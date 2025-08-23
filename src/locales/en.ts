@@ -306,6 +306,10 @@ export default {
       supportedFormats: 'Supported formats',
       selectImage: 'Select Image',
       cropImage: 'Crop Image',
+      originalImage: 'Original Image',
+      originalImageDescription: 'Full resolution image preview - this is your source image',
+      imageSize: 'Image Size',
+      cropPreview: 'Crop Preview',
       selectAnother: 'Select Another',
       cropInstruction:
         'Drag to adjust the crop area. The selected area will be used to generate square favicons.',
@@ -343,6 +347,8 @@ export default {
         invalidFile: 'Please select a valid image file',
         generationFailed: 'Failed to generate favicons',
         downloadFailed: 'Failed to download files',
+        imageLoadFailed: 'Failed to load image',
+        fileReadFailed: 'Failed to read file',
       },
       success: {
         imageLoaded: 'Image loaded successfully!',

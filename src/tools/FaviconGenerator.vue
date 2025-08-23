@@ -70,10 +70,46 @@
             </button>
           </div>
 
+          <!-- Original Image Preview -->
+          <div class="mb-6">
+            <h5 class="text-sm font-medium text-gray-700 mb-3">
+              {{ $t('tools.faviconGenerator.originalImage') }}
+            </h5>
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+              <div class="flex justify-center mb-4">
+                <div class="relative inline-block">
+                  <img
+                    :src="originalImageUrl"
+                    :alt="$t('tools.faviconGenerator.originalImage')"
+                    class="max-w-none h-auto rounded border border-gray-300 shadow-sm bg-white"
+                    :style="{
+                      maxWidth: '100%',
+                      maxHeight: '500px',
+                      width: 'auto',
+                      height: 'auto',
+                    }"
+                  />
+                </div>
+              </div>
+              <div class="text-center text-sm text-gray-600">
+                <div class="font-medium">
+                  {{ $t('tools.faviconGenerator.imageSize') }}: {{ originalImageSize.width }} ×
+                  {{ originalImageSize.height }} px
+                </div>
+                <div class="mt-1 text-xs text-gray-500">
+                  {{ $t('tools.faviconGenerator.originalImageDescription') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Cropper Container -->
           <div class="flex flex-col lg:flex-row gap-6">
             <!-- Image Cropper -->
             <div class="flex-1">
+              <h5 class="text-sm font-medium text-gray-700 mb-3">
+                {{ $t('tools.faviconGenerator.cropPreview') }}
+              </h5>
               <div class="relative bg-gray-100 rounded-lg overflow-hidden">
                 <canvas
                   ref="cropCanvas"
@@ -310,6 +346,8 @@ const { success, error: showError } = useToast()
 const fileInput = ref<HTMLInputElement>()
 const cropCanvas = ref<HTMLCanvasElement>()
 const selectedImage = ref<HTMLImageElement | null>(null)
+const originalImageUrl = ref<string>('')
+const originalImageSize = ref({ width: 0, height: 0 })
 const isDragging = ref(false)
 const isGenerating = ref(false)
 const isCropping = ref(false)
@@ -359,19 +397,35 @@ function handleDrop(event: DragEvent) {
 function loadImage(file: File) {
   const reader = new FileReader()
   reader.onload = (e) => {
+    const imageUrl = e.target?.result as string
     const img = new Image()
     img.onload = () => {
       selectedImage.value = img
-      setupCanvas()
+      originalImageUrl.value = imageUrl
+      originalImageSize.value = { width: img.width, height: img.height }
+
+      // Force Vue to update the DOM before setting up canvas
+      setTimeout(() => {
+        setupCanvas()
+      }, 100)
+
       success(t('tools.faviconGenerator.success.imageLoaded'))
     }
-    img.src = e.target?.result as string
+    img.onerror = () => {
+      showError(t('tools.faviconGenerator.errors.imageLoadFailed'))
+    }
+    img.src = imageUrl
+  }
+  reader.onerror = () => {
+    showError(t('tools.faviconGenerator.errors.fileReadFailed'))
   }
   reader.readAsDataURL(file)
 }
 
 function resetImage() {
   selectedImage.value = null
+  originalImageUrl.value = ''
+  originalImageSize.value = { width: 0, height: 0 }
   generatedFavicons.value = []
   if (fileInput.value) {
     fileInput.value.value = ''
@@ -388,12 +442,12 @@ function setupCanvas() {
 
   const img = selectedImage.value
 
-  // Calculate scale to fit image in canvas
-  const maxSize = 400
-  const scale = Math.min(maxSize / img.width, maxSize / img.height)
+  // Calculate scale to fit image in canvas with better sizing
+  const maxSize = 500 // Increased canvas size for better preview
+  const scale = Math.min(maxSize / img.width, maxSize / img.height, 1) // Don't scale up small images
 
-  canvasSize.value.width = img.width * scale
-  canvasSize.value.height = img.height * scale
+  canvasSize.value.width = Math.max(img.width * scale, 300) // Minimum canvas size
+  canvasSize.value.height = Math.max(img.height * scale, 300)
 
   canvas.width = canvasSize.value.width
   canvas.height = canvasSize.value.height
@@ -401,7 +455,7 @@ function setupCanvas() {
   imageScale.value = scale
 
   // Set initial crop area to center square
-  const size = Math.min(canvasSize.value.width, canvasSize.value.height) * 0.8
+  const size = Math.min(canvasSize.value.width, canvasSize.value.height) * 0.7
   cropArea.value = {
     x: (canvasSize.value.width - size) / 2,
     y: (canvasSize.value.height - size) / 2,
@@ -409,7 +463,10 @@ function setupCanvas() {
     height: size,
   }
 
-  drawCanvas()
+  // Force immediate canvas draw
+  requestAnimationFrame(() => {
+    drawCanvas()
+  })
 }
 
 function drawCanvas() {
@@ -645,8 +702,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   // Cleanup
-  if (selectedImage.value) {
-    URL.revokeObjectURL(selectedImage.value.src)
+  if (originalImageUrl.value) {
+    URL.revokeObjectURL(originalImageUrl.value)
   }
 })
 </script>

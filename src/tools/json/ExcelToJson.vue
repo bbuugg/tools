@@ -260,7 +260,8 @@ function convertToJson() {
     // For now, show an informational message
     throw new Error(t('tools.excelToJson.errors.xlsxRequired'))
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : t('tools.excelToJson.errors.conversionFailed')
+    const errorMessage =
+      err instanceof Error ? err.message : t('tools.excelToJson.errors.conversionFailed')
     error.value = errorMessage
     showError(error.value)
   }

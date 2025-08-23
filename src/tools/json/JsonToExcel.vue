@@ -345,7 +345,8 @@ function convertToExcel() {
     // showToast(t('tools.jsonToExcel.success.conversionComplete'), 'success')
     success(t('tools.jsonToExcel.success.conversionComplete'))
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : t('tools.jsonToExcel.errors.conversionFailed')
+    const message =
+      err instanceof Error ? err.message : t('tools.jsonToExcel.errors.conversionFailed')
     errorMessage.value = message
     showError(message)
   }
