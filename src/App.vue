@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
+import Header from './layouts/Header.vue'
+import Footer from './layouts/Footer.vue'
 import HtmlExtractor from './tools/HtmlExtractor.vue'
 import ComingSoon from './tools/ComingSoon.vue'
 

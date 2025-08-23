@@ -57,10 +57,7 @@
           <button
             v-for="tool in tools"
             :key="tool.id"
-            @click="
-              $emit('selectTool', tool.id)
-              mobileMenuOpen = false
-            "
+            @click="selectToolAndCloseMobile(tool.id)"
             :class="[
               'block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200',
               selectedTool === tool.id
@@ -91,9 +88,14 @@ defineProps<{
   selectedTool: string
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   selectTool: [toolId: string]
 }>()
 
 const mobileMenuOpen = ref(false)
+
+function selectToolAndCloseMobile(toolId: string) {
+  emit('selectTool', toolId)
+  mobileMenuOpen.value = false
+}
 </script>
