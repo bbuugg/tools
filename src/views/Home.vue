@@ -665,6 +665,13 @@ const categories = ref<Category[]>([
         path: '/image-tools/image-compressor',
         status: 'active',
       },
+      {
+        id: 'background-remover',
+        name: 'Background Remover',
+        icon: '✂️',
+        path: '/image-tools/background-remover',
+        status: 'active',
+      },
     ],
   },
   {

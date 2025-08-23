@@ -7,6 +7,7 @@ import ImageCompressor from '../tools/ImageCompressor.vue'
 import FaviconGenerator from '../tools/FaviconGenerator.vue'
 import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
+import BackgroundRemover from '../tools/BackgroundRemover.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
@@ -558,6 +559,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'Image Compressor',
+          },
+        },
+        {
+          path: 'image-tools/background-remover',
+          name: 'background-remover',
+          component: BackgroundRemover,
+          meta: {
+            category: 'image-tools',
+            title: 'Background Remover',
           },
         },
         {
