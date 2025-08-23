@@ -232,7 +232,8 @@ export default {
       selectImage: 'Select Image',
       cropImage: 'Crop Image',
       selectAnother: 'Select Another',
-      cropInstruction: 'Drag to adjust the crop area. The selected area will be used to generate square favicons.',
+      cropInstruction:
+        'Drag to adjust the crop area. The selected area will be used to generate square favicons.',
       outputFormat: 'Output Format',
       sizes: 'Favicon Sizes',
       generate: 'Generate Favicons',
@@ -249,15 +250,18 @@ export default {
       features: {
         cropping: {
           title: 'Smart Cropping',
-          description: 'Interactive crop tool to select the perfect square area from your image with real-time preview.',
+          description:
+            'Interactive crop tool to select the perfect square area from your image with real-time preview.',
         },
         multiSize: {
           title: 'Multiple Sizes',
-          description: 'Generate favicons in all standard sizes (16px to 128px) for optimal compatibility across devices.',
+          description:
+            'Generate favicons in all standard sizes (16px to 128px) for optimal compatibility across devices.',
         },
         formats: {
           title: 'Multiple Formats',
-          description: 'Export in ICO, PNG, or JPG formats to meet different browser and platform requirements.',
+          description:
+            'Export in ICO, PNG, or JPG formats to meet different browser and platform requirements.',
         },
       },
       errors: {

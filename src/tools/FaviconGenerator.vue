@@ -16,7 +16,7 @@
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
           {{ $t('tools.faviconGenerator.uploadSection') }}
         </h3>
-        
+
         <div
           v-if="!selectedImage"
           @drop="handleDrop"
@@ -193,7 +193,10 @@
                 :src="favicon.dataUrl"
                 :alt="`${favicon.size}x${favicon.size} favicon`"
                 class="max-w-full max-h-full"
-                :style="{ width: Math.min(favicon.size, 48) + 'px', height: Math.min(favicon.size, 48) + 'px' }"
+                :style="{
+                  width: Math.min(favicon.size, 48) + 'px',
+                  height: Math.min(favicon.size, 48) + 'px',
+                }"
               />
             </div>
             <div class="text-sm font-medium text-gray-900 mb-1">
@@ -223,7 +226,9 @@
               <h4 class="font-medium text-gray-900 mb-2">
                 {{ $t('tools.faviconGenerator.htmlUsage') }}
               </h4>
-              <pre class="bg-gray-100 p-3 rounded text-xs overflow-x-auto"><code>&lt;!-- Basic favicon --&gt;
+              <pre
+                class="bg-gray-100 p-3 rounded text-xs overflow-x-auto"
+              ><code>&lt;!-- Basic favicon --&gt;
 &lt;link rel="shortcut icon" href="/favicon.ico" /&gt;
 
 &lt;!-- Multiple sizes --&gt;
@@ -382,19 +387,19 @@ function setupCanvas() {
   if (!ctx) return
 
   const img = selectedImage.value
-  
+
   // Calculate scale to fit image in canvas
   const maxSize = 400
   const scale = Math.min(maxSize / img.width, maxSize / img.height)
-  
+
   canvasSize.value.width = img.width * scale
   canvasSize.value.height = img.height * scale
-  
+
   canvas.width = canvasSize.value.width
   canvas.height = canvasSize.value.height
 
   imageScale.value = scale
-  
+
   // Set initial crop area to center square
   const size = Math.min(canvasSize.value.width, canvasSize.value.height) * 0.8
   cropArea.value = {
@@ -416,40 +421,55 @@ function drawCanvas() {
 
   // Clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  
+
   // Draw image
   ctx.drawImage(selectedImage.value, 0, 0, canvasSize.value.width, canvasSize.value.height)
-  
+
   // Draw crop overlay
   ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
-  
+
   // Clear crop area
   ctx.clearRect(cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height)
-  
+
   // Redraw image in crop area
   ctx.drawImage(
     selectedImage.value,
-    cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height,
-    cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height
+    cropArea.value.x,
+    cropArea.value.y,
+    cropArea.value.width,
+    cropArea.value.height,
+    cropArea.value.x,
+    cropArea.value.y,
+    cropArea.value.width,
+    cropArea.value.height,
   )
-  
+
   // Draw crop border
   ctx.strokeStyle = '#3b82f6'
   ctx.lineWidth = 2
   ctx.strokeRect(cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height)
-  
+
   // Draw corner handles
   const handleSize = 8
   const handles = [
-    { x: cropArea.value.x - handleSize/2, y: cropArea.value.y - handleSize/2 },
-    { x: cropArea.value.x + cropArea.value.width - handleSize/2, y: cropArea.value.y - handleSize/2 },
-    { x: cropArea.value.x - handleSize/2, y: cropArea.value.y + cropArea.value.height - handleSize/2 },
-    { x: cropArea.value.x + cropArea.value.width - handleSize/2, y: cropArea.value.y + cropArea.value.height - handleSize/2 },
+    { x: cropArea.value.x - handleSize / 2, y: cropArea.value.y - handleSize / 2 },
+    {
+      x: cropArea.value.x + cropArea.value.width - handleSize / 2,
+      y: cropArea.value.y - handleSize / 2,
+    },
+    {
+      x: cropArea.value.x - handleSize / 2,
+      y: cropArea.value.y + cropArea.value.height - handleSize / 2,
+    },
+    {
+      x: cropArea.value.x + cropArea.value.width - handleSize / 2,
+      y: cropArea.value.y + cropArea.value.height - handleSize / 2,
+    },
   ]
-  
+
   ctx.fillStyle = '#3b82f6'
-  handles.forEach(handle => {
+  handles.forEach((handle) => {
     ctx.fillRect(handle.x, handle.y, handleSize, handleSize)
   })
 }
@@ -462,32 +482,44 @@ function startCrop(event: MouseEvent | TouchEvent) {
 
   const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
   const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
-  
+
   const x = clientX - rect.left
   const y = clientY - rect.top
-  
+
   // Simple drag to move crop area
-  cropArea.value.x = Math.max(0, Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2))
-  cropArea.value.y = Math.max(0, Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2))
-  
+  cropArea.value.x = Math.max(
+    0,
+    Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2),
+  )
+  cropArea.value.y = Math.max(
+    0,
+    Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2),
+  )
+
   drawCanvas()
 }
 
 function updateCrop(event: MouseEvent | TouchEvent) {
   if (!isCropping.value) return
-  
+
   const rect = cropCanvas.value?.getBoundingClientRect()
   if (!rect) return
 
   const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
   const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
-  
+
   const x = clientX - rect.left
   const y = clientY - rect.top
-  
-  cropArea.value.x = Math.max(0, Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2))
-  cropArea.value.y = Math.max(0, Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2))
-  
+
+  cropArea.value.x = Math.max(
+    0,
+    Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2),
+  )
+  cropArea.value.y = Math.max(
+    0,
+    Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2),
+  )
+
   drawCanvas()
 }
 
@@ -517,11 +549,7 @@ async function generateFavicons() {
       const sourceSize = cropArea.value.width / imageScale.value
 
       // Draw cropped and resized image
-      ctx.drawImage(
-        selectedImage.value,
-        sourceX, sourceY, sourceSize, sourceSize,
-        0, 0, size, size
-      )
+      ctx.drawImage(selectedImage.value, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size)
 
       // Convert to blob
       const mimeType = outputFormat.value === 'ico' ? 'image/png' : `image/${outputFormat.value}`
