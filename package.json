@@ -18,6 +18,7 @@
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
     "@tailwindcss/vite": "^4.1.12",
+    "gif.js": "^0.2.0",
     "jsonpath-plus": "^10.3.0",
     "jszip": "^3.10.1",
     "vue": "^3.5.18",

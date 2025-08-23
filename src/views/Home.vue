@@ -672,6 +672,13 @@ const categories = ref<Category[]>([
         path: '/image-tools/background-remover',
         status: 'active',
       },
+      {
+        id: 'videoToGifConverter',
+        name: 'Video to GIF Converter',
+        icon: '🎬',
+        path: '/image-tools/video-to-gif-converter',
+        status: 'active',
+      },
     ],
   },
   {

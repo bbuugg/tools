@@ -21,6 +21,7 @@ export default {
     unique: 'Unique',
     nonEmpty: 'Non-empty',
     loading: 'Loading...',
+    remove: 'Remove',
   },
   toast: {
     success: 'Success',
@@ -196,6 +197,89 @@ export default {
           description:
             'Advanced image viewer with zoom, scroll, drag, and full-screen capabilities for detailed inspection.',
         },
+      },
+    },
+    videoToGifConverter: {
+      title: 'Video to GIF Converter',
+      description:
+        'Convert videos to animated GIFs with customizable text overlays and timing controls',
+      upload: {
+        title: 'Upload Video',
+        dragDrop: 'Drag & drop your video here',
+        selectFile: 'Select Video File',
+        supportedFormats: 'Supports MP4, AVI, MOV, WebM and other video formats (Max: 100MB)',
+      },
+      settings: {
+        width: 'GIF Width (px)',
+        quality: 'Quality',
+        fps: 'Frame Rate (FPS)',
+        qualityOptions: {
+          high: 'High Quality',
+          medium: 'Medium Quality',
+          low: 'Low Quality (Smaller File)',
+        },
+      },
+      preview: {
+        title: 'Video Preview & Controls',
+      },
+      actions: {
+        startCapture: 'Start Capture',
+        stopCapture: 'Stop Capture',
+        generateGif: 'Generate GIF',
+      },
+      timeRange: {
+        title: 'Time Range Selection',
+        start: 'Start',
+        end: 'End',
+        setStart: 'Set Start',
+        setEnd: 'Set End',
+      },
+      textOverlay: {
+        title: 'Text Overlays',
+        add: 'Add Text',
+        text: 'Text',
+        placeholder: 'Enter overlay text...',
+        startTime: 'Start Time (s)',
+        endTime: 'End Time (s)',
+        fontSize: 'Font Size',
+        color: 'Color',
+        position: 'Position',
+        positions: {
+          top: 'Top',
+          center: 'Center',
+          bottom: 'Bottom',
+        },
+      },
+      processing: {
+        title: 'Processing Video',
+        description: 'Converting your video to GIF with text overlays. This may take a moment...',
+      },
+      result: {
+        title: 'Generated GIF',
+        download: 'Download GIF',
+        createNew: 'Create New GIF',
+      },
+      features: {
+        conversion: {
+          title: 'Video Conversion',
+          description:
+            'Convert videos to high-quality animated GIFs with customizable frame rate and dimensions.',
+        },
+        textOverlay: {
+          title: 'Text Overlays',
+          description:
+            'Add multiple text overlays with precise timing, custom colors, fonts, and positioning.',
+        },
+        customization: {
+          title: 'Full Customization',
+          description:
+            'Control every aspect including quality, size, timing, and text appearance for perfect results.',
+        },
+      },
+      errors: {
+        invalidFile: 'Please select a valid video file.',
+        fileTooLarge: 'File size must be less than 100MB.',
+        processingFailed: 'Failed to process video. Please try again.',
       },
     },
     backgroundRemover: {

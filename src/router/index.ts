@@ -8,6 +8,7 @@ import FaviconGenerator from '../tools/FaviconGenerator.vue'
 import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
 import BackgroundRemover from '../tools/image/BackgroundRemover.vue'
+import VideoToGifConverter from '../tools/image/VideoToGifConverter.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
@@ -568,6 +569,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'Background Remover',
+          },
+        },
+        {
+          path: 'image-tools/video-to-gif-converter',
+          name: 'video-to-gif-converter',
+          component: VideoToGifConverter,
+          meta: {
+            category: 'image-tools',
+            title: 'Video to GIF Converter',
           },
         },
         {

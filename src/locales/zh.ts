@@ -21,6 +21,7 @@ export default {
     unique: '唯一',
     nonEmpty: '非空',
     loading: '加载中...',
+    remove: '移除',
   },
   navigation: {
     tools: '工具',
@@ -272,6 +273,85 @@ export default {
           title: '专业预览',
           description: '高级图片查看器，支持缩放、滚动、拖拽和全屏功能，便于详细检查。',
         },
+      },
+    },
+    videoToGifConverter: {
+      title: '视频转GIF工具',
+      description: '将视频转换为动态GIF，支持自定义文字叠加和时间控制',
+      upload: {
+        title: '上传视频',
+        dragDrop: '拖拽视频文件到此处',
+        selectFile: '选择视频文件',
+        supportedFormats: '支持 MP4、AVI、MOV、WebM 等视频格式（最大：100MB）',
+      },
+      settings: {
+        width: 'GIF宽度（像素）',
+        quality: '质量',
+        fps: '帧率（FPS）',
+        qualityOptions: {
+          high: '高质量',
+          medium: '中等质量',
+          low: '低质量（文件更小）',
+        },
+      },
+      preview: {
+        title: '视频预览和控制',
+      },
+      actions: {
+        startCapture: '开始取图',
+        stopCapture: '取图完成',
+        generateGif: '生成GIF',
+      },
+      timeRange: {
+        title: '时间范围选择',
+        start: '开始',
+        end: '结束',
+        setStart: '设置开始时间',
+        setEnd: '设置结束时间',
+      },
+      textOverlay: {
+        title: '文字叠加',
+        add: '添加文字',
+        text: '文字',
+        placeholder: '输入叠加文字...',
+        startTime: '开始时间（秒）',
+        endTime: '结束时间（秒）',
+        fontSize: '字体大小',
+        color: '颜色',
+        position: '位置',
+        positions: {
+          top: '顶部',
+          center: '居中',
+          bottom: '底部',
+        },
+      },
+      processing: {
+        title: '处理视频中',
+        description: '正在将您的视频转换为GIF并添加文字叠加。这可能需要一些时间...',
+      },
+      result: {
+        title: '生成的GIF',
+        download: '下载GIF',
+        createNew: '创建新的GIF',
+      },
+      features: {
+        conversion: {
+          title: '视频转换',
+          description: '将视频转换为高质量的动态GIF，支持自定义帧率和尺寸。',
+        },
+        textOverlay: {
+          title: '文字叠加',
+          description: '添加多个文字叠加，支持精确时间控制、自定义颜色、字体和位置。',
+        },
+        customization: {
+          title: '全面自定义',
+          description: '控制质量、大小、时间和文字外观等各个方面，获得完美效果。',
+        },
+      },
+      errors: {
+        invalidFile: '请选择有效的视频文件。',
+        fileTooLarge: '文件大小必须小于100MB。',
+        processingFailed: '视频处理失败，请重试。',
       },
     },
     backgroundRemover: {
