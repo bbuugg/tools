@@ -172,11 +172,53 @@
       <!-- Main Content -->
       <main
         :class="[
-          'flex-1 overflow-auto transition-all duration-300 ease-in-out',
+          'flex-1 overflow-auto transition-all duration-300 ease-in-out relative',
           isMobile && isSidebarOpen ? 'lg:ml-0' : '',
         ]"
       >
-        <router-view />
+        <!-- Loading Overlay -->
+        <transition
+          enter-active-class="transition-opacity duration-200"
+          leave-active-class="transition-opacity duration-300"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="isLoading"
+            class="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50 backdrop-blur-sm"
+          >
+            <div class="flex flex-col items-center">
+              <!-- Spinner Animation -->
+              <div
+                class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"
+              ></div>
+              <!-- Loading Text -->
+              <p class="text-gray-600 text-sm font-medium animate-pulse">
+                {{ $t('common.loading') }}
+              </p>
+            </div>
+          </div>
+        </transition>
+
+        <!-- Content with Transition -->
+        <transition
+          enter-active-class="transition-all duration-300 delay-100"
+          leave-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 transform translate-y-2"
+          enter-to-class="opacity-100 transform translate-y-0"
+          leave-from-class="opacity-100 transform translate-y-0"
+          leave-to-class="opacity-0 transform translate-y-1"
+          mode="out-in"
+        >
+          <div
+            :key="$route.path"
+            :class="['transition-opacity duration-300', isLoading ? 'opacity-50' : 'opacity-100']"
+          >
+            <router-view />
+          </div>
+        </transition>
       </main>
     </div>
 
@@ -215,6 +257,7 @@ const selectedCategory = ref('web-tools')
 const isSidebarOpen = ref(false)
 const isMobile = ref(false)
 const searchQuery = ref('')
+const isLoading = ref(false)
 
 // Tool categories configuration
 const categories = ref<Category[]>([
@@ -722,6 +765,9 @@ function selectCategory(categoryId: string) {
   selectedCategory.value = categoryId
   searchQuery.value = '' // Clear search when changing category
 
+  // Set loading state when navigating to a new category
+  isLoading.value = true
+
   // Navigate to first tool of the category
   const category = categories.value.find((cat) => cat.id === categoryId)
   if (category && category.tools.length > 0) {
@@ -739,6 +785,9 @@ function clearSearch() {
 }
 
 function onToolClick() {
+  // Set loading state when tool is clicked
+  isLoading.value = true
+
   // Close sidebar on mobile when tool is clicked
   if (isMobile.value) {
     closeSidebar()
@@ -749,15 +798,23 @@ function onToolClick() {
 watch(
   () => route.path,
   (newPath) => {
+    // Set loading state at the start of route change
+    isLoading.value = true
+
     // Find category based on current route
     for (const category of categories.value) {
       for (const tool of category.tools) {
         if (tool.path === newPath) {
           selectedCategory.value = category.id
-          return
+          break
         }
       }
     }
+
+    // Simulate loading delay for smooth transition
+    setTimeout(() => {
+      isLoading.value = false
+    }, 300)
   },
   { immediate: true },
 )

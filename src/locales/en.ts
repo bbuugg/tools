@@ -20,6 +20,7 @@ export default {
     total: 'Total',
     unique: 'Unique',
     nonEmpty: 'Non-empty',
+    loading: 'Loading...',
   },
   navigation: {
     tools: 'Tools',

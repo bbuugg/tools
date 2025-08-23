@@ -20,6 +20,7 @@ export default {
     total: '总数',
     unique: '唯一',
     nonEmpty: '非空',
+    loading: '加载中...',
   },
   navigation: {
     tools: '工具',
