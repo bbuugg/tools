@@ -3,16 +3,39 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Hero Section -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">JSON Field Extractor</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('tools.jsonExtractor.title') }}</h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Extract specific fields from JSON array data with one click
+          {{ $t('tools.jsonExtractor.description') }}
         </p>
+      </div>
+
+      <!-- Input Section -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          Input JSON Array
+        </h2>
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">
+            📋 Please paste JSON array data in the format:
+            <code class="bg-gray-100 px-1 rounded">[{},{},...]</code>
+          </p>
+          <p class="text-sm text-gray-500">
+            The tool will automatically parse the JSON and list all available fields for selection.
+          </p>
+        </div>
+        <textarea
+          v-model="jsonInput"
+          @input="parseJson"
+          :placeholder="$t('tools.jsonExtractor.inputPlaceholder')"
+          class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
+        ></textarea>
+        <div v-if="parseError" class="mt-2 text-red-600 text-sm">⚠️ {{ parseError }}</div>
       </div>
 
       <!-- Field Selection -->
       <div v-if="availableFields.length > 0" class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Available Fields
+          {{ $t('tools.jsonExtractor.availableFields') }}
         </h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
           <label
@@ -35,13 +58,13 @@
             @click="selectAllFields"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            Select All
+            {{ $t('common.selectAll') }}
           </button>
           <button
             @click="clearSelection"
             class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
           >
-            Clear Selection
+            {{ $t('common.clearSelection') }}
           </button>
         </div>
       </div>
@@ -49,7 +72,7 @@
       <!-- Options -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Options
+          {{ $t('common.options') }}
         </h3>
         <div class="flex flex-wrap items-center gap-6">
           <label class="flex items-center space-x-3">
@@ -68,7 +91,9 @@
               @change="extractFields"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span class="text-sm font-medium text-gray-700">🧹 Remove Empty Values</span>
+            <span class="text-sm font-medium text-gray-700"
+              >🧹 {{ $t('tools.jsonExtractor.options.removeEmpty') }}</span
+            >
           </label>
           <div class="flex gap-3 ml-auto">
             <button
@@ -76,62 +101,40 @@
               :disabled="extractedData.length === 0"
               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Copy Results
+              {{ $t('common.copy') }} {{ $t('common.results') }}
             </button>
             <button
               @click="downloadResults"
               :disabled="extractedData.length === 0"
               class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Download JSON
+              {{ $t('common.download') }} JSON
             </button>
             <button
               @click="loadExample"
               class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
             >
-              Load Example
+              {{ $t('common.loadExample') }}
             </button>
             <button
               @click="clearContent"
               class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
             >
-              Clear
+              {{ $t('common.clear') }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Input JSON Array
-        </h2>
-        <div class="mb-4">
-          <p class="text-sm text-gray-600 mb-2">
-            📋 Please paste JSON array data in the format:
-            <code class="bg-gray-100 px-1 rounded">[{},{},...]</code>
-          </p>
-          <p class="text-sm text-gray-500">
-            The tool will automatically parse the JSON and list all available fields for selection.
-          </p>
-        </div>
-        <textarea
-          v-model="jsonInput"
-          @input="parseJson"
-          placeholder='Paste your JSON array here, e.g.:\n[\n  {"name": "John", "age": 30, "city": "New York"},\n  {"name": "Jane", "age": 25, "city": "London"}\n]'
-          class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
-        ></textarea>
-        <div v-if="parseError" class="mt-2 text-red-600 text-sm">⚠️ {{ parseError }}</div>
-      </div>
-
       <!-- Results Section -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Extraction Results
+          {{ $t('tools.jsonExtractor.extractionResults') }}
         </h2>
         <div class="mb-3 px-3 py-2 bg-blue-50 rounded-md border-l-4 border-blue-400">
           <span class="text-blue-800 font-medium text-sm">
-            {{ extractedData.length }} items extracted with {{ selectedFields.length }} fields
+            {{ extractedData.length }} {{ $t('common.items') }} {{ $t('common.extracted') }}
+            {{ $t('common.with') }} {{ selectedFields.length }} {{ $t('common.fields') }}
           </span>
         </div>
 
@@ -214,6 +217,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 
 interface ExtractionOptions {
   preserveStructure: boolean
@@ -227,11 +232,16 @@ interface FieldStat {
   unique: number
 }
 
+const { t } = useI18n()
+const { copySuccess, copyError, downloadSuccess } = useToast()
+
 const jsonInput = ref('')
 const parseError = ref('')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const originalData = ref<any[]>([])
 const availableFields = ref<string[]>([])
 const selectedFields = ref<string[]>([])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const extractedData = ref<any[]>([])
 const options = ref<ExtractionOptions>({
   preserveStructure: true,
@@ -254,12 +264,12 @@ function parseJson() {
     const parsed = JSON.parse(jsonInput.value)
 
     if (!Array.isArray(parsed)) {
-      parseError.value = 'Input must be a JSON array in format: [{},{},...]'
+      parseError.value = t('tools.jsonExtractor.errors.invalidFormat')
       return
     }
 
     if (parsed.length === 0) {
-      parseError.value = 'JSON array cannot be empty'
+      parseError.value = t('tools.jsonExtractor.errors.emptyArray')
       return
     }
 
@@ -268,6 +278,7 @@ function parseJson() {
     // Extract all available fields from all objects
     const fieldSet = new Set<string>()
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function extractFieldsFromObject(obj: any, prefix = '') {
       if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) {
         Object.keys(obj).forEach((key) => {
@@ -289,10 +300,10 @@ function parseJson() {
     availableFields.value = Array.from(fieldSet).sort()
 
     if (availableFields.value.length === 0) {
-      parseError.value = 'No fields found in the JSON objects'
+      parseError.value = t('tools.jsonExtractor.errors.noFields')
     }
   } catch (error) {
-    parseError.value = `Invalid JSON format: ${(error as Error).message}`
+    parseError.value = `${t('tools.jsonExtractor.errors.invalidJson')} ${(error as Error).message}`
   }
 }
 
@@ -305,6 +316,7 @@ function extractFields() {
 
   extractedData.value = originalData.value
     .map((item) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const extracted: any = {}
 
       selectedFields.value.forEach((field) => {
@@ -325,6 +337,7 @@ function extractFields() {
 }
 
 // Helper function to get nested value from object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((current, key) => {
     return current && typeof current === 'object' ? current[key] : undefined
@@ -332,6 +345,7 @@ function getNestedValue(obj: any, path: string): any {
 }
 
 // Helper function to set nested value in object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setNestedValue(obj: any, path: string, value: any): void {
   const keys = path.split('.')
   const lastKey = keys.pop()!
@@ -442,10 +456,10 @@ function copyResults() {
   navigator.clipboard
     .writeText(text)
     .then(() => {
-      alert('Results copied to clipboard!')
+      copySuccess()
     })
     .catch(() => {
-      alert('Failed to copy to clipboard')
+      copyError()
     })
 }
 
@@ -465,5 +479,6 @@ function downloadResults() {
   document.body.removeChild(link)
 
   URL.revokeObjectURL(url)
+  downloadSuccess()
 }
 </script>

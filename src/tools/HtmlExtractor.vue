@@ -3,182 +3,20 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Hero Section -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">HTML Content Extractor</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('tools.htmlExtractor.title') }}</h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Extract images, videos, links, and other resources from HTML code with one click
+          {{ $t('tools.htmlExtractor.description') }}
         </p>
-      </div>
-
-      <!-- Content Type Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Content Types
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.images"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🖼️ Images</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.videos"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">📹 Videos</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.audios"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🎵 Audio</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.links"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🔗 Links</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.css"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🎨 CSS</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.js"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">📜 JavaScript</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.iframes"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🖼️ iFrames</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.metadata"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🔍 Metadata</span>
-          </label>
-          <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              v-model="options.forms"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">📝 Forms</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Options -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Options
-        </h3>
-        <div class="flex flex-wrap items-center gap-6">
-          <label class="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              v-model="options.uniqueOnly"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">✨ Unique Results Only</span>
-          </label>
-          <label class="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              v-model="options.absoluteUrls"
-              @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="text-sm font-medium text-gray-700">🔗 Convert to Absolute URLs</span>
-          </label>
-          <div class="flex gap-3 ml-auto">
-            <button
-              @click="extractContent"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              Extract Content
-            </button>
-            <button
-              @click="copyResults"
-              :disabled="totalCount === 0"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Copy Results
-            </button>
-            <button
-              @click="loadExample"
-              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-            >
-              Load Example
-            </button>
-            <button
-              @click="clearContent"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
       </div>
 
       <!-- Input Section -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Input HTML Code
+          {{ $t('common.input') }} HTML Code
         </h2>
         <div class="mb-4">
           <label for="base-url" class="block text-sm font-medium text-gray-700 mb-2">
-            Base URL:
+            {{ $t('tools.htmlExtractor.baseUrl') }}:
           </label>
           <input
             id="base-url"
@@ -191,24 +29,210 @@
         <textarea
           v-model="htmlInput"
           @input="extractContent"
-          placeholder="Paste your HTML code here..."
+          :placeholder="$t('tools.htmlExtractor.inputPlaceholder')"
           class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
         ></textarea>
+      </div>
+
+      <!-- Content Type Filters -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          {{ $t('tools.htmlExtractor.contentTypes') }}
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.images"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🖼️ {{ $t('tools.htmlExtractor.types.images') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.videos"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >📹 {{ $t('tools.htmlExtractor.types.videos') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.audios"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🎵 {{ $t('tools.htmlExtractor.types.audio') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.links"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🔗 {{ $t('tools.htmlExtractor.types.links') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.css"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🎨 {{ $t('tools.htmlExtractor.types.css') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.js"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >📜 {{ $t('tools.htmlExtractor.types.javascript') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.iframes"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🖼️ {{ $t('tools.htmlExtractor.types.iframes') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.metadata"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🔍 {{ $t('tools.htmlExtractor.types.metadata') }}</span
+            >
+          </label>
+          <label
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              v-model="options.forms"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >📝 {{ $t('tools.htmlExtractor.types.forms') }}</span
+            >
+          </label>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          {{ $t('common.options') }}
+        </h3>
+        <div class="flex flex-wrap items-center gap-6">
+          <label class="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              v-model="options.uniqueOnly"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >✨ {{ $t('tools.htmlExtractor.options.uniqueOnly') }}</span
+            >
+          </label>
+          <label class="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              v-model="options.absoluteUrls"
+              @change="extractContent"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span class="text-sm font-medium text-gray-700"
+              >🔗 {{ $t('tools.htmlExtractor.options.absoluteUrls') }}</span
+            >
+          </label>
+          <div class="flex gap-3 ml-auto">
+            <button
+              @click="extractContent"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              {{ $t('common.extract') }} {{ $t('common.results') }}
+            </button>
+            <button
+              @click="copyResults"
+              :disabled="totalCount === 0"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ $t('common.copy') }} {{ $t('common.results') }}
+            </button>
+            <button
+              @click="loadExample"
+              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+            >
+              {{ $t('common.loadExample') }}
+            </button>
+            <button
+              @click="clearContent"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+            >
+              {{ $t('common.clear') }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Results Section -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          Extraction Results
+          {{ $t('tools.htmlExtractor.extractionResults') }}
         </h2>
         <div class="mb-3 px-3 py-2 bg-blue-50 rounded-md border-l-4 border-blue-400">
-          <span class="text-blue-800 font-medium text-sm">{{ totalCount }} items found</span>
+          <span class="text-blue-800 font-medium text-sm"
+            >{{ totalCount }} {{ $t('common.items') }} {{ $t('common.found') }}</span
+          >
         </div>
 
         <div v-if="totalCount === 0" class="text-center py-12">
           <div class="text-gray-400 text-lg mb-2">📋</div>
           <p class="text-gray-500">
-            No extraction results yet. Please input HTML code and select content types to extract.
+            {{ $t('tools.htmlExtractor.noResults') }}
           </p>
         </div>
 
@@ -284,26 +308,29 @@
       <!-- Feature Descriptions -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">🖼️ Image Extraction</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            🖼️ {{ $t('tools.htmlExtractor.features.imageExtraction.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Automatically extract all image URLs from HTML, including img tags and CSS background
-            images. Supports relative to absolute URL conversion for easy use.
+            {{ $t('tools.htmlExtractor.features.imageExtraction.description') }}
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">🎬 Media Processing</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            🎬 {{ $t('tools.htmlExtractor.features.mediaProcessing.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Batch extract video and audio file links, supporting multiple formats (MP4, WebM, Ogg,
-            MP3, etc.). Automatically recognizes source files in video and audio tags.
+            {{ $t('tools.htmlExtractor.features.mediaProcessing.description') }}
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">🔗 Link Analysis</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            🔗 {{ $t('tools.htmlExtractor.features.linkAnalysis.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Extract all hyperlinks from the page, including href attributes of a tags. Supports
-            filtering internal and external links to help analyze website structure.
+            {{ $t('tools.htmlExtractor.features.linkAnalysis.description') }}
           </p>
         </div>
       </div>
@@ -313,6 +340,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useToast } from '@/composables/useToast'
 
 interface ExtractedItem {
   type: string
@@ -350,6 +378,8 @@ const options = ref<ExtractionOptions>({
   uniqueOnly: true,
   absoluteUrls: false,
 })
+
+const { copySuccess, copyError } = useToast()
 
 const extractedResults = ref<ExtractedItem[]>([])
 
@@ -705,9 +735,14 @@ function clearContent() {
 
 function copyResults() {
   const text = extractedResults.value.map((item) => `${item.type}: ${item.url}`).join('\n')
-  navigator.clipboard.writeText(text).then(() => {
-    alert('Results copied to clipboard!')
-  })
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      copySuccess()
+    })
+    .catch(() => {
+      copyError()
+    })
 }
 
 // Get emoji for content type

@@ -87,7 +87,9 @@
             CSS.
           </p>
           <div class="mt-4 md:mt-0">
-            <p class="text-gray-400 text-sm">Made with ❤️ for developers</p>
+            <p class="text-gray-400 text-sm">
+              {{ $t('footer.madeWith') }} ❤️ {{ $t('footer.by') }} developers
+            </p>
           </div>
         </div>
       </div>
