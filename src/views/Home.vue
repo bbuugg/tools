@@ -791,8 +791,25 @@ function clearSearch() {
   searchQuery.value = ''
 }
 
-function onToolClick() {
-  // Set loading state when tool is clicked
+function onToolClick(event: Event) {
+  // Get the target path from the router-link
+  const target = event.currentTarget as HTMLElement
+  const link = target.closest('a[href]') as HTMLAnchorElement
+  if (!link) return
+
+  const targetPath = link.getAttribute('href')
+
+  // If we're already on the target route, prevent default navigation and don't set loading state
+  if (targetPath === route.path) {
+    event.preventDefault()
+    // Close sidebar on mobile but don't trigger loading or navigation
+    if (isMobile.value) {
+      closeSidebar()
+    }
+    return
+  }
+
+  // Set loading state when navigating to a different tool
   isLoading.value = true
 
   // Close sidebar on mobile when tool is clicked
@@ -804,10 +821,7 @@ function onToolClick() {
 // Watch for route changes to update selected category
 watch(
   () => route.path,
-  (newPath) => {
-    // Set loading state at the start of route change
-    isLoading.value = true
-
+  (newPath, oldPath) => {
     // Find category based on current route
     for (const category of categories.value) {
       for (const tool of category.tools) {
@@ -818,10 +832,16 @@ watch(
       }
     }
 
-    // Simulate loading delay for smooth transition
-    setTimeout(() => {
+    // Always reset loading state after a short delay to ensure smooth transition
+    // Only delay if we're actually changing routes
+    if (newPath !== oldPath) {
+      setTimeout(() => {
+        isLoading.value = false
+      }, 300)
+    } else {
+      // If it's the same path, immediately reset loading state
       isLoading.value = false
-    }, 300)
+    }
   },
   { immediate: true },
 )
