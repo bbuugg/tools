@@ -11,6 +11,48 @@
         </p>
       </div>
 
+      <!-- Upload Area -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div
+          @drop="handleDrop"
+          @dragover.prevent
+          @dragenter.prevent
+          @click="openFileSelector"
+          :class="[
+            'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
+            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
+          ]"
+        >
+          <input
+            ref="fileInput"
+            type="file"
+            multiple
+            accept="image/*"
+            @change="handleFileSelect"
+            class="hidden"
+          />
+          <div class="space-y-4">
+            <div class="text-6xl text-gray-400">📸</div>
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">
+                {{ $t('tools.imageCompressor.uploadTitle') }}
+              </h3>
+              <p class="text-gray-600">
+                {{ $t('tools.imageCompressor.uploadDescription') }}
+              </p>
+              <p class="text-sm text-gray-500 mt-2">
+                {{ $t('tools.imageCompressor.supportedFormats') }}: JPG, PNG, WebP, GIF
+              </p>
+            </div>
+            <button
+              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              {{ $t('tools.imageCompressor.selectFiles') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Settings Panel -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
@@ -64,48 +106,6 @@
               max="4096"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-          </div>
-        </div>
-      </div>
-
-      <!-- Upload Area -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div
-          @drop="handleDrop"
-          @dragover.prevent
-          @dragenter.prevent
-          @click="openFileSelector"
-          :class="[
-            'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
-            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
-          ]"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            @change="handleFileSelect"
-            class="hidden"
-          />
-          <div class="space-y-4">
-            <div class="text-6xl text-gray-400">📸</div>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">
-                {{ $t('tools.imageCompressor.uploadTitle') }}
-              </h3>
-              <p class="text-gray-600">
-                {{ $t('tools.imageCompressor.uploadDescription') }}
-              </p>
-              <p class="text-sm text-gray-500 mt-2">
-                {{ $t('tools.imageCompressor.supportedFormats') }}: JPG, PNG, WebP, GIF
-              </p>
-            </div>
-            <button
-              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              {{ $t('tools.imageCompressor.selectFiles') }}
-            </button>
           </div>
         </div>
       </div>

@@ -36,9 +36,25 @@
 
       <!-- Content Type Filters -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          {{ $t('tools.htmlExtractor.contentTypes') }}
-        </h3>
+        <div class="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
+          <h3 class="text-lg font-semibold text-gray-900">
+            {{ $t('tools.htmlExtractor.contentTypes') }}
+          </h3>
+          <div class="flex gap-2">
+            <button
+              @click="selectAllContentTypes"
+              class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors cursor-pointer"
+            >
+              {{ $t('common.selectAll') }}
+            </button>
+            <button
+              @click="deselectAllContentTypes"
+              class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors cursor-pointer"
+            >
+              {{ $t('common.clearSelection') }}
+            </button>
+          </div>
+        </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <label
             class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -743,6 +759,34 @@ function copyResults() {
     .catch(() => {
       copyError()
     })
+}
+
+// Select all content types
+function selectAllContentTypes() {
+  options.value.images = true
+  options.value.videos = true
+  options.value.audios = true
+  options.value.links = true
+  options.value.css = true
+  options.value.js = true
+  options.value.iframes = true
+  options.value.metadata = true
+  options.value.forms = true
+  extractContent()
+}
+
+// Deselect all content types
+function deselectAllContentTypes() {
+  options.value.images = false
+  options.value.videos = false
+  options.value.audios = false
+  options.value.links = false
+  options.value.css = false
+  options.value.js = false
+  options.value.iframes = false
+  options.value.metadata = false
+  options.value.forms = false
+  extractContent()
 }
 
 // Get emoji for content type

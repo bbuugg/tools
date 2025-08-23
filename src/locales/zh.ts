@@ -88,6 +88,7 @@ export default {
       contentTypes: '内容类型',
       baseUrl: '基础 URL',
       inputPlaceholder: '请在此处粘贴您的 HTML 代码...',
+      extractionResults: '转换结果',
       noResults: '暂无提取结果。请输入 HTML 代码并选择要提取的内容类型。',
       features: {
         imageExtraction: {

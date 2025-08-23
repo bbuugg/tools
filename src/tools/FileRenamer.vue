@@ -38,7 +38,7 @@
               />
               <button
                 @click="(fileInput as HTMLInputElement)?.click()"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
               >
                 {{ $t('tools.fileRenamer.uploadArea.selectFiles') }}
               </button>
@@ -68,7 +68,7 @@
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
               ]"
             >
-              {{ $t(`fileRenamer.tabs.${tab.id}`) }}
+              {{ $t(`tools.fileRenamer.tabs.${tab.id}`) }}
             </button>
           </nav>
         </div>
@@ -455,7 +455,7 @@ const processFiles = (fileList: File[]) => {
   hasPreview.value = false
   hasRenamed.value = false
 
-  success(t('fileRenamer.messages.filesAdded', { count: newFiles.length }))
+  success(t('tools.fileRenamer.messages.filesAdded', { count: newFiles.length }))
 }
 
 // Utility functions
@@ -557,7 +557,7 @@ const generatePreview = () => {
   })
 
   hasPreview.value = true
-  success(t('fileRenamer.messages.previewGenerated'))
+  success(t('tools.fileRenamer.messages.previewGenerated'))
 }
 
 const applyRename = () => {
@@ -572,7 +572,7 @@ const applyRename = () => {
 
   hasRenamed.value = true
   hasPreview.value = false
-  success(t('fileRenamer.messages.renameApplied'))
+  success(t('tools.fileRenamer.messages.renameApplied'))
 }
 
 const downloadFiles = async () => {
@@ -597,10 +597,10 @@ const downloadFiles = async () => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    success(t('fileRenamer.messages.downloadStarted'))
+    success(t('tools.fileRenamer.messages.downloadStarted'))
   } catch (_err) {
     const { error } = useToast()
-    error(t('fileRenamer.messages.downloadError'))
+    error(t('tools.fileRenamer.messages.downloadError'))
   }
 }
 
@@ -608,6 +608,6 @@ const clearFiles = () => {
   files.value = []
   hasPreview.value = false
   hasRenamed.value = false
-  info(t('fileRenamer.messages.filesCleared'))
+  info(t('tools.fileRenamer.messages.filesCleared'))
 }
 </script>

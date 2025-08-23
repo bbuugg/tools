@@ -89,6 +89,7 @@ export default {
       contentTypes: 'Content Types',
       baseUrl: 'Base URL',
       inputPlaceholder: 'Paste your HTML code here...',
+      extractionResults: 'Extraction Results',
       noResults:
         'No extraction results yet. Please input HTML code and select content types to extract.',
       features: {
