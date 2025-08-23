@@ -241,6 +241,13 @@ const categories = ref<Category[]>([
         path: '/image-tools/image-list-processor',
         status: 'active',
       },
+      {
+        id: 'image-compressor',
+        name: 'Image Compressor Master',
+        icon: '🗂',
+        path: '/image-tools/image-compressor',
+        status: 'active',
+      },
     ],
   },
   {

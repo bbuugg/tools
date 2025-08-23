@@ -3,6 +3,7 @@ import HomePage from '../views/Home.vue'
 import HtmlExtractor from '../tools/HtmlExtractor.vue'
 import JsonExtractor from '../tools/JsonExtractor.vue'
 import ImageListProcessor from '../tools/ImageListProcessor.vue'
+import ImageCompressor from '../tools/ImageCompressor.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
 
 const router = createRouter({
@@ -42,6 +43,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'Image List Processor',
+          },
+        },
+        {
+          path: 'image-tools/image-compressor',
+          name: 'image-compressor',
+          component: ImageCompressor,
+          meta: {
+            category: 'image-tools',
+            title: 'Image Compressor',
           },
         },
         {

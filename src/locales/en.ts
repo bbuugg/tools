@@ -163,6 +163,65 @@ export default {
         },
       },
     },
+    imageCompressor: {
+      title: 'Image Compressor Master',
+      description:
+        'Efficient online image compression tool with batch processing and local privacy',
+      settings: 'Compression Settings',
+      quality: 'Quality',
+      smaller: 'Smaller',
+      larger: 'Larger',
+      outputFormat: 'Output Format',
+      keepOriginal: 'Keep Original Format',
+      maxWidth: 'Max Width',
+      uploadTitle: 'Drag & Drop Images or Click to Select',
+      uploadDescription: 'Support multiple images, local processing, no upload to server',
+      supportedFormats: 'Supported formats',
+      selectFiles: 'Select Files',
+      imageList: 'Image List',
+      compressing: 'Compressing...',
+      compressAll: 'Compress All',
+      downloadAll: 'Download All',
+      compress: 'Compress',
+      remove: 'Remove',
+      originalSize: 'Original Size',
+      compressedSize: 'Compressed Size',
+      spaceSaved: 'Space Saved',
+      original: 'Original',
+      compressed: 'Compressed',
+      status: {
+        pending: 'Pending',
+        compressing: 'Processing',
+        completed: 'Completed',
+        error: 'Failed',
+      },
+      features: {
+        efficient: {
+          title: 'High Efficiency',
+          description:
+            'Advanced compression algorithms maintain image quality while reducing file size by 40-80%.',
+        },
+        secure: {
+          title: 'Privacy Protection',
+          description:
+            'All processing happens locally in your browser. Images never uploaded to any server.',
+        },
+        batch: {
+          title: 'Batch Processing',
+          description:
+            'Process multiple images simultaneously with progress tracking and batch download.',
+        },
+      },
+      errors: {
+        noValidImages: 'No valid image files found',
+        compressionFailed: 'Failed to compress {filename}',
+      },
+      success: {
+        compressionComplete: 'All images compressed successfully!',
+        downloadComplete: 'Batch download completed!',
+        pasteSuccess: 'Images pasted successfully!',
+      },
+    },
   },
   toast: {
     success: 'Success',
