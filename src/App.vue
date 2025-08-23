@@ -22,6 +22,7 @@ import { ref, computed } from 'vue'
 import Header from './layouts/Header.vue'
 import Footer from './layouts/Footer.vue'
 import HtmlExtractor from './tools/HtmlExtractor.vue'
+import JsonExtractor from './tools/JsonExtractor.vue'
 import ComingSoon from './tools/ComingSoon.vue'
 
 interface Tool {
@@ -39,10 +40,10 @@ const availableTools: Tool[] = [
     component: 'HtmlExtractor',
   },
   {
-    id: 'json-formatter',
-    name: 'JSON Formatter',
-    icon: '📝',
-    component: 'ComingSoon',
+    id: 'json-extractor',
+    name: 'JSON Extractor',
+    icon: '📊',
+    component: 'JsonExtractor',
   },
   {
     id: 'url-encoder',
@@ -79,6 +80,8 @@ const currentToolComponent = computed(() => {
   switch (tool.component) {
     case 'HtmlExtractor':
       return HtmlExtractor
+    case 'JsonExtractor':
+      return JsonExtractor
     case 'ComingSoon':
     default:
       return ComingSoon

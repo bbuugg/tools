@@ -251,6 +251,7 @@
                   class="mt-2 p-2 bg-gray-50 rounded border border-gray-200"
                 >
                   <img
+                    referrerpolicy="no-referrer"
                     :src="item.url"
                     :alt="item.text || 'Preview image'"
                     class="max-w-full max-h-48 rounded shadow-sm hover:scale-105 transition-transform duration-200"
