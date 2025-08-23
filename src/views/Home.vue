@@ -277,6 +277,13 @@ const categories = ref<Category[]>([
     icon: '⚡',
     tools: [
       {
+        id: 'favicon-generator',
+        name: 'Favicon Generator',
+        icon: '🎯',
+        path: '/generators/favicon-generator',
+        status: 'active',
+      },
+      {
         id: 'color-picker',
         name: 'Color Picker',
         icon: '🎨',

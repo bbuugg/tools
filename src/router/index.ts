@@ -4,6 +4,7 @@ import HtmlExtractor from '../tools/HtmlExtractor.vue'
 import JsonExtractor from '../tools/JsonExtractor.vue'
 import ImageListProcessor from '../tools/ImageListProcessor.vue'
 import ImageCompressor from '../tools/ImageCompressor.vue'
+import FaviconGenerator from '../tools/FaviconGenerator.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
 
 const router = createRouter({
@@ -52,6 +53,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'Image Compressor',
+          },
+        },
+        {
+          path: 'generators/favicon-generator',
+          name: 'favicon-generator',
+          component: FaviconGenerator,
+          meta: {
+            category: 'generators',
+            title: 'Favicon Generator',
           },
         },
         {
