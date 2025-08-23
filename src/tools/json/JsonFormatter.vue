@@ -3,9 +3,9 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Formatter</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.jsonFormatter.title') }}</h1>
         <p class="text-gray-600">
-          Format, beautify, and validate JSON data with customizable indentation
+          {{ $t('tools.jsonFormatter.description') }}
         </p>
       </div>
 
@@ -13,23 +13,29 @@
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">✨</div>
-          <h3 class="text-lg font-semibold mb-2">Pretty Format</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonFormatter.features.prettyFormat.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Automatically format and beautify JSON with proper indentation and spacing
+            {{ $t('tools.jsonFormatter.features.prettyFormat.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">Validation</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonFormatter.features.validation.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Real-time JSON validation with detailed error messages and line numbers
+            {{ $t('tools.jsonFormatter.features.validation.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Customization</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonFormatter.features.customization.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Choose indentation size, sorting, and compact formatting options
+            {{ $t('tools.jsonFormatter.features.customization.description') }}
           </p>
         </div>
       </div>
@@ -38,26 +44,28 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonFormatter.inputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON here..."
+            :placeholder="$t('tools.jsonFormatter.inputPlaceholder')"
             class="w-full h-80 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="validateJson"
           ></textarea>
@@ -67,7 +75,7 @@
             <div class="flex items-center">
               <div class="text-red-600 text-lg mr-2">❌</div>
               <div>
-                <p class="font-medium text-red-800">Invalid JSON</p>
+                <p class="font-medium text-red-800">{{ $t('tools.jsonFormatter.invalidJson') }}</p>
                 <p class="text-sm text-red-600">{{ validationError }}</p>
               </div>
             </div>
@@ -79,24 +87,26 @@
           >
             <div class="flex items-center">
               <div class="text-green-600 text-lg mr-2">✅</div>
-              <p class="font-medium text-green-800">Valid JSON</p>
+              <p class="font-medium text-green-800">{{ $t('tools.jsonFormatter.validJson') }}</p>
             </div>
           </div>
 
           <!-- Format Options -->
           <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">Format Options</h4>
+            <h4 class="font-medium text-gray-900">{{ $t('tools.jsonFormatter.formatOptions') }}</h4>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="flex items-center space-x-2">
-                <label class="text-sm font-medium text-gray-700">Indent:</label>
+                <label class="text-sm font-medium text-gray-700"
+                  >{{ $t('tools.jsonFormatter.indent') }}:</label
+                >
                 <select
                   v-model="options.indent"
                   class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option :value="2">2 spaces</option>
-                  <option :value="4">4 spaces</option>
-                  <option :value="'\t'">Tab</option>
+                  <option :value="2">{{ $t('tools.jsonFormatter.spaces2') }}</option>
+                  <option :value="4">{{ $t('tools.jsonFormatter.spaces4') }}</option>
+                  <option :value="'\t'">{{ $t('tools.jsonFormatter.tab') }}</option>
                 </select>
               </div>
 
@@ -106,7 +116,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Sort Keys
+                {{ $t('tools.jsonFormatter.sortKeys') }}
               </label>
             </div>
 
@@ -117,7 +127,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Compact Format
+                {{ $t('tools.jsonFormatter.compactFormat') }}
               </label>
 
               <label class="flex items-center">
@@ -126,7 +136,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Escape Unicode
+                {{ $t('tools.jsonFormatter.escapeUnicode') }}
               </label>
             </div>
           </div>
@@ -136,28 +146,30 @@
             :disabled="!inputJson.trim() || !isValid"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Format JSON
+            {{ $t('tools.jsonFormatter.formatJson') }}
           </button>
         </div>
 
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Formatted JSON</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonFormatter.outputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 v-if="formattedJson"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="formattedJson"
                 @click="downloadJson"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -168,7 +180,7 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">✨</div>
-              <p>No formatted JSON yet. Please input valid JSON to format.</p>
+              <p>{{ $t('tools.jsonFormatter.noResults') }}</p>
             </div>
           </div>
 
@@ -178,7 +190,9 @@
                 <div class="flex items-center">
                   <div class="text-green-600 text-2xl mr-3">✅</div>
                   <div>
-                    <p class="font-medium text-green-800">Formatting Complete</p>
+                    <p class="font-medium text-green-800">
+                      {{ $t('tools.jsonFormatter.formattingComplete') }}
+                    </p>
                     <p class="text-sm text-green-600">{{ formatInfo }}</p>
                   </div>
                 </div>
@@ -199,8 +213,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
+const { t } = useI18n()
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
 
 const inputJson = ref('')
@@ -240,21 +256,26 @@ function validateJson() {
   try {
     JSON.parse(inputJson.value)
     isValid.value = true
-  } catch (error: any) {
-    validationError.value = error.message
-    isValid.value = false
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      validationError.value = error.message
+      isValid.value = false
+    } else {
+      validationError.value = String(error)
+      isValid.value = false
+    }
   }
 }
 
-function sortObjectKeys(obj: any): any {
+function sortObjectKeys(obj: unknown): unknown {
   if (Array.isArray(obj)) {
     return obj.map(sortObjectKeys)
   } else if (obj !== null && typeof obj === 'object') {
-    const sortedObj: any = {}
-    Object.keys(obj)
+    const sortedObj: Record<string, unknown> = {}
+    Object.keys(obj as Record<string, unknown>)
       .sort()
       .forEach((key) => {
-        sortedObj[key] = sortObjectKeys(obj[key])
+        sortedObj[key] = sortObjectKeys((obj as Record<string, unknown>)[key])
       })
     return sortedObj
   }
@@ -264,7 +285,7 @@ function sortObjectKeys(obj: any): any {
 function formatJson() {
   try {
     if (!inputJson.value.trim()) {
-      showError('Please provide JSON data to format')
+      showError(t('tools.jsonFormatter.messages.provideData'))
       return
     }
 
@@ -298,15 +319,21 @@ function formatJson() {
     const formattedSize = formatted.length
     const reduction =
       originalSize > formattedSize
-        ? `${Math.round((1 - formattedSize / originalSize) * 100)}% smaller`
-        : `${Math.round((formattedSize / originalSize - 1) * 100)}% larger`
+        ? `${Math.round((1 - formattedSize / originalSize) * 100)}% ${t('tools.jsonFormatter.smaller')}`
+        : `${Math.round((formattedSize / originalSize - 1) * 100)}% ${t('tools.jsonFormatter.larger')}`
 
-    formatInfo.value = `${formatted.split('\n').length} lines, ${formattedSize} characters (${reduction})`
+    formatInfo.value = `${formatted.split('\n').length} ${t('tools.jsonFormatter.lines')}, ${formattedSize} ${t('tools.jsonFormatter.characters')} (${reduction})`
 
-    success('JSON formatted successfully!')
-  } catch (error: any) {
-    validationError.value = error.message
-    showError('Failed to format JSON: ' + error.message)
+    success(t('tools.jsonFormatter.messages.formatSuccess'))
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      validationError.value = error.message
+      showError(t('tools.jsonFormatter.messages.formatError') + error.message)
+    } else {
+      const errorMessage = String(error)
+      validationError.value = errorMessage
+      showError(t('tools.jsonFormatter.messages.formatError') + errorMessage)
+    }
   }
 }
 
