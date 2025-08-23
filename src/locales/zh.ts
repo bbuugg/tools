@@ -247,49 +247,30 @@ export default {
     },
     imageListProcessor: {
       title: '图片列表处理器',
-      description: '从各种格式中提取、转换和处理图片列表',
-      processingOptions: '处理选项',
-      inputTitle: '输入图片数据',
-      resultsTitle: '处理结果',
-      inputNote: '请粘贴以下支持格式之一的图片数据：',
+      description: '输入图片URL列表并以可视化图库格式显示',
+      inputTitle: '输入图片URL',
+      inputNote: '请在下方粘贴图片URL，每行一个：',
       inputPlaceholder:
-        '在此粘贴图片 URL、HTML、Markdown 或 CSV 数据...\n\n支持的格式：\n- 直接 URL（每行一个）\n- HTML img 标签\n- Markdown 图片语法\n- CSV 格式（url,alt,width,height）',
-      imagePreview: '图片预览',
-      processedOutput: '处理后输出',
-      noResults: '未找到图片。请输入支持格式的图片数据。',
-      showingFirst: '显示前',
-      of: '个，共',
-      modes: {
-        extract: '提取 URL',
-        markdown: 'Markdown 格式',
-        html: 'HTML 格式',
-        csv: 'CSV 格式',
-      },
-      options: {
-        includeAltText: '包含替代文本',
-        includeDimensions: '包含尺寸',
-        validateUrls: '验证 URL',
-        sortByName: '按文件名排序',
-      },
-      supportedFormats: {
-        urls: '直接图片 URL（每行一个）',
-        html: '带有 src 和 alt 属性的 HTML img 标签',
-        markdown: 'Markdown 图片语法 ![alt](url)',
-        csv: 'CSV 格式：url,alt,width,height',
+        '在此粘贴图片URL，每行一个...\n\n示例：\nhttps://example.com/image1.jpg\nhttps://example.com/image2.png\nhttps://example.com/image3.webp',
+      imagePreview: '图片图库',
+      noResults: '未找到有效的图片URL。请输入有效的图片URL。',
+      imageError: '加载失败',
+      emptyState: {
+        title: '没有图片可显示',
+        description: '在上方输入一些图片URL以在下方图库中查看。',
       },
       features: {
-        extraction: {
-          title: '智能提取',
-          description: '自动检测并从 URL、HTML、Markdown 和 CSV 格式中提取图片，具有智能解析功能。',
+        simple: {
+          title: '简单输入',
+          description: '只需逐行粘贴图片URL - 无需复杂格式。',
         },
-        formats: {
-          title: '多种格式',
-          description:
-            '将图片列表转换为各种输出格式，包括纯 URL、Markdown、HTML 和 CSV，适用于不同用途。',
+        gallery: {
+          title: '图库视图',
+          description: '在清洁的4列响应式图库布局中查看所有图片。',
         },
-        batch: {
-          title: '批量处理',
-          description: '一次处理数百张图片，提供预览缩略图、验证和批量导出功能。',
+        fast: {
+          title: '快速预览',
+          description: '即时预览所有图片，带有悬停效果和模态视图。',
         },
       },
     },

@@ -169,51 +169,30 @@ export default {
     },
     imageListProcessor: {
       title: 'Image List Processor',
-      description: 'Extract, convert and process image lists from various formats',
-      processingOptions: 'Processing Options',
-      inputTitle: 'Input Image Data',
-      resultsTitle: 'Processing Results',
-      inputNote: 'Paste your image data in one of the supported formats:',
+      description: 'Input a list of image URLs and display them in a visual gallery format',
+      inputTitle: 'Input Image URLs',
+      inputNote: 'Paste your image URLs below, one per line:',
       inputPlaceholder:
-        'Paste image URLs, HTML, Markdown, or CSV data here...\n\nSupported formats:\n- Direct URLs (one per line)\n- HTML img tags\n- Markdown image syntax\n- CSV format (url,alt,width,height)',
-      imagePreview: 'Image Preview',
-      processedOutput: 'Processed Output',
-      noResults: 'No images found. Please input image data in a supported format.',
-      showingFirst: 'Showing first',
-      of: 'of',
-      modes: {
-        extract: 'Extract URLs',
-        markdown: 'Markdown Format',
-        html: 'HTML Format',
-        csv: 'CSV Format',
-      },
-      options: {
-        includeAltText: 'Include Alt Text',
-        includeDimensions: 'Include Dimensions',
-        validateUrls: 'Validate URLs',
-        sortByName: 'Sort by Filename',
-      },
-      supportedFormats: {
-        urls: 'Direct image URLs (one per line)',
-        html: 'HTML img tags with src and alt attributes',
-        markdown: 'Markdown image syntax ![alt](url)',
-        csv: 'CSV format: url,alt,width,height',
+        'Paste image URLs here, one per line...\n\nExample:\nhttps://example.com/image1.jpg\nhttps://example.com/image2.png\nhttps://example.com/image3.webp',
+      imagePreview: 'Image Gallery',
+      noResults: 'No valid image URLs found. Please enter valid image URLs.',
+      imageError: 'Failed to load',
+      emptyState: {
+        title: 'No images to display',
+        description: 'Enter some image URLs above to see them displayed in the gallery below.',
       },
       features: {
-        extraction: {
-          title: 'Smart Extraction',
-          description:
-            'Automatically detect and extract images from URLs, HTML, Markdown, and CSV formats with intelligent parsing.',
+        simple: {
+          title: 'Simple Input',
+          description: 'Just paste image URLs line by line - no complex formatting needed.',
         },
-        formats: {
-          title: 'Multiple Formats',
-          description:
-            'Convert image lists to various output formats including plain URLs, Markdown, HTML, and CSV for different use cases.',
+        gallery: {
+          title: 'Gallery View',
+          description: 'View all images in a clean 4-column responsive gallery layout.',
         },
-        batch: {
-          title: 'Batch Processing',
-          description:
-            'Process hundreds of images at once with preview thumbnails, validation, and bulk export capabilities.',
+        fast: {
+          title: 'Fast Preview',
+          description: 'Instant preview of all images with hover effects and modal view.',
         },
       },
     },
