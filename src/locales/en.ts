@@ -27,6 +27,9 @@ export default {
     categories: 'Tool Categories',
     menu: 'Menu',
     close: 'Close',
+    search: 'Search tools...',
+    noResults: 'No tools found matching your search.',
+    noToolsInCategory: 'No tools available in this category.',
   },
   tools: {
     htmlExtractor: {

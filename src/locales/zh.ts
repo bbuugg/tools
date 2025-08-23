@@ -27,6 +27,9 @@ export default {
     categories: '工具分类',
     menu: '菜单',
     close: '关闭',
+    search: '搜索工具...',
+    noResults: '没有找到匹配的工具。',
+    noToolsInCategory: '该分类中没有可用的工具。',
   },
   tools: {
     htmlExtractor: {

@@ -62,90 +62,108 @@
         </div>
 
         <!-- Tools List -->
-        <div class="flex-1 p-4">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-sm font-medium text-gray-900">
-              {{ $t(`categories.${selectedCategory}.name`) }}
-            </h3>
-            <span class="text-xs text-gray-500">
-              {{ paginatedTools.length }}/{{ currentCategoryTools.length }}
-            </span>
+        <div class="flex-1 flex flex-col min-h-0">
+          <div class="p-4 border-b border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-sm font-medium text-gray-900">
+                {{ $t(`categories.${selectedCategory}.name`) }}
+              </h3>
+              <span class="text-xs text-gray-500">
+                {{ filteredTools.length }}/{{ currentCategoryTools.length }}
+              </span>
+            </div>
+
+            <!-- Search Box -->
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg
+                  class="h-4 w-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                v-model="searchQuery"
+                type="text"
+                :placeholder="$t('navigation.search')"
+                class="block w-full pl-10 pr-8 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                v-if="searchQuery"
+                @click="clearSearch"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <svg
+                  class="h-4 w-4 text-gray-400 hover:text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <!-- Tool Items -->
-          <div class="space-y-2">
-            <router-link
-              v-for="tool in paginatedTools"
-              :key="tool.id"
-              :to="tool.path"
-              @click="onToolClick"
-              :class="[
-                'block p-3 rounded-lg border transition-all hover:shadow-md',
-                $route.name === tool.id
-                  ? 'bg-blue-50 border-blue-200 shadow-sm'
-                  : 'bg-white border-gray-200 hover:border-gray-300',
-              ]"
-            >
-              <div class="flex items-start">
-                <span class="text-lg mr-3 mt-0.5">{{ tool.icon }}</span>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-sm font-medium text-gray-900 truncate">
-                    {{ $t(`tools.${tool.id.replace('-', '')}.title`) }}
-                  </h4>
-                  <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-                    {{ $t(`tools.${tool.id.replace('-', '')}.description`) }}
-                  </p>
-                  <div v-if="tool.status" class="mt-2">
-                    <span
-                      :class="[
-                        'inline-block px-2 py-1 text-xs rounded-full font-medium',
-                        tool.status === 'active'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700',
-                      ]"
-                    >
-                      {{ $t(`status.${tool.status}`) }}
-                    </span>
+          <!-- Tool Items - Scrollable Area -->
+          <div class="flex-1 overflow-y-auto p-4" style="max-height: calc(100vh - 320px)">
+            <div v-if="filteredTools.length === 0" class="text-center py-8">
+              <div class="text-gray-400 text-4xl mb-2">🔍</div>
+              <p class="text-gray-500 text-sm">
+                {{ searchQuery ? $t('navigation.noResults') : $t('navigation.noToolsInCategory') }}
+              </p>
+            </div>
+
+            <div v-else class="space-y-2">
+              <router-link
+                v-for="tool in filteredTools"
+                :key="tool.id"
+                :to="tool.path"
+                @click="onToolClick"
+                :class="[
+                  'block p-3 rounded-lg border transition-all hover:shadow-md',
+                  $route.name === tool.id
+                    ? 'bg-blue-50 border-blue-200 shadow-sm'
+                    : 'bg-white border-gray-200 hover:border-gray-300',
+                ]"
+              >
+                <div class="flex items-start">
+                  <span class="text-lg mr-3 mt-0.5">{{ tool.icon }}</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-medium text-gray-900 truncate">
+                      {{ $t(`tools.${tool.id.replace('-', '')}.title`) }}
+                    </h4>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                      {{ $t(`tools.${tool.id.replace('-', '')}.description`) }}
+                    </p>
+                    <div v-if="tool.status" class="mt-2">
+                      <span
+                        :class="[
+                          'inline-block px-2 py-1 text-xs rounded-full font-medium',
+                          tool.status === 'active'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700',
+                        ]"
+                      >
+                        {{ $t(`status.${tool.status}`) }}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </router-link>
-          </div>
-
-          <!-- Pagination -->
-          <div v-if="totalPages > 1" class="mt-6 border-t border-gray-200 pt-4">
-            <div class="flex items-center justify-between">
-              <button
-                @click="previousPage"
-                :disabled="currentPage === 1"
-                class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {{ $t('pagination.previous') }}
-              </button>
-
-              <div class="flex space-x-1">
-                <button
-                  v-for="page in visiblePages"
-                  :key="page"
-                  @click="goToPage(page)"
-                  :class="[
-                    'w-8 h-8 text-sm rounded-md transition-colors',
-                    page === currentPage
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50',
-                  ]"
-                >
-                  {{ page }}
-                </button>
-              </div>
-
-              <button
-                @click="nextPage"
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {{ $t('pagination.next') }}
-              </button>
+              </router-link>
             </div>
           </div>
         </div>
@@ -194,10 +212,9 @@ const router = useRouter()
 const {} = useI18n()
 
 const selectedCategory = ref('web-tools')
-const currentPage = ref(1)
-const toolsPerPage = 6
 const isSidebarOpen = ref(false)
 const isMobile = ref(false)
+const searchQuery = ref('')
 
 // Tool categories configuration
 const categories = ref<Category[]>([
@@ -671,37 +688,18 @@ const currentCategoryTools = computed(() => {
   return category?.tools || []
 })
 
-const totalPages = computed(() => {
-  return Math.ceil(currentCategoryTools.value.length / toolsPerPage)
-})
-
-const paginatedTools = computed(() => {
-  const start = (currentPage.value - 1) * toolsPerPage
-  const end = start + toolsPerPage
-  return currentCategoryTools.value.slice(start, end)
-})
-
-const visiblePages = computed(() => {
-  const total = totalPages.value
-  const current = currentPage.value
-  const delta = 2
-
-  let start = Math.max(1, current - delta)
-  let end = Math.min(total, current + delta)
-
-  if (end - start < 4) {
-    if (start === 1) {
-      end = Math.min(total, start + 4)
-    } else {
-      start = Math.max(1, end - 4)
-    }
+const filteredTools = computed(() => {
+  const tools = currentCategoryTools.value
+  if (!searchQuery.value.trim()) {
+    return tools
   }
 
-  const pages = []
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
+  const query = searchQuery.value.toLowerCase().trim()
+  return tools.filter((tool) => {
+    const name = tool.name.toLowerCase()
+    const id = tool.id.toLowerCase()
+    return name.includes(query) || id.includes(query)
+  })
 })
 
 // Methods
@@ -722,7 +720,7 @@ function checkMobile() {
 
 function selectCategory(categoryId: string) {
   selectedCategory.value = categoryId
-  currentPage.value = 1
+  searchQuery.value = '' // Clear search when changing category
 
   // Navigate to first tool of the category
   const category = categories.value.find((cat) => cat.id === categoryId)
@@ -736,26 +734,14 @@ function selectCategory(categoryId: string) {
   }
 }
 
+function clearSearch() {
+  searchQuery.value = ''
+}
+
 function onToolClick() {
   // Close sidebar on mobile when tool is clicked
   if (isMobile.value) {
     closeSidebar()
-  }
-}
-
-function goToPage(page: number) {
-  currentPage.value = page
-}
-
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
-}
-
-function previousPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--
   }
 }
 
