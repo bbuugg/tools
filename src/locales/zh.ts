@@ -32,6 +32,26 @@ export default {
     noResults: '没有找到匹配的工具。',
     noToolsInCategory: '该分类中没有可用的工具。',
   },
+  homepage: {
+    title: '开发者工具集合',
+    subtitle: '为开发者、设计师和内容创作者提供强大的在线工具。提升您的工作效率。',
+    recommendedTools: '推荐工具',
+    exploreCategories: '浏览分类',
+    stats: {
+      totalTools: '工具总数',
+      activeTools: '可用工具',
+      categories: '分类数量',
+      comingSoon: '即将推出',
+    },
+  },
+  notFound: {
+    title: '页面未找到',
+    description: '您要查找的工具或页面不存在或已被移动。',
+    backToHome: '返回首页',
+    goBack: '返回上页',
+    popularTools: '热门工具',
+    helpText: '如果您需要帮助寻找特定工具，请查看侧边栏中的分类。',
+  },
   toast: {
     success: '成功',
     error: '错误',
@@ -219,6 +239,7 @@ export default {
       options: {
         preserveStructure: '保持对象结构',
         removeEmpty: '移除空值',
+        flattenNested: '展平嵌套对象',
       },
       features: {
         fieldExtraction: {
@@ -240,8 +261,9 @@ export default {
       errors: {
         invalidFormat: '输入必须是 JSON 数组格式：[{},{},...]',
         emptyArray: 'JSON 数组不能为空',
-        noFields: '在 JSON 对象中找不到字段',
+        noFields: '请选择至少一个字段进行提取',
         invalidJson: '无效的 JSON 格式：',
+        noData: '请提供要提取的 JSON 数据',
       },
     },
     imageListProcessor: {

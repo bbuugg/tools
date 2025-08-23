@@ -3,9 +3,9 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Field Extractor</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.jsonExtractor.title') }}</h1>
         <p class="text-gray-600">
-          Extract specific fields from JSON array data with flexible selection options
+          {{ $t('tools.jsonExtractor.description') }}
         </p>
       </div>
 
@@ -13,23 +13,23 @@
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🎯</div>
-          <h3 class="text-lg font-semibold mb-2">Selective Extraction</h3>
+          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.fieldExtraction.title') }}</h3>
           <p class="text-gray-600 text-sm">
-            Choose specific fields to extract from complex JSON structures
+            {{ $t('tools.jsonExtractor.features.fieldExtraction.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">Auto Discovery</h3>
+          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.smartFiltering.title') }}</h3>
           <p class="text-gray-600 text-sm">
-            Automatically discover and list all available fields in your JSON data
+            {{ $t('tools.jsonExtractor.features.smartFiltering.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Flexible Options</h3>
+          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.exportOptions.title') }}</h3>
           <p class="text-gray-600 text-sm">
-            Preserve structure, handle nested objects, and remove empty values
+            {{ $t('tools.jsonExtractor.features.exportOptions.description') }}
           </p>
         </div>
       </div>
@@ -38,33 +38,33 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON Array</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('tools.jsonExtractor.inputTitle') }}</h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON array here..."
+            :placeholder="$t('tools.jsonExtractor.inputPlaceholder')"
             class="w-full h-48 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="analyzeFields"
           ></textarea>
 
           <!-- Available Fields -->
           <div v-if="availableFields.length > 0" class="mt-4">
-            <h4 class="font-medium text-gray-900 mb-3">Available Fields</h4>
+            <h4 class="font-medium text-gray-900 mb-3">{{ $t('tools.jsonExtractor.availableFields') }}</h4>
             <div class="max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
               <div class="grid grid-cols-2 gap-2">
                 <label
@@ -84,17 +84,17 @@
             </div>
             <div class="flex justify-between mt-2">
               <button @click="selectAllFields" class="text-sm text-blue-600 hover:text-blue-800">
-                Select All
+                {{ $t('common.selectAll') }}
               </button>
               <button @click="clearSelection" class="text-sm text-gray-600 hover:text-gray-800">
-                Clear Selection
+                {{ $t('common.clearSelection') }}
               </button>
             </div>
           </div>
 
           <!-- Options -->
           <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">Extraction Options</h4>
+            <h4 class="font-medium text-gray-900">{{ $t('common.options') }}</h4>
 
             <div class="grid grid-cols-1 gap-3">
               <label class="flex items-center">
@@ -103,7 +103,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Preserve Object Structure
+                {{ $t('tools.jsonExtractor.options.preserveStructure') }}
               </label>
 
               <label class="flex items-center">
@@ -112,7 +112,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Remove Empty Values
+                {{ $t('tools.jsonExtractor.options.removeEmpty') }}
               </label>
 
               <label class="flex items-center">
@@ -121,7 +121,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Flatten Nested Objects
+                {{ $t('tools.jsonExtractor.options.flattenNested') }}
               </label>
             </div>
           </div>
@@ -131,28 +131,28 @@
             :disabled="!inputJson.trim() || selectedFields.length === 0"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Extract Fields
+            {{ $t('common.extract') }} {{ $t('common.fields') }}
           </button>
         </div>
 
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Extracted Data</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('tools.jsonExtractor.extractedData') }}</h3>
             <div class="flex space-x-2">
               <button
                 v-if="extractedData"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="extractedData"
                 @click="downloadJson"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -163,14 +163,14 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">🎯</div>
-              <p>No extraction results yet. Select fields and click extract.</p>
+              <p>{{ $t('tools.jsonExtractor.noResults') }}</p>
             </div>
           </div>
 
           <div v-if="error" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
-              <p class="font-medium">Error</p>
+              <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
@@ -180,7 +180,7 @@
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">Extraction Complete</p>
+                  <p class="font-medium text-green-800">{{ $t('toast.success') }}</p>
                   <p class="text-sm text-green-600">
                     {{ extractionStats }}
                   </p>
@@ -202,8 +202,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
+const { t } = useI18n()
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
 
 const inputJson = ref('')
@@ -304,12 +306,12 @@ function analyzeFields() {
     const data = JSON.parse(inputJson.value)
 
     if (!Array.isArray(data)) {
-      error.value = 'Input must be a JSON array'
+      error.value = t('tools.jsonExtractor.errors.invalidFormat')
       return
     }
 
     if (data.length === 0) {
-      error.value = 'JSON array cannot be empty'
+      error.value = t('tools.jsonExtractor.errors.emptyArray')
       return
     }
 
@@ -320,7 +322,7 @@ function analyzeFields() {
 
     availableFields.value = Array.from(allKeys).sort()
   } catch (err: any) {
-    error.value = 'Invalid JSON format: ' + err.message
+    error.value = t('tools.jsonExtractor.errors.invalidJson') + ' ' + err.message
   }
 }
 
@@ -344,11 +346,11 @@ function extractFields() {
     extractedData.value = ''
 
     if (!inputJson.value.trim()) {
-      throw new Error('Please provide JSON data to extract from')
+      throw new Error(t('tools.jsonExtractor.errors.invalidFormat'))
     }
 
     if (selectedFields.value.length === 0) {
-      throw new Error('Please select at least one field to extract')
+      throw new Error(t('tools.jsonExtractor.errors.noFields'))
     }
 
     const data = JSON.parse(inputJson.value)
@@ -398,7 +400,7 @@ function extractFields() {
 
     extractionStats.value = `${extractedFields} of ${originalFields} fields extracted from ${totalRecords} records`
 
-    success('Fields extracted successfully!')
+    success(t('toast.success') + '!')
   } catch (err: any) {
     error.value = err.message || 'Failed to extract fields'
     showError(error.value)

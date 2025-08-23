@@ -354,10 +354,10 @@ const categories = ref<Category[]>([
         status: 'active',
       },
       {
-        id: 'jsonFieldExtractor',
-        name: 'JSON Field Extractor',
+        id: 'jsonExtractor',
+        name: 'JSON Extractor',
         icon: '🔍',
-        path: '/json-tools/json-field-extractor',
+        path: '/json-tools/json-extractor',
         status: 'active',
       },
       {

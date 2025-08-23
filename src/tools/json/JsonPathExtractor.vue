@@ -509,7 +509,7 @@ function downloadJson() {
 
     URL.revokeObjectURL(url)
     success(t('tools.jsonPathExtractor.messages.downloaded'))
-  } catch {
+  } catch (e) {
     error(t('tools.jsonPathExtractor.messages.downloadFailed'))
   }
 }

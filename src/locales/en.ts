@@ -82,6 +82,28 @@ export default {
     noResults: 'No tools found matching your search.',
     noToolsInCategory: 'No tools available in this category.',
   },
+  homepage: {
+    title: 'Developer Tools Collection',
+    subtitle:
+      'Powerful online tools for developers, designers, and content creators. Everything you need to boost your productivity.',
+    recommendedTools: 'Recommended Tools',
+    exploreCategories: 'Explore Categories',
+    stats: {
+      totalTools: 'Total Tools',
+      activeTools: 'Active Tools',
+      categories: 'Categories',
+      comingSoon: 'Coming Soon',
+    },
+  },
+  notFound: {
+    title: 'Page Not Found',
+    description: 'The tool or page you are looking for does not exist or has been moved.',
+    backToHome: 'Back to Home',
+    goBack: 'Go Back',
+    popularTools: 'Popular Tools',
+    helpText:
+      'If you need help finding a specific tool, please check our categories in the sidebar.',
+  },
   tools: {
     htmlExtractor: {
       title: 'HTML Content Extractor',
@@ -142,6 +164,7 @@ export default {
       options: {
         preserveStructure: 'Preserve Object Structure',
         removeEmpty: 'Remove Empty Values',
+        flattenNested: 'Flatten Nested Objects',
       },
       features: {
         fieldExtraction: {
@@ -163,8 +186,9 @@ export default {
       errors: {
         invalidFormat: 'Input must be a JSON array in format: [{},{},...]',
         emptyArray: 'JSON array cannot be empty',
-        noFields: 'No fields found in the JSON objects',
+        noFields: 'Please select at least one field to extract',
         invalidJson: 'Invalid JSON format:',
+        noData: 'Please provide JSON data to extract from',
       },
     },
     imageListProcessor: {

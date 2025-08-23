@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ComingSoon from '../tools/ComingSoon.vue'
 import HomePage from '../views/Home.vue'
+import HomePageContent from '../views/HomePage.vue'
+import NotFound from '../views/NotFound.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
 const HtmlExtractor = () => import('../tools/HtmlExtractor.vue')
@@ -15,7 +17,7 @@ const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const ExcelToJson = () => import('../tools/json/ExcelToJson.vue')
 const JsonToCsv = () => import('../tools/json/JsonToCsv.vue')
 const JsonFormatter = () => import('../tools/json/JsonFormatter.vue')
-const JsonFieldExtractor = () => import('../tools/json/JsonFieldExtractor.vue')
+const JsonExtractor = () => import('../tools/json/JsonExtractor.vue')
 const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const GetToJson = () => import('../tools/json/GetToJson.vue')
@@ -67,12 +69,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'landing',
       component: HomePage,
       children: [
         {
           path: '',
-          redirect: '/json-tools/json-to-excel',
+          name: 'homepage',
+          component: HomePageContent,
         },
         // JSON Tools Routes
         {
@@ -112,9 +115,9 @@ const router = createRouter({
           },
         },
         {
-          path: 'json-tools/json-field-extractor',
-          name: 'json-field-extractor',
-          component: JsonFieldExtractor,
+          path: 'json-tools/json-extractor',
+          name: 'json-extractor',
+          component: JsonExtractor,
           meta: {
             category: 'json-tools',
             title: 'JSON Field Extractor',
@@ -633,6 +636,18 @@ const router = createRouter({
             category: 'generators',
             title: 'QR Generator',
           },
+        },
+      ],
+    },
+    // 404 catch-all route
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: HomePage,
+      children: [
+        {
+          path: '',
+          component: NotFound,
         },
       ],
     },
