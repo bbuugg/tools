@@ -15,43 +15,60 @@
           </div>
         </router-link>
 
-        <!-- Language Switcher -->
-        <div class="relative">
+        <div class="flex items-center space-x-4">
+          <!-- Mobile Menu Button -->
           <button
-            @click="showLanguageMenu = !showLanguageMenu"
-            class="bg-blue-500 p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200 flex items-center space-x-2"
+            @click="$emit('toggle-sidebar')"
+            class="lg:hidden p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200"
           >
-            <span>🌐</span>
-            <span class="hidden sm:block text-sm">{{ currentLanguage.name }}</span>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
           </button>
 
-          <!-- Language Dropdown -->
-          <div
-            v-if="showLanguageMenu"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200"
-          >
-            <div class="py-1">
-              <button
-                v-for="lang in languages"
-                :key="lang.code"
-                @click="changeLanguage(lang.code)"
-                :class="[
-                  'block w-full text-left px-4 py-2 text-sm transition-colors',
-                  currentLocale === lang.code
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50',
-                ]"
-              >
-                <span class="mr-2">{{ lang.flag }}</span>
-                {{ lang.name }}
-              </button>
+          <!-- Language Switcher -->
+          <div class="relative">
+            <button
+              @click="showLanguageMenu = !showLanguageMenu"
+              class="bg-blue-500 p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200 flex items-center space-x-2"
+            >
+              <span>🌐</span>
+              <span class="hidden sm:block text-sm">{{ currentLanguage.name }}</span>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <!-- Language Dropdown -->
+            <div
+              v-if="showLanguageMenu"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200"
+            >
+              <div class="py-1">
+                <button
+                  v-for="lang in languages"
+                  :key="lang.code"
+                  @click="changeLanguage(lang.code)"
+                  :class="[
+                    'block w-full text-left px-4 py-2 text-sm transition-colors',
+                    currentLocale === lang.code
+                      ? 'bg-blue-50 text-blue-600 font-medium'
+                      : 'text-gray-700 hover:bg-gray-50',
+                  ]"
+                >
+                  <span class="mr-2">{{ lang.flag }}</span>
+                  {{ lang.name }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -63,6 +80,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+interface Props {
+  isSidebarOpen?: boolean
+}
+
+defineProps<Props>()
+defineEmits<{
+  'toggle-sidebar': []
+}>()
 
 const { locale } = useI18n()
 const showLanguageMenu = ref(false)

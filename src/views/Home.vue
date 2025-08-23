@@ -1,16 +1,45 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col">
     <!-- Header -->
-    <Header />
+    <Header @toggle-sidebar="toggleSidebar" :is-sidebar-open="isSidebarOpen" />
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 relative">
+      <!-- Mobile Overlay -->
+      <div
+        v-if="isSidebarOpen && isMobile"
+        @click="closeSidebar"
+        class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden transition-opacity duration-300"
+      ></div>
+
       <!-- Sidebar -->
-      <aside class="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+      <aside
+        :class="[
+          'bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-40',
+          'lg:relative lg:translate-x-0',
+          isMobile
+            ? ['fixed inset-y-0 left-0 w-80', isSidebarOpen ? 'translate-x-0' : '-translate-x-full']
+            : 'w-64',
+        ]"
+      >
         <!-- Category Navigation -->
         <div class="p-4 border-b border-gray-200">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">
-            {{ $t('navigation.categories') }}
-          </h2>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">{{ $t('navigation.categories') }}</h2>
+            <button
+              v-if="isMobile"
+              @click="closeSidebar"
+              class="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
           <nav class="space-y-2">
             <button
               v-for="category in categories"
@@ -49,6 +78,7 @@
               v-for="tool in paginatedTools"
               :key="tool.id"
               :to="tool.path"
+              @click="onToolClick"
               :class="[
                 'block p-3 rounded-lg border transition-all hover:shadow-md',
                 $route.name === tool.id
@@ -122,7 +152,12 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 overflow-auto">
+      <main
+        :class="[
+          'flex-1 overflow-auto transition-all duration-300 ease-in-out',
+          isMobile && isSidebarOpen ? 'lg:ml-0' : '',
+        ]"
+      >
         <router-view />
       </main>
     </div>
@@ -133,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Header from '@/layouts/Header.vue'
@@ -161,6 +196,8 @@ const {} = useI18n()
 const selectedCategory = ref('web-tools')
 const currentPage = ref(1)
 const toolsPerPage = 6
+const isSidebarOpen = ref(false)
+const isMobile = ref(false)
 
 // Tool categories configuration
 const categories = ref<Category[]>([
@@ -290,6 +327,21 @@ const visiblePages = computed(() => {
 })
 
 // Methods
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+function closeSidebar() {
+  isSidebarOpen.value = false
+}
+
+function checkMobile() {
+  isMobile.value = window.innerWidth < 1024 // lg breakpoint
+  if (!isMobile.value) {
+    isSidebarOpen.value = false
+  }
+}
+
 function selectCategory(categoryId: string) {
   selectedCategory.value = categoryId
   currentPage.value = 1
@@ -298,6 +350,18 @@ function selectCategory(categoryId: string) {
   const category = categories.value.find((cat) => cat.id === categoryId)
   if (category && category.tools.length > 0) {
     router.push(category.tools[0].path)
+  }
+
+  // Close sidebar on mobile after selection
+  if (isMobile.value) {
+    closeSidebar()
+  }
+}
+
+function onToolClick() {
+  // Close sidebar on mobile when tool is clicked
+  if (isMobile.value) {
+    closeSidebar()
   }
 }
 
@@ -345,5 +409,13 @@ onMounted(() => {
       }
     }
   }
+
+  // Check mobile state
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 </script>

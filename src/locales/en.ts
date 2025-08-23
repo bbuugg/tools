@@ -25,6 +25,8 @@ export default {
     tools: 'Tools',
     language: 'Language',
     categories: 'Tool Categories',
+    menu: 'Menu',
+    close: 'Close',
   },
   tools: {
     htmlExtractor: {
