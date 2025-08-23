@@ -23,6 +23,7 @@ import Header from './layouts/Header.vue'
 import Footer from './layouts/Footer.vue'
 import HtmlExtractor from './tools/HtmlExtractor.vue'
 import JsonExtractor from './tools/JsonExtractor.vue'
+import ImageListProcessor from './tools/ImageListProcessor.vue'
 import ComingSoon from './tools/ComingSoon.vue'
 
 interface Tool {
@@ -40,10 +41,10 @@ const availableTools: Tool[] = [
     component: 'HtmlExtractor',
   },
   {
-    id: 'json-extractor',
-    name: 'JSON Extractor',
-    icon: '📊',
-    component: 'JsonExtractor',
+    id: 'image-list-processor',
+    name: 'Image List Processor',
+    icon: '🖼️',
+    component: 'ImageListProcessor',
   },
   {
     id: 'url-encoder',
@@ -82,6 +83,8 @@ const currentToolComponent = computed(() => {
       return HtmlExtractor
     case 'JsonExtractor':
       return JsonExtractor
+    case 'ImageListProcessor':
+      return ImageListProcessor
     case 'ComingSoon':
     default:
       return ComingSoon

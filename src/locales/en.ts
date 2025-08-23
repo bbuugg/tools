@@ -110,6 +110,52 @@ export default {
         invalidJson: 'Invalid JSON format:',
       },
     },
+    imageListProcessor: {
+      title: 'Image List Processor',
+      description: 'Extract, convert and process image lists from various formats',
+      processingOptions: 'Processing Options',
+      inputTitle: 'Input Image Data',
+      resultsTitle: 'Processing Results',
+      inputNote: 'Paste your image data in one of the supported formats:',
+      inputPlaceholder: 'Paste image URLs, HTML, Markdown, or CSV data here...\n\nSupported formats:\n- Direct URLs (one per line)\n- HTML img tags\n- Markdown image syntax\n- CSV format (url,alt,width,height)',
+      imagePreview: 'Image Preview',
+      processedOutput: 'Processed Output',
+      noResults: 'No images found. Please input image data in a supported format.',
+      showingFirst: 'Showing first',
+      of: 'of',
+      modes: {
+        extract: 'Extract URLs',
+        markdown: 'Markdown Format',
+        html: 'HTML Format',
+        csv: 'CSV Format',
+      },
+      options: {
+        includeAltText: 'Include Alt Text',
+        includeDimensions: 'Include Dimensions',
+        validateUrls: 'Validate URLs',
+        sortByName: 'Sort by Filename',
+      },
+      supportedFormats: {
+        urls: 'Direct image URLs (one per line)',
+        html: 'HTML img tags with src and alt attributes',
+        markdown: 'Markdown image syntax ![alt](url)',
+        csv: 'CSV format: url,alt,width,height',
+      },
+      features: {
+        extraction: {
+          title: 'Smart Extraction',
+          description: 'Automatically detect and extract images from URLs, HTML, Markdown, and CSV formats with intelligent parsing.',
+        },
+        formats: {
+          title: 'Multiple Formats',
+          description: 'Convert image lists to various output formats including plain URLs, Markdown, HTML, and CSV for different use cases.',
+        },
+        batch: {
+          title: 'Batch Processing',
+          description: 'Process hundreds of images at once with preview thumbnails, validation, and bulk export capabilities.',
+        },
+      },
+    },
   },
   toast: {
     success: 'Success',
