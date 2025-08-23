@@ -163,6 +163,10 @@ export default {
         },
       },
     },
+    filerenamer: {
+      title: 'File Renamer Tool',
+      description: 'Batch rename files with multiple modes - local processing for privacy',
+    },
     fileRenamer: {
       title: 'File Renamer Tool',
       subtitle: 'Batch rename files with multiple modes - local processing for privacy',
@@ -344,65 +348,6 @@ export default {
         imageLoaded: 'Image loaded successfully!',
         generationComplete: 'Favicons generated successfully!',
         downloadComplete: 'Download completed!',
-      },
-    },
-    fileRenamer: {
-      title: 'Batch File Renamer',
-      description: 'Powerful batch file renaming tool with multiple modes and local processing',
-      uploadSection: 'Upload Files',
-      uploadTitle: 'Drag & Drop Files or Click to Select',
-      uploadDescription: 'Select multiple files to rename in batch',
-      selectFiles: 'Select Files',
-      fileList: 'File List',
-      preview: 'Preview',
-      apply: 'Apply',
-      processing: 'Processing...',
-      downloadAll: 'Download All',
-      originalName: 'Original Name',
-      newName: 'New Name',
-      remove: 'Remove',
-      renameOptions: 'Rename Options',
-      findText: 'Find Text',
-      findPlaceholder: 'Text to find...',
-      replaceWith: 'Replace With',
-      replacePlaceholder: 'Replacement text...',
-      baseName: 'Base Name',
-      startNumber: 'Start Number',
-      padding: 'Padding',
-      caseMode: 'Case Mode',
-      uppercase: 'UPPERCASE',
-      lowercase: 'lowercase',
-      capitalize: 'Capitalize',
-      tabs: {
-        replace: 'Replace',
-        sequential: 'Sequential',
-        case: 'Case Transform',
-      },
-      features: {
-        batch: {
-          title: 'Batch Processing',
-          description:
-            'Rename hundreds of files at once with powerful pattern matching and transformation tools.',
-        },
-        privacy: {
-          title: 'Privacy Protected',
-          description:
-            'All processing happens locally in your browser. Files are never uploaded to any server.',
-        },
-        flexible: {
-          title: 'Flexible Options',
-          description:
-            'Multiple renaming modes that can be combined for complex filename transformations.',
-        },
-      },
-      success: {
-        filesAdded: '{count} files added successfully!',
-        previewGenerated: 'Preview generated successfully!',
-        renameComplete: 'Files renamed successfully!',
-        downloadComplete: 'Download completed!',
-      },
-      errors: {
-        downloadFailed: 'Failed to download files',
       },
     },
   },
