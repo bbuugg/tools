@@ -146,7 +146,7 @@
                     <h4 class="text-sm font-medium text-gray-900 truncate">
                       {{ $t(`tools.${tool.id.replace('-', '')}.title`) }}
                     </h4>
-                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed break-all">
                       {{ $t(`tools.${tool.id.replace('-', '')}.description`) }}
                     </p>
                     <div v-if="tool.status" class="mt-2">
