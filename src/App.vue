@@ -533,6 +533,34 @@ function getTypeEmoji(type: string): string {
                     {{ key }}: {{ value }}
                   </span>
                 </div>
+
+                <!-- Preview for images -->
+                <div
+                  v-if="(item.type === 'image' || item.type === 'css-background')"
+                  class="media-preview"
+                >
+                  <img
+                    :src="item.url"
+                    :alt="item.text || 'Preview image'"
+                    class="preview-image"
+                    @error="$event.target.style.display = 'none'"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                </div>
+
+                <!-- Preview for videos -->
+                <div v-if="item.type === 'video'" class="media-preview">
+                  <video
+                    :src="item.url"
+                    class="preview-video"
+                    controls
+                    preload="metadata"
+                    @error="$event.target.style.display = 'none'"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
               </div>
             </div>
           </div>
@@ -806,6 +834,37 @@ function getTypeEmoji(type: string): string {
   margin-top: 3px;
 }
 
+/* Media Preview Styles */
+.media-preview {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.preview-image:hover {
+  transform: scale(1.02);
+}
+
+.preview-video {
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Features */
 .features {
   display: grid;
@@ -858,6 +917,15 @@ function getTypeEmoji(type: string): string {
   .base-url {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .preview-image,
+  .preview-video {
+    max-height: 200px;
+  }
+
+  .media-preview {
+    padding: 8px;
   }
 }
 </style>
