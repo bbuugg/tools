@@ -3,7 +3,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Hero Section -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('tools.imageListProcessor.title') }}</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          {{ $t('tools.imageListProcessor.title') }}
+        </h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
           {{ $t('tools.imageListProcessor.description') }}
         </p>
@@ -25,7 +27,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
-            <span class="text-sm font-medium text-gray-700">📋 {{ $t('tools.imageListProcessor.modes.extract') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >📋 {{ $t('tools.imageListProcessor.modes.extract') }}</span
+            >
           </label>
           <label
             class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -37,7 +41,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
-            <span class="text-sm font-medium text-gray-700">📝 {{ $t('tools.imageListProcessor.modes.markdown') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >📝 {{ $t('tools.imageListProcessor.modes.markdown') }}</span
+            >
           </label>
           <label
             class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -49,7 +55,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
-            <span class="text-sm font-medium text-gray-700">🌐 {{ $t('tools.imageListProcessor.modes.html') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >🌐 {{ $t('tools.imageListProcessor.modes.html') }}</span
+            >
           </label>
           <label
             class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -61,7 +69,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
-            <span class="text-sm font-medium text-gray-700">📊 {{ $t('tools.imageListProcessor.modes.csv') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >📊 {{ $t('tools.imageListProcessor.modes.csv') }}</span
+            >
           </label>
         </div>
       </div>
@@ -79,7 +89,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span class="text-sm font-medium text-gray-700">🏷️ {{ $t('tools.imageListProcessor.options.includeAltText') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >🏷️ {{ $t('tools.imageListProcessor.options.includeAltText') }}</span
+            >
           </label>
           <label class="flex items-center space-x-3">
             <input
@@ -88,7 +100,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span class="text-sm font-medium text-gray-700">📐 {{ $t('tools.imageListProcessor.options.includeDimensions') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >📐 {{ $t('tools.imageListProcessor.options.includeDimensions') }}</span
+            >
           </label>
           <label class="flex items-center space-x-3">
             <input
@@ -97,7 +111,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span class="text-sm font-medium text-gray-700">✅ {{ $t('tools.imageListProcessor.options.validateUrls') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >✅ {{ $t('tools.imageListProcessor.options.validateUrls') }}</span
+            >
           </label>
           <label class="flex items-center space-x-3">
             <input
@@ -106,7 +122,9 @@
               @change="processImages"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span class="text-sm font-medium text-gray-700">🔤 {{ $t('tools.imageListProcessor.options.sortByName') }}</span>
+            <span class="text-sm font-medium text-gray-700"
+              >🔤 {{ $t('tools.imageListProcessor.options.sortByName') }}</span
+            >
           </label>
           <div class="flex gap-3 ml-auto">
             <button
@@ -189,7 +207,10 @@
 
         <div v-else class="space-y-6">
           <!-- Image Preview Grid -->
-          <div v-if="imageList.length > 0" class="border border-gray-200 rounded-lg overflow-hidden">
+          <div
+            v-if="imageList.length > 0"
+            class="border border-gray-200 rounded-lg overflow-hidden"
+          >
             <h3 class="bg-gray-800 text-white px-3 py-2 font-medium flex items-center text-sm">
               <span class="mr-2">🖼️</span>
               {{ $t('tools.imageListProcessor.imagePreview') }} ({{ imageList.length }})
@@ -210,7 +231,9 @@
                       loading="lazy"
                     />
                   </div>
-                  <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity rounded-lg flex items-center justify-center">
+                  <div
+                    class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity rounded-lg flex items-center justify-center"
+                  >
                     <button
                       @click="copyImageUrl(image.url)"
                       class="opacity-0 group-hover:opacity-100 transition-opacity bg-white text-gray-800 px-2 py-1 rounded text-xs"
@@ -218,13 +241,19 @@
                       {{ $t('common.copy') }}
                     </button>
                   </div>
-                  <div v-if="image.alt" class="mt-1 text-xs text-gray-600 truncate" :title="image.alt">
+                  <div
+                    v-if="image.alt"
+                    class="mt-1 text-xs text-gray-600 truncate"
+                    :title="image.alt"
+                  >
                     {{ image.alt }}
                   </div>
                 </div>
               </div>
               <div v-if="imageList.length > 24" class="mt-4 text-center text-sm text-gray-500">
-                {{ $t('tools.imageListProcessor.showingFirst') }} 24 {{ $t('tools.imageListProcessor.of') }} {{ imageList.length }} {{ $t('common.items') }}
+                {{ $t('tools.imageListProcessor.showingFirst') }} 24
+                {{ $t('tools.imageListProcessor.of') }} {{ imageList.length }}
+                {{ $t('common.items') }}
               </div>
             </div>
           </div>
@@ -233,10 +262,15 @@
           <div v-if="processedOutput" class="border border-gray-200 rounded-lg overflow-hidden">
             <h3 class="bg-gray-800 text-white px-3 py-2 font-medium flex items-center text-sm">
               <span class="mr-2">📋</span>
-              {{ $t('tools.imageListProcessor.processedOutput') }} ({{ processingMode.toUpperCase() }})
+              {{ $t('tools.imageListProcessor.processedOutput') }} ({{
+                processingMode.toUpperCase()
+              }})
             </h3>
             <div class="p-4">
-              <pre class="bg-gray-50 p-3 rounded border text-sm overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap">{{ processedOutput }}</pre>
+              <pre
+                class="bg-gray-50 p-3 rounded border text-sm overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap"
+                >{{ processedOutput }}</pre
+              >
             </div>
           </div>
         </div>
@@ -245,21 +279,27 @@
       <!-- Feature Descriptions -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">🖼️ {{ $t('tools.imageListProcessor.features.extraction.title') }}</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            🖼️ {{ $t('tools.imageListProcessor.features.extraction.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
             {{ $t('tools.imageListProcessor.features.extraction.description') }}
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">📝 {{ $t('tools.imageListProcessor.features.formats.title') }}</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            📝 {{ $t('tools.imageListProcessor.features.formats.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
             {{ $t('tools.imageListProcessor.features.formats.description') }}
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">⚡ {{ $t('tools.imageListProcessor.features.batch.title') }}</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            ⚡ {{ $t('tools.imageListProcessor.features.batch.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
             {{ $t('tools.imageListProcessor.features.batch.description') }}
           </p>
@@ -300,7 +340,7 @@ const options = ref<ProcessingOptions>({
   includeAltText: true,
   includeDimensions: false,
   validateUrls: false,
-  sortByName: false
+  sortByName: false,
 })
 
 // Process input data to extract images
@@ -316,13 +356,13 @@ function processImages() {
 
   // Extract images from different formats
   // 1. Direct URLs (one per line)
-  const urlLines = input.split('\n').filter(line => line.trim())
+  const urlLines = input.split('\n').filter((line) => line.trim())
   for (const line of urlLines) {
     const url = line.trim()
     if (isValidImageUrl(url)) {
       images.push({
         url,
-        filename: extractFilename(url)
+        filename: extractFilename(url),
       })
     }
   }
@@ -337,7 +377,7 @@ function processImages() {
       images.push({
         url,
         alt,
-        filename: extractFilename(url)
+        filename: extractFilename(url),
       })
     }
   }
@@ -352,31 +392,31 @@ function processImages() {
       images.push({
         url,
         alt,
-        filename: extractFilename(url)
+        filename: extractFilename(url),
       })
     }
   }
 
   // 4. CSV format (url,alt,width,height)
   if (input.includes(',')) {
-    const csvLines = input.split('\n').filter(line => line.trim() && !line.startsWith('#'))
+    const csvLines = input.split('\n').filter((line) => line.trim() && !line.startsWith('#'))
     for (const line of csvLines) {
-      const parts = line.split(',').map(part => part.trim().replace(/^["']|["']$/g, ''))
+      const parts = line.split(',').map((part) => part.trim().replace(/^["']|["']$/g, ''))
       if (parts.length >= 1 && isValidImageUrl(parts[0])) {
         images.push({
           url: parts[0],
           alt: parts[1] || '',
           width: parts[2] ? parseInt(parts[2]) : undefined,
           height: parts[3] ? parseInt(parts[3]) : undefined,
-          filename: extractFilename(parts[0])
+          filename: extractFilename(parts[0]),
         })
       }
     }
   }
 
   // Remove duplicates based on URL
-  const uniqueImages = images.filter((image, index, self) => 
-    index === self.findIndex(t => t.url === image.url)
+  const uniqueImages = images.filter(
+    (image, index, self) => index === self.findIndex((t) => t.url === image.url),
   )
 
   // Sort if requested
@@ -395,42 +435,49 @@ const processedOutput = computed(() => {
 
   switch (processingMode.value) {
     case 'extract':
-      return processedData.value.map(img => img.url).join('\n')
-    
+      return processedData.value.map((img) => img.url).join('\n')
+
     case 'markdown':
-      return processedData.value.map(img => {
-        const alt = options.value.includeAltText ? (img.alt || img.filename || 'Image') : 'Image'
-        return `![${alt}](${img.url})`
-      }).join('\n')
-    
+      return processedData.value
+        .map((img) => {
+          const alt = options.value.includeAltText ? img.alt || img.filename || 'Image' : 'Image'
+          return `![${alt}](${img.url})`
+        })
+        .join('\n')
+
     case 'html':
-      return processedData.value.map(img => {
-        const alt = options.value.includeAltText ? (img.alt || img.filename || '') : ''
-        const dimensions = options.value.includeDimensions && img.width && img.height 
-          ? ` width="${img.width}" height="${img.height}"` 
-          : ''
-        return `<img src="${img.url}" alt="${alt}"${dimensions} />`
-      }).join('\n')
-    
+      return processedData.value
+        .map((img) => {
+          const alt = options.value.includeAltText ? img.alt || img.filename || '' : ''
+          const dimensions =
+            options.value.includeDimensions && img.width && img.height
+              ? ` width="${img.width}" height="${img.height}"`
+              : ''
+          return `<img src="${img.url}" alt="${alt}"${dimensions} />`
+        })
+        .join('\n')
+
     case 'csv':
       const headers = ['URL']
       if (options.value.includeAltText) headers.push('Alt Text')
       if (options.value.includeDimensions) headers.push('Width', 'Height')
-      
+
       const csvRows = [headers.join(',')]
-      csvRows.push(...processedData.value.map(img => {
-        const row = [img.url]
-        if (options.value.includeAltText) row.push(img.alt || '')
-        if (options.value.includeDimensions) {
-          row.push(img.width?.toString() || '')
-          row.push(img.height?.toString() || '')
-        }
-        return row.map(cell => `"${cell}"`).join(',')
-      }))
+      csvRows.push(
+        ...processedData.value.map((img) => {
+          const row = [img.url]
+          if (options.value.includeAltText) row.push(img.alt || '')
+          if (options.value.includeDimensions) {
+            row.push(img.width?.toString() || '')
+            row.push(img.height?.toString() || '')
+          }
+          return row.map((cell) => `"${cell}"`).join(',')
+        }),
+      )
       return csvRows.join('\n')
-    
+
     default:
-      return processedData.value.map(img => img.url).join('\n')
+      return processedData.value.map((img) => img.url).join('\n')
   }
 })
 
@@ -442,7 +489,7 @@ function generateOutput() {
 // Helper functions
 function isValidImageUrl(url: string): boolean {
   if (!url) return false
-  
+
   // Check if it's a valid URL format
   try {
     new URL(url)
@@ -452,7 +499,7 @@ function isValidImageUrl(url: string): boolean {
       return false
     }
   }
-  
+
   // Check for image file extensions
   return /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|tiff)(\?|#|$)/i.test(url)
 }
@@ -474,38 +521,44 @@ function handleImageError(event: Event) {
 // Action functions
 function copyResults() {
   if (!processedOutput.value) return
-  
-  navigator.clipboard.writeText(processedOutput.value).then(() => {
-    copySuccess()
-  }).catch(() => {
-    copyError()
-  })
+
+  navigator.clipboard
+    .writeText(processedOutput.value)
+    .then(() => {
+      copySuccess()
+    })
+    .catch(() => {
+      copyError()
+    })
 }
 
 function copyImageUrl(url: string) {
-  navigator.clipboard.writeText(url).then(() => {
-    copySuccess()
-  }).catch(() => {
-    copyError()
-  })
+  navigator.clipboard
+    .writeText(url)
+    .then(() => {
+      copySuccess()
+    })
+    .catch(() => {
+      copyError()
+    })
 }
 
 function downloadResults() {
   if (!processedOutput.value) return
-  
+
   const extension = processingMode.value === 'csv' ? 'csv' : 'txt'
   const mimeType = processingMode.value === 'csv' ? 'text/csv' : 'text/plain'
-  
+
   const blob = new Blob([processedOutput.value], { type: mimeType })
   const url = URL.createObjectURL(blob)
-  
+
   const link = document.createElement('a')
   link.href = url
   link.download = `image-list-${processingMode.value}-${new Date().toISOString().split('T')[0]}.${extension}`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
-  
+
   URL.revokeObjectURL(url)
   downloadSuccess()
 }
@@ -527,7 +580,7 @@ https://picsum.photos/800/600?random=3
 # CSV format (url,alt,width,height)
 "https://picsum.photos/500/500?random=8","Square image",500,500
 "https://picsum.photos/800/400?random=9","Wide image",800,400`
-  
+
   processImages()
 }
 

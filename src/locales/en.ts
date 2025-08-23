@@ -24,6 +24,7 @@ export default {
   navigation: {
     tools: 'Tools',
     language: 'Language',
+    categories: 'Tool Categories',
   },
   tools: {
     htmlExtractor: {
@@ -117,7 +118,8 @@ export default {
       inputTitle: 'Input Image Data',
       resultsTitle: 'Processing Results',
       inputNote: 'Paste your image data in one of the supported formats:',
-      inputPlaceholder: 'Paste image URLs, HTML, Markdown, or CSV data here...\n\nSupported formats:\n- Direct URLs (one per line)\n- HTML img tags\n- Markdown image syntax\n- CSV format (url,alt,width,height)',
+      inputPlaceholder:
+        'Paste image URLs, HTML, Markdown, or CSV data here...\n\nSupported formats:\n- Direct URLs (one per line)\n- HTML img tags\n- Markdown image syntax\n- CSV format (url,alt,width,height)',
       imagePreview: 'Image Preview',
       processedOutput: 'Processed Output',
       noResults: 'No images found. Please input image data in a supported format.',
@@ -144,15 +146,18 @@ export default {
       features: {
         extraction: {
           title: 'Smart Extraction',
-          description: 'Automatically detect and extract images from URLs, HTML, Markdown, and CSV formats with intelligent parsing.',
+          description:
+            'Automatically detect and extract images from URLs, HTML, Markdown, and CSV formats with intelligent parsing.',
         },
         formats: {
           title: 'Multiple Formats',
-          description: 'Convert image lists to various output formats including plain URLs, Markdown, HTML, and CSV for different use cases.',
+          description:
+            'Convert image lists to various output formats including plain URLs, Markdown, HTML, and CSV for different use cases.',
         },
         batch: {
           title: 'Batch Processing',
-          description: 'Process hundreds of images at once with preview thumbnails, validation, and bulk export capabilities.',
+          description:
+            'Process hundreds of images at once with preview thumbnails, validation, and bulk export capabilities.',
         },
       },
     },
@@ -169,5 +174,37 @@ export default {
   footer: {
     madeWith: 'Made with',
     by: 'by',
+  },
+  categories: {
+    'web-tools': {
+      name: 'Web Tools',
+      description: 'Tools for web development and analysis',
+    },
+    'data-tools': {
+      name: 'Data Tools',
+      description: 'Tools for data processing and manipulation',
+    },
+    'image-tools': {
+      name: 'Image Tools',
+      description: 'Tools for image processing and management',
+    },
+    converters: {
+      name: 'Converters',
+      description: 'Format conversion utilities',
+    },
+    generators: {
+      name: 'Generators',
+      description: 'Code and content generators',
+    },
+  },
+  pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+  },
+  status: {
+    active: 'Active',
+    'coming-soon': 'Coming Soon',
   },
 }

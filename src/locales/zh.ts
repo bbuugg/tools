@@ -24,6 +24,7 @@ export default {
   navigation: {
     tools: '工具',
     language: '语言',
+    categories: '工具分类',
   },
   tools: {
     htmlExtractor: {
@@ -113,7 +114,8 @@ export default {
       inputTitle: '输入图片数据',
       resultsTitle: '处理结果',
       inputNote: '请粘贴以下支持格式之一的图片数据：',
-      inputPlaceholder: '在此粘贴图片 URL、HTML、Markdown 或 CSV 数据...\n\n支持的格式：\n- 直接 URL（每行一个）\n- HTML img 标签\n- Markdown 图片语法\n- CSV 格式（url,alt,width,height）',
+      inputPlaceholder:
+        '在此粘贴图片 URL、HTML、Markdown 或 CSV 数据...\n\n支持的格式：\n- 直接 URL（每行一个）\n- HTML img 标签\n- Markdown 图片语法\n- CSV 格式（url,alt,width,height）',
       imagePreview: '图片预览',
       processedOutput: '处理后输出',
       noResults: '未找到图片。请输入支持格式的图片数据。',
@@ -144,7 +146,8 @@ export default {
         },
         formats: {
           title: '多种格式',
-          description: '将图片列表转换为各种输出格式，包括纯 URL、Markdown、HTML 和 CSV，适用于不同用途。',
+          description:
+            '将图片列表转换为各种输出格式，包括纯 URL、Markdown、HTML 和 CSV，适用于不同用途。',
         },
         batch: {
           title: '批量处理',
@@ -165,5 +168,37 @@ export default {
   footer: {
     madeWith: '用',
     by: '制作',
+  },
+  categories: {
+    'web-tools': {
+      name: '网页工具',
+      description: '网页开发和分析工具',
+    },
+    'data-tools': {
+      name: '数据工具',
+      description: '数据处理和操作工具',
+    },
+    'image-tools': {
+      name: '图片工具',
+      description: '图片处理和管理工具',
+    },
+    converters: {
+      name: '转换器',
+      description: '格式转换实用工具',
+    },
+    generators: {
+      name: '生成器',
+      description: '代码和内容生成器',
+    },
+  },
+  pagination: {
+    previous: '上一页',
+    next: '下一页',
+    page: '第',
+    of: '页，共',
+  },
+  status: {
+    active: '可用',
+    'coming-soon': '即将推出',
   },
 }
