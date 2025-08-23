@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <!-- Image Preview and Cropper -->
+        <!-- Image Cropper and Settings -->
         <div v-if="selectedImage" class="space-y-6">
           <div class="flex justify-between items-center">
             <h4 class="text-md font-medium text-gray-900">
@@ -70,48 +70,15 @@
             </button>
           </div>
 
-          <!-- Original Image Preview -->
-          <div class="mb-6">
-            <h5 class="text-sm font-medium text-gray-700 mb-3">
-              {{ $t('tools.faviconGenerator.originalImage') }}
-            </h5>
-            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-              <div class="flex justify-center mb-4">
-                <div class="relative inline-block">
-                  <img
-                    :src="originalImageUrl"
-                    :alt="$t('tools.faviconGenerator.originalImage')"
-                    class="max-w-none h-auto rounded border border-gray-300 shadow-sm bg-white"
-                    :style="{
-                      maxWidth: '100%',
-                      maxHeight: '500px',
-                      width: 'auto',
-                      height: 'auto',
-                    }"
-                  />
-                </div>
-              </div>
-              <div class="text-center text-sm text-gray-600">
-                <div class="font-medium">
-                  {{ $t('tools.faviconGenerator.imageSize') }}: {{ originalImageSize.width }} ×
-                  {{ originalImageSize.height }} px
-                </div>
-                <div class="mt-1 text-xs text-gray-500">
-                  {{ $t('tools.faviconGenerator.originalImageDescription') }}
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Professional Image Cropper -->
-          <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Vue Advanced Cropper -->
-            <div class="flex-1">
+          <div class="flex flex-col xl:flex-row gap-6">
+            <!-- Vue Advanced Cropper - Responsive -->
+            <div class="flex-1 min-w-0">
               <h5 class="text-sm font-medium text-gray-700 mb-3">
                 {{ $t('tools.faviconGenerator.cropPreview') }}
               </h5>
               <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div class="cropper-container" style="height: 400px">
+                <div class="cropper-container w-full" style="height: 500px">
                   <Cropper
                     ref="cropperRef"
                     :src="originalImageUrl"
@@ -131,7 +98,7 @@
                         imageSize: { width: number; height: number }
                         visibleArea: { width: number; height: number }
                       }) => {
-                        return Math.min(imageSize.width, visibleArea.width * 0.6)
+                        return Math.min(imageSize.width, visibleArea.width * 0.7)
                       },
                       height: ({
                         imageSize,
@@ -140,11 +107,11 @@
                         imageSize: { width: number; height: number }
                         visibleArea: { width: number; height: number }
                       }) => {
-                        return Math.min(imageSize.height, visibleArea.height * 0.6)
+                        return Math.min(imageSize.height, visibleArea.height * 0.7)
                       },
                     }"
                     @change="onCropChange"
-                    class="rounded border border-gray-300"
+                    class="rounded border border-gray-300 w-full h-full"
                   />
                 </div>
               </div>
@@ -153,8 +120,8 @@
               </p>
             </div>
 
-            <!-- Settings Panel -->
-            <div class="lg:w-80 space-y-6">
+            <!-- Settings Panel - Fixed Width -->
+            <div class="xl:w-80 w-full xl:flex-shrink-0 space-y-6">
               <!-- Format Selection -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
