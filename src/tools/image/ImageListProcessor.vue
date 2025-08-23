@@ -11,6 +11,30 @@
         </p>
       </div>
 
+      <!-- Input Section -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          {{ $t('tools.imageListProcessor.inputTitle') }}
+        </h2>
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">
+            {{ $t('tools.imageListProcessor.inputNote') }}
+          </p>
+          <ul class="text-sm text-gray-500 list-disc list-inside space-y-1">
+            <li>{{ $t('tools.imageListProcessor.supportedFormats.urls') }}</li>
+            <li>{{ $t('tools.imageListProcessor.supportedFormats.html') }}</li>
+            <li>{{ $t('tools.imageListProcessor.supportedFormats.markdown') }}</li>
+            <li>{{ $t('tools.imageListProcessor.supportedFormats.csv') }}</li>
+          </ul>
+        </div>
+        <textarea
+          v-model="inputData"
+          @input="processImages"
+          :placeholder="$t('tools.imageListProcessor.inputPlaceholder')"
+          class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
+        ></textarea>
+      </div>
+
       <!-- Processing Options -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
@@ -129,62 +153,38 @@
           <div class="flex gap-3 ml-auto">
             <button
               @click="processImages"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
             >
               {{ $t('common.extract') }}
             </button>
             <button
               @click="copyResults"
               :disabled="processedData.length === 0"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {{ $t('common.copy') }}
             </button>
             <button
               @click="downloadResults"
               :disabled="processedData.length === 0"
-              class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {{ $t('common.download') }}
             </button>
             <button
               @click="loadExample"
-              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium cursor-pointer"
             >
               {{ $t('common.loadExample') }}
             </button>
             <button
               @click="clearContent"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer"
             >
               {{ $t('common.clear') }}
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-          {{ $t('tools.imageListProcessor.inputTitle') }}
-        </h2>
-        <div class="mb-4">
-          <p class="text-sm text-gray-600 mb-2">
-            {{ $t('tools.imageListProcessor.inputNote') }}
-          </p>
-          <ul class="text-sm text-gray-500 list-disc list-inside space-y-1">
-            <li>{{ $t('tools.imageListProcessor.supportedFormats.urls') }}</li>
-            <li>{{ $t('tools.imageListProcessor.supportedFormats.html') }}</li>
-            <li>{{ $t('tools.imageListProcessor.supportedFormats.markdown') }}</li>
-            <li>{{ $t('tools.imageListProcessor.supportedFormats.csv') }}</li>
-          </ul>
-        </div>
-        <textarea
-          v-model="inputData"
-          @input="processImages"
-          :placeholder="$t('tools.imageListProcessor.inputPlaceholder')"
-          class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
-        ></textarea>
       </div>
 
       <!-- Results Section -->
@@ -329,7 +329,7 @@ interface ProcessingOptions {
   sortByName: boolean
 }
 
-const { t } = useI18n()
+useI18n() // Using $t in template
 const { copySuccess, copyError, downloadSuccess } = useToast()
 
 const inputData = ref('')
@@ -355,25 +355,17 @@ function processImages() {
   const input = inputData.value.trim()
 
   // Extract images from different formats
-  // 1. Direct URLs (one per line)
-  const urlLines = input.split('\n').filter((line) => line.trim())
-  for (const line of urlLines) {
-    const url = line.trim()
-    if (isValidImageUrl(url)) {
-      images.push({
-        url,
-        filename: extractFilename(url),
-      })
-    }
-  }
+  // Check for direct URLs only if no other structured formats are detected
+  let hasStructuredContent = false
 
-  // 2. HTML img tags
+  // 1. HTML img tags
   const htmlRegex = /<img[^>]+src=["']([^"']+)["'][^>]*(?:alt=["']([^"']*)["'][^>]*)?>/gi
   let htmlMatch
   while ((htmlMatch = htmlRegex.exec(input)) !== null) {
     const url = htmlMatch[1]
     const alt = htmlMatch[2] || ''
     if (isValidImageUrl(url)) {
+      hasStructuredContent = true
       images.push({
         url,
         alt,
@@ -382,13 +374,14 @@ function processImages() {
     }
   }
 
-  // 3. Markdown images
+  // 2. Markdown images
   const markdownRegex = /!\[([^\]]*)\]\(([^)]+)\)/g
   let mdMatch
   while ((mdMatch = markdownRegex.exec(input)) !== null) {
     const alt = mdMatch[1]
     const url = mdMatch[2]
     if (isValidImageUrl(url)) {
+      hasStructuredContent = true
       images.push({
         url,
         alt,
@@ -397,18 +390,36 @@ function processImages() {
     }
   }
 
-  // 4. CSV format (url,alt,width,height)
-  if (input.includes(',')) {
-    const csvLines = input.split('\n').filter((line) => line.trim() && !line.startsWith('#'))
-    for (const line of csvLines) {
+  // 3. CSV format (url,alt,width,height)
+  const csvLines = input.split('\n').filter((line) => line.trim() && !line.startsWith('#'))
+  let hasCsvFormat = false
+
+  for (const line of csvLines) {
+    if (line.includes(',') && line.split(',').length >= 2) {
       const parts = line.split(',').map((part) => part.trim().replace(/^["']|["']$/g, ''))
       if (parts.length >= 1 && isValidImageUrl(parts[0])) {
+        hasCsvFormat = true
         images.push({
           url: parts[0],
           alt: parts[1] || '',
           width: parts[2] ? parseInt(parts[2]) : undefined,
           height: parts[3] ? parseInt(parts[3]) : undefined,
           filename: extractFilename(parts[0]),
+        })
+      }
+    }
+  }
+
+  // 4. Direct URLs (one per line) - only if no structured content detected
+  if (!hasStructuredContent && !hasCsvFormat) {
+    const urlLines = input.split('\n').filter((line) => line.trim() && !line.startsWith('#'))
+    for (const line of urlLines) {
+      const url = line.trim()
+      // Skip lines that look like HTML, Markdown, or CSV
+      if (!url.includes('<') && !url.includes('![') && isValidImageUrl(url)) {
+        images.push({
+          url,
+          filename: extractFilename(url),
         })
       }
     }
@@ -426,7 +437,6 @@ function processImages() {
 
   imageList.value = uniqueImages
   processedData.value = uniqueImages
-  generateOutput()
 }
 
 // Generate output based on processing mode
@@ -481,27 +491,42 @@ const processedOutput = computed(() => {
   }
 })
 
-function generateOutput() {
-  // Trigger computed property update
-  processingMode.value = processingMode.value
-}
+// Removed generateOutput function - using computed properties for reactive updates
 
 // Helper functions
 function isValidImageUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false
+
+  // Remove whitespace
+  url = url.trim()
   if (!url) return false
 
-  // Check if it's a valid URL format
-  try {
-    new URL(url)
-  } catch {
-    // If not a full URL, check if it's a relative path with image extension
-    if (!url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|tiff)$/i)) {
-      return false
-    }
+  // Check for image file extensions (more comprehensive)
+  const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|tiff|avif|heic|heif)(\?[^\s]*)?$/i
+
+  // Check if it's a data URL
+  if (url.startsWith('data:image/')) {
+    return true
   }
 
-  // Check for image file extensions
-  return /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|tiff)(\?|#|$)/i.test(url)
+  // Check if it contains image extension
+  if (imageExtensions.test(url)) {
+    return true
+  }
+
+  // Check for URLs that might be images but without extension (like CDN URLs)
+  if (
+    url.includes('picsum.photos') ||
+    url.includes('unsplash.com') ||
+    url.includes('placeholder.com') ||
+    url.includes('via.placeholder.com') ||
+    url.includes('dummyimage.com') ||
+    url.includes('lorempixel.com')
+  ) {
+    return true
+  }
+
+  return false
 }
 
 function extractFilename(url: string): string {

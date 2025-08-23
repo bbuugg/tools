@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/Home.vue'
 import HtmlExtractor from '../tools/HtmlExtractor.vue'
 import JsonExtractor from '../tools/JsonExtractor.vue'
-import ImageListProcessor from '../tools/ImageListProcessor.vue'
-import ImageCompressor from '../tools/ImageCompressor.vue'
+import ImageListProcessor from '../tools/image/ImageListProcessor.vue'
+import ImageCompressor from '../tools/image/ImageCompressor.vue'
 import FaviconGenerator from '../tools/FaviconGenerator.vue'
 import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
-import BackgroundRemover from '../tools/BackgroundRemover.vue'
+import BackgroundRemover from '../tools/image/BackgroundRemover.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
