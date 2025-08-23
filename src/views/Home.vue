@@ -769,6 +769,9 @@ function checkMobile() {
 }
 
 function selectCategory(categoryId: string) {
+  if (selectedCategory.value === categoryId) {
+    return
+  }
   selectedCategory.value = categoryId
   searchQuery.value = '' // Clear search when changing category
 
