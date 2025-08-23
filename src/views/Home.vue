@@ -368,8 +368,8 @@ const categories = ref<Category[]>([
         status: 'active',
       },
       {
-        id: 'jsonMerger',
-        name: 'JSON File Merger',
+        id: 'jsonMerge',
+        name: 'JSON File Merge',
         icon: '🔗',
         path: '/json-tools/json-merge',
         status: 'active',

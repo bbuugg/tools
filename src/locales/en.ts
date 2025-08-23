@@ -651,6 +651,78 @@ export default {
         downloadFailed: 'Failed to download file',
       },
     },
+    jsonMerge: {
+      title: 'JSON File Merger',
+      description: 'Merge multiple JSON files into a single file',
+      introduction: {
+        title: 'Tool Introduction',
+        description:
+          'Online JSON file merger tool to combine multiple JSON files into one large JSON file.',
+        usage:
+          'JSON files will be merged in import order. If order matters, please note the file sequence.',
+      },
+      fileUpload: {
+        title: 'Upload JSON Files',
+        description:
+          'Select multiple JSON files to merge. Files will be processed in the order shown below.',
+        selectFiles: 'Select JSON Files',
+        supportedFormats: 'Supports .json files',
+        noFiles: 'No files selected yet. Please select JSON files to merge.',
+      },
+      filePreview: {
+        title: 'File Preview',
+        fileName: 'File Name',
+        fileSize: 'File Size',
+        jsonStructure: 'JSON Structure',
+        arrayItems: '{count} array items',
+        object: 'JSON Object',
+        remove: 'Remove',
+        moveUp: 'Move Up',
+        moveDown: 'Move Down',
+      },
+      options: {
+        title: 'Merge Options',
+        outputFileName: 'Output File Name',
+        outputFileNamePlaceholder: 'Enter output file name (without extension)',
+        defaultFileName: 'merged-json',
+      },
+      actions: {
+        merge: 'Merge JSON Files',
+        clear: 'Clear All Files',
+        download: 'Download Merged JSON',
+      },
+      output: {
+        title: 'Merged JSON Output',
+        noOutput: 'No merged output yet. Please upload JSON files and click Merge.',
+        complete: 'Merge Complete',
+        itemsMerged: '{count} items merged',
+        downloadReady: 'Merged JSON file is ready for download.',
+      },
+      features: {
+        multipleFiles: {
+          title: 'Multiple File Support',
+          description: 'Upload and merge multiple JSON files with drag-and-drop support.',
+        },
+        orderControl: {
+          title: 'Order Control',
+          description: 'Reorder files before merging to control the output sequence.',
+        },
+        preview: {
+          title: 'File Preview',
+          description: 'Preview file structure and content before merging.',
+        },
+      },
+      errors: {
+        noFiles: 'Please select at least one JSON file to merge',
+        invalidJson: 'Invalid JSON in file: {fileName}',
+        mergeFailed: 'Failed to merge JSON files: {error}',
+        emptyArray: 'JSON file must contain an array at the root level',
+      },
+      success: {
+        filesAdded: '{count} file(s) added successfully',
+        mergeComplete: 'JSON files merged successfully!',
+      },
+    },
     jsonToExcel: {
       title: 'JSON to Excel Converter',
       description: 'Convert JSON data to Excel format with customizable options',

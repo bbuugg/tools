@@ -709,6 +709,75 @@ export default {
         downloadFailed: '文件下载失败',
       },
     },
+    jsonMerge: {
+      title: 'JSON 文件合并工具',
+      description: '将多个 JSON 文件合并成一个文件',
+      introduction: {
+        title: '工具介绍',
+        description: '在线 JSON 文件合并工具，将多个 JSON 文件合并成一个大的 JSON 文件。',
+        usage: 'JSON 文件将按导入顺序依次合并，如对顺序有要求，请注意文件顺序。',
+      },
+      fileUpload: {
+        title: '上传 JSON 文件',
+        description: '选择多个 JSON 文件进行合并。文件将按以下顺序处理。',
+        selectFiles: '选择 JSON 文件',
+        supportedFormats: '支持 .json 文件',
+        noFiles: '尚未选择文件。请选择要合并的 JSON 文件。',
+      },
+      filePreview: {
+        title: '文件预览',
+        fileName: '文件名',
+        fileSize: '文件大小',
+        jsonStructure: 'JSON 结构',
+        arrayItems: '{count} 个数组项',
+        object: 'JSON 对象',
+        remove: '移除',
+        moveUp: '上移',
+        moveDown: '下移',
+      },
+      options: {
+        title: '合并选项',
+        outputFileName: '输出文件名',
+        outputFileNamePlaceholder: '输入输出文件名（不含扩展名）',
+        defaultFileName: '合并的JSON',
+      },
+      actions: {
+        merge: '合并 JSON 文件',
+        clear: '清空所有文件',
+        download: '下载合并的 JSON',
+      },
+      output: {
+        title: '合并的 JSON 输出',
+        noOutput: '暂无合并输出。请上传 JSON 文件并点击合并。',
+        complete: '合并完成',
+        itemsMerged: '已合并 {count} 项',
+        downloadReady: '合并的 JSON 文件已准备好下载。',
+      },
+      features: {
+        multipleFiles: {
+          title: '多文件支持',
+          description: '通过拖放支持上传和合并多个 JSON 文件。',
+        },
+        orderControl: {
+          title: '顺序控制',
+          description: '合并前重新排序文件以控制输出顺序。',
+        },
+        preview: {
+          title: '文件预览',
+          description: '合并前预览文件结构和内容。',
+        },
+      },
+      errors: {
+        noFiles: '请至少选择一个 JSON 文件进行合并',
+        invalidJson: '文件中的 JSON 无效：{fileName}',
+        mergeFailed: '合并 JSON 文件失败：{error}',
+        emptyArray: 'JSON 文件的根级别必须包含一个数组',
+      },
+      success: {
+        filesAdded: '已成功添加 {count} 个文件',
+        mergeComplete: 'JSON 文件合并成功！',
+      },
+    },
     cookieToJson: {
       title: 'Cookie 转 JSON',
       description: '将 Cookie 字符串转换为 JSON 对象，支持多种解析选项',
