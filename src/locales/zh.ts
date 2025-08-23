@@ -157,9 +157,50 @@ export default {
         },
       },
     },
-    filerenamer: {
-      title: '文件重命名工具',
-      description: '多模式批量重命名文件 - 本地处理保护隐私',
+    cookieToJson: {
+      title: 'Cookie 转 JSON',
+      description: '将 Cookie 字符串转换为 JSON 对象，支持多种解析选项',
+      inputTitle: '输入 Cookie 字符串',
+      outputTitle: 'JSON 输出',
+      inputNote: '粘贴格式如下的 Cookie 字符串：',
+      inputPlaceholder:
+        '请在此粘贴您的 Cookie 字符串，例如：\nsessionId=abc123; userId=12345; theme=dark; lang=zh-CN\n\n支持的格式：\n- 标准 Cookie 格式：name1=value1; name2=value2\n- 自动解码 URL 编码的值\n- 处理无值的 Cookie（标志位）',
+      parseOptions: '解析选项',
+      noResults: '暂无转换结果。请输入 Cookie 字符串进行转换。',
+      error: '解析错误',
+      success: '解析成功',
+      conversionComplete: '转换完成',
+      cookiesFound: '找到 {count} 个 Cookie',
+      statistics: '共 {total} 个 Cookie，{nonEmpty} 个有值',
+      options: {
+        decodeValues: '解码 URL 编码值',
+        removeEmpty: '移除空值',
+        formatOutput: '格式化 JSON 输出',
+      },
+      features: {
+        parsing: {
+          title: 'Cookie 解析',
+          description: '自动解析 Cookie 字符串，支持标准 HTTP Cookie 格式和 URL 解码。',
+        },
+        conversion: {
+          title: 'JSON 转换',
+          description: '将解析的 Cookie 转换为清晰的 JSON 格式，支持可定制的输出格式选项。',
+        },
+        export: {
+          title: '导出选项',
+          description: '复制到剪贴板或下载为 JSON 文件，包含统计信息和验证反馈。',
+        },
+      },
+      errors: {
+        noCookies: '输入字符串中未找到有效的 Cookie',
+        parseError: '解析 Cookie 字符串失败：{error}',
+      },
+      messages: {
+        copied: 'JSON 已成功复制到剪贴板！',
+        copyFailed: '复制到剪贴板失败',
+        downloaded: 'JSON 文件下载成功！',
+        downloadFailed: '文件下载失败',
+      },
     },
     fileRenamer: {
       title: '文件重命名工具',

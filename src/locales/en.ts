@@ -163,9 +163,53 @@ export default {
         },
       },
     },
-    filerenamer: {
-      title: 'File Renamer Tool',
-      description: 'Batch rename files with multiple modes - local processing for privacy',
+    cookieToJson: {
+      title: 'Cookie to JSON',
+      description: 'Convert cookie strings to JSON objects with parsing options',
+      inputTitle: 'Input Cookie String',
+      outputTitle: 'JSON Output',
+      inputNote: 'Paste cookie string in the format:',
+      inputPlaceholder:
+        'Paste your cookie string here, e.g.:\nsessionId=abc123; userId=12345; theme=dark; lang=en-US\n\nSupported formats:\n- Standard cookie format: name1=value1; name2=value2\n- URL-encoded values are automatically decoded\n- Handles cookies without values (flags)',
+      parseOptions: 'Parse Options',
+      noResults: 'No conversion results yet. Please input a cookie string to convert.',
+      error: 'Parse Error',
+      success: 'Parsing Successful',
+      conversionComplete: 'Conversion Complete',
+      cookiesFound: '{count} cookies found',
+      statistics: '{total} total cookies, {nonEmpty} with values',
+      options: {
+        decodeValues: 'Decode URL-encoded Values',
+        removeEmpty: 'Remove Empty Values',
+        formatOutput: 'Format JSON Output',
+      },
+      features: {
+        parsing: {
+          title: 'Cookie Parsing',
+          description:
+            'Automatically parse cookie strings with support for standard HTTP cookie format and URL decoding.',
+        },
+        conversion: {
+          title: 'JSON Conversion',
+          description:
+            'Convert parsed cookies to clean JSON format with customizable output formatting options.',
+        },
+        export: {
+          title: 'Export Options',
+          description:
+            'Copy to clipboard or download as JSON file with statistics and validation feedback.',
+        },
+      },
+      errors: {
+        noCookies: 'No valid cookies found in the input string',
+        parseError: 'Failed to parse cookie string: {error}',
+      },
+      messages: {
+        copied: 'JSON copied to clipboard successfully!',
+        copyFailed: 'Failed to copy to clipboard',
+        downloaded: 'JSON file downloaded successfully!',
+        downloadFailed: 'Failed to download file',
+      },
     },
     fileRenamer: {
       title: 'File Renamer Tool',
