@@ -201,8 +201,8 @@
         <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
           Extraction Results
         </h2>
-        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-          <span class="text-blue-800 font-medium">{{ totalCount }} items found</span>
+        <div class="mb-3 px-3 py-2 bg-blue-50 rounded-md border-l-4 border-blue-400">
+          <span class="text-blue-800 font-medium text-sm">{{ totalCount }} items found</span>
         </div>
 
         <div v-if="totalCount === 0" class="text-center py-12">
@@ -212,34 +212,34 @@
           </p>
         </div>
 
-        <div v-else class="space-y-6">
+        <div v-else class="space-y-4">
           <div
             v-for="(items, type) in resultsByType"
             :key="type"
             class="border border-gray-200 rounded-lg overflow-hidden"
           >
-            <h3 class="bg-gray-800 text-white px-4 py-3 font-semibold flex items-center">
+            <h3 class="bg-gray-800 text-white px-3 py-2 font-medium flex items-center text-sm">
               <span class="mr-2">{{ getTypeEmoji(type) }}</span>
               {{ type.toUpperCase() }} ({{ items.length }})
             </h3>
             <div class="divide-y divide-gray-200">
-              <div v-for="(item, index) in items" :key="index" class="p-4 hover:bg-gray-50">
-                <div class="mb-2">
+              <div v-for="(item, index) in items" :key="index" class="px-3 py-2 hover:bg-gray-50">
+                <div class="mb-1">
                   <a
                     :href="item.url"
                     target="_blank"
                     rel="noopener"
-                    class="text-blue-600 hover:text-blue-800 hover:underline break-all font-medium"
+                    class="text-blue-600 hover:text-blue-800 hover:underline break-all font-medium text-sm"
                   >
                     {{ item.url }}
                   </a>
                 </div>
-                <div v-if="item.text" class="text-gray-600 text-sm mb-2">{{ item.text }}</div>
-                <div v-if="item.attributes" class="flex flex-wrap gap-2 mb-3">
+                <div v-if="item.text" class="text-gray-600 text-xs mb-1">{{ item.text }}</div>
+                <div v-if="item.attributes" class="flex flex-wrap gap-1 mb-2">
                   <span
                     v-for="(value, key) in item.attributes"
                     :key="key"
-                    class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                    class="inline-block bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs"
                   >
                     {{ key }}: {{ value }}
                   </span>
@@ -248,12 +248,12 @@
                 <!-- Preview for images -->
                 <div
                   v-if="item.type === 'image' || item.type === 'css-background'"
-                  class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  class="mt-2 p-2 bg-gray-50 rounded border border-gray-200"
                 >
                   <img
                     :src="item.url"
                     :alt="item.text || 'Preview image'"
-                    class="max-w-full max-h-72 rounded-lg shadow-md hover:scale-105 transition-transform duration-200"
+                    class="max-w-full max-h-48 rounded shadow-sm hover:scale-105 transition-transform duration-200"
                     @error="($event.target as HTMLImageElement).style.display = 'none'"
                     loading="lazy"
                   />
@@ -262,11 +262,11 @@
                 <!-- Preview for videos -->
                 <div
                   v-if="item.type === 'video'"
-                  class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  class="mt-2 p-2 bg-gray-50 rounded border border-gray-200"
                 >
                   <video
                     :src="item.url"
-                    class="max-w-full max-h-72 rounded-lg shadow-md"
+                    class="max-w-full max-h-48 rounded shadow-sm"
                     controls
                     preload="metadata"
                     @error="($event.target as HTMLVideoElement).style.display = 'none'"
