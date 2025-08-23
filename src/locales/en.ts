@@ -477,6 +477,60 @@ export default {
         noOutput: 'No JSON output yet. Please input CSV data to convert.',
       },
     },
+    excelTextToJson: {
+      title: 'Excel Text to JSON',
+      description: 'Convert Excel clipboard data directly to JSON format',
+      introduction: {
+        title: 'Tool Introduction',
+        description:
+          'Online Excel text to JSON converter for converting tab-separated Excel data to JSON format.',
+        usage:
+          'Copy data from Excel and paste it here. Default delimiter is tab (\\t). First row should contain headers for object format.',
+      },
+      example: {
+        title: 'Example',
+        input: 'Excel Input:',
+        output: 'JSON Output:',
+      },
+      input: {
+        title: 'Input Excel Data',
+        placeholder:
+          'Paste your Excel data here...\n\nExample:\nname\tage\tscore\nLi Hua\t25\t89\nXiao Ming\t22\t85',
+        fileUpload: 'Upload Text File',
+      },
+      options: {
+        title: 'Parsing Options',
+        delimiter: 'Delimiter',
+        outputFormat: 'Output Format',
+        hasHeaders: 'First Row as Headers',
+        skipEmptyLines: 'Skip Empty Lines',
+        autoDetectNumbers: 'Auto-detect Numbers',
+        autoDetectBooleans: 'Auto-detect Booleans',
+      },
+      delimiters: {
+        comma: 'Comma (,)',
+        semicolon: 'Semicolon (;)',
+        tab: 'Tab (\\t)',
+        pipe: 'Pipe (|)',
+        space: 'Space',
+      },
+      formats: {
+        jsonObject: 'JSON Objects',
+        jsonArray: 'JSON Array',
+      },
+      preview: {
+        title: 'Data Preview',
+        firstRows: 'first {count} rows',
+        rowsDetected: '{count} rows detected',
+      },
+      convert: 'Convert to JSON',
+      output: {
+        title: 'JSON Output',
+        complete: 'Conversion Complete',
+        recordsConverted: '{count} records converted',
+        noOutput: 'No JSON output yet. Please input Excel data to convert.',
+      },
+    },
     jsonPathExtractor: {
       title: 'JSON Path Extractor',
       description:

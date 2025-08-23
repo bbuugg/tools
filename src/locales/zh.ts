@@ -586,6 +586,59 @@ export default {
         noOutput: '暂无JSON输出。请输入CSV数据进行转换。',
       },
     },
+    excelTextToJson: {
+      title: 'Excel文本转JSON',
+      description: '将Excel剪贴板数据直接转换为JSON格式',
+      introduction: {
+        title: '工具介绍',
+        description: '在线Excel文本转JSON工具，用于将制表符分隔的Excel数据转换为JSON格式。',
+        usage:
+          '从Excel中复制数据并粘贴到此处。默认分隔符为制表符(\\t)。对象格式需要第一行包含标题。',
+      },
+      example: {
+        title: '示例',
+        input: 'Excel输入：',
+        output: 'JSON输出：',
+      },
+      input: {
+        title: '输入Excel数据',
+        placeholder:
+          '在此粘贴您的Excel数据...\n\n示例：\nname\tage\tscore\n李华\t25\t89\n小明\t22\t85',
+        fileUpload: '上传文本文件',
+      },
+      options: {
+        title: '解析选项',
+        delimiter: '分隔符',
+        outputFormat: '输出格式',
+        hasHeaders: '首行作为标题',
+        skipEmptyLines: '跳过空行',
+        autoDetectNumbers: '自动检测数字',
+        autoDetectBooleans: '自动检测布尔值',
+      },
+      delimiters: {
+        comma: '逗号 (,)',
+        semicolon: '分号 (;)',
+        tab: '制表符 (\\t)',
+        pipe: '管道符 (|)',
+        space: '空格',
+      },
+      formats: {
+        jsonObject: 'JSON对象',
+        jsonArray: 'JSON数组',
+      },
+      preview: {
+        title: '数据预览',
+        firstRows: '前{count}行',
+        rowsDetected: '检测到{count}行',
+      },
+      convert: '转换为JSON',
+      output: {
+        title: 'JSON输出',
+        complete: '转换完成',
+        recordsConverted: '已转换{count}条记录',
+        noOutput: '暂无JSON输出。请输入Excel数据进行转换。',
+      },
+    },
     jsonPathExtractor: {
       title: 'JSON 路径提取器',
       description: '使用 JSONPath 表达式从 JSON 中提取数据，支持高级过滤功能',
