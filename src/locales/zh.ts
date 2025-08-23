@@ -31,6 +31,7 @@ export default {
     search: '搜索工具...',
     noResults: '没有找到匹配的工具。',
     noToolsInCategory: '该分类中没有可用的工具。',
+    backToCategories: '返回分类',
   },
   toast: {
     success: '成功',

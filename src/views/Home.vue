@@ -24,7 +24,9 @@
         <!-- Category Navigation -->
         <div class="p-4 border-b border-gray-200">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">{{ $t('navigation.categories') }}</h2>
+            <h2 class="text-lg font-semibold text-gray-900">
+              {{ showCategoryView ? $t('navigation.categories') : $t(`categories.${selectedCategory}.name`) }}
+            </h2>
             <button
               v-if="isMobile"
               @click="closeSidebar"
@@ -40,33 +42,55 @@
               </svg>
             </button>
           </div>
-          <nav class="space-y-2">
+          
+          <!-- Back Button (only shown in tool view) -->
+          <div v-if="!showCategoryView" class="mb-4">
+            <button
+              @click="backToCategories"
+              class="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              {{ $t('navigation.backToCategories') }}
+            </button>
+          </div>
+          
+          <!-- Category List (shown in category view) -->
+          <nav v-if="showCategoryView" class="space-y-2">
             <button
               v-for="category in categories"
               :key="category.id"
-              @click="selectCategory(category.id)"
-              :class="[
-                'w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                selectedCategory === category.id
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                  : 'text-gray-700 hover:bg-gray-100',
-              ]"
+              @click="enterCategory(category.id)"
+              class="w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer hover:bg-gray-100 border border-gray-200 hover:border-gray-300"
             >
-              <span class="mr-2">{{ category.icon }}</span>
-              {{ $t(`categories.${category.id}.name`) }}
-              <span class="ml-auto text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">
-                {{ category.tools.length }}
-              </span>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <span class="text-lg mr-3">{{ category.icon }}</span>
+                  <div>
+                    <div class="font-medium text-gray-900">{{ $t(`categories.${category.id}.name`) }}</div>
+                    <div class="text-xs text-gray-500 mt-1">{{ $t(`categories.${category.id}.description`) }}</div>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full mr-2">
+                    {{ category.tools.length }}
+                  </span>
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </button>
           </nav>
         </div>
 
-        <!-- Tools List -->
-        <div class="flex-1 flex flex-col min-h-0">
+        <!-- Tools List (shown in tool view) -->
+        <div v-if="!showCategoryView" class="flex-1 flex flex-col min-h-0">
           <div class="p-4 border-b border-gray-200">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-sm font-medium text-gray-900">
-                {{ $t(`categories.${selectedCategory}.name`) }}
+                {{ $t('navigation.tools') }}
               </h3>
               <span class="text-xs text-gray-500">
                 {{ filteredTools.length }}/{{ currentCategoryTools.length }}
@@ -258,6 +282,7 @@ const isSidebarOpen = ref(false)
 const isMobile = ref(false)
 const searchQuery = ref('')
 const isLoading = ref(false)
+const showCategoryView = ref(true) // true: show categories, false: show tools
 
 // Tool categories configuration
 const categories = ref<Category[]>([
@@ -796,6 +821,22 @@ function selectCategory(categoryId: string) {
   }
 }
 
+function enterCategory(categoryId: string) {
+  selectedCategory.value = categoryId
+  showCategoryView.value = false
+  searchQuery.value = '' // Clear search when entering category
+  
+  // Close sidebar on mobile after category selection
+  if (isMobile.value) {
+    closeSidebar()
+  }
+}
+
+function backToCategories() {
+  showCategoryView.value = true
+  searchQuery.value = '' // Clear search when going back
+}
+
 function clearSearch() {
   searchQuery.value = ''
 }
@@ -836,9 +877,18 @@ watch(
       for (const tool of category.tools) {
         if (tool.path === newPath) {
           selectedCategory.value = category.id
+          // If we're on a tool page, show tool view
+          if (newPath !== '/') {
+            showCategoryView.value = false
+          }
           break
         }
       }
+    }
+
+    // If on homepage, show category view
+    if (newPath === '/') {
+      showCategoryView.value = true
     }
 
     // Always reset loading state after a short delay to ensure smooth transition
@@ -858,13 +908,23 @@ watch(
 onMounted(() => {
   // Set initial category based on current route
   const currentPath = route.path
+  let foundTool = false
+  
   for (const category of categories.value) {
     for (const tool of category.tools) {
       if (tool.path === currentPath) {
         selectedCategory.value = category.id
+        showCategoryView.value = false // Show tool view if on a tool page
+        foundTool = true
         break
       }
     }
+    if (foundTool) break
+  }
+  
+  // If not on a tool page, show category view
+  if (!foundTool || currentPath === '/') {
+    showCategoryView.value = true
   }
 
   // Check mobile state
