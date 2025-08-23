@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ComingSoon from '../tools/ComingSoon.vue'
 import HomePage from '../views/Home.vue'
-import HomePageContent from '../views/HomePage.vue'
+import HomePageContent from '../views/Homepage.vue'
 import NotFound from '../views/NotFound.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
