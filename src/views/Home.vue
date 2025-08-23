@@ -679,6 +679,13 @@ const categories = ref<Category[]>([
         path: '/image-tools/video-to-gif-converter',
         status: 'active',
       },
+      {
+        id: 'apngGenerator',
+        name: 'APNG Converter',
+        icon: '🎬',
+        path: '/image-tools/apng-generator',
+        status: 'active',
+      },
     ],
   },
   {

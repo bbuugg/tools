@@ -281,6 +281,49 @@ export default {
         processingFailed: 'Failed to process video. Please try again.',
       },
     },
+    apngGenerator: {
+      title: 'APNG Generator',
+      description:
+        'Create animated PNG files from multiple static images with customizable settings',
+      uploadTitle: 'Upload Image Frames',
+      uploadDescription:
+        'Drag and drop multiple images or click to select frames for your animation',
+      selectFiles: 'Select Image Files',
+      supportedFormats: 'Supported formats',
+      settings: 'Animation Settings',
+      frameDelay: 'Frame Delay',
+      loopCount: 'Loop Count',
+      infinite: 'Infinite',
+      outputWidth: 'Output Width',
+      outputHeight: 'Output Height',
+      advancedOptions: 'Advanced Options',
+      maintainAspectRatio: 'Maintain Aspect Ratio',
+      optimizeSize: 'Optimize File Size',
+      frameList: 'Animation Frames',
+      generateAPNG: 'Generate APNG',
+      generating: 'Generating...',
+      preview: 'Preview Animation',
+      animationPreview: 'Animation Preview',
+      downloadAPNG: 'Download APNG',
+      reorderHint:
+        'Frames will be animated in the order shown above. You can remove unwanted frames by clicking the × button.',
+      features: {
+        title: 'Key Features',
+        highQuality: {
+          title: 'High Quality Output',
+          description:
+            'Generate lossless animated PNG files with support for transparency and 24-bit color',
+        },
+        customizable: {
+          title: 'Fully Customizable',
+          description: 'Control frame timing, loop count, dimensions, and optimization settings',
+        },
+        easyToUse: {
+          title: 'Easy to Use',
+          description: 'Simple drag-and-drop interface with real-time preview and instant download',
+        },
+      },
+    },
     backgroundRemover: {
       title: 'Background Remover',
       description: 'Remove backgrounds from images automatically using AI technology',

@@ -9,6 +9,7 @@ import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
 import BackgroundRemover from '../tools/image/BackgroundRemover.vue'
 import VideoToGifConverter from '../tools/image/VideoToGifConverter.vue'
+import ApngGenerator from '../tools/image/ApngGenerator.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
@@ -578,6 +579,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'Video to GIF Converter',
+          },
+        },
+        {
+          path: 'image-tools/apng-generator',
+          name: 'apng-generator',
+          component: ApngGenerator,
+          meta: {
+            category: 'image-tools',
+            title: 'APNG Generator',
           },
         },
         {
