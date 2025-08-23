@@ -1,72 +1,84 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-6xl mx-auto px-4">
+  <div class="min-h-screen bg-gray-50 p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.fileRenamer.title') }}</h1>
         <p class="text-gray-600">{{ $t('tools.fileRenamer.subtitle') }}</p>
       </div>
 
-      <!-- File Upload Area -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <!-- Upload Area -->
+      <div class="bg-white p-6 rounded-lg shadow-sm border">
         <div
-          @drop="handleDrop"
+          class="border-2 border-dashed rounded-lg p-8 text-center transition-colors"
+          :class="{
+            'border-blue-500 bg-blue-50': isDragging,
+            'border-gray-300 hover:border-gray-400': !isDragging,
+          }"
           @dragover.prevent
-          @dragenter.prevent
-          :class="[
-            'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-            isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
-          ]"
-          @dragenter="isDragging = true"
-          @dragleave="isDragging = false"
+          @dragenter.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop="handleFileDrop"
         >
-          <div class="space-y-4">
-            <div class="text-4xl text-gray-400">📁</div>
-            <div>
-              <p class="text-lg font-medium text-gray-700">
-                {{ $t('tools.fileRenamer.uploadArea.title') }}
-              </p>
-              <p class="text-sm text-gray-500">{{ $t('tools.fileRenamer.uploadArea.subtitle') }}</p>
-            </div>
-            <div>
-              <input
-                type="file"
-                multiple
-                @change="handleFileSelect"
-                ref="fileInput"
-                class="hidden"
-              />
+          <div class="text-4xl mb-3">📁</div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            {{ $t('tools.fileRenamer.uploadArea.title') }}
+          </h3>
+          <p class="text-gray-500 mb-4">{{ $t('tools.fileRenamer.uploadArea.subtitle') }}</p>
+          <button
+            @click="fileInputClick"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.uploadArea.selectFiles') }}
+          </button>
+          <input ref="fileInput" type="file" multiple @change="handleFileSelect" class="hidden" />
+        </div>
+      </div>
+
+      <!-- File List and Options -->
+      <div v-if="files.length > 0" class="bg-white p-6 rounded-lg shadow-sm border">
+        <!-- File Count and Sorting -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div class="text-lg font-medium text-gray-900">
+            {{ $t('tools.fileRenamer.fileCount', { count: files.length }) }}
+          </div>
+
+          <!-- Sorting Options -->
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-sm font-medium text-gray-700">
+              {{ $t('tools.fileRenamer.sorting.title') }}:
+            </span>
+            <div class="flex flex-wrap gap-2">
               <button
-                @click="(fileInput as HTMLInputElement)?.click()"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+                v-for="option in sortingOptions"
+                :key="option.id"
+                @click="sortFiles(option.id)"
+                class="px-3 py-1 text-sm rounded transition-colors"
+                :class="{
+                  'bg-blue-100 text-blue-800 border border-blue-300': sortType === option.id,
+                  'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200':
+                    sortType !== option.id,
+                }"
               >
-                {{ $t('tools.fileRenamer.uploadArea.selectFiles') }}
+                {{ option.label }}
               </button>
             </div>
           </div>
         </div>
 
-        <!-- File Count Info -->
-        <div v-if="files.length > 0" class="mt-4 text-sm text-gray-600">
-          {{ $t('tools.fileRenamer.fileCount', { count: files.length }) }}
-        </div>
-      </div>
-
-      <!-- Renaming Options -->
-      <div v-if="files.length > 0" class="bg-white rounded-lg shadow-md mb-6">
-        <!-- Tab Navigation -->
-        <div class="border-b border-gray-200">
-          <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <!-- Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+          <nav class="-mb-px flex space-x-8 overflow-x-auto">
             <button
               v-for="tab in renamingTabs"
               :key="tab.id"
               @click="activeTab = tab.id"
-              :class="[
-                'py-4 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer',
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-              ]"
+              class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+              :class="{
+                'border-blue-500 text-blue-600': activeTab === tab.id,
+                'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+                  activeTab !== tab.id,
+              }"
             >
               {{ $t(`tools.fileRenamer.tabs.${tab.id}`) }}
             </button>
@@ -74,34 +86,33 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="p-6">
+        <div class="mb-6">
           <!-- Sequential Tab -->
-          <div v-if="activeTab === 'sequential'" class="space-y-4">
+          <div v-if="activeTab === 'sequential'">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.sequential.prefix') }}
                 </label>
                 <input
                   v-model="sequentialOptions.prefix"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="$t('tools.fileRenamer.sequential.prefixPlaceholder')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.sequential.startNumber') }}
                 </label>
                 <input
                   v-model.number="sequentialOptions.startNumber"
                   type="number"
                   min="0"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.sequential.padding') }}
                 </label>
                 <input
@@ -109,116 +120,115 @@
                   type="number"
                   min="1"
                   max="10"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
           </div>
 
           <!-- Replace Tab -->
-          <div v-if="activeTab === 'replace'" class="space-y-4">
+          <div v-if="activeTab === 'replace'">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.replace.findText') }}
                 </label>
                 <input
                   v-model="replaceOptions.findText"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="$t('tools.fileRenamer.replace.findPlaceholder')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.replace.replaceText') }}
                 </label>
                 <input
                   v-model="replaceOptions.replaceText"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="$t('tools.fileRenamer.replace.replacePlaceholder')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
-            <div class="flex items-center">
-              <input
-                id="case-sensitive"
-                v-model="replaceOptions.caseSensitive"
-                type="checkbox"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label for="case-sensitive" class="ml-2 block text-sm text-gray-700">
-                {{ $t('tools.fileRenamer.replace.caseSensitive') }}
+            <div class="mt-3">
+              <label class="flex items-center">
+                <input
+                  v-model="replaceOptions.caseSensitive"
+                  type="checkbox"
+                  class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                />
+                <span class="ml-2 text-sm text-gray-600">
+                  {{ $t('tools.fileRenamer.replace.caseSensitive') }}
+                </span>
               </label>
             </div>
           </div>
 
           <!-- Case Tab -->
-          <div v-if="activeTab === 'case'" class="space-y-4">
-            <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700">
-                {{ $t('tools.fileRenamer.case.transformation') }}
+          <div v-if="activeTab === 'case'">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <label
+                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+              >
+                <input
+                  v-model="caseOptions.type"
+                  type="radio"
+                  value="uppercase"
+                  class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span class="ml-3 text-sm text-gray-700">
+                  {{ $t('tools.fileRenamer.case.uppercase') }}
+                </span>
               </label>
-              <div class="space-y-2">
-                <label class="flex items-center">
-                  <input
-                    v-model="caseOptions.type"
-                    type="radio"
-                    value="uppercase"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  />
-                  <span class="ml-2 text-sm text-gray-700">{{
-                    $t('tools.fileRenamer.case.uppercase')
-                  }}</span>
-                </label>
-                <label class="flex items-center">
-                  <input
-                    v-model="caseOptions.type"
-                    type="radio"
-                    value="lowercase"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  />
-                  <span class="ml-2 text-sm text-gray-700">{{
-                    $t('tools.fileRenamer.case.lowercase')
-                  }}</span>
-                </label>
-                <label class="flex items-center">
-                  <input
-                    v-model="caseOptions.type"
-                    type="radio"
-                    value="capitalize"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  />
-                  <span class="ml-2 text-sm text-gray-700">{{
-                    $t('tools.fileRenamer.case.capitalize')
-                  }}</span>
-                </label>
-              </div>
+              <label
+                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+              >
+                <input
+                  v-model="caseOptions.type"
+                  type="radio"
+                  value="lowercase"
+                  class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span class="ml-3 text-sm text-gray-700">
+                  {{ $t('tools.fileRenamer.case.lowercase') }}
+                </span>
+              </label>
+              <label
+                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+              >
+                <input
+                  v-model="caseOptions.type"
+                  type="radio"
+                  value="capitalize"
+                  class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span class="ml-3 text-sm text-gray-700">
+                  {{ $t('tools.fileRenamer.case.capitalize') }}
+                </span>
+              </label>
             </div>
           </div>
 
           <!-- Insert Tab -->
-          <div v-if="activeTab === 'insert'" class="space-y-4">
+          <div v-if="activeTab === 'insert'">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.insert.text') }}
                 </label>
                 <input
                   v-model="insertOptions.text"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   :placeholder="$t('tools.fileRenamer.insert.textPlaceholder')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.insert.position') }}
                 </label>
                 <select
                   v-model="insertOptions.position"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="prefix">{{ $t('tools.fileRenamer.insert.prefix') }}</option>
                   <option value="suffix">{{ $t('tools.fileRenamer.insert.suffix') }}</option>
@@ -226,149 +236,199 @@
                 </select>
               </div>
             </div>
-            <div v-if="insertOptions.position === 'index'" class="w-full md:w-1/2">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+            <div v-if="insertOptions.position === 'index'" class="mt-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
                 {{ $t('tools.fileRenamer.insert.index') }}
               </label>
               <input
                 v-model.number="insertOptions.index"
                 type="number"
                 min="0"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
 
           <!-- Truncate Tab -->
-          <div v-if="activeTab === 'truncate'" class="space-y-4">
+          <div v-if="activeTab === 'truncate'">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.truncate.startIndex') }}
                 </label>
                 <input
                   v-model.number="truncateOptions.startIndex"
                   type="number"
                   min="0"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.fileRenamer.truncate.endIndex') }}
                 </label>
                 <input
                   v-model.number="truncateOptions.endIndex"
                   type="number"
                   min="0"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
-            <p class="text-sm text-gray-500">{{ $t('tools.fileRenamer.truncate.description') }}</p>
+            <p class="mt-2 text-sm text-gray-500">
+              {{ $t('tools.fileRenamer.truncate.description') }}
+            </p>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
-          <div class="flex space-x-4">
-            <button
-              @click="generatePreview"
-              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-            >
-              {{ $t('tools.fileRenamer.actions.preview') }}
-            </button>
-            <button
-              @click="applyRename"
-              :disabled="!hasPreview"
-              class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {{ $t('tools.fileRenamer.actions.apply') }}
-            </button>
-            <button
-              @click="downloadFiles"
-              :disabled="!hasRenamed"
-              class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {{ $t('tools.fileRenamer.actions.download') }}
-            </button>
-            <button
-              @click="clearFiles"
-              class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
-            >
-              {{ $t('tools.fileRenamer.actions.clear') }}
-            </button>
+        <div class="flex flex-wrap gap-3 mb-6">
+          <button
+            @click="generatePreview"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.actions.preview') }}
+          </button>
+          <button
+            v-if="hasPreview"
+            @click="applyRename"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.actions.apply') }}
+          </button>
+          <button
+            v-if="hasRenamed"
+            @click="downloadFiles"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.actions.download') }}
+          </button>
+          <button
+            @click="clearFiles"
+            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.actions.clear') }}
+          </button>
+        </div>
+
+        <!-- File List -->
+        <div class="border rounded-lg overflow-hidden">
+          <div class="bg-gray-50 px-4 py-3 border-b">
+            <h3 class="font-medium text-gray-900">
+              {{ $t('tools.fileRenamer.fileList.title') }}
+            </h3>
+            <p class="text-sm text-gray-500 mt-1">
+              {{ $t('tools.fileRenamer.fileList.dragHint') }}
+            </p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {{ $t('tools.fileRenamer.fileList.drag') }}
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {{ $t('tools.fileRenamer.fileList.originalName') }}
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {{ $t('tools.fileRenamer.fileList.newName') }}
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {{ $t('tools.fileRenamer.fileList.size') }}
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {{ $t('tools.fileRenamer.fileList.type') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr
+                  v-for="(file, index) in sortedFiles"
+                  :key="index"
+                  :draggable="sortType === 'manual'"
+                  @dragstart="handleDragStart(index)"
+                  @dragover="handleDragOver($event, index)"
+                  @drop="handleDragDrop($event, index)"
+                  @dragend="handleDragEnd"
+                  :class="{
+                    'cursor-move': sortType === 'manual',
+                    'bg-blue-50': dragOverItemIndex === index,
+                  }"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div
+                      v-if="sortType === 'manual'"
+                      class="cursor-move text-gray-400 hover:text-gray-600"
+                      title="Drag to reorder"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 8h16M4 16h16"
+                        />
+                      </svg>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ file.originalName }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span
+                      :class="{
+                        'text-green-600 font-medium':
+                          file.newName && file.newName !== file.originalName,
+                      }"
+                    >
+                      {{ file.newName || file.originalName }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatFileSize(file.size) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ file.type || '—' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- File List -->
-      <div v-if="files.length > 0" class="bg-white rounded-lg shadow-md">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">
-            {{ $t('tools.fileRenamer.fileList.title') }}
-          </h3>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ $t('tools.fileRenamer.fileList.originalName') }}
-                </th>
-                <th
-                  v-if="hasPreview"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ $t('tools.fileRenamer.fileList.newName') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ $t('tools.fileRenamer.fileList.size') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ $t('tools.fileRenamer.fileList.type') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="(file, index) in files" :key="index">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ file.originalName }}
-                </td>
-                <td v-if="hasPreview" class="px-6 py-4 whitespace-nowrap text-sm">
-                  <span
-                    :class="
-                      file.newName !== file.originalName
-                        ? 'text-green-600 font-medium'
-                        : 'text-gray-500'
-                    "
-                  >
-                    {{ file.newName || file.originalName }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatFileSize(file.size) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ file.type || 'Unknown' }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <!-- Empty State -->
+      <div v-else class="bg-white p-12 rounded-lg shadow-sm border text-center">
+        <div class="text-5xl mb-4">📁</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-1">
+          {{ $t('tools.fileRenamer.uploadArea.title') }}
+        </h3>
+        <p class="text-gray-500">
+          {{ $t('tools.fileRenamer.uploadArea.subtitle') }}
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
@@ -381,6 +441,8 @@ interface FileItem {
   newName?: string
   size: number
   type: string
+  lastModified: number
+  sortOrder?: number // Add this property for drag-and-drop sorting
 }
 
 // State
@@ -390,6 +452,41 @@ const activeTab = ref('sequential')
 const hasPreview = ref(false)
 const hasRenamed = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+const sortType = ref('natural')
+const dragItemIndex = ref<number | null>(null)
+const dragOverItemIndex = ref<number | null>(null)
+
+// Computed property for sorted files
+const sortedFiles = computed(() => {
+  const filesArray = [...files.value]
+
+  // If we're in manual sort mode (drag-and-drop), use the sortOrder property
+  if (sortType.value === 'manual') {
+    return filesArray.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+  }
+
+  switch (sortType.value) {
+    case 'natural':
+      return filesArray.sort((a, b) =>
+        a.originalName.localeCompare(b.originalName, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        }),
+      )
+    case 'filename':
+      return filesArray.sort((a, b) => a.originalName.localeCompare(b.originalName))
+    case 'modifiedTime':
+      return filesArray.sort((a, b) => a.lastModified - b.lastModified)
+    case 'modifiedTimeDesc':
+      return filesArray.sort((a, b) => b.lastModified - a.lastModified)
+    case 'random':
+      return filesArray.sort(() => Math.random() - 0.5)
+    case 'reverse':
+      return filesArray.reverse()
+    default:
+      return filesArray
+  }
+})
 
 // Renaming options
 const sequentialOptions = ref({
@@ -428,8 +525,19 @@ const renamingTabs = [
   { id: 'truncate' },
 ]
 
+// Sorting options
+const sortingOptions = [
+  { id: 'natural', label: t('tools.fileRenamer.sorting.natural') },
+  { id: 'filename', label: t('tools.fileRenamer.sorting.filename') },
+  { id: 'modifiedTime', label: t('tools.fileRenamer.sorting.modifiedTime') },
+  { id: 'modifiedTimeDesc', label: t('tools.fileRenamer.sorting.modifiedTimeDesc') },
+  { id: 'random', label: t('tools.fileRenamer.sorting.random') },
+  { id: 'reverse', label: t('tools.fileRenamer.sorting.reverse') },
+  { id: 'manual', label: t('tools.fileRenamer.sorting.manual') }, // Add manual sort option
+]
+
 // File handling
-const handleDrop = (event: DragEvent) => {
+const handleFileDrop = (event: DragEvent) => {
   event.preventDefault()
   isDragging.value = false
 
@@ -443,12 +551,21 @@ const handleFileSelect = (event: Event) => {
   processFiles(selectedFiles)
 }
 
+const fileInputClick = () => {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+// Initialize sortOrder when files are added
 const processFiles = (fileList: File[]) => {
-  const newFiles: FileItem[] = fileList.map((file) => ({
+  const newFiles: FileItem[] = fileList.map((file, index) => ({
     file,
     originalName: file.name,
     size: file.size,
     type: file.type,
+    lastModified: file.lastModified,
+    sortOrder: files.value.length + index, // Set initial sort order
   }))
 
   files.value = [...files.value, ...newFiles]
@@ -479,9 +596,14 @@ const getFileExtension = (filename: string): string => {
   return filename.substring(lastDotIndex)
 }
 
+// Sorting function
+const sortFiles = (type: string) => {
+  sortType.value = type
+}
+
 // Renaming functions
 const generatePreview = () => {
-  files.value.forEach((file, index) => {
+  sortedFiles.value.forEach((file, index) => {
     let newName = file.originalName
 
     // Apply sequential renaming
@@ -561,7 +683,7 @@ const generatePreview = () => {
 }
 
 const applyRename = () => {
-  files.value.forEach((file) => {
+  sortedFiles.value.forEach((file) => {
     if (file.newName && file.newName !== file.originalName) {
       // Create a new file with the new name
       const newFile = new File([file.file], file.newName, { type: file.file.type })
@@ -583,7 +705,7 @@ const downloadFiles = async () => {
     const JSZip = (await import('jszip')).default
     const zip = new JSZip()
 
-    files.value.forEach((file) => {
+    sortedFiles.value.forEach((file) => {
       zip.file(file.originalName, file.file)
     })
 
@@ -598,7 +720,8 @@ const downloadFiles = async () => {
     URL.revokeObjectURL(url)
 
     success(t('tools.fileRenamer.messages.downloadStarted'))
-  } catch (_err) {
+  } catch (err) {
+    console.error('Download error:', err)
     const { error } = useToast()
     error(t('tools.fileRenamer.messages.downloadError'))
   }
@@ -609,5 +732,52 @@ const clearFiles = () => {
   hasPreview.value = false
   hasRenamed.value = false
   info(t('tools.fileRenamer.messages.filesCleared'))
+}
+
+// Drag and drop functions
+const handleDragStart = (index: number) => {
+  dragItemIndex.value = index
+}
+
+const handleDragOver = (event: DragEvent, index: number) => {
+  event.preventDefault()
+  dragOverItemIndex.value = index
+}
+
+const handleDragDrop = (event: DragEvent, targetIndex: number) => {
+  event.preventDefault()
+
+  if (dragItemIndex.value === null) return
+
+  const draggedItem = sortedFiles.value[dragItemIndex.value]
+  const targetItem = sortedFiles.value[targetIndex]
+
+  // Update sort orders
+  const newFiles = [...files.value]
+  const draggedFileIndex = newFiles.findIndex(
+    (f) =>
+      f.originalName === draggedItem.originalName && f.lastModified === draggedItem.lastModified,
+  )
+  const targetFileIndex = newFiles.findIndex(
+    (f) => f.originalName === targetItem.originalName && f.lastModified === targetItem.lastModified,
+  )
+
+  if (draggedFileIndex !== -1 && targetFileIndex !== -1) {
+    // Swap sort orders
+    const tempSortOrder = newFiles[draggedFileIndex].sortOrder
+    newFiles[draggedFileIndex].sortOrder = newFiles[targetFileIndex].sortOrder
+    newFiles[targetFileIndex].sortOrder = tempSortOrder
+
+    files.value = newFiles
+    sortType.value = 'manual' // Switch to manual sort mode
+  }
+
+  dragItemIndex.value = null
+  dragOverItemIndex.value = null
+}
+
+const handleDragEnd = () => {
+  dragItemIndex.value = null
+  dragOverItemIndex.value = null
 }
 </script>
