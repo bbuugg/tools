@@ -247,10 +247,7 @@
 
                 <!-- Preview for images -->
                 <div
-                  v-if="
-                    (item.type === 'image' || item.type === 'css-background') &&
-                    isImageUrl(item.url)
-                  "
+                  v-if="item.type === 'image' || item.type === 'css-background'"
                   class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
                   <img
@@ -264,7 +261,7 @@
 
                 <!-- Preview for videos -->
                 <div
-                  v-if="item.type === 'video' && isVideoUrl(item.url)"
+                  v-if="item.type === 'video'"
                   class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
                   <video
@@ -727,17 +724,5 @@ function getTypeEmoji(type: string): string {
     form: '📝',
   }
   return emojis[type] || '📄'
-}
-
-// Check if URL is an image
-function isImageUrl(url: string): boolean {
-  const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp|svg|ico)$/i
-  return imageExtensions.test(url)
-}
-
-// Check if URL is a video
-function isVideoUrl(url: string): boolean {
-  const videoExtensions = /\.(mp4|webm|ogg|avi|mov|wmv|flv|mkv)$/i
-  return videoExtensions.test(url)
 }
 </script>
