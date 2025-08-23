@@ -32,6 +32,55 @@ export default {
     noResults: '没有找到匹配的工具。',
     noToolsInCategory: '该分类中没有可用的工具。',
   },
+  toast: {
+    success: '成功',
+    error: '错误',
+    warning: '警告',
+    info: '信息',
+    copied: '结果已复制到剪贴板！',
+    copyFailed: '复制到剪贴板失败',
+    downloadSuccess: '文件下载成功！',
+  },
+  footer: {
+    madeWith: '用',
+    by: '制作',
+  },
+  categories: {
+    'web-tools': {
+      name: '网页工具',
+      description: '网页开发和分析工具',
+    },
+    'json-tools': {
+      name: 'JSON工具',
+      description: '全面的JSON处理和转换实用程序',
+    },
+    'data-tools': {
+      name: '数据工具',
+      description: '数据处理和操作工具',
+    },
+    'image-tools': {
+      name: '图片工具',
+      description: '图片处理和管理工具',
+    },
+    converters: {
+      name: '转换器',
+      description: '格式转换实用工具',
+    },
+    generators: {
+      name: '生成器',
+      description: '代码和内容生成器',
+    },
+  },
+  pagination: {
+    previous: '上一页',
+    next: '下一页',
+    page: '第',
+    of: '页，共',
+  },
+  status: {
+    active: '可用',
+    'coming-soon': '即将推出',
+  },
   tools: {
     htmlExtractor: {
       title: 'HTML 内容提取器',
@@ -586,55 +635,6 @@ export default {
         generationComplete: '图标生成成功！',
         downloadComplete: '下载完成！',
       },
-    },
-    toast: {
-      success: '成功',
-      error: '错误',
-      warning: '警告',
-      info: '信息',
-      copied: '结果已复制到剪贴板！',
-      copyFailed: '复制到剪贴板失败',
-      downloadSuccess: '文件下载成功！',
-    },
-    footer: {
-      madeWith: '用',
-      by: '制作',
-    },
-    categories: {
-      'web-tools': {
-        name: '网页工具',
-        description: '网页开发和分析工具',
-      },
-      'json-tools': {
-        name: 'JSON工具',
-        description: '全面的JSON处理和转换实用程序',
-      },
-      'data-tools': {
-        name: '数据工具',
-        description: '数据处理和操作工具',
-      },
-      'image-tools': {
-        name: '图片工具',
-        description: '图片处理和管理工具',
-      },
-      converters: {
-        name: '转换器',
-        description: '格式转换实用工具',
-      },
-      generators: {
-        name: '生成器',
-        description: '代码和内容生成器',
-      },
-    },
-    pagination: {
-      previous: '上一页',
-      next: '下一页',
-      page: '第',
-      of: '页，共',
-    },
-    status: {
-      active: '可用',
-      'coming-soon': '即将推出',
     },
   },
 }

@@ -22,6 +22,55 @@ export default {
     nonEmpty: 'Non-empty',
     loading: 'Loading...',
   },
+  toast: {
+    success: 'Success',
+    error: 'Error',
+    warning: 'Warning',
+    info: 'Info',
+    copied: 'Results copied to clipboard!',
+    copyFailed: 'Failed to copy to clipboard',
+    downloadSuccess: 'File downloaded successfully!',
+  },
+  footer: {
+    madeWith: 'Made with',
+    by: 'by',
+  },
+  categories: {
+    'web-tools': {
+      name: 'Web Tools',
+      description: 'Tools for web development and analysis',
+    },
+    'json-tools': {
+      name: 'JSON Tools',
+      description: 'Comprehensive JSON processing and conversion utilities',
+    },
+    'data-tools': {
+      name: 'Data Tools',
+      description: 'Tools for data processing and manipulation',
+    },
+    'image-tools': {
+      name: 'Image Tools',
+      description: 'Tools for image processing and management',
+    },
+    converters: {
+      name: 'Converters',
+      description: 'Format conversion utilities',
+    },
+    generators: {
+      name: 'Generators',
+      description: 'Code and content generators',
+    },
+  },
+  pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+  },
+  status: {
+    active: 'Active',
+    'coming-soon': 'Coming Soon',
+  },
   navigation: {
     tools: 'Tools',
     language: 'Language',
@@ -911,55 +960,6 @@ export default {
           downloaded: 'JSON file downloaded successfully!',
           downloadFailed: 'Failed to download file',
         },
-      },
-      toast: {
-        success: 'Success',
-        error: 'Error',
-        warning: 'Warning',
-        info: 'Info',
-        copied: 'Results copied to clipboard!',
-        copyFailed: 'Failed to copy to clipboard',
-        downloadSuccess: 'File downloaded successfully!',
-      },
-      footer: {
-        madeWith: 'Made with',
-        by: 'by',
-      },
-      categories: {
-        'web-tools': {
-          name: 'Web Tools',
-          description: 'Tools for web development and analysis',
-        },
-        'json-tools': {
-          name: 'JSON Tools',
-          description: 'Comprehensive JSON processing and conversion utilities',
-        },
-        'data-tools': {
-          name: 'Data Tools',
-          description: 'Tools for data processing and manipulation',
-        },
-        'image-tools': {
-          name: 'Image Tools',
-          description: 'Tools for image processing and management',
-        },
-        converters: {
-          name: 'Converters',
-          description: 'Format conversion utilities',
-        },
-        generators: {
-          name: 'Generators',
-          description: 'Code and content generators',
-        },
-      },
-      pagination: {
-        previous: 'Previous',
-        next: 'Next',
-        page: 'Page',
-        of: 'of',
-      },
-      status: {
-        active: 'Active',
-        'coming-soon': 'Coming Soon',
       },
     },
   },
