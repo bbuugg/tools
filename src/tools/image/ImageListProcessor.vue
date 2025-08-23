@@ -59,15 +59,15 @@
             :key="index"
             class="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
           >
-            <div class="aspect-square relative bg-gray-100">
+            <div class="aspect-square relative bg-gray-100 border border-gray-200">
               <img
                 referrerpolicy="no-referrer"
                 :src="image.url"
                 :alt="image.alt || `Image ${index + 1}`"
                 @error="handleImageError"
                 @load="handleImageLoad"
-                class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                @click="openImageModal(image)"
+                class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-200 p-2"
+                @click="showLightbox(index)"
               />
               <div
                 v-if="image.loading"
@@ -157,34 +157,23 @@
     </div>
   </div>
 
-  <!-- Image Modal -->
-  <div
-    v-if="selectedImage"
-    class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
-    @click="closeImageModal"
-  >
-    <div class="max-w-4xl max-h-full relative">
-      <button
-        @click="closeImageModal"
-        class="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl"
-      >
-        ✕
-      </button>
-      <img
-        :src="selectedImage.url"
-        :alt="selectedImage.alt || 'Selected image'"
-        class="max-w-full max-h-full object-contain"
-        @click.stop
-      />
-      <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
-        <div class="text-sm truncate">{{ selectedImage.url }}</div>
-      </div>
-    </div>
-  </div>
+  <!-- Vue Easy Lightbox -->
+  <vue-easy-lightbox
+    :visible="lightboxVisible"
+    :imgs="lightboxImages"
+    :index="lightboxIndex"
+    @hide="hideLightbox"
+    :move-disabled="false"
+    :scroll-disabled="false"
+    :drag="true"
+    :wheel="true"
+    :pinch="true"
+    :dblclick="true"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
@@ -201,7 +190,29 @@ const { copySuccess, copyError } = useToast()
 
 const inputData = ref('')
 const imageList = ref<ImageInfo[]>([])
-const selectedImage = ref<ImageInfo | null>(null)
+
+// Lightbox state
+const lightboxVisible = ref(false)
+const lightboxIndex = ref(0)
+
+// Computed property for lightbox images
+const lightboxImages = computed(() => {
+  return imageList.value.map((image) => ({
+    src: image.url,
+    title: image.filename || extractFilename(image.url),
+  }))
+})
+
+// Show lightbox
+function showLightbox(index: number) {
+  lightboxIndex.value = index
+  lightboxVisible.value = true
+}
+
+// Hide lightbox
+function hideLightbox() {
+  lightboxVisible.value = false
+}
 
 // Process input data to extract image URLs
 function processImages() {
@@ -281,14 +292,6 @@ function handleImageLoad(event: Event) {
   }
 }
 
-function openImageModal(image: ImageInfo) {
-  selectedImage.value = image
-}
-
-function closeImageModal() {
-  selectedImage.value = null
-}
-
 // Action functions
 function clearAll() {
   inputData.value = ''
@@ -321,3 +324,19 @@ https://picsum.photos/400/300?random=8`
   processImages()
 }
 </script>
+
+<style scoped>
+/* Ensure proper image display in gallery */
+.aspect-square img {
+  transition: transform 0.2s ease-in-out;
+}
+
+.aspect-square:hover img {
+  transform: scale(1.05);
+}
+
+/* Ensure images maintain aspect ratio while fitting in container */
+.object-contain {
+  object-fit: contain;
+}
+</style>

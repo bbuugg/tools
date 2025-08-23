@@ -265,12 +265,12 @@ export default {
           description: '只需逐行粘贴图片URL - 无需复杂格式。',
         },
         gallery: {
-          title: '图库视图',
-          description: '在清洁的4列响应式图库布局中查看所有图片。',
+          title: '增强图库',
+          description: '在清洁4列布局中查看所有图片，支持缩放、平移和键盘导航的全功能灯箱预览。',
         },
         fast: {
-          title: '快速预览',
-          description: '即时预览所有图片，带有悬停效果和模态视图。',
+          title: '专业预览',
+          description: '高级图片查看器，支持缩放、滚动、拖拽和全屏功能，便于详细检查。',
         },
       },
     },

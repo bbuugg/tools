@@ -187,12 +187,14 @@ export default {
           description: 'Just paste image URLs line by line - no complex formatting needed.',
         },
         gallery: {
-          title: 'Gallery View',
-          description: 'View all images in a clean 4-column responsive gallery layout.',
+          title: 'Enhanced Gallery',
+          description:
+            'View all images in a clean 4-column layout with full-featured lightbox preview supporting zoom, pan, and keyboard navigation.',
         },
         fast: {
-          title: 'Fast Preview',
-          description: 'Instant preview of all images with hover effects and modal view.',
+          title: 'Professional Preview',
+          description:
+            'Advanced image viewer with zoom, scroll, drag, and full-screen capabilities for detailed inspection.',
         },
       },
     },
