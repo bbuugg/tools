@@ -103,29 +103,53 @@
             </div>
           </div>
 
-          <!-- Cropper Container -->
+          <!-- Professional Image Cropper -->
           <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Image Cropper -->
+            <!-- Vue Advanced Cropper -->
             <div class="flex-1">
               <h5 class="text-sm font-medium text-gray-700 mb-3">
                 {{ $t('tools.faviconGenerator.cropPreview') }}
               </h5>
-              <div class="relative bg-gray-100 rounded-lg overflow-hidden">
-                <canvas
-                  ref="cropCanvas"
-                  @mousedown="startCrop"
-                  @mousemove="updateCrop"
-                  @mouseup="endCrop"
-                  @touchstart="startCrop"
-                  @touchmove="updateCrop"
-                  @touchend="endCrop"
-                  class="max-w-full h-auto cursor-crosshair border border-gray-300"
-                  :width="canvasSize.width"
-                  :height="canvasSize.height"
-                />
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="cropper-container" style="height: 400px">
+                  <Cropper
+                    ref="cropperRef"
+                    :src="originalImageUrl"
+                    :stencil-props="{
+                      aspectRatio: 1,
+                      movable: true,
+                      resizable: true,
+                    }"
+                    :resize-image="{
+                      adjustStencil: false,
+                    }"
+                    :default-size="{
+                      width: ({
+                        imageSize,
+                        visibleArea,
+                      }: {
+                        imageSize: { width: number; height: number }
+                        visibleArea: { width: number; height: number }
+                      }) => {
+                        return Math.min(imageSize.width, visibleArea.width * 0.6)
+                      },
+                      height: ({
+                        imageSize,
+                        visibleArea,
+                      }: {
+                        imageSize: { width: number; height: number }
+                        visibleArea: { width: number; height: number }
+                      }) => {
+                        return Math.min(imageSize.height, visibleArea.height * 0.6)
+                      },
+                    }"
+                    @change="onCropChange"
+                    class="rounded border border-gray-300"
+                  />
+                </div>
               </div>
               <p class="text-sm text-gray-500 mt-2">
-                {{ $t('tools.faviconGenerator.cropInstruction') }}
+                {{ $t('tools.faviconGenerator.cropInstructionAdvanced') }}
               </p>
             </div>
 
@@ -321,9 +345,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
 
 interface FaviconResult {
   size: number
@@ -333,42 +359,34 @@ interface FaviconResult {
   filename: string
 }
 
-interface CropArea {
-  x: number
-  y: number
+interface CropperCoordinates {
+  left: number
+  top: number
   width: number
   height: number
+}
+
+interface CropData {
+  coordinates: CropperCoordinates
+  canvas: HTMLCanvasElement | null
 }
 
 const { t } = useI18n()
 const { success, error: showError } = useToast()
 
 const fileInput = ref<HTMLInputElement>()
-const cropCanvas = ref<HTMLCanvasElement>()
+const cropperRef = ref<InstanceType<typeof Cropper>>()
 const selectedImage = ref<HTMLImageElement | null>(null)
 const originalImageUrl = ref<string>('')
 const originalImageSize = ref({ width: 0, height: 0 })
 const isDragging = ref(false)
 const isGenerating = ref(false)
-const isCropping = ref(false)
+const currentCropData = ref<CropData | null>(null)
 
 const outputFormat = ref('ico')
 const availableSizes = [16, 32, 48, 64, 128]
 const selectedSizes = ref([16, 32, 48])
 const generatedFavicons = ref<FaviconResult[]>([])
-
-const canvasSize = ref({ width: 400, height: 400 })
-const cropArea = ref<CropArea>({ x: 50, y: 50, width: 300, height: 300 })
-const imageScale = ref(1)
-const imageOffset = ref({ x: 0, y: 0 })
-
-// Computed properties
-const cropStyle = computed(() => ({
-  left: `${cropArea.value.x}px`,
-  top: `${cropArea.value.y}px`,
-  width: `${cropArea.value.width}px`,
-  height: `${cropArea.value.height}px`,
-}))
 
 // File handling
 function openFileSelector() {
@@ -404,11 +422,6 @@ function loadImage(file: File) {
       originalImageUrl.value = imageUrl
       originalImageSize.value = { width: img.width, height: img.height }
 
-      // Force Vue to update the DOM before setting up canvas
-      setTimeout(() => {
-        setupCanvas()
-      }, 100)
-
       success(t('tools.faviconGenerator.success.imageLoaded'))
     }
     img.onerror = () => {
@@ -426,167 +439,21 @@ function resetImage() {
   selectedImage.value = null
   originalImageUrl.value = ''
   originalImageSize.value = { width: 0, height: 0 }
+  currentCropData.value = null
   generatedFavicons.value = []
   if (fileInput.value) {
     fileInput.value.value = ''
   }
 }
 
-// Canvas setup and drawing
-function setupCanvas() {
-  if (!selectedImage.value || !cropCanvas.value) return
-
-  const canvas = cropCanvas.value
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  const img = selectedImage.value
-
-  // Calculate scale to fit image in canvas with better sizing
-  const maxSize = 500 // Increased canvas size for better preview
-  const scale = Math.min(maxSize / img.width, maxSize / img.height, 1) // Don't scale up small images
-
-  canvasSize.value.width = Math.max(img.width * scale, 300) // Minimum canvas size
-  canvasSize.value.height = Math.max(img.height * scale, 300)
-
-  canvas.width = canvasSize.value.width
-  canvas.height = canvasSize.value.height
-
-  imageScale.value = scale
-
-  // Set initial crop area to center square
-  const size = Math.min(canvasSize.value.width, canvasSize.value.height) * 0.7
-  cropArea.value = {
-    x: (canvasSize.value.width - size) / 2,
-    y: (canvasSize.value.height - size) / 2,
-    width: size,
-    height: size,
-  }
-
-  // Force immediate canvas draw
-  requestAnimationFrame(() => {
-    drawCanvas()
-  })
+// Vue Advanced Cropper event handlers
+function onCropChange({ coordinates, canvas }: CropData) {
+  currentCropData.value = { coordinates, canvas }
 }
 
-function drawCanvas() {
-  if (!selectedImage.value || !cropCanvas.value) return
-
-  const canvas = cropCanvas.value
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  // Clear canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  // Draw image
-  ctx.drawImage(selectedImage.value, 0, 0, canvasSize.value.width, canvasSize.value.height)
-
-  // Draw crop overlay
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  // Clear crop area
-  ctx.clearRect(cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height)
-
-  // Redraw image in crop area
-  ctx.drawImage(
-    selectedImage.value,
-    cropArea.value.x,
-    cropArea.value.y,
-    cropArea.value.width,
-    cropArea.value.height,
-    cropArea.value.x,
-    cropArea.value.y,
-    cropArea.value.width,
-    cropArea.value.height,
-  )
-
-  // Draw crop border
-  ctx.strokeStyle = '#3b82f6'
-  ctx.lineWidth = 2
-  ctx.strokeRect(cropArea.value.x, cropArea.value.y, cropArea.value.width, cropArea.value.height)
-
-  // Draw corner handles
-  const handleSize = 8
-  const handles = [
-    { x: cropArea.value.x - handleSize / 2, y: cropArea.value.y - handleSize / 2 },
-    {
-      x: cropArea.value.x + cropArea.value.width - handleSize / 2,
-      y: cropArea.value.y - handleSize / 2,
-    },
-    {
-      x: cropArea.value.x - handleSize / 2,
-      y: cropArea.value.y + cropArea.value.height - handleSize / 2,
-    },
-    {
-      x: cropArea.value.x + cropArea.value.width - handleSize / 2,
-      y: cropArea.value.y + cropArea.value.height - handleSize / 2,
-    },
-  ]
-
-  ctx.fillStyle = '#3b82f6'
-  handles.forEach((handle) => {
-    ctx.fillRect(handle.x, handle.y, handleSize, handleSize)
-  })
-}
-
-// Crop functionality
-function startCrop(event: MouseEvent | TouchEvent) {
-  isCropping.value = true
-  const rect = cropCanvas.value?.getBoundingClientRect()
-  if (!rect) return
-
-  const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
-  const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
-
-  const x = clientX - rect.left
-  const y = clientY - rect.top
-
-  // Simple drag to move crop area
-  cropArea.value.x = Math.max(
-    0,
-    Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2),
-  )
-  cropArea.value.y = Math.max(
-    0,
-    Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2),
-  )
-
-  drawCanvas()
-}
-
-function updateCrop(event: MouseEvent | TouchEvent) {
-  if (!isCropping.value) return
-
-  const rect = cropCanvas.value?.getBoundingClientRect()
-  if (!rect) return
-
-  const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
-  const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
-
-  const x = clientX - rect.left
-  const y = clientY - rect.top
-
-  cropArea.value.x = Math.max(
-    0,
-    Math.min(canvasSize.value.width - cropArea.value.width, x - cropArea.value.width / 2),
-  )
-  cropArea.value.y = Math.max(
-    0,
-    Math.min(canvasSize.value.height - cropArea.value.height, y - cropArea.value.height / 2),
-  )
-
-  drawCanvas()
-}
-
-function endCrop() {
-  isCropping.value = false
-}
-
-// Favicon generation
+// Favicon generation with Vue Advanced Cropper data
 async function generateFavicons() {
-  if (!selectedImage.value || selectedSizes.value.length === 0) return
+  if (!selectedImage.value || selectedSizes.value.length === 0 || !currentCropData.value) return
 
   isGenerating.value = true
   generatedFavicons.value = []
@@ -600,13 +467,25 @@ async function generateFavicons() {
       canvas.width = size
       canvas.height = size
 
-      // Calculate source crop area in original image coordinates
-      const sourceX = cropArea.value.x / imageScale.value
-      const sourceY = cropArea.value.y / imageScale.value
-      const sourceSize = cropArea.value.width / imageScale.value
-
-      // Draw cropped and resized image
-      ctx.drawImage(selectedImage.value, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size)
+      // Use the cropped canvas from Vue Advanced Cropper
+      if (currentCropData.value.canvas) {
+        // Draw the already cropped canvas to our target size
+        ctx.drawImage(currentCropData.value.canvas, 0, 0, size, size)
+      } else {
+        // Fallback: use coordinates to crop manually
+        const coords = currentCropData.value.coordinates
+        ctx.drawImage(
+          selectedImage.value,
+          coords.left,
+          coords.top,
+          coords.width,
+          coords.height,
+          0,
+          0,
+          size,
+          size,
+        )
+      }
 
       // Convert to blob
       const mimeType = outputFormat.value === 'ico' ? 'image/png' : `image/${outputFormat.value}`

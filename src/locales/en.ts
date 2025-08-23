@@ -312,7 +312,9 @@ export default {
       cropPreview: 'Crop Preview',
       selectAnother: 'Select Another',
       cropInstruction:
-        'Drag to adjust the crop area. The selected area will be used to generate square favicons.',
+        'Drag the crop area to move it, or drag the corner handles to resize. The selected square area will be used to generate favicons.',
+      cropInstructionAdvanced:
+        'Drag to move the crop area, resize by dragging corners, or use mouse wheel to zoom. The selected square area will be used for favicon generation.',
       outputFormat: 'Output Format',
       sizes: 'Favicon Sizes',
       generate: 'Generate Favicons',

@@ -301,7 +301,10 @@ export default {
       imageSize: '图片尺寸',
       cropPreview: '裁剪预览',
       selectAnother: '选择其他',
-      cropInstruction: '拖动调整裁剪区域。选中的区域将用于生成正方形图标。',
+      cropInstruction:
+        '拖动裁剪区域移动位置，或拖动角落手柄调整大小。选中的正方形区域将用于生成图标。',
+      cropInstructionAdvanced:
+        '拖动移动裁剪区域，拖动角落调整大小，或使用鼠标滚轮缩放。选中的正方形区域将用于生成网站图标。',
       outputFormat: '输出格式',
       sizes: '图标尺寸',
       generate: '生成图标',
