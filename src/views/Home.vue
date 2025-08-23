@@ -24,12 +24,37 @@
         <!-- Category Navigation -->
         <div class="p-4 border-b border-gray-200">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">
-              {{
-                showCategoryView
-                  ? $t('navigation.categories')
-                  : $t(`categories.${selectedCategory}.name`)
-              }}
+            <!-- Category Title - Clickable with arrow when in tool view -->
+            <div
+              v-if="!showCategoryView"
+              @click="backToCategories"
+              class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <svg
+                  class="w-4 h-4 mr-2 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  {{ $t(`categories.${selectedCategory}.name`) }}
+                </h2>
+              </div>
+              <span class="text-xs text-gray-500">
+                {{ filteredTools.length }}/{{ currentCategoryTools.length }}
+              </span>
+            </div>
+            <!-- Regular title when in category view -->
+            <h2 v-else class="text-lg font-semibold text-gray-900">
+              {{ $t('navigation.categories') }}
             </h2>
             <button
               v-if="isMobile"
@@ -44,24 +69,6 @@
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
-          </div>
-
-          <!-- Back Button (only shown in tool view) -->
-          <div v-if="!showCategoryView" class="mb-4">
-            <button
-              @click="backToCategories"
-              class="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
-            >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              {{ $t('navigation.backToCategories') }}
             </button>
           </div>
 
@@ -111,15 +118,6 @@
         <!-- Tools List (shown in tool view) -->
         <div v-if="!showCategoryView" class="flex-1 flex flex-col min-h-0">
           <div class="p-4 border-b border-gray-200">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-sm font-medium text-gray-900">
-                {{ $t('navigation.tools') }}
-              </h3>
-              <span class="text-xs text-gray-500">
-                {{ filteredTools.length }}/{{ currentCategoryTools.length }}
-              </span>
-            </div>
-
             <!-- Search Box -->
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -276,7 +274,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Header from '@/layouts/Header.vue'
 import Footer from '@/layouts/Footer.vue'
@@ -297,7 +295,6 @@ interface Category {
 }
 
 const route = useRoute()
-const router = useRouter()
 const {} = useI18n()
 
 const selectedCategory = ref('web-tools')
@@ -819,28 +816,6 @@ function checkMobile() {
   isMobile.value = window.innerWidth < 1024 // lg breakpoint
   if (!isMobile.value) {
     isSidebarOpen.value = false
-  }
-}
-
-function selectCategory(categoryId: string) {
-  if (selectedCategory.value === categoryId) {
-    return
-  }
-  selectedCategory.value = categoryId
-  searchQuery.value = '' // Clear search when changing category
-
-  // Set loading state when navigating to a new category
-  isLoading.value = true
-
-  // Navigate to first tool of the category
-  const category = categories.value.find((cat) => cat.id === categoryId)
-  if (category && category.tools.length > 0) {
-    router.push(category.tools[0].path)
-  }
-
-  // Close sidebar on mobile after selection
-  if (isMobile.value) {
-    closeSidebar()
   }
 }
 
