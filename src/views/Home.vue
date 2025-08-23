@@ -256,6 +256,13 @@ const categories = ref<Category[]>([
     icon: '🔄',
     tools: [
       {
+        id: 'file-renamer',
+        name: 'Batch File Renamer',
+        icon: '📝',
+        path: '/converters/file-renamer',
+        status: 'active',
+      },
+      {
         id: 'url-encoder',
         name: 'URL Encoder',
         icon: '🔗',

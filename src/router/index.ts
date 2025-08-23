@@ -5,6 +5,7 @@ import JsonExtractor from '../tools/JsonExtractor.vue'
 import ImageListProcessor from '../tools/ImageListProcessor.vue'
 import ImageCompressor from '../tools/ImageCompressor.vue'
 import FaviconGenerator from '../tools/FaviconGenerator.vue'
+import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
 
 const router = createRouter({
@@ -62,6 +63,15 @@ const router = createRouter({
           meta: {
             category: 'generators',
             title: 'Favicon Generator',
+          },
+        },
+        {
+          path: 'converters/file-renamer',
+          name: 'file-renamer',
+          component: FileRenamer,
+          meta: {
+            category: 'converters',
+            title: 'File Renamer',
           },
         },
         {
