@@ -421,6 +421,7 @@ function extractImages(doc: Document): ExtractedItem[] {
   const imgs = doc.querySelectorAll('img')
   imgs.forEach((img) => {
     const src = img.getAttribute('src')
+    console.log(src)
     if (src) {
       const url = options.value.absoluteUrls ? makeAbsolute(src, baseUrl.value) : src
       results.push({

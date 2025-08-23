@@ -1,17 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../views/Home.vue'
-import HtmlExtractor from '../tools/HtmlExtractor.vue'
-import JsonExtractor from '../tools/JsonExtractor.vue'
-import ImageListProcessor from '../tools/image/ImageListProcessor.vue'
-import ImageCompressor from '../tools/image/ImageCompressor.vue'
-import FaviconGenerator from '../tools/FaviconGenerator.vue'
-import FileRenamer from '../tools/FileRenamer.vue'
 import ComingSoon from '../tools/ComingSoon.vue'
-import BackgroundRemover from '../tools/image/BackgroundRemover.vue'
-import VideoToGifConverter from '../tools/image/VideoToGifConverter.vue'
-import ApngGenerator from '../tools/image/ApngGenerator.vue'
+import HomePage from '../views/Home.vue'
 
 // JSON Tools imports (placeholder for now, will be created later)
+const HtmlExtractor = () => import('../tools/HtmlExtractor.vue')
+const FileRenamer = () => import('../tools/FileRenamer.vue')
+const FaviconGenerator = () => import('../tools/FaviconGenerator.vue')
+const ApngGenerator = () => import('../tools/image/ApngGenerator.vue')
+const ImageCompressor = () => import('../tools/image/ImageCompressor.vue')
+const ImageListProcessor = () => import('../tools/image/ImageListProcessor.vue')
+const VideoToGifConverter = () => import('../tools/image/VideoToGifConverter.vue')
+const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const ExcelToJson = () => import('../tools/json/ExcelToJson.vue')
 const JsonToCsv = () => import('../tools/json/JsonToCsv.vue')
@@ -534,15 +533,6 @@ const router = createRouter({
           meta: {
             category: 'web-tools',
             title: 'HTML Content Extractor',
-          },
-        },
-        {
-          path: 'data-tools/json-extractor',
-          name: 'json-extractor',
-          component: JsonExtractor,
-          meta: {
-            category: 'data-tools',
-            title: 'JSON Field Extractor',
           },
         },
         {

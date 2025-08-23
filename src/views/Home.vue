@@ -636,15 +636,7 @@ const categories = ref<Category[]>([
     id: 'data-tools',
     name: 'Data Tools',
     icon: '📊',
-    tools: [
-      {
-        id: 'jsonExtractor',
-        name: 'JSON Field Extractor',
-        icon: '📋',
-        path: '/data-tools/json-extractor',
-        status: 'active',
-      },
-    ],
+    tools: [],
   },
   {
     id: 'image-tools',
