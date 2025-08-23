@@ -122,6 +122,88 @@ export default {
         forms: '表单',
       },
     },
+    jsonToExcel: {
+      title: 'JSON 转 Excel 转换器 ',
+      description: ' 将 JSON 数据转换为 Excel 格式，支持自定义选项 ',
+      inputTitle: ' 输入 JSON 数据 ',
+      outputTitle: 'Excel 输出结果 ',
+      inputPlaceholder: ' 在此粘贴您的 JSON 数组...',
+      noResults: ' 暂无转换结果。请输入 JSON 数据以进行转换。',
+      conversionComplete: ' 转换成功完成！',
+      readyForDownload: 'Excel 文件已准备就绪，可立即下载。',
+      previewTitle: ' 数据预览 ',
+      convert: ' 转换为 Excel',
+      showingRows: ' 显示 {shown} 行，共 {total} 行 ',
+      options: {
+        includeHeaders: ' 包含表头 ',
+        autoFitColumns: ' 自动适配列宽 ',
+        sheetName: ' 工作表名称 ',
+        sheetNamePlaceholder: ' 输入工作表名称 ',
+      },
+      features: {
+        conversion: {
+          title: ' 智能转换 ',
+          description: ' 自动将 JSON 数组转换为 Excel 格式，并对数据类型进行妥善处理。',
+        },
+        formatting: {
+          title: 'Excel 格式优化 ',
+          description: ' 生成格式规范的 Excel 文件，包含表头、自动调整列宽及多工作表支持。',
+        },
+        batch: {
+          title: ' 批量处理 ',
+          description: ' 支持高效处理大型数据集，提供数据预览与批量下载功能。',
+        },
+      },
+      errors: {
+        emptyInput: ' 请提供待转换的 JSON 数据 ',
+        invalidJson: 'JSON 格式无效，请检查您的输入内容。',
+        notArray: ' 输入内容必须是 JSON 数组 ',
+        emptyArray: 'JSON 数组不能为空 ',
+        conversionFailed: 'JSON 转 Excel 转换失败 ',
+      },
+      success: {
+        conversionComplete: 'JSON 成功转换为 Excel！',
+      },
+    },
+    excelToJson: {
+      title: 'Excel 转 JSON 转换器 ',
+      description: ' 将 Excel 文件转换为 JSON 格式，支持灵活的解析选项 ',
+      inputTitle: ' 上传 Excel 文件 ',
+      outputTitle: 'JSON 输出结果 ',
+      uploadDescription: ' 选择需转换为 JSON 的 Excel 文件 ',
+      selectFile: ' 选择 Excel 文件 ',
+      supportedFormats: ' 支持 .xlsx、.xls 及 .csv 格式文件 ',
+      noResults: ' 暂无转换结果。请上传 Excel 文件。',
+      conversionComplete: ' 转换成功完成！',
+      recordsCount: ' 已转换 {count} 条记录 ',
+      convert: ' 转换为 JSON',
+      fileSelected: ' 文件选择成功 ',
+      options: {
+        title: ' 转换选项 ',
+        firstRowAsHeaders: ' 首行作为表头 ',
+        skipEmptyRows: ' 跳过空行 ',
+        sheetIndex: ' 待转换工作表 ',
+      },
+      features: {
+        parsing: {
+          title: 'Excel 解析 ',
+          description: ' 解析 Excel 文件，支持多工作表、公式及多种数据类型。',
+        },
+        conversion: {
+          title: ' 灵活转换 ',
+          description: ' 转换时可配置表头、空行处理及特定工作表选择等选项。',
+        },
+        options: {
+          title: ' 转换选项配置 ',
+          description: ' 通过表头处理、空行跳过及工作表选择等功能自定义输出结果。',
+        },
+      },
+      errors: {
+        noFileSelected: ' 请选择需转换的 Excel 文件 ',
+        xlsxRequired: 'Excel 文件解析需依赖 XLSX 库。请安装：npm install xlsx',
+        conversionFailed: 'Excel 转 JSON 转换失败 ',
+      },
+    },
     jsonExtractor: {
       title: 'JSON 字段提取器',
       description: '一键从 JSON 数组数据中提取指定字段',
