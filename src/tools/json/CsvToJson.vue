@@ -3,34 +3,44 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">CSV to JSON Converter</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.csvToJson.title') }}</h1>
         <p class="text-gray-600">
-          Convert CSV data to JSON format with customizable parsing options
+          {{ $t('tools.csvToJson.description') }}
         </p>
       </div>
 
-      <!-- Features -->
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔄</div>
-          <h3 class="text-lg font-semibold mb-2">Smart Parsing</h3>
-          <p class="text-gray-600 text-sm">
-            Intelligent CSV parsing with support for various delimiters and quote styles
-          </p>
+      <!-- Tool Introduction -->
+      <div class="bg-white p-6 rounded-lg shadow-sm border">
+        <h2 class="text-lg font-semibold mb-3">{{ $t('tools.csvToJson.introduction.title') }}</h2>
+        <div class="text-gray-600 space-y-2">
+          <p>{{ $t('tools.csvToJson.introduction.description') }}</p>
+          <p>{{ $t('tools.csvToJson.introduction.usage') }}</p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Flexible Options</h3>
-          <p class="text-gray-600 text-sm">
-            Configure delimiters, headers, data types, and output format
-          </p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">📊</div>
-          <h3 class="text-lg font-semibold mb-2">Data Preview</h3>
-          <p class="text-gray-600 text-sm">
-            Preview parsed data with statistics and validation before conversion
-          </p>
+
+        <!-- Example -->
+        <div class="mt-4">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">
+            {{ $t('tools.csvToJson.example.title') }}
+          </h3>
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs text-gray-500 mb-1">{{ $t('tools.csvToJson.example.input') }}</p>
+              <pre class="bg-gray-50 p-3 rounded text-xs font-mono">
+name,age,score
+李华,25,89
+小明,22,85</pre
+              >
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">{{ $t('tools.csvToJson.example.output') }}</p>
+              <pre class="bg-gray-50 p-3 rounded text-xs font-mono">
+[
+  {"name": "李华", "age": "25", "score": "89"},
+  {"name": "小明", "age": "22", "score": "85"}
+]</pre
+              >
+            </div>
+          </div>
         </div>
       </div>
 
@@ -38,60 +48,77 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input CSV Data</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.csvToJson.input.title') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
+          <!-- File Upload -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ $t('tools.csvToJson.input.fileUpload') }}
+            </label>
+            <input
+              type="file"
+              accept=".csv,.txt"
+              @change="handleFileUpload"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+          </div>
+
           <textarea
             v-model="inputCsv"
-            placeholder="Paste your CSV data here..."
+            :placeholder="$t('tools.csvToJson.input.placeholder')"
             class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="previewData"
           ></textarea>
 
           <!-- CSV Options -->
           <div class="mt-4 space-y-4">
-            <h4 class="font-medium text-gray-900">Parsing Options</h4>
+            <h4 class="font-medium text-gray-900">{{ $t('tools.csvToJson.options.title') }}</h4>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="flex items-center space-x-2">
-                <label class="text-sm font-medium text-gray-700">Delimiter:</label>
+                <label class="text-sm font-medium text-gray-700"
+                  >{{ $t('tools.csvToJson.options.delimiter') }}:</label
+                >
                 <select
                   v-model="options.delimiter"
                   @change="previewData"
                   class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value=",">,</option>
-                  <option value=";">;</option>
-                  <option value="\t">Tab</option>
-                  <option value="|">|</option>
-                  <option value=" ">Space</option>
+                  <option value=",">{{ $t('tools.csvToJson.delimiters.comma') }}</option>
+                  <option value=";">{{ $t('tools.csvToJson.delimiters.semicolon') }}</option>
+                  <option value="\t">{{ $t('tools.csvToJson.delimiters.tab') }}</option>
+                  <option value="|">{{ $t('tools.csvToJson.delimiters.pipe') }}</option>
+                  <option value=" ">{{ $t('tools.csvToJson.delimiters.space') }}</option>
                 </select>
               </div>
 
               <div class="flex items-center space-x-2">
-                <label class="text-sm font-medium text-gray-700">Quote:</label>
+                <label class="text-sm font-medium text-gray-700"
+                  >{{ $t('tools.csvToJson.options.outputFormat') }}:</label
+                >
                 <select
-                  v-model="options.quote"
-                  @change="previewData"
+                  v-model="options.outputFormat"
                   class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value='"'>"</option>
-                  <option value="'">'</option>
-                  <option value="">None</option>
+                  <option value="object">{{ $t('tools.csvToJson.formats.jsonObject') }}</option>
+                  <option value="array">{{ $t('tools.csvToJson.formats.jsonArray') }}</option>
                 </select>
               </div>
             </div>
@@ -104,7 +131,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                First Row as Headers
+                {{ $t('tools.csvToJson.options.hasHeaders') }}
               </label>
 
               <label class="flex items-center">
@@ -114,7 +141,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Skip Empty Lines
+                {{ $t('tools.csvToJson.options.skipEmptyLines') }}
               </label>
             </div>
 
@@ -126,7 +153,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Auto-detect Numbers
+                {{ $t('tools.csvToJson.options.autoDetectNumbers') }}
               </label>
 
               <label class="flex items-center">
@@ -136,14 +163,18 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Auto-detect Booleans
+                {{ $t('tools.csvToJson.options.autoDetectBooleans') }}
               </label>
             </div>
           </div>
 
           <!-- Preview Table -->
           <div v-if="previewRows.length > 0" class="mt-4">
-            <h4 class="font-medium text-gray-900 mb-2">Data Preview (first 5 rows)</h4>
+            <h4 class="font-medium text-gray-900 mb-2">
+              {{ $t('tools.csvToJson.preview.title') }} ({{
+                $t('tools.csvToJson.preview.firstRows', { count: 5 })
+              }})
+            </h4>
             <div class="overflow-x-auto border rounded-lg">
               <table class="w-full text-sm">
                 <thead class="bg-gray-50">
@@ -166,7 +197,9 @@
                 </tbody>
               </table>
             </div>
-            <p class="text-sm text-gray-600 mt-2">{{ previewRows.length }} rows detected</p>
+            <p class="text-sm text-gray-600 mt-2">
+              {{ $t('tools.csvToJson.preview.rowsDetected', { count: previewRows.length }) }}
+            </p>
           </div>
 
           <button
@@ -174,28 +207,30 @@
             :disabled="!inputCsv.trim() || previewRows.length === 0"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Convert to JSON
+            {{ $t('tools.csvToJson.convert') }}
           </button>
         </div>
 
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">JSON Output</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.csvToJson.output.title') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 v-if="jsonOutput"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="jsonOutput"
                 @click="downloadJson"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -206,7 +241,7 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">📄</div>
-              <p>No JSON output yet. Please input CSV data to convert.</p>
+              <p>{{ $t('tools.csvToJson.output.noOutput') }}</p>
             </div>
           </div>
 
@@ -215,9 +250,13 @@
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">Conversion Complete</p>
+                  <p class="font-medium text-green-800">
+                    {{ $t('tools.csvToJson.output.complete') }}
+                  </p>
                   <p class="text-sm text-green-600">
-                    {{ JSON.parse(jsonOutput).length }} records converted
+                    {{
+                      $t('tools.csvToJson.output.recordsConverted', { count: outputRecordCount })
+                    }}
                   </p>
                 </div>
               </div>
@@ -236,7 +275,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useToast } from '@/composables/useToast'
 
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
@@ -247,21 +286,30 @@ const previewRows = ref<any[][]>([])
 const headers = ref<string[]>([])
 
 const options = reactive({
-  delimiter: ',',
-  quote: '"',
+  delimiter: '\t', // Default to tab as mentioned in reference website
+  outputFormat: 'object', // Default to object format
   hasHeaders: true,
   skipEmptyLines: true,
   autoDetectNumbers: true,
   autoDetectBooleans: true,
 })
 
+const outputRecordCount = computed(() => {
+  if (!jsonOutput.value) return 0
+  try {
+    const parsed = JSON.parse(jsonOutput.value)
+    return Array.isArray(parsed) ? parsed.length : 1
+  } catch {
+    return 0
+  }
+})
+
 function loadExample() {
-  inputCsv.value = `Name,Age,City,Salary,Active
-John Doe,30,New York,75000,true
-Jane Smith,28,London,65000,false
-Bob Johnson,35,Tokyo,80000,true
-Alice Brown,32,Paris,70000,true
-Charlie Wilson,29,Sydney,68000,false`
+  inputCsv.value = `name,age,score
+李华,25,89
+小明,22,85
+张三,30,92
+李四,28,78`
   previewData()
 }
 
@@ -270,6 +318,21 @@ function clearInput() {
   jsonOutput.value = ''
   previewRows.value = []
   headers.value = []
+}
+
+function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = e.target?.result as string
+      inputCsv.value = content
+      previewData()
+    }
+    reader.readAsText(file, 'UTF-8')
+  }
 }
 
 function parseCsvLine(line: string): string[] {
@@ -282,14 +345,18 @@ function parseCsvLine(line: string): string[] {
     const char = line[i]
     const nextChar = line[i + 1]
 
-    if (char === options.quote && options.quote) {
-      if (inQuotes && nextChar === options.quote) {
+    if ((char === '"' || char === "'") && !inQuotes) {
+      // Start of quoted field
+      inQuotes = true
+      i++
+    } else if ((char === '"' || char === "'") && inQuotes) {
+      if (nextChar === char) {
         // Escaped quote
-        current += options.quote
+        current += char
         i += 2
       } else {
-        // Toggle quote state
-        inQuotes = !inQuotes
+        // End of quoted field
+        inQuotes = false
         i++
       }
     } else if (char === options.delimiter && !inQuotes) {
@@ -373,14 +440,29 @@ function convertToJson() {
       return
     }
 
-    const result = previewRows.value.map((row) => {
-      const obj: any = {}
-      headers.value.forEach((header, index) => {
-        const value = row[index] || ''
-        obj[header] = convertValue(value)
+    let result: any
+
+    if (options.outputFormat === 'object' && options.hasHeaders) {
+      // Convert to JSON objects
+      result = previewRows.value.map((row) => {
+        const obj: any = {}
+        headers.value.forEach((header, index) => {
+          const value = row[index] || ''
+          obj[header] = convertValue(value)
+        })
+        return obj
       })
-      return obj
-    })
+    } else {
+      // Convert to JSON array
+      if (options.hasHeaders) {
+        result = [
+          headers.value,
+          ...previewRows.value.map((row) => row.map((value) => convertValue(value))),
+        ]
+      } else {
+        result = previewRows.value.map((row) => row.map((value) => convertValue(value)))
+      }
+    }
 
     jsonOutput.value = JSON.stringify(result, null, 2)
     success('CSV converted to JSON successfully!')
@@ -409,7 +491,7 @@ function downloadJson() {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `converted_${Date.now()}.json`
+  link.download = `csv-to-json-${Date.now()}.json`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

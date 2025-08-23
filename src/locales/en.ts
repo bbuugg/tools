@@ -167,126 +167,182 @@ export default {
         },
       },
     },
-    jsonPathExtractor: {
-      title: 'JSON Path Extractor',
-      description:
-        'Extract data from JSON using JSONPath expressions with advanced filtering capabilities',
-      extractButton: 'Extract Data',
-      features: {
-        pathExtraction: {
-          title: 'Path Extraction',
-          description:
-            'Use JSONPath expressions to precisely extract data from complex JSON structures with dot notation and array indexing.',
-        },
-        filtering: {
-          title: 'Advanced Filtering',
-          description:
-            'Support for wildcards, array slicing, and conditional filtering to extract exactly the data you need.',
-        },
-        export: {
-          title: 'Export Results',
-          description:
-            'Copy extracted data to clipboard or download as JSON file with formatted output and statistics.',
-        },
+    csvtojson: {
+      title: 'CSV to JSON Converter',
+      description: 'Convert CSV data to JSON format with customizable parsing options',
+    },
+    csvToJson: {
+      title: 'CSV to JSON Converter',
+      description: 'Convert CSV data to JSON format with customizable parsing options',
+      introduction: {
+        title: 'Tool Introduction',
+        description:
+          'Online CSV to JSON converter for converting fixed-symbol separated CSV format data to JSON format data.',
+        usage:
+          'Default delimiter is tab (\\t), but you can change it to comma or other symbols. Supports converting CSV to JSON objects or arrays.',
       },
-      syntaxGuide: {
-        title: 'JSONPath Syntax Guide',
-        basicSyntax: 'Basic Syntax',
-        examples: 'Common Examples',
-        rootSymbol: 'Root of JSON data',
-        dotNotation: 'Access object properties',
-        bracketNotation: 'Array/object access',
-        wildcard: 'Match all elements',
-        exampleDesc1: 'Get first book title',
-        exampleDesc2: 'Get all book authors',
+      example: {
+        title: 'Example',
+        input: 'CSV Input:',
+        output: 'JSON Output:',
       },
-      inputSection: {
-        title: 'JSON Data & Path',
-        jsonData: 'JSON Data',
-        jsonPath: 'JSONPath Expression',
-        jsonPlaceholder:
-          'Paste your JSON data here...\n\nExample:\n{\n  "users": [\n    {"name": "John", "age": 30},\n    {"name": "Jane", "age": 25}\n  ]\n}',
-        pathPlaceholder: 'Enter JSONPath expression (e.g., $.users[*].name)',
-        quickPaths: 'Quick Path Templates',
+      input: {
+        title: 'Input CSV Data',
+        placeholder:
+          'Paste your CSV data here...\n\nExample:\nname,age,score\nLi Hua,25,89\nXiao Ming,22,85',
+        fileUpload: 'Upload CSV File',
       },
-      outputSection: {
-        title: 'Extracted Results',
-        noResults: 'No extraction results yet. Please input JSON data and JSONPath expression.',
-        extractedData: 'Extracted Data',
+      options: {
+        title: 'Parsing Options',
+        delimiter: 'Delimiter',
+        outputFormat: 'Output Format',
+        hasHeaders: 'First Row as Headers',
+        skipEmptyLines: 'Skip Empty Lines',
+        autoDetectNumbers: 'Auto-detect Numbers',
+        autoDetectBooleans: 'Auto-detect Booleans',
       },
-      quickPaths: {
-        root: 'Root element',
-        allProperties: 'All properties',
-        firstArrayItem: 'First array item',
-        allArrayItems: 'All array items',
-        lastArrayItem: 'Last array item',
-        arraySlice: 'Array slice (0-2)',
+      delimiters: {
+        comma: 'Comma (,)',
+        semicolon: 'Semicolon (;)',
+        tab: 'Tab (\\t)',
+        pipe: 'Pipe (|)',
+        space: 'Space',
       },
-      success: {
-        validJson: 'Valid JSON format',
-        extracted: 'Data Extracted Successfully',
-        arrayResults: 'Found {count} array items',
-        objectResults: 'Found object with {count} properties',
-        primitiveResult: 'Found {type} value',
+      formats: {
+        jsonObject: 'JSON Objects',
+        jsonArray: 'JSON Array',
       },
-      errors: {
-        invalidJson: 'Invalid JSON format',
-        pathError: 'JSONPath Expression Error',
-        noMatches: 'No data matches the specified path',
+      preview: {
+        title: 'Data Preview',
+        firstRows: 'first {count} rows',
+        rowsDetected: '{count} rows detected',
       },
-      messages: {
-        copied: 'Extracted data copied to clipboard successfully!',
-        copyFailed: 'Failed to copy to clipboard',
-        downloaded: 'JSON file downloaded successfully!',
-        downloadFailed: 'Failed to download file',
+      convert: 'Convert to JSON',
+      output: {
+        title: 'JSON Output',
+        complete: 'Conversion Complete',
+        recordsConverted: '{count} records converted',
+        noOutput: 'No JSON output yet. Please input CSV data to convert.',
       },
     },
-    title: 'Cookie to JSON',
-    description: 'Convert cookie strings to JSON objects with parsing options',
-    inputTitle: 'Input Cookie String',
-    outputTitle: 'JSON Output',
-    inputNote: 'Paste cookie string in the format:',
-    inputPlaceholder:
-      'Paste your cookie string here, e.g.:\nsessionId=abc123; userId=12345; theme=dark; lang=en-US\n\nSupported formats:\n- Standard cookie format: name1=value1; name2=value2\n- URL-encoded values are automatically decoded\n- Handles cookies without values (flags)',
-    parseOptions: 'Parse Options',
-    noResults: 'No conversion results yet. Please input a cookie string to convert.',
-    error: 'Parse Error',
-    success: 'Parsing Successful',
-    conversionComplete: 'Conversion Complete',
-    cookiesFound: '{count} cookies found',
-    statistics: '{total} total cookies, {nonEmpty} with values',
-    options: {
-      decodeValues: 'Decode URL-encoded Values',
-      removeEmpty: 'Remove Empty Values',
-      formatOutput: 'Format JSON Output',
-    },
+    title: 'JSON Path Extractor',
+    description:
+      'Extract data from JSON using JSONPath expressions with advanced filtering capabilities',
+    extractButton: 'Extract Data',
     features: {
-      parsing: {
-        title: 'Cookie Parsing',
+      pathExtraction: {
+        title: 'Path Extraction',
         description:
-          'Automatically parse cookie strings with support for standard HTTP cookie format and URL decoding.',
+          'Use JSONPath expressions to precisely extract data from complex JSON structures with dot notation and array indexing.',
       },
-      conversion: {
-        title: 'JSON Conversion',
+      filtering: {
+        title: 'Advanced Filtering',
         description:
-          'Convert parsed cookies to clean JSON format with customizable output formatting options.',
+          'Support for wildcards, array slicing, and conditional filtering to extract exactly the data you need.',
       },
       export: {
-        title: 'Export Options',
+        title: 'Export Results',
         description:
-          'Copy to clipboard or download as JSON file with statistics and validation feedback.',
+          'Copy extracted data to clipboard or download as JSON file with formatted output and statistics.',
       },
     },
+    syntaxGuide: {
+      title: 'JSONPath Syntax Guide',
+      basicSyntax: 'Basic Syntax',
+      examples: 'Common Examples',
+      rootSymbol: 'Root of JSON data',
+      dotNotation: 'Access object properties',
+      bracketNotation: 'Array/object access',
+      wildcard: 'Match all elements',
+      exampleDesc1: 'Get first book title',
+      exampleDesc2: 'Get all book authors',
+    },
+    inputSection: {
+      title: 'JSON Data & Path',
+      jsonData: 'JSON Data',
+      jsonPath: 'JSONPath Expression',
+      jsonPlaceholder:
+        'Paste your JSON data here...\n\nExample:\n{\n  "users": [\n    {"name": "John", "age": 30},\n    {"name": "Jane", "age": 25}\n  ]\n}',
+      pathPlaceholder: 'Enter JSONPath expression (e.g., $.users[*].name)',
+      quickPaths: 'Quick Path Templates',
+    },
+    outputSection: {
+      title: 'Extracted Results',
+      noResults: 'No extraction results yet. Please input JSON data and JSONPath expression.',
+      extractedData: 'Extracted Data',
+    },
+    quickPaths: {
+      root: 'Root element',
+      allProperties: 'All properties',
+      firstArrayItem: 'First array item',
+      allArrayItems: 'All array items',
+      lastArrayItem: 'Last array item',
+      arraySlice: 'Array slice (0-2)',
+    },
+    success: {
+      validJson: 'Valid JSON format',
+      extracted: 'Data Extracted Successfully',
+      arrayResults: 'Found {count} array items',
+      objectResults: 'Found object with {count} properties',
+      primitiveResult: 'Found {type} value',
+    },
     errors: {
-      noCookies: 'No valid cookies found in the input string',
-      parseError: 'Failed to parse cookie string: {error}',
+      invalidJson: 'Invalid JSON format',
+      pathError: 'JSONPath Expression Error',
+      noMatches: 'No data matches the specified path',
     },
     messages: {
-      copied: 'JSON copied to clipboard successfully!',
+      copied: 'Extracted data copied to clipboard successfully!',
       copyFailed: 'Failed to copy to clipboard',
       downloaded: 'JSON file downloaded successfully!',
       downloadFailed: 'Failed to download file',
     },
+  },
+  title: 'Cookie to JSON',
+  description: 'Convert cookie strings to JSON objects with parsing options',
+  inputTitle: 'Input Cookie String',
+  outputTitle: 'JSON Output',
+  inputNote: 'Paste cookie string in the format:',
+  inputPlaceholder:
+    'Paste your cookie string here, e.g.:\nsessionId=abc123; userId=12345; theme=dark; lang=en-US\n\nSupported formats:\n- Standard cookie format: name1=value1; name2=value2\n- URL-encoded values are automatically decoded\n- Handles cookies without values (flags)',
+  parseOptions: 'Parse Options',
+  noResults: 'No conversion results yet. Please input a cookie string to convert.',
+  error: 'Parse Error',
+  success: 'Parsing Successful',
+  conversionComplete: 'Conversion Complete',
+  cookiesFound: '{count} cookies found',
+  statistics: '{total} total cookies, {nonEmpty} with values',
+  options: {
+    decodeValues: 'Decode URL-encoded Values',
+    removeEmpty: 'Remove Empty Values',
+    formatOutput: 'Format JSON Output',
+  },
+  features: {
+    parsing: {
+      title: 'Cookie Parsing',
+      description:
+        'Automatically parse cookie strings with support for standard HTTP cookie format and URL decoding.',
+    },
+    conversion: {
+      title: 'JSON Conversion',
+      description:
+        'Convert parsed cookies to clean JSON format with customizable output formatting options.',
+    },
+    export: {
+      title: 'Export Options',
+      description:
+        'Copy to clipboard or download as JSON file with statistics and validation feedback.',
+    },
+  },
+  errors: {
+    noCookies: 'No valid cookies found in the input string',
+    parseError: 'Failed to parse cookie string: {error}',
+  },
+  messages: {
+    copied: 'JSON copied to clipboard successfully!',
+    copyFailed: 'Failed to copy to clipboard',
+    downloaded: 'JSON file downloaded successfully!',
+    downloadFailed: 'Failed to download file',
   },
   fileRenamer: {
     title: 'File Renamer Tool',
