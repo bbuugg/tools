@@ -21,7 +21,6 @@ export default {
     unique: '唯一',
     nonEmpty: '非空',
     loading: '加载中...',
-    remove: '移除',
   },
   navigation: {
     tools: '工具',
@@ -174,7 +173,7 @@ export default {
       outputTitle: 'JSON 输出结果 ',
       uploadDescription: ' 选择需转换为 JSON 的 Excel 文件 ',
       selectFile: ' 选择 Excel 文件 ',
-      supportedFormats: ' 支持 .xlsx、.xls 及 .csv 格式文件 ',
+      supportedFormats: ' 支持 .xlsx、.xls、.csv 及 .ods 格式文件 ',
       noResults: ' 暂无转换结果。请上传 Excel 文件。',
       conversionComplete: ' 转换成功完成！',
       recordsCount: ' 已转换 {count} 条记录 ',
@@ -213,8 +212,7 @@ export default {
       inputTitle: '输入 JSON 数组',
       inputNote: '请粘贴格式为以下的 JSON 数组数据：',
       inputDescription: '工具将自动解析 JSON 并列出所有可选择的字段。',
-      inputPlaceholder:
-        '请在此处粘贴您的 JSON 数组，例如：\n[\n  {"name": "张三", "age": 30, "city": "北京"},\n  {"name": "李四", "age": 25, "city": "上海"}\n]',
+      inputPlaceholder: '请在此处粘贴您的 JSON 数据',
       extractedData: '提取的数据',
       fieldStatistics: '字段统计',
       noResults: '暂无提取结果。请输入 JSON 数组数据并选择要提取的字段。',

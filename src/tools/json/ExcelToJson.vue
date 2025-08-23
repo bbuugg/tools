@@ -7,20 +7,6 @@
         <p class="text-gray-600">{{ $t('tools.excelToJson.description') }}</p>
       </div>
 
-      <!-- Installation Notice -->
-      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <div class="flex items-center">
-          <div class="text-yellow-600 text-xl mr-3">⚠️</div>
-          <div>
-            <p class="font-medium text-yellow-800">Installation Required</p>
-            <p class="text-sm text-yellow-700">
-              To use Excel conversion features, please install the XLSX library:
-              <code class="bg-yellow-100 px-2 py-1 rounded text-sm">npm install xlsx</code>
-            </p>
-          </div>
-        </div>
-      </div>
-
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
@@ -72,7 +58,7 @@
             <input
               ref="fileInput"
               type="file"
-              accept=".xlsx,.xls,.csv"
+              accept=".xlsx,.xls,.csv,.ods"
               @change="handleFileSelect"
               class="hidden"
             />
@@ -128,10 +114,35 @@
 
           <button
             @click="convertToJson"
-            :disabled="!selectedFile"
+            :disabled="!selectedFile || isLoading"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            {{ $t('tools.excelToJson.convert') }}
+            <span v-if="isLoading" class="flex items-center justify-center">
+              <svg
+                class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              {{ $t('common.loading') }}
+            </span>
+            <span v-else>
+              {{ $t('tools.excelToJson.convert') }}
+            </span>
           </button>
         </div>
 
@@ -210,6 +221,7 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+import * as XLSX from 'xlsx'
 
 const { t } = useI18n()
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
@@ -217,6 +229,7 @@ const { success, error: showError, copySuccess, copyError, downloadSuccess } = u
 const selectedFile = ref<File | null>(null)
 const outputJson = ref('')
 const error = ref('')
+const isLoading = ref(false)
 const availableSheets = ref<Array<{ name: string }>>([])
 
 const options = reactive({
@@ -225,17 +238,52 @@ const options = reactive({
   sheetIndex: 0,
 })
 
-function handleFileSelect(event: Event) {
+async function handleFileSelect(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
-    selectedFile.value = target.files[0]
+    const file = target.files[0]
+
+    // Validate file type
+    const validExtensions = ['.xlsx', '.xls', '.csv', '.ods']
+    const fileName = file.name.toLowerCase()
+    const isValidFile = validExtensions.some((ext) => fileName.endsWith(ext))
+
+    if (!isValidFile) {
+      error.value = 'Please select a valid Excel file (.xlsx, .xls, .csv, .ods)'
+      showError(error.value)
+      return
+    }
+
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024 // 50MB
+    if (file.size > maxSize) {
+      error.value = 'File size must be less than 50MB'
+      showError(error.value)
+      return
+    }
+
+    selectedFile.value = file
     error.value = ''
     outputJson.value = ''
 
-    // For demonstration, show that we would parse the file
-    availableSheets.value = [{ name: 'Sheet1' }, { name: 'Sheet2' }]
+    try {
+      // Read the file to get sheet information
+      const arrayBuffer = await file.arrayBuffer()
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' })
 
-    success(t('tools.excelToJson.fileSelected'))
+      // Update available sheets
+      availableSheets.value = workbook.SheetNames.map((name) => ({ name }))
+      options.sheetIndex = 0
+
+      success(t('tools.excelToJson.fileSelected'))
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : t('tools.excelToJson.errors.conversionFailed')
+      error.value = errorMessage
+      showError(error.value)
+      selectedFile.value = null
+      availableSheets.value = []
+    }
   }
 }
 
@@ -243,11 +291,16 @@ function clearInput() {
   selectedFile.value = null
   outputJson.value = ''
   error.value = ''
+  isLoading.value = false
   availableSheets.value = []
   options.sheetIndex = 0
 }
 
-function convertToJson() {
+async function convertToJson() {
+  if (isLoading.value) return
+
+  isLoading.value = true
+
   try {
     error.value = ''
     outputJson.value = ''
@@ -256,14 +309,52 @@ function convertToJson() {
       throw new Error(t('tools.excelToJson.errors.noFileSelected'))
     }
 
-    // This would require the XLSX library to actually parse Excel files
-    // For now, show an informational message
-    throw new Error(t('tools.excelToJson.errors.xlsxRequired'))
+    // Check if we have any sheets available
+    if (availableSheets.value.length === 0) {
+      throw new Error('No sheets found in the Excel file')
+    }
+
+    // Read the Excel file
+    const arrayBuffer = await selectedFile.value.arrayBuffer()
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+
+    // Get the selected sheet
+    const sheetName = workbook.SheetNames[options.sheetIndex]
+    if (!sheetName) {
+      throw new Error('Selected sheet not found')
+    }
+
+    const worksheet = workbook.Sheets[sheetName]
+
+    // Check if worksheet is empty
+    if (!worksheet || Object.keys(worksheet).length === 0) {
+      throw new Error('Selected sheet is empty')
+    }
+
+    // Convert sheet to JSON with options
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+      header: options.firstRowAsHeaders ? 1 : 'A',
+      defval: '',
+      blankrows: !options.skipEmptyRows,
+      raw: false,
+    })
+
+    // Check if we got any data
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+      throw new Error('No data found in the selected sheet')
+    }
+
+    // Format the JSON output
+    outputJson.value = JSON.stringify(jsonData, null, 2)
+
+    success(t('tools.excelToJson.conversionComplete'))
   } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : t('tools.excelToJson.errors.conversionFailed')
     error.value = errorMessage
     showError(error.value)
+  } finally {
+    isLoading.value = false
   }
 }
 

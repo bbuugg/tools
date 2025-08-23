@@ -16,7 +16,7 @@
         </h2>
         <div class="mb-4">
           <p class="text-sm text-gray-600 mb-2">
-            📋 Please paste JSON array data in the format:
+            📋 Please paste JSON data in the format:
             <code class="bg-gray-100 px-1 rounded">[{},{},...]</code>
           </p>
           <p class="text-sm text-gray-500">

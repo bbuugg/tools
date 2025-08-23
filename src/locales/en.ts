@@ -134,8 +134,7 @@ export default {
       inputNote: 'Please paste JSON array data in the format:',
       inputDescription:
         'The tool will automatically parse the JSON and list all available fields for selection.',
-      inputPlaceholder:
-        'Paste your JSON array here, e.g.:\n[\n  {"name": "John", "age": 30, "city": "New York"},\n  {"name": "Jane", "age": 25, "city": "London"}\n]',
+      inputPlaceholder: 'Paste your JSON here.',
       extractedData: 'EXTRACTED DATA',
       fieldStatistics: 'FIELD STATISTICS',
       noResults:
@@ -538,7 +537,7 @@ export default {
       outputTitle: 'JSON Output',
       uploadDescription: 'Select an Excel file to convert to JSON',
       selectFile: 'Select Excel File',
-      supportedFormats: 'Supports .xlsx, .xls, and .csv files',
+      supportedFormats: 'Supports .xlsx, .xls, .csv, and .ods files',
       noResults: 'No conversion results yet. Please upload an Excel file.',
       conversionComplete: 'Conversion completed successfully!',
       recordsCount: '{count} records converted',
