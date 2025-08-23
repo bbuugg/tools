@@ -265,7 +265,7 @@ function clearInput() {
   error.value = ''
 }
 
-function escapeValue(value: any): string {
+function escapeValue(value: unknown): string {
   if (value === null || value === undefined) {
     return 'NULL'
   }
@@ -293,7 +293,7 @@ function escapeValue(value: any): string {
   return `'${str}'`
 }
 
-function getSqlDataType(value: any): string {
+function getSqlDataType(value: unknown): string {
   if (value === null || value === undefined) {
     return 'VARCHAR(255)'
   }
@@ -319,7 +319,7 @@ function getSqlDataType(value: any): string {
   return 'TEXT'
 }
 
-function generateCreateTableSql(data: any[]): string {
+function generateCreateTableSql(data: Record<string, unknown>[]): string {
   if (data.length === 0) return ''
 
   const fields = new Set<string>()
@@ -344,7 +344,7 @@ function generateCreateTableSql(data: any[]): string {
   return `CREATE TABLE ${options.tableName} (\n${fieldDefinitions}\n);`
 }
 
-function generateInsertSql(data: any[]): string {
+function generateInsertSql(data: Record<string, unknown>[]): string {
   if (data.length === 0) return ''
 
   if (options.batchInsert) {
@@ -374,7 +374,7 @@ function generateInsertSql(data: any[]): string {
   }
 }
 
-function generateUpdateSql(data: any[]): string {
+function generateUpdateSql(data: Record<string, unknown>[]): string {
   if (data.length === 0) return ''
 
   return data
@@ -404,7 +404,7 @@ function convertToSql() {
     let data
     try {
       data = JSON.parse(inputJson.value)
-    } catch (e) {
+    } catch {
       throw new Error(t('tools.jsonToSql.errors.invalidJson'))
     }
 
@@ -435,9 +435,11 @@ function convertToSql() {
 
     sqlOutput.value = sql
     success(t('tools.jsonToSql.success.conversionComplete'))
-  } catch (err: any) {
-    error.value = err.message || t('tools.jsonToSql.errors.conversionFailed')
-    showError(error.value)
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : t('tools.jsonToSql.errors.conversionFailed')
+    error.value = errorMessage
+    showError(errorMessage)
   }
 }
 
@@ -447,10 +449,10 @@ function copyToClipboard() {
   navigator.clipboard
     .writeText(sqlOutput.value)
     .then(() => {
-      showToast(t('toast.copied'), 'success')
+      copySuccess()
     })
     .catch(() => {
-      showToast(t('toast.copyFailed'), 'error')
+      copyError()
     })
 }
 

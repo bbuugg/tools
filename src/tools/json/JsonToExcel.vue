@@ -127,7 +127,7 @@
           </div>
 
           <div
-            v-if="!excelBlob && !error"
+            v-if="!excelBlob && !errorMessage"
             class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg"
           >
             <div class="text-center">
@@ -136,15 +136,15 @@
             </div>
           </div>
 
-          <div v-if="error" class="h-80 flex items-center justify-center">
+          <div v-if="errorMessage" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
               <p class="font-medium">{{ $t('toast.error') }}</p>
-              <p class="text-sm">{{ error }}</p>
+              <p class="text-sm">{{ errorMessage }}</p>
             </div>
           </div>
 
-          <div v-if="excelBlob && !error" class="space-y-4">
+          <div v-if="excelBlob && !errorMessage" class="space-y-4">
             <div class="bg-green-50 border border-green-200 rounded-lg p-4">
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
@@ -217,12 +217,12 @@ import { useToast } from '@/composables/useToast'
 import * as XLSX from 'xlsx' // Will be needed when XLSX is installed
 
 const { t } = useI18n()
-const { success, error } = useToast()
+const { success, error: showError } = useToast()
 
 const inputJson = ref('')
 const excelBlob = ref<Blob | null>(null)
-const error = ref('')
-const previewData = ref<any[]>([])
+const errorMessage = ref('')
+const previewData = ref<Record<string, unknown>[]>([])
 const previewHeaders = ref<string[]>([])
 
 const options = reactive({
@@ -270,14 +270,14 @@ function loadExample() {
 function clearInput() {
   inputJson.value = ''
   excelBlob.value = null
-  error.value = ''
+  errorMessage.value = ''
   previewData.value = []
   previewHeaders.value = []
 }
 
 function convertToExcel() {
   try {
-    error.value = ''
+    errorMessage.value = ''
     excelBlob.value = null
     previewData.value = []
     previewHeaders.value = []
@@ -289,7 +289,7 @@ function convertToExcel() {
     let data
     try {
       data = JSON.parse(inputJson.value)
-    } catch (e) {
+    } catch {
       throw new Error(t('tools.jsonToExcel.errors.invalidJson'))
     }
 
@@ -311,7 +311,7 @@ function convertToExcel() {
 
     // Auto-fit columns if enabled
     if (options.autoFitColumns) {
-      const columnWidths: any[] = []
+      const columnWidths: Array<{ wch: number }> = []
       const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1')
 
       for (let C = range.s.c; C <= range.e.c; ++C) {
@@ -344,9 +344,10 @@ function convertToExcel() {
 
     // showToast(t('tools.jsonToExcel.success.conversionComplete'), 'success')
     success(t('tools.jsonToExcel.success.conversionComplete'))
-  } catch (err: any) {
-    error.value = err.message || t('tools.jsonToExcel.errors.conversionFailed')
-    error(error.value)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : t('tools.jsonToExcel.errors.conversionFailed')
+    errorMessage.value = message
+    showError(message)
   }
 }
 

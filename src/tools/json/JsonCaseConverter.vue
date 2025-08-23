@@ -4,7 +4,9 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Text Case Converter</h1>
-        <p class="text-gray-600">Transform text case in JSON strings - uppercase, lowercase, title case, and more</p>
+        <p class="text-gray-600">
+          Transform text case in JSON strings - uppercase, lowercase, title case, and more
+        </p>
       </div>
 
       <!-- Features -->
@@ -12,17 +14,23 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🅰️</div>
           <h3 class="text-lg font-semibold mb-2">Multiple Formats</h3>
-          <p class="text-gray-600 text-sm">Support for uppercase, lowercase, title case, camelCase, and snake_case</p>
+          <p class="text-gray-600 text-sm">
+            Support for uppercase, lowercase, title case, camelCase, and snake_case
+          </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🎯</div>
           <h3 class="text-lg font-semibold mb-2">Selective Processing</h3>
-          <p class="text-gray-600 text-sm">Target specific fields or convert all text values in JSON</p>
+          <p class="text-gray-600 text-sm">
+            Target specific fields or convert all text values in JSON
+          </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
           <h3 class="text-lg font-semibold mb-2">Smart Handling</h3>
-          <p class="text-gray-600 text-sm">Preserve JSON structure while transforming text content</p>
+          <p class="text-gray-600 text-sm">
+            Preserve JSON structure while transforming text content
+          </p>
         </div>
       </div>
 
@@ -57,7 +65,7 @@
           <!-- Case Conversion Options -->
           <div class="mt-4 space-y-4">
             <h4 class="font-medium text-gray-900">Case Conversion Options</h4>
-            
+
             <div class="space-y-3">
               <div class="flex items-center space-x-4">
                 <label class="text-sm font-medium text-gray-700 w-24">Target Case:</label>
@@ -112,7 +120,7 @@
                   />
                   Preserve Numeric Strings
                 </label>
-                
+
                 <label class="flex items-center">
                   <input
                     v-model="options.preserveSpecialChars"
@@ -141,7 +149,9 @@
             <h5 class="font-medium text-blue-900 mb-2">Analysis Results:</h5>
             <div class="text-sm text-blue-800 space-y-1">
               <p>• Text values found: {{ analysisResults.textValues }}</p>
-              <p v-if="options.applyTo === 'keys' || options.applyTo === 'both'">• Object keys found: {{ analysisResults.objectKeys }}</p>
+              <p v-if="options.applyTo === 'keys' || options.applyTo === 'both'">
+                • Object keys found: {{ analysisResults.objectKeys }}
+              </p>
               <p>• Values to convert: {{ analysisResults.toConvert }}</p>
             </div>
           </div>
@@ -177,7 +187,10 @@
             </div>
           </div>
 
-          <div v-if="!convertedOutput && !error" class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+          <div
+            v-if="!convertedOutput && !error"
+            class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg"
+          >
             <div class="text-center">
               <div class="text-3xl mb-2">🅰️</div>
               <p>No results yet. Input JSON to convert text case.</p>
@@ -220,7 +233,15 @@ import { ref, computed } from 'vue'
 import { useToast } from '@/composables/useToast'
 
 interface CaseOptions {
-  targetCase: 'uppercase' | 'lowercase' | 'title' | 'camel' | 'pascal' | 'snake' | 'kebab' | 'constant'
+  targetCase:
+    | 'uppercase'
+    | 'lowercase'
+    | 'title'
+    | 'camel'
+    | 'pascal'
+    | 'snake'
+    | 'kebab'
+    | 'constant'
   applyTo: 'values' | 'keys' | 'both' | 'fields'
   targetFields: string
   preserveNumbers: boolean
@@ -243,24 +264,24 @@ const options = ref<CaseOptions>({
   targetFields: '',
   preserveNumbers: true,
   preserveSpecialChars: true,
-  preserveWhitespace: false
+  preserveWhitespace: false,
 })
 
 function loadExample() {
   const example = {
     user_profile: {
-      first_name: "john doe",
-      last_name: "SMITH",
-      email_address: "JohnSmith@EXAMPLE.com",
-      phone_number: "+1-555-123-4567"
+      first_name: 'john doe',
+      last_name: 'SMITH',
+      email_address: 'JohnSmith@EXAMPLE.com',
+      phone_number: '+1-555-123-4567',
     },
     company_details: {
-      company_name: "Tech Solutions Inc.",
-      department: "software engineering",
-      position: "Senior Developer",
-      status: "ACTIVE"
+      company_name: 'Tech Solutions Inc.',
+      department: 'software engineering',
+      position: 'Senior Developer',
+      status: 'ACTIVE',
     },
-    tags: ["important", "VIP_CLIENT", "Priority_One"]
+    tags: ['important', 'VIP_CLIENT', 'Priority_One'],
   }
   inputJson.value = JSON.stringify(example, null, 2)
   analyzeJson()
@@ -277,7 +298,7 @@ function clearInput() {
 function analyzeJson() {
   error.value = ''
   analysisResults.value = null
-  
+
   if (!inputJson.value.trim()) {
     isValidJson.value = false
     return
@@ -286,7 +307,7 @@ function analyzeJson() {
   try {
     const parsed = JSON.parse(inputJson.value)
     isValidJson.value = true
-    
+
     const analysis = analyzeTextContent(parsed)
     analysisResults.value = analysis
   } catch (e) {
@@ -315,41 +336,46 @@ function analyzeTextContent(obj: any, path = ''): any {
     } else if (typeof item === 'object' && item !== null) {
       Object.entries(item).forEach(([key, value]) => {
         const newPath = currentPath ? `${currentPath}.${key}` : key
-        
-        if (typeof value === 'string' && (options.value.applyTo === 'values' || options.value.applyTo === 'both' || options.value.applyTo === 'fields')) {
+
+        if (
+          typeof value === 'string' &&
+          (options.value.applyTo === 'values' ||
+            options.value.applyTo === 'both' ||
+            options.value.applyTo === 'fields')
+        ) {
           textValues++
           if (shouldConvertField(newPath, value, false)) {
             toConvert++
           }
         }
-        
+
         traverse(value, newPath, key)
       })
     }
   }
 
   traverse(obj, path)
-  
+
   return {
     textValues,
     objectKeys,
-    toConvert
+    toConvert,
   }
 }
 
 function shouldConvertField(fieldPath: string, value: string, isKey: boolean): boolean {
   const { applyTo, targetFields } = options.value
-  
+
   if (applyTo === 'fields') {
     if (!targetFields.trim()) return false
-    const fields = targetFields.split(',').map(f => f.trim())
-    return fields.some(field => fieldPath.includes(field))
+    const fields = targetFields.split(',').map((f) => f.trim())
+    return fields.some((field) => fieldPath.includes(field))
   }
-  
+
   if (isKey && (applyTo === 'keys' || applyTo === 'both')) {
     return true
   }
-  
+
   if (!isKey && (applyTo === 'values' || applyTo === 'both')) {
     // Check if we should preserve numbers
     if (options.value.preserveNumbers && /^\d+(\.\d+)?$/.test(value.trim())) {
@@ -357,7 +383,7 @@ function shouldConvertField(fieldPath: string, value: string, isKey: boolean): b
     }
     return true
   }
-  
+
   return false
 }
 
@@ -367,11 +393,11 @@ function convertCase() {
   try {
     const parsed = JSON.parse(inputJson.value)
     let convertedCount = 0
-    
+
     const converted = convertCaseInObject(parsed, '', (count) => {
       convertedCount = count
     })
-    
+
     convertedOutput.value = JSON.stringify(converted, null, 2)
     conversionStats.value = `Converted ${convertedCount} text values to ${options.value.targetCase}`
     error.value = ''
@@ -383,25 +409,23 @@ function convertCase() {
 
 function convertCaseInObject(obj: any, path = '', onConvert?: (count: number) => void): any {
   let convertedCount = 0
-  
+
   function convert(item: any, currentPath: string): any {
     if (Array.isArray(item)) {
-      return item.map((element, index) => 
-        convert(element, `${currentPath}[${index}]`)
-      )
+      return item.map((element, index) => convert(element, `${currentPath}[${index}]`))
     } else if (typeof item === 'object' && item !== null) {
       const result: any = {}
-      
+
       Object.entries(item).forEach(([key, value]) => {
         const newPath = currentPath ? `${currentPath}.${key}` : key
         let newKey = key
-        
+
         // Convert key if needed
         if (shouldConvertField(newPath, key, true)) {
           newKey = transformCase(key)
           convertedCount++
         }
-        
+
         // Convert value if it's a string and should be converted
         if (typeof value === 'string' && shouldConvertField(newPath, value, false)) {
           result[newKey] = transformCase(value)
@@ -410,13 +434,13 @@ function convertCaseInObject(obj: any, path = '', onConvert?: (count: number) =>
           result[newKey] = convert(value, newPath)
         }
       })
-      
+
       return result
     }
-    
+
     return item
   }
-  
+
   const result = convert(obj, path)
   if (onConvert) onConvert(convertedCount)
   return result
@@ -424,45 +448,50 @@ function convertCaseInObject(obj: any, path = '', onConvert?: (count: number) =>
 
 function transformCase(text: string): string {
   if (!text) return text
-  
+
   // Preserve whitespace if requested
   const trimmed = options.value.preserveWhitespace ? text : text.trim()
-  
+
   switch (options.value.targetCase) {
     case 'uppercase':
       return trimmed.toUpperCase()
-    
+
     case 'lowercase':
       return trimmed.toLowerCase()
-    
+
     case 'title':
-      return trimmed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase())
-    
+      return trimmed.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
+
     case 'camel':
-      return trimmed.toLowerCase()
+      return trimmed
+        .toLowerCase()
         .replace(/[^a-zA-Z0-9]+(.)/g, (_, char) => char.toUpperCase())
-        .replace(/^[A-Z]/, char => char.toLowerCase())
-    
+        .replace(/^[A-Z]/, (char) => char.toLowerCase())
+
     case 'pascal':
-      return trimmed.toLowerCase()
+      return trimmed
+        .toLowerCase()
         .replace(/[^a-zA-Z0-9]+(.)/g, (_, char) => char.toUpperCase())
-        .replace(/^[a-z]/, char => char.toUpperCase())
-    
+        .replace(/^[a-z]/, (char) => char.toUpperCase())
+
     case 'snake':
-      return trimmed.toLowerCase()
+      return trimmed
+        .toLowerCase()
         .replace(/[^a-zA-Z0-9]+/g, '_')
         .replace(/^_+|_+$/g, '')
-    
+
     case 'kebab':
-      return trimmed.toLowerCase()
+      return trimmed
+        .toLowerCase()
         .replace(/[^a-zA-Z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
-    
+
     case 'constant':
-      return trimmed.toUpperCase()
+      return trimmed
+        .toUpperCase()
         .replace(/[^a-zA-Z0-9]+/g, '_')
         .replace(/^_+|_+$/g, '')
-    
+
     default:
       return trimmed
   }

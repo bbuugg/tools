@@ -79,7 +79,7 @@
             <div class="text-4xl text-gray-400 mb-4">📁</div>
             <p class="text-gray-600 mb-2">{{ $t('tools.excelToJson.uploadDescription') }}</p>
             <button
-              @click="$refs.fileInput?.click()"
+              @click="($refs.fileInput as HTMLInputElement)?.click()"
               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               {{ $t('tools.excelToJson.selectFile') }}
@@ -212,7 +212,7 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
-const { showToast } = useToast()
+const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
 
 const selectedFile = ref<File | null>(null)
 const outputJson = ref('')
@@ -235,7 +235,7 @@ function handleFileSelect(event: Event) {
     // For demonstration, show that we would parse the file
     availableSheets.value = [{ name: 'Sheet1' }, { name: 'Sheet2' }]
 
-    showToast(t('tools.excelToJson.fileSelected'), 'success')
+    success(t('tools.excelToJson.fileSelected'))
   }
 }
 
@@ -259,9 +259,10 @@ function convertToJson() {
     // This would require the XLSX library to actually parse Excel files
     // For now, show an informational message
     throw new Error(t('tools.excelToJson.errors.xlsxRequired'))
-  } catch (err: any) {
-    error.value = err.message || t('tools.excelToJson.errors.conversionFailed')
-    showToast(error.value, 'error')
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : t('tools.excelToJson.errors.conversionFailed')
+    error.value = errorMessage
+    showError(error.value)
   }
 }
 
@@ -271,10 +272,10 @@ function copyToClipboard() {
   navigator.clipboard
     .writeText(outputJson.value)
     .then(() => {
-      showToast(t('toast.copied'), 'success')
+      copySuccess()
     })
     .catch(() => {
-      showToast(t('toast.copyFailed'), 'error')
+      copyError()
     })
 }
 
@@ -291,6 +292,6 @@ function downloadJson() {
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 
-  showToast(t('toast.downloadSuccess'), 'success')
+  downloadSuccess()
 }
 </script>
