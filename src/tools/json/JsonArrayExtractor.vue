@@ -8,7 +8,10 @@
       <div class="bg-white p-8 rounded-lg border text-center">
         <div class="text-6xl mb-4">🚧</div>
         <h3 class="text-xl font-semibold mb-2">Coming Soon</h3>
-        <button @click="$router.go(-1)" class="px-6 py-2 bg-gray-600 text-white rounded-lg">
+        <button
+          @click="$router.go(-1)"
+          class="px-6 py-2 bg-gray-600 text-white rounded-lg cursor-pointer hover:bg-gray-700 transition-colors"
+        >
           Back
         </button>
       </div>

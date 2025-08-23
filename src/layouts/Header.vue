@@ -3,7 +3,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <!-- Logo and Title -->
-        <router-link to="/" class="flex items-center space-x-4 hover:opacity-90 transition-opacity">
+        <router-link
+          to="/"
+          class="flex items-center space-x-4 hover:opacity-90 transition-opacity cursor-pointer"
+        >
           <div class="flex-shrink-0">
             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
               <span class="text-2xl font-bold text-blue-600">🔧</span>
@@ -19,7 +22,7 @@
           <!-- Mobile Menu Button -->
           <button
             @click="$emit('toggle-sidebar')"
-            class="lg:hidden p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200"
+            class="lg:hidden p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200 cursor-pointer"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -35,7 +38,7 @@
           <div class="relative">
             <button
               @click="showLanguageMenu = !showLanguageMenu"
-              class="bg-blue-500 p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200 flex items-center space-x-2"
+              class="bg-blue-500 p-2 rounded-md text-blue-100 hover:text-white hover:bg-blue-400 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
             >
               <span>🌐</span>
               <span class="hidden sm:block text-sm">{{ currentLanguage.name }}</span>
@@ -59,7 +62,7 @@
                   :key="lang.code"
                   @click="changeLanguage(lang.code)"
                   :class="[
-                    'block w-full text-left px-4 py-2 text-sm transition-colors',
+                    'block w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer',
                     currentLocale === lang.code
                       ? 'bg-blue-50 text-blue-600 font-medium'
                       : 'text-gray-700 hover:bg-gray-50',

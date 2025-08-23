@@ -62,7 +62,7 @@
               :key="tab.id"
               @click="activeTab = tab.id"
               :class="[
-                'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+                'py-4 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer',
                 activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
@@ -274,7 +274,7 @@
           <div class="flex space-x-4">
             <button
               @click="generatePreview"
-              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
             >
               {{ $t('tools.fileRenamer.actions.preview') }}
             </button>
@@ -294,7 +294,7 @@
             </button>
             <button
               @click="clearFiles"
-              class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
             >
               {{ $t('tools.fileRenamer.actions.clear') }}
             </button>

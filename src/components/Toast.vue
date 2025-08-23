@@ -34,7 +34,7 @@
         <!-- Close Button -->
         <button
           @click="close"
-          class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+          class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path

@@ -28,7 +28,7 @@
             <button
               v-if="isMobile"
               @click="closeSidebar"
-              class="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              class="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -46,7 +46,7 @@
               :key="category.id"
               @click="selectCategory(category.id)"
               :class="[
-                'w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                'w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer',
                 selectedCategory === category.id
                   ? 'bg-blue-100 text-blue-700 border border-blue-200'
                   : 'text-gray-700 hover:bg-gray-100',
@@ -99,7 +99,7 @@
               <button
                 v-if="searchQuery"
                 @click="clearSearch"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
               >
                 <svg
                   class="h-4 w-4 text-gray-400 hover:text-gray-600"
@@ -134,7 +134,7 @@
                 :to="tool.path"
                 @click="onToolClick"
                 :class="[
-                  'block p-3 rounded-lg border transition-all hover:shadow-md',
+                  'block p-3 rounded-lg border transition-all hover:shadow-md cursor-pointer',
                   $route.path === tool.path
                     ? 'bg-blue-50 border-blue-200 shadow-sm'
                     : 'bg-white border-gray-200 hover:border-gray-300',
