@@ -355,6 +355,10 @@ export default {
       name: '网页工具',
       description: '网页开发和分析工具',
     },
+    'json-tools': {
+      name: 'JSON工具',
+      description: '全面的JSON处理和转换实用程序',
+    },
     'data-tools': {
       name: '数据工具',
       description: '数据处理和操作工具',

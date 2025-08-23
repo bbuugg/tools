@@ -350,6 +350,187 @@ export default {
         downloadComplete: 'Download completed!',
       },
     },
+    // JSON Tools
+    jsonToExcel: {
+      title: 'JSON to Excel Converter',
+      description: 'Convert JSON data to Excel format with customizable options',
+      inputTitle: 'Input JSON Data',
+      outputTitle: 'Excel Output',
+      inputPlaceholder: 'Paste your JSON array here...',
+      noResults: 'No conversion results yet. Please input JSON data to convert.',
+      conversionComplete: 'Conversion completed successfully!',
+      readyForDownload: 'Excel file is ready for download.',
+      previewTitle: 'Data Preview',
+      convert: 'Convert to Excel',
+      showingRows: 'Showing {shown} of {total} rows',
+      options: {
+        includeHeaders: 'Include Headers',
+        autoFitColumns: 'Auto-fit Columns',
+        sheetName: 'Sheet Name',
+        sheetNamePlaceholder: 'Enter sheet name',
+      },
+      features: {
+        conversion: {
+          title: 'Smart Conversion',
+          description:
+            'Automatically convert JSON arrays to Excel format with proper data type handling.',
+        },
+        formatting: {
+          title: 'Excel Formatting',
+          description:
+            'Generate properly formatted Excel files with headers, auto-sized columns, and multiple sheets.',
+        },
+        batch: {
+          title: 'Batch Processing',
+          description:
+            'Handle large datasets efficiently with preview and bulk download capabilities.',
+        },
+      },
+      errors: {
+        emptyInput: 'Please provide JSON data to convert',
+        invalidJson: 'Invalid JSON format. Please check your input.',
+        notArray: 'Input must be a JSON array',
+        emptyArray: 'JSON array cannot be empty',
+        conversionFailed: 'Failed to convert JSON to Excel',
+      },
+      success: {
+        conversionComplete: 'JSON converted to Excel successfully!',
+      },
+    },
+    excelToJson: {
+      title: 'Excel to JSON Converter',
+      description: 'Convert Excel files to JSON format with flexible parsing options',
+      inputTitle: 'Upload Excel File',
+      outputTitle: 'JSON Output',
+      uploadDescription: 'Select an Excel file to convert to JSON',
+      selectFile: 'Select Excel File',
+      supportedFormats: 'Supports .xlsx, .xls, and .csv files',
+      noResults: 'No conversion results yet. Please upload an Excel file.',
+      conversionComplete: 'Conversion completed successfully!',
+      recordsCount: '{count} records converted',
+      convert: 'Convert to JSON',
+      fileSelected: 'File selected successfully',
+      options: {
+        title: 'Conversion Options',
+        firstRowAsHeaders: 'First Row as Headers',
+        skipEmptyRows: 'Skip Empty Rows',
+        sheetIndex: 'Sheet to Convert',
+      },
+      features: {
+        parsing: {
+          title: 'Excel Parsing',
+          description:
+            'Parse Excel files with support for multiple sheets, formulas, and data types.',
+        },
+        conversion: {
+          title: 'Flexible Conversion',
+          description:
+            'Convert with options for headers, empty rows, and specific sheet selection.',
+        },
+        options: {
+          title: 'Conversion Options',
+          description:
+            'Customize output with header handling, empty row skipping, and sheet selection.',
+        },
+      },
+      errors: {
+        noFileSelected: 'Please select an Excel file to convert',
+        xlsxRequired:
+          'XLSX library is required for Excel file parsing. Please install: npm install xlsx',
+        conversionFailed: 'Failed to convert Excel to JSON',
+      },
+    },
+    jsonToCsv: {
+      title: 'JSON to CSV Converter',
+      description: 'Convert JSON data to CSV format with customizable delimiters and formatting',
+      inputTitle: 'Input JSON Data',
+      outputTitle: 'CSV Output',
+      inputPlaceholder: 'Paste your JSON array here...',
+      noResults: 'No conversion results yet. Please input JSON data to convert.',
+      conversionComplete: 'Conversion completed successfully!',
+      linesGenerated: '{count} lines generated',
+      convert: 'Convert to CSV',
+      options: {
+        title: 'CSV Options',
+        includeHeaders: 'Include Headers',
+        flattenNested: 'Flatten Nested Objects',
+        delimiter: 'Delimiter',
+        quoteChar: 'Quote Character',
+        tab: 'Tab',
+        none: 'None',
+      },
+      features: {
+        conversion: {
+          title: 'Flexible Conversion',
+          description: 'Convert JSON to CSV with support for nested objects and custom delimiters.',
+        },
+        customization: {
+          title: 'Customization',
+          description: 'Choose delimiters, quote characters, and handle nested data structures.',
+        },
+        nested: {
+          title: 'Nested Data',
+          description: 'Automatically flatten nested objects or preserve them as JSON strings.',
+        },
+      },
+      errors: {
+        emptyInput: 'Please provide JSON data to convert',
+        invalidJson: 'Invalid JSON format. Please check your input.',
+        notArray: 'Input must be a JSON array',
+        emptyArray: 'JSON array cannot be empty',
+        conversionFailed: 'Failed to convert JSON to CSV',
+      },
+      success: {
+        conversionComplete: 'JSON converted to CSV successfully!',
+      },
+    },
+    jsonToSql: {
+      title: 'JSON to SQL Converter',
+      description: 'Generate SQL INSERT, UPDATE, or CREATE TABLE statements from JSON data',
+      inputTitle: 'Input JSON Data',
+      outputTitle: 'SQL Output',
+      inputPlaceholder: 'Paste your JSON array here...',
+      noResults: 'No SQL statements generated yet. Please input JSON data and configure options.',
+      conversionComplete: 'SQL generation completed successfully!',
+      statementsGenerated: '{count} SQL statements generated',
+      convert: 'Generate SQL',
+      options: {
+        title: 'SQL Options',
+        tableName: 'Table Name',
+        tableNamePlaceholder: 'Enter table name',
+        sqlType: 'SQL Type',
+        whereField: 'WHERE Field',
+        whereFieldPlaceholder: 'Field for WHERE clause',
+        escapeValues: 'Escape Values',
+        batchInsert: 'Batch Insert',
+      },
+      features: {
+        insertion: {
+          title: 'Multiple SQL Types',
+          description: 'Generate INSERT, UPDATE, or CREATE TABLE statements from JSON data.',
+        },
+        customization: {
+          title: 'Customization',
+          description: 'Configure table names, SQL types, and field mappings for your database.',
+        },
+        security: {
+          title: 'SQL Security',
+          description: 'Automatic value escaping to prevent SQL injection vulnerabilities.',
+        },
+      },
+      errors: {
+        emptyInput: 'Please provide JSON data to convert',
+        emptyTableName: 'Please provide a table name',
+        emptyWhereField: 'Please provide a WHERE field for UPDATE statements',
+        invalidJson: 'Invalid JSON format. Please check your input.',
+        notArray: 'Input must be a JSON array',
+        emptyArray: 'JSON array cannot be empty',
+        conversionFailed: 'Failed to generate SQL statements',
+      },
+      success: {
+        conversionComplete: 'SQL statements generated successfully!',
+      },
+    },
   },
   toast: {
     success: 'Success',
@@ -368,6 +549,10 @@ export default {
     'web-tools': {
       name: 'Web Tools',
       description: 'Tools for web development and analysis',
+    },
+    'json-tools': {
+      name: 'JSON Tools',
+      description: 'Comprehensive JSON processing and conversion utilities',
     },
     'data-tools': {
       name: 'Data Tools',
