@@ -135,7 +135,7 @@
                 @click="onToolClick"
                 :class="[
                   'block p-3 rounded-lg border transition-all hover:shadow-md',
-                  $route.name === tool.id
+                  $route.path === tool.path
                     ? 'bg-blue-50 border-blue-200 shadow-sm'
                     : 'bg-white border-gray-200 hover:border-gray-300',
                 ]"
