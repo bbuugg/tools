@@ -58,6 +58,7 @@ const JsonFieldMapper = () => import('../tools/json/JsonFieldMapper.vue')
 const JsonFieldSearcher = () => import('../tools/json/JsonFieldSearcher.vue')
 const ListDeduplicator = () => import('../tools/json/ListDeduplicator.vue')
 const JsonDuplicateDetector = () => import('../tools/json/JsonDuplicateDetector.vue')
+const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -709,11 +710,11 @@ export const routeConfig: RouteRecordRaw[] = [
       {
         path: 'qr-generator',
         name: 'qr-generator',
-        component: () => import('../tools/ComingSoon.vue'),
+        component: QrCodeTool,
         meta: {
-          title: 'QR Generator',
+          title: 'QR Code Tool',
           icon: '📱',
-          status: 'coming-soon',
+          status: 'active',
         },
       },
     ],

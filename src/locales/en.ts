@@ -1347,5 +1347,75 @@ export default {
         formatFailed: 'Format failed. Please check your input format.',
       },
     },
+    qrCodeTool: {
+      title: 'QR Code Generator & Recognizer',
+      description:
+        'Generate QR codes from text and recognize QR codes from images with batch processing support',
+      tabs: {
+        generate: 'Generate',
+        recognize: 'Recognize',
+      },
+      generate: {
+        inputTitle: 'Generate QR Code',
+        textInputLabel: 'Text to encode',
+        textInputPlaceholder: 'Enter text to generate QR code...',
+        generateButton: 'Generate QR Code',
+        batchTitle: 'Batch Generate QR Codes',
+        batchInputLabel: 'Multiple texts (one per line)',
+        batchInputPlaceholder:
+          'Enter multiple texts, one per line...\nhttps://example.com\nContact: John Doe\nEmail: john@example.com',
+        batchInputHint:
+          'Enter multiple texts, one per line. Each line will generate a separate QR code.',
+        batchGenerateButton: 'Generate Batch QR Codes',
+        generatedTitle: 'Generated QR Codes',
+        downloadAll: 'Download All as ZIP',
+      },
+      recognize: {
+        uploadTitle: 'Recognize QR Codes',
+        uploadInstruction: 'Upload QR Code Images',
+        uploadDescription:
+          'Drag and drop images here or click to select files. Supports JPG, PNG, WebP formats.',
+        selectFiles: 'Select Files',
+        resultsTitle: 'Recognition Results',
+        copyAll: 'Copy All Results',
+        recognitionFailed: 'Failed to recognize QR code',
+      },
+      features: {
+        batch: {
+          title: 'Batch Processing',
+          description:
+            'Generate multiple QR codes at once or recognize QR codes from multiple images simultaneously.',
+        },
+        generate: {
+          title: 'QR Generation',
+          description:
+            'Create high-quality QR codes from any text input with customizable options.',
+        },
+        recognize: {
+          title: 'QR Recognition',
+          description:
+            'Extract data from QR codes in images with support for various image formats.',
+        },
+      },
+      messages: {
+        generateSuccess: 'QR code generated successfully!',
+        batchGenerateSuccess: 'Generated {count} QR codes successfully!',
+        downloadAllSuccess: 'All QR codes downloaded as ZIP file!',
+        copySuccess: 'QR code copied to clipboard!',
+        copyAllSuccess: 'All recognition results copied to clipboard!',
+        recognitionComplete: 'QR code recognition completed!',
+      },
+      errors: {
+        generateFailed: 'Failed to generate QR code. Please try again.',
+        batchGenerateFailed: 'Failed to generate batch QR codes. Please check your input.',
+        emptyBatch: 'Please enter at least one text to generate QR codes.',
+        downloadAllFailed: 'Failed to download all QR codes. Please try again.',
+        copyFailed: 'Failed to copy QR code to clipboard.',
+        copyAllFailed: 'Failed to copy recognition results to clipboard.',
+        noValidImages: 'Please select valid image files.',
+        noQRCodeFound: 'No QR code found in the image.',
+        noResultsToCopy: 'No successful recognition results to copy.',
+      },
+    },
   },
 }
