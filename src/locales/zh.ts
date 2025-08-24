@@ -878,12 +878,12 @@ export default {
         windows: 'Windows 批处理 (.bat)',
         linux: 'Linux Shell (.sh)',
         both: '两个脚本',
-        outputDirectory: '输出目录',
-        outputDirectoryPlaceholder: '例如：C:\\MyFiles 或 /home/user/files',
-        includeSubdirectories: '包含子目录',
+        generatePreview: '生成预览',
+        scriptPreview: '脚本预览',
+        downloadScript: '下载脚本',
         instructions: {
           title: '使用说明',
-          description: '此工具生成用于重命名文件的脚本。下载脚本后，将其放置在包含文件的目录中，然后运行它来执行重命名操作。',
+          description: '此工具生成用于重命名文件的脚本。点击"生成预览"查看脚本内容，然后点击"下载脚本"进行下载。将脚本放置在包含文件的目录中，然后运行它来执行重命名操作。',
         },
       },
       actions: {
@@ -891,7 +891,6 @@ export default {
         apply: '应用重命名',
         download: '下载ZIP',
         clear: '清空文件',
-        generateScript: '生成脚本',
       },
       sorting: {
         title: '排序',
@@ -920,6 +919,7 @@ export default {
         downloadError: '下载失败！请重试。',
         filesCleared: '所有文件已清空！',
         noFilesToProcess: '没有要处理的文件！请先添加文件。',
+        noScriptToDownload: '没有可下载的脚本！请先生成脚本。',
         scriptDownloaded: '脚本 "{fileName}" 下载成功！',
       },
     },

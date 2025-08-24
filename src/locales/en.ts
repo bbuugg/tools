@@ -958,12 +958,12 @@ export default {
         windows: 'Windows Batch (.bat)',
         linux: 'Linux Shell (.sh)',
         both: 'Both Scripts',
-        outputDirectory: 'Output Directory',
-        outputDirectoryPlaceholder: 'e.g., C:\\MyFiles or /home/user/files',
-        includeSubdirectories: 'Include Subdirectories',
+        generatePreview: 'Generate Preview',
+        scriptPreview: 'Script Preview',
+        downloadScript: 'Download Script',
         instructions: {
           title: 'Instructions',
-          description: 'This tool generates scripts to rename your files. Download the script, place it in the directory with your files, and run it to perform the renaming operation.',
+          description: 'This tool generates scripts to rename your files. Click "Generate Preview" to see the script content, then click "Download Script" to download it. Place the script in the directory with your files and run it to perform the renaming operation.',
         },
       },
       actions: {
@@ -971,7 +971,6 @@ export default {
         apply: 'Apply Rename',
         download: 'Download ZIP',
         clear: 'Clear Files',
-        generateScript: 'Generate Script',
       },
       sorting: {
         title: 'Sorting',
@@ -1000,6 +999,7 @@ export default {
         downloadError: 'Download failed! Please try again.',
         filesCleared: 'All files cleared!',
         noFilesToProcess: 'No files to process! Please add files first.',
+        noScriptToDownload: 'No script to download! Please generate a script first.',
         scriptDownloaded: 'Script "{fileName}" downloaded successfully!',
       },
     },
