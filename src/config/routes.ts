@@ -24,7 +24,7 @@ const HeaderToJson = () => import('../tools/json/HeaderToJson.vue')
 const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
 const JsonToList = () => import('../tools/json/JsonToList.vue')
 const JsonToGet = () => import('../tools/json/JsonToGet.vue')
-const JsonFieldValueExtractor = () => import('../tools/json/JsonFieldValueExtractor.vue')
+
 const JsonMinifier = () => import('../tools/json/JsonMinifier.vue')
 const JsonUnicodeFixer = () => import('../tools/json/JsonUnicodeFixer.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
@@ -211,16 +211,7 @@ export const routeConfig: RouteRecordRaw[] = [
           status: 'active',
         },
       },
-      {
-        path: 'json-field-value-extractor',
-        name: 'jsonFieldValueExtractor',
-        component: JsonFieldValueExtractor,
-        meta: {
-          title: 'JSON Field Value Extractor',
-          icon: '🎯',
-          status: 'active',
-        },
-      },
+
       {
         path: 'json-minifier',
         name: 'jsonMinifier',

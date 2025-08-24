@@ -145,6 +145,54 @@ export default {
         forms: '表单',
       },
     },
+    jsonKeysExtractor: {
+      title: 'JSON 键值提取器',
+      description: '从 JSON 对象和数组中提取所有唯一键或值',
+      inputTitle: '输入 JSON',
+      inputPlaceholder: '在此粘贴您的 JSON 数据...',
+      extractedKeys: '提取的键',
+      extractedValues: '提取的值',
+      noResults: '暂无提取结果。请输入 JSON 进行分析。',
+      extractionOptions: '提取选项',
+      includeNested: '包含嵌套键（使用点符号）',
+      sortResults: '按字母顺序排序结果',
+      includeArrayIndices: '包含数组索引',
+      outputFormat: '输出格式',
+      formatOptions: {
+        array: 'JSON 数组',
+        list: '行分隔列表',
+        tree: '树形结构',
+      },
+      modeToggle: {
+        keys: '提取键',
+        values: '提取值',
+      },
+      features: {
+        keyDiscovery: {
+          title: '键发现',
+          description: '自动从复杂的 JSON 结构中发现所有键',
+        },
+        valueExtraction: {
+          title: '值提取',
+          description: '从复杂的 JSON 结构中提取所有值',
+        },
+        nestedSupport: {
+          title: '嵌套支持',
+          description: '使用路径符号处理嵌套对象的深层结构',
+        },
+        valueTypes: {
+          title: '值类型',
+          description: '提取所有类型的值（字符串、数字、布尔值等）',
+        },
+        exportOptions: {
+          title: '多种格式',
+          description: '导出为数组、列表或树形结构',
+        },
+      },
+      errors: {
+        invalidJson: '无效的 JSON 格式：',
+      },
+    },
     jsonFormatter: {
       title: 'JSON 格式化工具',
       description: '格式化、美化和验证 JSON 数据，支持自定义缩进',

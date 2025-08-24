@@ -193,6 +193,54 @@ export default {
         noData: 'Please provide JSON data to extract from',
       },
     },
+    jsonKeysExtractor: {
+      title: 'JSON Keys/Values Extractor',
+      description: 'Extract all unique keys or values from JSON objects and arrays',
+      inputTitle: 'Input JSON',
+      inputPlaceholder: 'Paste your JSON here...',
+      extractedKeys: 'Extracted Keys',
+      extractedValues: 'Extracted Values',
+      noResults: 'No keys or values extracted yet. Please input JSON to analyze.',
+      extractionOptions: 'Extraction Options',
+      includeNested: 'Include Nested Keys (with dot notation)',
+      sortResults: 'Sort Results Alphabetically',
+      includeArrayIndices: 'Include Array Indices',
+      outputFormat: 'Output Format',
+      formatOptions: {
+        array: 'JSON Array',
+        list: 'Line-separated List',
+        tree: 'Tree Structure',
+      },
+      modeToggle: {
+        keys: 'Extract Keys',
+        values: 'Extract Values',
+      },
+      features: {
+        keyDiscovery: {
+          title: 'Key Discovery',
+          description: 'Automatically discover all keys from complex JSON structures',
+        },
+        valueExtraction: {
+          title: 'Value Extraction',
+          description: 'Extract all values from complex JSON structures',
+        },
+        nestedSupport: {
+          title: 'Nested Support',
+          description: 'Handle nested objects with path notation for deep structures',
+        },
+        valueTypes: {
+          title: 'Value Types',
+          description: 'Extract values of all types (strings, numbers, booleans, etc.)',
+        },
+        exportOptions: {
+          title: 'Multiple Formats',
+          description: 'Export as array, list, or tree structure',
+        },
+      },
+      errors: {
+        invalidJson: 'Invalid JSON format:',
+      },
+    },
     imageListProcessor: {
       title: 'Image List Processor',
       description: 'Input a list of image URLs and display them in a visual gallery format',

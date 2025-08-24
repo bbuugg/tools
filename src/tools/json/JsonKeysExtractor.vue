@@ -3,30 +3,72 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Keys Extractor</h1>
-        <p class="text-gray-600">Extract all unique keys from JSON objects and arrays</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Keys/Values Extractor</h1>
+        <p class="text-gray-600">Extract all unique keys or values from JSON objects and arrays</p>
+      </div>
+
+      <!-- Toggle Switch -->
+      <div class="flex justify-center mb-6">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            type="button"
+            @click="extractionMode = 'keys'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-l-lg',
+              extractionMode === 'keys'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            Extract Keys
+          </button>
+          <button
+            type="button"
+            @click="extractionMode = 'values'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
+              extractionMode === 'values'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            Extract Values
+          </button>
+        </div>
       </div>
 
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔑</div>
-          <h3 class="text-lg font-semibold mb-2">Key Discovery</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ extractionMode === 'keys' ? 'Key Discovery' : 'Value Extraction' }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Automatically discover all keys from complex JSON structures
+            {{
+              extractionMode === 'keys'
+                ? 'Automatically discover all keys from complex JSON structures'
+                : 'Extract all values from complex JSON structures'
+            }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🌳</div>
-          <h3 class="text-lg font-semibold mb-2">Nested Support</h3>
+          <div class="text-2xl mb-3">{{ extractionMode === 'keys' ? '🌳' : '💎' }}</div>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ extractionMode === 'keys' ? 'Nested Support' : 'Value Types' }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Handle nested objects with path notation for deep structures
+            {{
+              extractionMode === 'keys'
+                ? 'Handle nested objects with path notation for deep structures'
+                : 'Extract values of all types (strings, numbers, booleans, etc.)'
+            }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">📋</div>
           <h3 class="text-lg font-semibold mb-2">Multiple Formats</h3>
-          <p class="text-gray-600 text-sm">Export keys as array, list, or tree structure</p>
+          <p class="text-gray-600 text-sm">Export as array, list, or tree structure</p>
         </div>
       </div>
 
@@ -55,7 +97,7 @@
             v-model="inputJson"
             placeholder="Paste your JSON here..."
             class="w-full h-80 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            @input="extractKeys"
+            @input="extractData"
           ></textarea>
 
           <!-- Options -->
@@ -63,10 +105,10 @@
             <h4 class="font-medium text-gray-900">Extraction Options</h4>
 
             <div class="grid grid-cols-1 gap-3">
-              <label class="flex items-center">
+              <label v-if="extractionMode === 'keys'" class="flex items-center">
                 <input
                   v-model="options.includeNested"
-                  @change="extractKeys"
+                  @change="extractData"
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -76,17 +118,17 @@
               <label class="flex items-center">
                 <input
                   v-model="options.sortKeys"
-                  @change="extractKeys"
+                  @change="extractData"
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Sort Keys Alphabetically
+                Sort Results Alphabetically
               </label>
 
-              <label class="flex items-center">
+              <label v-if="extractionMode === 'keys'" class="flex items-center">
                 <input
                   v-model="options.includeArrayIndices"
-                  @change="extractKeys"
+                  @change="extractData"
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -98,12 +140,12 @@
               <label class="text-sm font-medium text-gray-700">Output Format:</label>
               <select
                 v-model="options.outputFormat"
-                @change="extractKeys"
+                @change="extractData"
                 class="px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="array">JSON Array</option>
                 <option value="list">Line-separated List</option>
-                <option value="tree">Tree Structure</option>
+                <option v-if="extractionMode === 'keys'" value="tree">Tree Structure</option>
               </select>
             </div>
           </div>
@@ -112,18 +154,20 @@
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Extracted Keys</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ extractionMode === 'keys' ? 'Extracted Keys' : 'Extracted Values' }}
+            </h3>
             <div class="flex space-x-2">
               <button
-                v-if="extractedKeys"
+                v-if="extractedData"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
                 Copy
               </button>
               <button
-                v-if="extractedKeys"
-                @click="downloadKeys"
+                v-if="extractedData"
+                @click="downloadData"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
                 Download
@@ -132,12 +176,15 @@
           </div>
 
           <div
-            v-if="!extractedKeys && !error"
+            v-if="!extractedData && !error"
             class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg"
           >
             <div class="text-center">
-              <div class="text-3xl mb-2">🔑</div>
-              <p>No keys extracted yet. Please input JSON to analyze.</p>
+              <div class="text-3xl mb-2">{{ extractionMode === 'keys' ? '🔑' : '💎' }}</div>
+              <p>
+                No {{ extractionMode === 'keys' ? 'keys' : 'values' }} extracted yet. Please input
+                JSON to analyze.
+              </p>
             </div>
           </div>
 
@@ -149,19 +196,21 @@
             </div>
           </div>
 
-          <div v-if="extractedKeys && !error" class="space-y-4">
+          <div v-if="extractedData && !error" class="space-y-4">
             <div class="bg-green-50 border border-green-200 rounded-lg p-4">
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">Keys Extracted</p>
-                  <p class="text-sm text-green-600">{{ keyStats }}</p>
+                  <p class="font-medium text-green-800">
+                    {{ extractionMode === 'keys' ? 'Keys' : 'Values' }} Extracted
+                  </p>
+                  <p class="text-sm text-green-600">{{ dataStats }}</p>
                 </div>
               </div>
             </div>
 
             <textarea
-              :value="extractedKeys"
+              :value="extractedData"
               readonly
               class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             ></textarea>
@@ -173,21 +222,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useToast } from '@/composables/useToast'
 
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
 
 const inputJson = ref('')
-const extractedKeys = ref('')
+const extractedData = ref('')
 const error = ref('')
-const keyStats = ref('')
+const dataStats = ref('')
+const extractionMode = ref<'keys' | 'values'>('keys')
 
 const options = reactive({
   includeNested: true,
   sortKeys: true,
   includeArrayIndices: false,
   outputFormat: 'array',
+})
+
+// Watch for mode changes and re-extract data
+watch(extractionMode, () => {
+  extractData()
 })
 
 function loadExample() {
@@ -218,16 +273,17 @@ function loadExample() {
     null,
     2,
   )
-  extractKeys()
+  extractData()
 }
 
 function clearInput() {
   inputJson.value = ''
-  extractedKeys.value = ''
+  extractedData.value = ''
   error.value = ''
-  keyStats.value = ''
+  dataStats.value = ''
 }
 
+// Function to extract all keys from JSON
 function getAllKeys(obj: any, path = '', keys: Set<string> = new Set(), level = 0): Set<string> {
   if (Array.isArray(obj)) {
     obj.forEach((item, index) => {
@@ -255,6 +311,29 @@ function getAllKeys(obj: any, path = '', keys: Set<string> = new Set(), level = 
   return keys
 }
 
+// Function to extract all values from JSON
+function getAllValues(obj: any, values: any[] = []): any[] {
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        getAllValues(item, values)
+      } else {
+        values.push(item)
+      }
+    })
+  } else if (obj !== null && typeof obj === 'object') {
+    Object.keys(obj).forEach((key) => {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        getAllValues(obj[key], values)
+      } else {
+        values.push(obj[key])
+      }
+    })
+  }
+
+  return values
+}
+
 function createTreeStructure(keys: string[]): any {
   const tree: any = {}
 
@@ -275,10 +354,10 @@ function createTreeStructure(keys: string[]): any {
   return tree
 }
 
-function extractKeys() {
+function extractData() {
   error.value = ''
-  extractedKeys.value = ''
-  keyStats.value = ''
+  extractedData.value = ''
+  dataStats.value = ''
 
   if (!inputJson.value.trim()) {
     return
@@ -286,39 +365,70 @@ function extractKeys() {
 
   try {
     const data = JSON.parse(inputJson.value)
-    const keysSet = getAllKeys(data)
-    const keys = Array.from(keysSet)
-
-    if (options.sortKeys) {
-      keys.sort()
-    }
-
-    // Generate output based on format
     let output = ''
+    let stats = ''
 
-    switch (options.outputFormat) {
-      case 'array':
-        output = JSON.stringify(keys, null, 2)
-        break
-      case 'list':
-        output = keys.join('\n')
-        break
-      case 'tree':
-        const tree = createTreeStructure(keys)
-        output = JSON.stringify(tree, null, 2)
-        break
+    if (extractionMode.value === 'keys') {
+      // Extract keys
+      const keysSet = getAllKeys(data)
+      const keys = Array.from(keysSet)
+
+      if (options.sortKeys) {
+        keys.sort()
+      }
+
+      // Generate output based on format
+      switch (options.outputFormat) {
+        case 'array':
+          output = JSON.stringify(keys, null, 2)
+          break
+        case 'list':
+          output = keys.join('\n')
+          break
+        case 'tree':
+          const tree = createTreeStructure(keys)
+          output = JSON.stringify(tree, null, 2)
+          break
+      }
+
+      // Generate stats
+      const uniqueKeys = keys.length
+      const topLevelKeys = keys.filter((key) => !key.includes('.')).length
+      const nestedKeys = keys.filter((key) => key.includes('.')).length
+      stats = `${uniqueKeys} total keys (${topLevelKeys} top-level, ${nestedKeys} nested)`
+    } else {
+      // Extract values
+      const valuesArray = getAllValues(data)
+      const uniqueValues = [...new Set(valuesArray)] // Remove duplicates
+
+      if (options.sortKeys) {
+        uniqueValues.sort()
+      }
+
+      // Generate output based on format
+      switch (options.outputFormat) {
+        case 'array':
+          output = JSON.stringify(uniqueValues, null, 2)
+          break
+        case 'list':
+          output = uniqueValues.join('\n')
+          break
+        case 'tree':
+          // Tree format only available for keys, fallback to array
+          output = JSON.stringify(uniqueValues, null, 2)
+          break
+      }
+
+      // Generate stats
+      const totalValues = valuesArray.length
+      const uniqueCount = uniqueValues.length
+      stats = `${totalValues} total values (${uniqueCount} unique)`
     }
 
-    extractedKeys.value = output
+    extractedData.value = output
+    dataStats.value = stats
 
-    // Generate stats
-    const uniqueKeys = keys.length
-    const topLevelKeys = keys.filter((key) => !key.includes('.')).length
-    const nestedKeys = keys.filter((key) => key.includes('.')).length
-
-    keyStats.value = `${uniqueKeys} total keys (${topLevelKeys} top-level, ${nestedKeys} nested)`
-
-    success('Keys extracted successfully!')
+    success(`${extractionMode.value === 'keys' ? 'Keys' : 'Values'} extracted successfully!`)
   } catch (err: any) {
     error.value = 'Invalid JSON format: ' + err.message
     showError(error.value)
@@ -326,10 +436,10 @@ function extractKeys() {
 }
 
 function copyToClipboard() {
-  if (!extractedKeys.value) return
+  if (!extractedData.value) return
 
   navigator.clipboard
-    .writeText(extractedKeys.value)
+    .writeText(extractedData.value)
     .then(() => {
       copySuccess()
     })
@@ -338,17 +448,17 @@ function copyToClipboard() {
     })
 }
 
-function downloadKeys() {
-  if (!extractedKeys.value) return
+function downloadData() {
+  if (!extractedData.value) return
 
   const extension = options.outputFormat === 'list' ? 'txt' : 'json'
   const mimeType = options.outputFormat === 'list' ? 'text/plain' : 'application/json'
 
-  const blob = new Blob([extractedKeys.value], { type: mimeType })
+  const blob = new Blob([extractedData.value], { type: mimeType })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `extracted_keys_${Date.now()}.${extension}`
+  link.download = `extracted_${extractionMode.value}_${Date.now()}.${extension}`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
