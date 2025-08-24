@@ -261,7 +261,7 @@ const connectToSignalingServer = () => {
 
     try {
       // Connect to the signaling server
-      signalServer = new WebSocket(`ws://localhost:${port}`)
+      signalServer = new WebSocket(`wss://tools.codeemo.cn/webrtc:${port}`)
 
       signalServer.onopen = () => {
         signalServerConnected.value = true
