@@ -885,7 +885,8 @@ export default {
         noContent: '暂无脚本内容。添加文件并应用重命名选项以生成脚本。',
         instructions: {
           title: '使用说明',
-          description: '此工具生成用于重命名文件的脚本。脚本会根据您的文件和重命名选项自动生成。点击"下载脚本"进行下载。将脚本放置在包含文件的目录中，然后运行它来执行重命名操作。',
+          description:
+            '此工具生成用于重命名文件的脚本。脚本会根据您的文件和重命名选项自动生成。点击"下载脚本"进行下载。将脚本放置在包含文件的目录中，然后运行它来执行重命名操作。',
         },
       },
       actions: {
@@ -923,6 +924,8 @@ export default {
         noFilesToProcess: '没有要处理的文件！请先添加文件。',
         noScriptToDownload: '没有可下载的脚本！请先生成脚本。',
         scriptDownloaded: '脚本 "{fileName}" 下载成功！',
+        applyInProgress: '正在应用重命名，请稍候...',
+        unappliedChanges: '您有未应用的更改。确定要切换标签页吗？',
       },
     },
     imageCompressor: {

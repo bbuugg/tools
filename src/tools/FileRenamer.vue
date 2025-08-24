@@ -36,7 +36,7 @@
       </div>
 
       <!-- File List and Options -->
-      <div v-if="files.length > 0" class="bg-white p-6 rounded-lg shadow-sm border">
+      <div class="bg-white p-6 rounded-lg shadow-sm border">
         <!-- File Count and Sorting -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div class="text-lg font-medium text-gray-900">
@@ -75,13 +75,14 @@
             <button
               v-for="tab in renamingTabs"
               :key="tab.id"
-              @click="activeTab = tab.id"
+              @click="handleTabChange(tab.id)"
               class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
               :class="{
                 'border-blue-500 text-blue-600': activeTab === tab.id,
                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
                   activeTab !== tab.id,
               }"
+              :disabled="isApplying"
             >
               {{ $t(`tools.fileRenamer.tabs.${tab.id}`) }}
             </button>
@@ -461,17 +462,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Empty State -->
-      <div v-else class="bg-white p-12 rounded-lg shadow-sm border text-center">
-        <div class="text-5xl mb-4">📁</div>
-        <h3 class="text-lg font-medium text-gray-900 mb-1">
-          {{ $t('tools.fileRenamer.uploadArea.title') }}
-        </h3>
-        <p class="text-gray-500">
-          {{ $t('tools.fileRenamer.uploadArea.subtitle') }}
-        </p>
-      </div>
     </div>
   </div>
 </template>
@@ -503,6 +493,7 @@ const hasPreview = ref(false)
 const hasRenamed = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const sortType = ref('natural')
+const isApplying = ref(false) // Track if rename is being applied
 
 // Renaming options
 const sequentialOptions = ref({
@@ -550,6 +541,20 @@ const scriptOptions = ref({
   scriptType: 'windows',
 })
 
+// Initialize script content
+const initializeScriptContent = () => {
+  if (files.value.length > 0) {
+    generateScriptContent()
+  } else {
+    // Set default script content when no files are present
+    scriptContent.value =
+      '# No files selected\n# Add files and apply renaming options to generate script'
+  }
+}
+
+// Call initializeScriptContent when component is mounted
+initializeScriptContent()
+
 // Watch for changes in files to update script content and preview
 watch(
   [files, sequentialOptions, replaceOptions, caseOptions, insertOptions, truncateOptions],
@@ -563,7 +568,7 @@ watch(
 )
 
 // Watch for changes in active tab to update script content
-watch(activeTab, (newTab) => {
+watch(activeTab, () => {
   if (files.value.length > 0) {
     generatePreview()
   }
@@ -573,7 +578,7 @@ watch(activeTab, (newTab) => {
 watch(
   scriptOptions,
   () => {
-    if (files.value.length > 0 && activeTab.value === 'script') {
+    if (files.value.length > 0) {
       generateScriptContent()
     }
   },
@@ -662,7 +667,7 @@ const sortFiles = (type: string) => {
 // Renaming functions
 const generatePreview = () => {
   sortedFiles.value.forEach((file, index) => {
-    let newName = file.originalName
+    let newName = file.originalName // Always start with original name
 
     // Apply sequential renaming
     if (activeTab.value === 'sequential') {
@@ -741,8 +746,8 @@ const generatePreview = () => {
   hasPreview.value = true
   success(t('tools.fileRenamer.messages.previewGenerated'))
 
-  // Generate script content immediately after preview
-  if (activeTab.value === 'script' && files.value.length > 0) {
+  // Generate script content immediately after preview, regardless of active tab
+  if (files.value.length > 0) {
     generateScriptContent()
   }
 }
@@ -766,6 +771,7 @@ const generateScriptContent = () => {
     content += 'for %%i in (*.*) do (\n'
 
     sortedFiles.value.forEach((file) => {
+      // Only generate commands for files that have a new name different from original
       if (file.newName && file.newName !== file.originalName) {
         content += '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.newName + '"\n'
       }
@@ -783,6 +789,7 @@ const generateScriptContent = () => {
     content += 'for file in *; do\n'
 
     sortedFiles.value.forEach((file) => {
+      // Only generate commands for files that have a new name different from original
       if (file.newName && file.newName !== file.originalName) {
         content += '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n'
         content += '    mv "$file" "' + file.newName + '"\n'
@@ -802,6 +809,7 @@ const generateScriptContent = () => {
     content += 'for %%i in (*.*) do (\n'
 
     sortedFiles.value.forEach((file) => {
+      // Only generate commands for files that have a new name different from original
       if (file.newName && file.newName !== file.originalName) {
         content += '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.newName + '"\n'
       }
@@ -820,6 +828,7 @@ const generateScriptContent = () => {
     content += 'for file in *; do\n'
 
     sortedFiles.value.forEach((file) => {
+      // Only generate commands for files that have a new name different from original
       if (file.newName && file.newName !== file.originalName) {
         content += '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n'
         content += '    mv "$file" "' + file.newName + '"\n'
@@ -831,21 +840,32 @@ const generateScriptContent = () => {
     content += 'echo "File renaming completed."\n'
   }
 
+  // If no files need renaming, show a message
+  if (!content.includes('ren "') && !content.includes('mv "')) {
+    content += '\nREM No files require renaming\n'
+    content += 'echo No files require renaming.\n'
+  }
+
   scriptContent.value = content
 }
 
 const applyRename = () => {
+  // Set applying state to prevent tab switching
+  isApplying.value = true
+
   sortedFiles.value.forEach((file) => {
     if (file.newName && file.newName !== file.originalName) {
       // Create a new file with the new name
       const newFile = new File([file.file], file.newName, { type: file.file.type })
       file.file = newFile
-      file.originalName = file.newName
+      file.originalName = file.newName // Update original name to the new name
+      delete file.newName // Clear the new name since it's now the original
     }
   })
 
   hasRenamed.value = true
   hasPreview.value = false
+  isApplying.value = false
   success(t('tools.fileRenamer.messages.renameApplied'))
 }
 
@@ -885,6 +905,8 @@ const clearFiles = () => {
   hasRenamed.value = false
   scriptContent.value = ''
   info(t('tools.fileRenamer.messages.filesCleared'))
+  // Initialize script content to show default message
+  initializeScriptContent()
 }
 
 const downloadScript = () => {
@@ -938,6 +960,24 @@ const renamingTabs = [
   { id: 'script' },
 ]
 
+// Function to handle tab switching with restrictions
+const handleTabChange = (tabId: string) => {
+  // Prevent tab switching while applying rename
+  if (isApplying.value) {
+    info(t('tools.fileRenamer.messages.applyInProgress'))
+    return
+  }
+
+  // If there's a preview but not applied, warn the user
+  if (hasPreview.value && !hasRenamed.value && activeTab.value !== tabId) {
+    if (confirm(t('tools.fileRenamer.messages.unappliedChanges'))) {
+      activeTab.value = tabId
+    }
+  } else {
+    activeTab.value = tabId
+  }
+}
+
 // Sorting options
 const sortingOptions = [
   { id: 'natural', label: t('tools.fileRenamer.sorting.natural') },
@@ -986,6 +1026,8 @@ const processFiles = (fileList: File[]) => {
   // Generate preview automatically when files are added
   if (newFiles.length > 0) {
     generatePreview()
+    // Initialize script content
+    initializeScriptContent()
   }
 
   success(t('tools.fileRenamer.messages.filesAdded', { count: newFiles.length }))
