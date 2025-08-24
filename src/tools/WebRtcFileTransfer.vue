@@ -544,8 +544,86 @@ const setupDataChannelHandlers = () => {
 
 // Handle received message
 const handleReceivedMessage = (data: any) => {
-  // In a real implementation, this would handle file data
-  addLog(t('tools.webRtcFileTransfer.logs.messageReceived', { type: typeof data }), 'info')
+  try {
+    if (data instanceof ArrayBuffer) {
+      // Handle file data chunks
+      handleFileDataChunk(data)
+    } else {
+      // Handle JSON messages
+      const message = JSON.parse(data)
+      if (message.type === 'file-metadata') {
+        // Handle file metadata
+        handleFileMetadata(message)
+      }
+    }
+  } catch (error) {
+    // If it's not JSON, it might be a file chunk
+    if (data instanceof ArrayBuffer) {
+      handleFileDataChunk(data)
+    } else {
+      addLog(t('tools.webRtcFileTransfer.logs.messageReceived', { type: typeof data }), 'info')
+    }
+  }
+}
+
+// Handle file metadata
+let currentFileMetadata: { name: string; size: number; mimeType: string } | null = null
+let receivedChunks: ArrayBuffer[] = []
+let receivedSize = 0
+
+const handleFileMetadata = (metadata: { name: string; size: number; mimeType: string }) => {
+  currentFileMetadata = metadata
+  receivedChunks = []
+  receivedSize = 0
+  addLog(
+    t('tools.webRtcFileTransfer.logs.receivingFile', {
+      name: metadata.name,
+      size: formatFileSize(metadata.size),
+    }),
+    'info',
+  )
+}
+
+// Handle file data chunks
+const handleFileDataChunk = (chunk: ArrayBuffer) => {
+  if (!currentFileMetadata) {
+    addLog(t('tools.webRtcFileTransfer.logs.unexpectedDataChunk'), 'warning')
+    return
+  }
+
+  receivedChunks.push(chunk)
+  receivedSize += chunk.byteLength
+
+  // Update progress
+  const progress = Math.floor((receivedSize / currentFileMetadata.size) * 100)
+  transferProgress.value = progress
+
+  // Check if file is complete
+  if (receivedSize >= currentFileMetadata.size) {
+    // Reconstruct file
+    const blob = new Blob(receivedChunks, { type: currentFileMetadata.mimeType })
+    const url = URL.createObjectURL(blob)
+
+    // Add to received files
+    receivedFiles.value.push({
+      name: currentFileMetadata.name,
+      size: currentFileMetadata.size,
+      url: url,
+    })
+
+    // Reset for next file
+    currentFileMetadata = null
+    receivedChunks = []
+    receivedSize = 0
+    transferProgress.value = 0
+
+    addLog(
+      t('tools.webRtcFileTransfer.logs.fileReceived', {
+        name: currentFileMetadata?.name || 'unknown',
+      }),
+      'success',
+    )
+  }
 }
 
 // Start discovery process
@@ -607,12 +685,24 @@ const sendFile = async () => {
   addLog(t('tools.webRtcFileTransfer.logs.sendingFile', { name: selectedFile.value.name }), 'info')
 
   try {
-    // In a real implementation, this would use WebRTC data channel to send file
-    // For this demo, we'll simulate file transfer
-    const interval = setInterval(() => {
-      transferProgress.value += 10
-      if (transferProgress.value >= 100) {
-        clearInterval(interval)
+    // Send file metadata first
+    const fileMetadata = {
+      type: 'file-metadata',
+      name: selectedFile.value.name,
+      size: selectedFile.value.size,
+      mimeType: selectedFile.value.type,
+    }
+
+    dataChannel.send(JSON.stringify(fileMetadata))
+
+    // Read file as ArrayBuffer and send in chunks
+    const reader = new FileReader()
+    const chunkSize = 16384 // 16KB chunks
+    let offset = 0
+
+    const sendChunk = () => {
+      if (offset >= selectedFile.value!.size) {
+        // File transfer complete
         isSending.value = false
         addLog(
           t('tools.webRtcFileTransfer.logs.fileSent', { name: selectedFile.value!.name }),
@@ -624,8 +714,35 @@ const sendFile = async () => {
           fileInput.value.value = ''
         }
         selectedFile.value = null
+        return
       }
-    }, 300)
+
+      const slice = selectedFile.value!.slice(offset, offset + chunkSize)
+      reader.readAsArrayBuffer(slice)
+    }
+
+    reader.onload = (e) => {
+      // Send chunk data
+      if (dataChannel && dataChannel.readyState === 'open') {
+        dataChannel.send(e.target!.result as ArrayBuffer)
+      } else {
+        throw new Error('Data channel is not open')
+      }
+
+      // Update progress
+      offset += chunkSize
+      transferProgress.value = Math.min(100, Math.floor((offset / selectedFile.value!.size) * 100))
+
+      // Send next chunk
+      setTimeout(sendChunk, 0)
+    }
+
+    reader.onerror = (error) => {
+      throw error
+    }
+
+    // Start sending
+    sendChunk()
   } catch (error) {
     isSending.value = false
     addLog(t('tools.webRtcFileTransfer.logs.sendFileFailed', { error: error.toString() }), 'error')
@@ -636,16 +753,6 @@ const sendFile = async () => {
 onMounted(() => {
   connectToSignalingServer()
   addLog(t('tools.webRtcFileTransfer.logs.initialized'), 'success')
-
-  // Simulate receiving a file for demo purposes
-  setTimeout(() => {
-    receivedFiles.value.push({
-      name: 'sample-document.txt',
-      size: 1024,
-      url: 'data:text/plain;base64,SGVsbG8gV29ybGQh',
-    })
-    addLog(t('tools.webRtcFileTransfer.logs.fileReceived', { name: 'sample-document.txt' }), 'info')
-  }, 5000)
 })
 
 // Cleanup
