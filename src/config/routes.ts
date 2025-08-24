@@ -11,7 +11,6 @@ const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const ExcelToJson = () => import('../tools/json/ExcelToJson.vue')
-const JsonToCsv = () => import('../tools/json/JsonToCsv.vue')
 const JsonFormatter = () => import('../tools/json/JsonFormatter.vue')
 const JsonExtractor = () => import('../tools/json/JsonExtractor.vue')
 const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
@@ -89,16 +88,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Excel to JSON Converter',
           icon: '📈',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-to-csv',
-        name: 'jsonToCsv',
-        component: JsonToCsv,
-        meta: {
-          title: 'JSON to CSV Converter',
-          icon: '📄',
           status: 'active',
         },
       },
