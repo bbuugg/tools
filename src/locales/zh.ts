@@ -1187,6 +1187,7 @@ export default {
       tip2: '确保良好的对比度，以便在不同背景下都能清晰显示',
       tip3: '在各种设备和浏览器上测试您的图标',
       tip4: '将 favicon.ico 放在网站根目录以便自动检测',
+      pasteHint: '提示：您也可以直接从剪贴板粘贴图片',
       features: {
         cropping: {
           title: '智能裁剪',
@@ -1212,6 +1213,9 @@ export default {
         imageLoaded: '图片加载成功！',
         generationComplete: '图标生成成功！',
         downloadComplete: '下载完成！',
+      },
+      messages: {
+        pasteSuccess: '已从剪贴板粘贴图片并开始处理！',
       },
     },
     jsonToSql: {

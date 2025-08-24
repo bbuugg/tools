@@ -47,6 +47,9 @@
               <p class="text-sm text-gray-500 mt-2">
                 {{ $t('tools.faviconGenerator.supportedFormats') }}: JPG, PNG, GIF, WebP
               </p>
+              <p class="text-sm text-gray-500 mt-2">
+                {{ $t('tools.faviconGenerator.pasteHint') }}
+              </p>
             </div>
             <button
               class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -379,6 +382,23 @@ function handleDrop(event: DragEvent) {
   }
 }
 
+// Handle paste event for clipboard images
+function handlePaste(event: ClipboardEvent) {
+  const items = event.clipboardData?.items
+  if (!items) return
+
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile()
+      if (file) {
+        loadImage(file)
+        success(t('tools.faviconGenerator.messages.pasteSuccess'))
+        return
+      }
+    }
+  }
+}
+
 function loadImage(file: File) {
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -524,6 +544,9 @@ async function downloadAll() {
 
 // Lifecycle
 onMounted(() => {
+  // Add paste event listener
+  document.addEventListener('paste', handlePaste)
+
   // Drag and drop for whole page
   document.addEventListener('dragenter', (e) => {
     e.preventDefault()
@@ -547,6 +570,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  // Remove paste event listener
+  document.removeEventListener('paste', handlePaste)
+
   // Cleanup
   if (originalImageUrl.value) {
     URL.revokeObjectURL(originalImageUrl.value)

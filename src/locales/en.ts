@@ -1232,6 +1232,7 @@ export default {
       tip2: 'Ensure good contrast for visibility across different backgrounds',
       tip3: 'Test your favicon on various devices and browsers',
       tip4: 'Place favicon.ico in your website root directory for automatic detection',
+      pasteHint: 'Tip: You can also paste images directly from your clipboard',
       features: {
         cropping: {
           title: 'Smart Cropping',
@@ -1260,6 +1261,9 @@ export default {
         imageLoaded: 'Image loaded successfully!',
         generationComplete: 'Favicons generated successfully!',
         downloadComplete: 'Download completed!',
+      },
+      messages: {
+        pasteSuccess: 'Image pasted from clipboard and processing started!',
       },
     },
     cookieToJson: {
