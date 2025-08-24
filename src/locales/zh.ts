@@ -22,6 +22,7 @@ export default {
     unique: '唯一',
     nonEmpty: '非空',
     loading: '加载中...',
+    remove: '移除',
   },
   navigation: {
     tools: '工具',
@@ -33,6 +34,7 @@ export default {
     search: '搜索工具...',
     noResults: '没有找到匹配的工具。',
     noToolsInCategory: '该分类中没有可用的工具。',
+    home: '首页',
   },
   homepage: {
     title: '开发者工具集合',

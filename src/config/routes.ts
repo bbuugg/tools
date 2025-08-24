@@ -73,6 +73,16 @@ export const routeConfig: RouteRecordRaw[] = [
     },
     children: [
       {
+        path: 'json-path-extractor',
+        name: 'jsonPathExtractor',
+        component: JsonPathExtractor,
+        meta: {
+          title: 'JSON Path Extractor',
+          icon: '🛤️',
+          status: 'active',
+        },
+      },
+      {
         path: 'json-to-excel',
         name: 'jsonToExcel',
         component: JsonToExcel,
@@ -405,7 +415,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'csv-to-json',
-        name: 'csv-to-json',
+        name: 'csvToJson',
         component: CsvToJson,
         meta: {
           title: 'CSV to JSON Converter',
@@ -415,7 +425,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'list-to-json-object',
-        name: 'list-to-json-object',
+        name: 'listToJsonObject',
         component: ListToJsonObject,
         meta: {
           title: 'List to JSON Object',
@@ -425,7 +435,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-case-converter',
-        name: 'json-case-converter',
+        name: 'jsonCaseConverter',
         component: JsonCaseConverter,
         meta: {
           title: 'JSON Case Converter',
@@ -434,18 +444,8 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-path-extractor',
-        name: 'json-path-extractor',
-        component: JsonPathExtractor,
-        meta: {
-          title: 'JSON Path Extractor',
-          icon: '🛤️',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-text-parser',
-        name: 'json-text-parser',
+        name: 'jsonTextParser',
         component: JsonTextParser,
         meta: {
           title: 'JSON Text Parser',
@@ -455,7 +455,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-array-deduplicator',
-        name: 'json-array-deduplicator',
+        name: 'jsonArrayDeduplicator',
         component: JsonArrayDeduplicator,
         meta: {
           title: 'JSON Array Deduplicator',
@@ -465,7 +465,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-line-splitter',
-        name: 'json-line-splitter',
+        name: 'jsonLineSplitter',
         component: JsonLineSplitter,
         meta: {
           title: 'JSON Line Splitter',
@@ -475,7 +475,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-field-replacer',
-        name: 'json-field-replacer',
+        name: 'jsonFieldReplacer',
         component: JsonFieldReplacer,
         meta: {
           title: 'JSON Field Replacer',
@@ -485,7 +485,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'js-to-json',
-        name: 'js-to-json',
+        name: 'jsToJson',
         component: JsToJson,
         meta: {
           title: 'JavaScript to JSON',
@@ -495,7 +495,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-text-formatter',
-        name: 'json-text-formatter',
+        name: 'jsonTextFormatter',
         component: JsonTextFormatter,
         meta: {
           title: 'JSON Text Formatter',
@@ -505,7 +505,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-field-mapper',
-        name: 'json-field-mapper',
+        name: 'jsonFieldMapper',
         component: JsonFieldMapper,
         meta: {
           title: 'JSON Field Mapper',
@@ -515,7 +515,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-field-searcher',
-        name: 'json-field-searcher',
+        name: 'jsonFieldSearcher',
         component: JsonFieldSearcher,
         meta: {
           title: 'JSON Field Searcher',
@@ -525,7 +525,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'list-deduplicator',
-        name: 'list-deduplicator',
+        name: 'listDeduplicator',
         component: ListDeduplicator,
         meta: {
           title: 'List Deduplicator',
@@ -535,7 +535,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'json-duplicate-detector',
-        name: 'json-duplicate-detector',
+        name: 'jsonDuplicateDetector',
         component: JsonDuplicateDetector,
         meta: {
           title: 'JSON Duplicate Detector',
@@ -658,7 +658,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'url-encoder',
-        name: 'url-encoder',
+        name: 'urlEncoder',
         component: () => import('../tools/ComingSoon.vue'),
         meta: {
           title: 'URL Encoder',
@@ -668,7 +668,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'base64-converter',
-        name: 'base64-converter',
+        name: 'base64Converter',
         component: () => import('../tools/ComingSoon.vue'),
         meta: {
           title: 'Base64 Converter',
@@ -699,7 +699,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'color-picker',
-        name: 'color-picker',
+        name: 'colorPicker',
         component: () => import('../tools/ComingSoon.vue'),
         meta: {
           title: 'Color Picker',
@@ -709,7 +709,7 @@ export const routeConfig: RouteRecordRaw[] = [
       },
       {
         path: 'qr-generator',
-        name: 'qr-generator',
+        name: 'qrCodeTool',
         component: QrCodeTool,
         meta: {
           title: 'QR Code Tool',

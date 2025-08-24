@@ -141,7 +141,7 @@ const { t } = useI18n()
 // Tool categories configuration (same as Home.vue)
 const categories: Category[] = [
   {
-    id: 'web-tools',
+    id: 'webTools',
     name: 'Web Tools',
     icon: '🌐',
     tools: [
@@ -156,7 +156,7 @@ const categories: Category[] = [
     ],
   },
   {
-    id: 'json-tools',
+    id: 'jsonTools',
     name: 'JSON Tools',
     icon: '📋',
     tools: [
@@ -203,7 +203,7 @@ const categories: Category[] = [
     ],
   },
   {
-    id: 'image-tools',
+    id: 'imageTools',
     name: 'Image Tools',
     icon: '🖼️',
     tools: [

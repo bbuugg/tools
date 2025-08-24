@@ -83,6 +83,7 @@ export default {
     search: 'Search tools...',
     noResults: 'No tools found matching your search.',
     noToolsInCategory: 'No tools available in this category.',
+    home: 'Home',
   },
   homepage: {
     title: 'Developer Tools Collection',
