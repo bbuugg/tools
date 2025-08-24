@@ -3,8 +3,10 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Keys/Values Extractor</h1>
-        <p class="text-gray-600">Extract all unique keys or values from JSON objects and arrays</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {{ $t('tools.jsonKeysExtractor.title') }}
+        </h1>
+        <p class="text-gray-600">{{ $t('tools.jsonKeysExtractor.description') }}</p>
       </div>
 
       <!-- Toggle Switch -->
@@ -20,7 +22,7 @@
                 : 'bg-white text-gray-700 hover:bg-gray-100',
             ]"
           >
-            Extract Keys
+            {{ $t('tools.jsonKeysExtractor.modeToggle.keys') }}
           </button>
           <button
             type="button"
@@ -32,7 +34,7 @@
                 : 'bg-white text-gray-700 hover:bg-gray-100',
             ]"
           >
-            Extract Values
+            {{ $t('tools.jsonKeysExtractor.modeToggle.values') }}
           </button>
         </div>
       </div>
@@ -42,33 +44,45 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔑</div>
           <h3 class="text-lg font-semibold mb-2">
-            {{ extractionMode === 'keys' ? 'Key Discovery' : 'Value Extraction' }}
+            {{
+              extractionMode === 'keys'
+                ? $t('tools.jsonKeysExtractor.features.keyDiscovery.title')
+                : $t('tools.jsonKeysExtractor.features.valueExtraction.title')
+            }}
           </h3>
           <p class="text-gray-600 text-sm">
             {{
               extractionMode === 'keys'
-                ? 'Automatically discover all keys from complex JSON structures'
-                : 'Extract all values from complex JSON structures'
+                ? $t('tools.jsonKeysExtractor.features.keyDiscovery.description')
+                : $t('tools.jsonKeysExtractor.features.valueExtraction.description')
             }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">{{ extractionMode === 'keys' ? '🌳' : '💎' }}</div>
           <h3 class="text-lg font-semibold mb-2">
-            {{ extractionMode === 'keys' ? 'Nested Support' : 'Value Types' }}
+            {{
+              extractionMode === 'keys'
+                ? $t('tools.jsonKeysExtractor.features.nestedSupport.title')
+                : $t('tools.jsonKeysExtractor.features.valueTypes.title')
+            }}
           </h3>
           <p class="text-gray-600 text-sm">
             {{
               extractionMode === 'keys'
-                ? 'Handle nested objects with path notation for deep structures'
-                : 'Extract values of all types (strings, numbers, booleans, etc.)'
+                ? $t('tools.jsonKeysExtractor.features.nestedSupport.description')
+                : $t('tools.jsonKeysExtractor.features.valueTypes.description')
             }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">📋</div>
-          <h3 class="text-lg font-semibold mb-2">Multiple Formats</h3>
-          <p class="text-gray-600 text-sm">Export as array, list, or tree structure</p>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonKeysExtractor.features.exportOptions.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.jsonKeysExtractor.features.exportOptions.description') }}
+          </p>
         </div>
       </div>
 
@@ -76,33 +90,37 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonKeysExtractor.inputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON here..."
+            :placeholder="$t('tools.jsonKeysExtractor.inputPlaceholder')"
             class="w-full h-80 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="extractData"
           ></textarea>
 
           <!-- Options -->
           <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">Extraction Options</h4>
+            <h4 class="font-medium text-gray-900">
+              {{ $t('tools.jsonKeysExtractor.extractionOptions') }}
+            </h4>
 
             <div class="grid grid-cols-1 gap-3">
               <label v-if="extractionMode === 'keys'" class="flex items-center">
@@ -112,7 +130,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Include Nested Keys (with dot notation)
+                {{ $t('tools.jsonKeysExtractor.includeNested') }}
               </label>
 
               <label class="flex items-center">
@@ -122,7 +140,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Sort Results Alphabetically
+                {{ $t('tools.jsonKeysExtractor.sortResults') }}
               </label>
 
               <label v-if="extractionMode === 'keys'" class="flex items-center">
@@ -132,20 +150,26 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Include Array Indices
+                {{ $t('tools.jsonKeysExtractor.includeArrayIndices') }}
               </label>
             </div>
 
             <div class="flex items-center space-x-4">
-              <label class="text-sm font-medium text-gray-700">Output Format:</label>
+              <label class="text-sm font-medium text-gray-700"
+                >{{ $t('tools.jsonKeysExtractor.outputFormat') }}:</label
+              >
               <select
                 v-model="options.outputFormat"
                 @change="extractData"
                 class="px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="array">JSON Array</option>
-                <option value="list">Line-separated List</option>
-                <option v-if="extractionMode === 'keys'" value="tree">Tree Structure</option>
+                <option value="array">
+                  {{ $t('tools.jsonKeysExtractor.formatOptions.array') }}
+                </option>
+                <option value="list">{{ $t('tools.jsonKeysExtractor.formatOptions.list') }}</option>
+                <option v-if="extractionMode === 'keys'" value="tree">
+                  {{ $t('tools.jsonKeysExtractor.formatOptions.tree') }}
+                </option>
               </select>
             </div>
           </div>
@@ -155,7 +179,11 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">
-              {{ extractionMode === 'keys' ? 'Extracted Keys' : 'Extracted Values' }}
+              {{
+                extractionMode === 'keys'
+                  ? $t('tools.jsonKeysExtractor.extractedKeys')
+                  : $t('tools.jsonKeysExtractor.extractedValues')
+              }}
             </h3>
             <div class="flex space-x-2">
               <button
@@ -163,14 +191,14 @@
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="extractedData"
                 @click="downloadData"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -182,8 +210,7 @@
             <div class="text-center">
               <div class="text-3xl mb-2">{{ extractionMode === 'keys' ? '🔑' : '💎' }}</div>
               <p>
-                No {{ extractionMode === 'keys' ? 'keys' : 'values' }} extracted yet. Please input
-                JSON to analyze.
+                {{ $t('tools.jsonKeysExtractor.noResults') }}
               </p>
             </div>
           </div>
@@ -191,7 +218,7 @@
           <div v-if="error" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
-              <p class="font-medium">Error</p>
+              <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
@@ -202,7 +229,11 @@
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
                   <p class="font-medium text-green-800">
-                    {{ extractionMode === 'keys' ? 'Keys' : 'Values' }} Extracted
+                    {{
+                      extractionMode === 'keys'
+                        ? $t('tools.jsonKeysExtractor.extractedKeys')
+                        : $t('tools.jsonKeysExtractor.extractedValues')
+                    }}
                   </p>
                   <p class="text-sm text-green-600">{{ dataStats }}</p>
                 </div>
@@ -223,8 +254,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
+const { t } = useI18n()
 const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
 
 const inputJson = ref('')
@@ -427,10 +460,8 @@ function extractData() {
 
     extractedData.value = output
     dataStats.value = stats
-
-    success(`${extractionMode.value === 'keys' ? 'Keys' : 'Values'} extracted successfully!`)
   } catch (err: any) {
-    error.value = 'Invalid JSON format: ' + err.message
+    error.value = t('tools.jsonKeysExtractor.errors.invalidJson') + ' ' + err.message
     showError(error.value)
   }
 }
