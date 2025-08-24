@@ -81,7 +81,7 @@
                 {{ $t('tools.faviconGenerator.cropPreview') }}
               </h5>
               <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div class="cropper-container w-full" style="height: 500px">
+                <div class="cropper-container w-full" style="height: 600px">
                   <Cropper
                     ref="cropperRef"
                     :src="originalImageUrl"
@@ -93,26 +93,7 @@
                     :resize-image="{
                       adjustStencil: false,
                     }"
-                    :default-size="{
-                      width: ({
-                        imageSize,
-                        visibleArea,
-                      }: {
-                        imageSize: { width: number; height: number }
-                        visibleArea: { width: number; height: number }
-                      }) => {
-                        return Math.min(imageSize.width, visibleArea.width * 0.7)
-                      },
-                      height: ({
-                        imageSize,
-                        visibleArea,
-                      }: {
-                        imageSize: { width: number; height: number }
-                        visibleArea: { width: number; height: number }
-                      }) => {
-                        return Math.min(imageSize.height, visibleArea.height * 0.7)
-                      },
-                    }"
+                    :default-size="{ width: 200, height: 200 }"
                     @change="onCropChange"
                     class="rounded border border-gray-300 w-full h-full"
                   />
