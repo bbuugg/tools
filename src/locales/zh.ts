@@ -838,6 +838,7 @@ export default {
         case: '大小写转换',
         insert: '插入文本',
         truncate: '截取文本',
+        script: '生成脚本',
       },
       sequential: {
         prefix: '前缀',
@@ -872,11 +873,25 @@ export default {
         endIndex: '结束索引',
         description: '从开始索引到结束索引提取子字符串（从0开始计数）',
       },
+      script: {
+        scriptType: '脚本类型',
+        windows: 'Windows 批处理 (.bat)',
+        linux: 'Linux Shell (.sh)',
+        both: '两个脚本',
+        outputDirectory: '输出目录',
+        outputDirectoryPlaceholder: '例如：C:\\MyFiles 或 /home/user/files',
+        includeSubdirectories: '包含子目录',
+        instructions: {
+          title: '使用说明',
+          description: '此工具生成用于重命名文件的脚本。下载脚本后，将其放置在包含文件的目录中，然后运行它来执行重命名操作。',
+        },
+      },
       actions: {
         preview: '预览',
         apply: '应用重命名',
         download: '下载ZIP',
         clear: '清空文件',
+        generateScript: '生成脚本',
       },
       sorting: {
         title: '排序',
@@ -896,6 +911,16 @@ export default {
         size: '大小',
         type: '类型',
         dragHint: '拖拽文件以手动重新排序',
+      },
+      messages: {
+        filesAdded: '成功添加 {count} 个文件！',
+        previewGenerated: '预览生成成功！',
+        renameApplied: '重命名应用成功！',
+        downloadStarted: '下载已开始！请检查您的下载文件夹。',
+        downloadError: '下载失败！请重试。',
+        filesCleared: '所有文件已清空！',
+        noFilesToProcess: '没有要处理的文件！请先添加文件。',
+        scriptDownloaded: '脚本 "{fileName}" 下载成功！',
       },
     },
     imageCompressor: {

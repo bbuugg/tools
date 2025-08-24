@@ -27,7 +27,7 @@
           <p class="text-gray-500 mb-4">{{ $t('tools.fileRenamer.uploadArea.subtitle') }}</p>
           <button
             @click="fileInputClick"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
           >
             {{ $t('tools.fileRenamer.uploadArea.selectFiles') }}
           </button>
@@ -279,6 +279,55 @@
               {{ $t('tools.fileRenamer.truncate.description') }}
             </p>
           </div>
+
+          <!-- Script Tab -->
+          <div v-if="activeTab === 'script'">
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ $t('tools.fileRenamer.script.scriptType') }}
+                  </label>
+                  <select
+                    v-model="scriptOptions.scriptType"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="windows">{{ $t('tools.fileRenamer.script.windows') }}</option>
+                    <option value="linux">{{ $t('tools.fileRenamer.script.linux') }}</option>
+                    <option value="both">{{ $t('tools.fileRenamer.script.both') }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ $t('tools.fileRenamer.script.outputDirectory') }}
+                  </label>
+                  <input
+                    v-model="scriptOptions.outputDirectory"
+                    :placeholder="$t('tools.fileRenamer.script.outputDirectoryPlaceholder')"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <div class="flex items-center">
+                <input
+                  v-model="scriptOptions.includeSubdirectories"
+                  type="checkbox"
+                  class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label class="ml-2 block text-sm text-gray-700">
+                  {{ $t('tools.fileRenamer.script.includeSubdirectories') }}
+                </label>
+              </div>
+              <div class="bg-blue-50 p-4 rounded-md">
+                <h4 class="text-sm font-medium text-blue-800 mb-2">
+                  {{ $t('tools.fileRenamer.script.instructions.title') }}
+                </h4>
+                <p class="text-sm text-blue-700">
+                  {{ $t('tools.fileRenamer.script.instructions.description') }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Action Buttons -->
@@ -302,6 +351,13 @@
             class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             {{ $t('tools.fileRenamer.actions.download') }}
+          </button>
+          <button
+            v-if="activeTab === 'script' && files.length > 0"
+            @click="generateScript"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            {{ $t('tools.fileRenamer.actions.generateScript') }}
           </button>
           <button
             @click="clearFiles"
@@ -499,6 +555,27 @@ const sortedFiles = computed(() => {
   }
 })
 
+// Tab configuration
+const renamingTabs = [
+  { id: 'sequential' },
+  { id: 'replace' },
+  { id: 'case' },
+  { id: 'insert' },
+  { id: 'truncate' },
+  { id: 'script' },
+]
+
+// Sorting options
+const sortingOptions = [
+  { id: 'natural', label: t('tools.fileRenamer.sorting.natural') },
+  { id: 'filename', label: t('tools.fileRenamer.sorting.filename') },
+  { id: 'modifiedTime', label: t('tools.fileRenamer.sorting.modifiedTime') },
+  { id: 'modifiedTimeDesc', label: t('tools.fileRenamer.sorting.modifiedTimeDesc') },
+  { id: 'random', label: t('tools.fileRenamer.sorting.random') },
+  { id: 'reverse', label: t('tools.fileRenamer.sorting.reverse') },
+  { id: 'manual', label: t('tools.fileRenamer.sorting.manual') },
+]
+
 // Renaming options
 const sequentialOptions = ref({
   prefix: '',
@@ -527,25 +604,11 @@ const truncateOptions = ref({
   endIndex: 0,
 })
 
-// Tab configuration
-const renamingTabs = [
-  { id: 'sequential' },
-  { id: 'replace' },
-  { id: 'case' },
-  { id: 'insert' },
-  { id: 'truncate' },
-]
-
-// Sorting options
-const sortingOptions = [
-  { id: 'natural', label: t('tools.fileRenamer.sorting.natural') },
-  { id: 'filename', label: t('tools.fileRenamer.sorting.filename') },
-  { id: 'modifiedTime', label: t('tools.fileRenamer.sorting.modifiedTime') },
-  { id: 'modifiedTimeDesc', label: t('tools.fileRenamer.sorting.modifiedTimeDesc') },
-  { id: 'random', label: t('tools.fileRenamer.sorting.random') },
-  { id: 'reverse', label: t('tools.fileRenamer.sorting.reverse') },
-  { id: 'manual', label: t('tools.fileRenamer.sorting.manual') },
-]
+const scriptOptions = ref({
+  scriptType: 'windows',
+  outputDirectory: '',
+  includeSubdirectories: false,
+})
 
 // File handling
 const handleFileDrop = (event: DragEvent) => {
@@ -744,6 +807,155 @@ const clearFiles = () => {
   info(t('tools.fileRenamer.messages.filesCleared'))
 }
 
+// Script generation functions
+const generateScript = () => {
+  if (files.value.length === 0) {
+    info(t('tools.fileRenamer.messages.noFilesToProcess'))
+    return
+  }
+
+  // First generate preview if not already done
+  if (!hasPreview.value) {
+    generatePreview()
+  }
+
+  const { scriptType, outputDirectory, includeSubdirectories } = scriptOptions.value
+  const directory = outputDirectory || '.'
+
+  let scriptContent = ''
+  let fileName = ''
+
+  if (scriptType === 'windows' || scriptType === 'both') {
+    fileName = 'rename_files.bat'
+    scriptContent += '@echo off\n'
+    scriptContent += 'REM Windows Batch Script for File Renaming\n'
+    scriptContent += 'REM Generated by File Renamer Tool\n\n'
+    
+    if (includeSubdirectories) {
+      scriptContent += 'REM Process files in current directory and subdirectories\n'
+      scriptContent += 'for /R "' + directory + '" %%i in (*) do (\n'
+    } else {
+      scriptContent += 'REM Process files in current directory\n'
+      scriptContent += 'for %%i in ("' + directory + '\\*") do (\n'
+    }
+    
+    sortedFiles.value.forEach((file) => {
+      if (file.newName && file.newName !== file.originalName) {
+        const originalPath = includeSubdirectories ? '%%~dpi%%~nxi' : directory + '\\' + file.originalName
+        scriptContent += '  if "%%~nxi"=="' + file.originalName + '" ren "' + originalPath + '" "' + file.newName + '"\n'
+      }
+    })
+    
+    scriptContent += ')\n'
+    scriptContent += 'echo File renaming completed.\n'
+    scriptContent += 'pause\n'
+    
+    if (scriptType === 'windows') {
+      downloadScript(scriptContent, fileName)
+      return
+    }
+  }
+
+  if (scriptType === 'linux' || scriptType === 'both') {
+    fileName = scriptType === 'both' ? 'rename_files_linux.sh' : 'rename_files.sh'
+    scriptContent = '#!/bin/bash\n'
+    scriptContent += '# Linux Shell Script for File Renaming\n'
+    scriptContent += '# Generated by File Renamer Tool\n\n'
+    
+    if (includeSubdirectories) {
+      scriptContent += '# Process files in current directory and subdirectories\n'
+      scriptContent += 'find "' + directory + '" -type f -exec sh -c \'\n'
+    } else {
+      scriptContent += '# Process files in current directory\n'
+      scriptContent += 'for file in "' + directory + '"/*; do\n'
+    }
+    
+    if (includeSubdirectories) {
+      scriptContent += '  case "$(basename "$1")" in\n'
+      sortedFiles.value.forEach((file) => {
+        if (file.newName && file.newName !== file.originalName) {
+          scriptContent += '    "' + file.originalName + '") mv "$1" "$(dirname "$1")/' + file.newName + '" ;;\n'
+        }
+      })
+      scriptContent += '  esac\n'
+      scriptContent += '\' _ {} \\;\n'
+    } else {
+      sortedFiles.value.forEach((file) => {
+        if (file.newName && file.newName !== file.originalName) {
+          scriptContent += '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n'
+          scriptContent += '    mv "$file" "' + directory + '/' + file.newName + '"\n'
+          scriptContent += '  fi\n'
+        }
+      })
+      scriptContent += 'done\n'
+    }
+    
+    scriptContent += 'echo "File renaming completed."\n'
+    
+    if (scriptType !== 'both') {
+      downloadScript(scriptContent, fileName)
+      return
+    }
+  }
+
+  // If both scripts are requested, download the Windows script now
+  if (scriptType === 'both') {
+    const winScriptContent = '@echo off\n' +
+      'REM Windows Batch Script for File Renaming\n' +
+      'REM Generated by File Renamer Tool\n\n' +
+      (includeSubdirectories 
+        ? 'REM Process files in current directory and subdirectories\nfor /R "' + directory + '" %%i in (*) do (\n'
+        : 'REM Process files in current directory\nfor %%i in ("' + directory + '\\*") do (\n') +
+      sortedFiles.value
+        .filter(file => file.newName && file.newName !== file.originalName)
+        .map(file => {
+          const originalPath = includeSubdirectories ? '%%~dpi%%~nxi' : directory + '\\' + file.originalName
+          return '  if "%%~nxi"=="' + file.originalName + '" ren "' + originalPath + '" "' + file.newName + '"'
+        })
+        .join('\n') +
+      '\n)\necho File renaming completed.\npause\n'
+      
+    downloadScript(winScriptContent, 'rename_files.bat')
+    
+    // Download the Linux script
+    const linuxScriptContent = '#!/bin/bash\n' +
+      '# Linux Shell Script for File Renaming\n' +
+      '# Generated by File Renamer Tool\n\n' +
+      (includeSubdirectories
+        ? '# Process files in current directory and subdirectories\nfind "' + directory + '" -type f -exec sh -c \'case "$(basename "$1")" in '
+        : '# Process files in current directory\nfor file in "' + directory + '"/*; do ') +
+      sortedFiles.value
+        .filter(file => file.newName && file.newName !== file.originalName)
+        .map(file => {
+          if (includeSubdirectories) {
+            return '"' + file.originalName + '") mv "$1" "$(dirname "$1")/' + file.newName + '" ;;'
+          } else {
+            return '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n    mv "$file" "' + directory + '/' + file.newName + '"\n  fi'
+          }
+        })
+        .join(' ') +
+      (includeSubdirectories ? ' esac\' _ {} \\;' : '\ndone') +
+      '\necho "File renaming completed."\n'
+      
+    downloadScript(linuxScriptContent, 'rename_files.sh')
+  }
+}
+
+const downloadScript = (content: string, fileName: string) => {
+  const blob = new Blob([content], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+  
+  success(t('tools.fileRenamer.messages.scriptDownloaded', { fileName }))
+}
+
+// Add the generateScript function to the actions section
 // Drag and drop event handlers for vue.draggable
 const handleDragStart = () => {
   // Can be used for additional logic when dragging starts

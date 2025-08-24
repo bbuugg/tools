@@ -918,6 +918,7 @@ export default {
         case: 'Case Transform',
         insert: 'Insert Text',
         truncate: 'Truncate',
+        script: 'Generate Script',
       },
       sequential: {
         prefix: 'Prefix',
@@ -952,11 +953,25 @@ export default {
         endIndex: 'End Index',
         description: 'Extract substring from start index to end index (0-based)',
       },
+      script: {
+        scriptType: 'Script Type',
+        windows: 'Windows Batch (.bat)',
+        linux: 'Linux Shell (.sh)',
+        both: 'Both Scripts',
+        outputDirectory: 'Output Directory',
+        outputDirectoryPlaceholder: 'e.g., C:\\MyFiles or /home/user/files',
+        includeSubdirectories: 'Include Subdirectories',
+        instructions: {
+          title: 'Instructions',
+          description: 'This tool generates scripts to rename your files. Download the script, place it in the directory with your files, and run it to perform the renaming operation.',
+        },
+      },
       actions: {
         preview: 'Preview',
         apply: 'Apply Rename',
         download: 'Download ZIP',
         clear: 'Clear Files',
+        generateScript: 'Generate Script',
       },
       sorting: {
         title: 'Sorting',
@@ -976,6 +991,16 @@ export default {
         size: 'Size',
         type: 'Type',
         dragHint: 'Drag files to reorder them manually',
+      },
+      messages: {
+        filesAdded: '{count} file(s) added successfully!',
+        previewGenerated: 'Preview generated successfully!',
+        renameApplied: 'Rename applied successfully!',
+        downloadStarted: 'Download started! Please check your downloads folder.',
+        downloadError: 'Download failed! Please try again.',
+        filesCleared: 'All files cleared!',
+        noFilesToProcess: 'No files to process! Please add files first.',
+        scriptDownloaded: 'Script "{fileName}" downloaded successfully!',
       },
     },
     imageCompressor: {
