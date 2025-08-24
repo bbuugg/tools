@@ -74,6 +74,7 @@ export default {
     'coming-soon': 'Coming Soon',
   },
   navigation: {
+    title: 'Professional web development utilities',
     tools: 'Tools',
     language: 'Language',
     categories: 'Tool Categories',

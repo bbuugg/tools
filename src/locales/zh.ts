@@ -25,6 +25,7 @@ export default {
   },
   navigation: {
     tools: '工具',
+    title: '专业Web开发者工具',
     language: '语言',
     categories: '工具分类',
     menu: '菜单',

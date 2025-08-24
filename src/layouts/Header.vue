@@ -14,7 +14,7 @@
           </div>
           <div>
             <h1 class="text-2xl font-bold text-white">{{ $t('navigation.tools') }}</h1>
-            <p class="text-blue-100 text-sm">Professional web development utilities</p>
+            <p class="text-blue-100 text-sm">{{ $t('navigation.title') }}</p>
           </div>
         </router-link>
 
@@ -93,7 +93,7 @@ defineEmits<{
   'toggle-sidebar': []
 }>()
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const showLanguageMenu = ref(false)
 
 const languages = [
@@ -109,6 +109,7 @@ const currentLanguage = computed(
 function changeLanguage(langCode: string) {
   locale.value = langCode
   localStorage.setItem('locale', langCode)
+  document.title = t('navigation.title')
   showLanguageMenu.value = false
 }
 
