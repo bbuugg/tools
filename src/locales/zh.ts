@@ -1213,5 +1213,40 @@ export default {
         conversionComplete: 'SQL 语句生成成功！',
       },
     },
+    universalConverter: {
+      title: '通用格式转换器',
+      description: '在 JSON、XML 和 HTTP 查询参数之间实时转换',
+      inputTitle: '输入',
+      outputTitle: '输出',
+      format: '格式',
+      conversionDirection: '转换方向',
+      conversionDirectionDescription: '选择转换方向或交换面板',
+      swap: '交换面板',
+      convertLeft: '转换到左侧',
+      convertRight: '转换到右侧',
+      features: {
+        bidirectional: {
+          title: '双向转换',
+          description: '支持任意格式之间的双向转换',
+        },
+        realtime: {
+          title: '实时转换',
+          description: '输入时即时转换，自动检测格式',
+        },
+        validation: {
+          title: '格式验证',
+          description: '内置所有支持格式的验证功能，提供详细的错误信息',
+        },
+      },
+      errors: {
+        conversionFailed: '转换失败。请检查您的输入格式。',
+        unsupportedFormat: '选择了不支持的格式',
+        invalidJson: 'JSON 格式无效。请检查您的输入。',
+        invalidXml: 'XML 格式无效。请检查您的输入。',
+        invalidQuery: '查询参数格式无效。请检查您的输入。',
+        xmlGenerationFailed: '生成 XML 输出失败',
+        queryGenerationFailed: '生成查询参数输出失败',
+      },
+    },
   },
 }

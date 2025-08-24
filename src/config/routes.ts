@@ -1,6 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 // Lazy loaded components
+const UniversalConverter = () => import('../tools/json/UniversalConverter.vue')
 const HtmlExtractor = () => import('../tools/HtmlExtractor.vue')
 const FileRenamer = () => import('../tools/FileRenamer.vue')
 const FaviconGenerator = () => import('../tools/FaviconGenerator.vue')
@@ -568,6 +569,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'HTML Content Extractor',
           icon: '🖼️',
+          status: 'active',
+        },
+      },
+      {
+        path: 'universal-converter',
+        name: 'universalConverter',
+        component: UniversalConverter,
+        meta: {
+          title: 'Universal Format Converter',
+          icon: '🔄',
           status: 'active',
         },
       },

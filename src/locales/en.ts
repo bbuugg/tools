@@ -1262,5 +1262,40 @@ export default {
         downloadFailed: 'Failed to download file',
       },
     },
+    universalConverter: {
+      title: 'Universal Format Converter',
+      description: 'Convert between JSON, XML, and HTTP query parameters in real-time',
+      inputTitle: 'Input',
+      outputTitle: 'Output',
+      format: 'Format',
+      conversionDirection: 'Conversion Direction',
+      conversionDirectionDescription: 'Choose which direction to convert or swap panels',
+      swap: 'Swap Panels',
+      convertLeft: 'Convert to Left',
+      convertRight: 'Convert to Right',
+      features: {
+        bidirectional: {
+          title: 'Bidirectional Conversion',
+          description: 'Convert between any of the supported formats in both directions',
+        },
+        realtime: {
+          title: 'Real-time Conversion',
+          description: 'See conversions happen instantly as you type with automatic detection',
+        },
+        validation: {
+          title: 'Format Validation',
+          description: 'Built-in validation for all supported formats with detailed error messages',
+        },
+      },
+      errors: {
+        conversionFailed: 'Conversion failed. Please check your input format.',
+        unsupportedFormat: 'Unsupported format selected',
+        invalidJson: 'Invalid JSON format. Please check your input.',
+        invalidXml: 'Invalid XML format. Please check your input.',
+        invalidQuery: 'Invalid query parameter format. Please check your input.',
+        xmlGenerationFailed: 'Failed to generate XML output',
+        queryGenerationFailed: 'Failed to generate query parameter output',
+      },
+    },
   },
 }
