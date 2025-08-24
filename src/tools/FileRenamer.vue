@@ -443,10 +443,10 @@
                       <span
                         :class="{
                           'text-green-600 font-medium':
-                            file.newName && file.newName !== file.originalName,
+                            file.tmpName && file.tmpName !== file.originalName,
                         }"
                       >
-                        {{ file.newName || file.originalName }}
+                        {{ file.tmpName || file.currentName }}
                       </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -479,7 +479,8 @@ interface FileItem {
   id: string
   file: File
   originalName: string
-  newName?: string
+  currentName: string
+  tmpName?: string
   size: number
   type: string
   lastModified: number
@@ -667,7 +668,7 @@ const sortFiles = (type: string) => {
 // Renaming functions
 const generatePreview = () => {
   sortedFiles.value.forEach((file, index) => {
-    let newName = file.originalName // Always start with original name
+    let tmpName = file.originalName // Always start with original name for preview
 
     // Apply sequential renaming
     if (activeTab.value === 'sequential') {
@@ -675,7 +676,7 @@ const generatePreview = () => {
       const number = (sequentialOptions.value.startNumber + index)
         .toString()
         .padStart(sequentialOptions.value.padding, '0')
-      newName = `${sequentialOptions.value.prefix}${number}${extension}`
+      tmpName = `${sequentialOptions.value.prefix}${number}${extension}`
     }
 
     // Apply replace renaming
@@ -685,7 +686,7 @@ const generatePreview = () => {
         replaceOptions.value.findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
         flags,
       )
-      newName = file.originalName.replace(regex, replaceOptions.value.replaceText)
+      tmpName = file.originalName.replace(regex, replaceOptions.value.replaceText)
     }
 
     // Apply case transformation
@@ -705,7 +706,7 @@ const generatePreview = () => {
           .join(' ')
       }
 
-      newName = `${transformedName}${extension}`
+      tmpName = `${transformedName}${extension}`
     }
 
     // Apply text insertion
@@ -714,14 +715,14 @@ const generatePreview = () => {
       const extension = getFileExtension(file.originalName)
 
       if (insertOptions.value.position === 'prefix') {
-        newName = `${insertOptions.value.text}${nameWithoutExtension}${extension}`
+        tmpName = `${insertOptions.value.text}${nameWithoutExtension}${extension}`
       } else if (insertOptions.value.position === 'suffix') {
-        newName = `${nameWithoutExtension}${insertOptions.value.text}${extension}`
+        tmpName = `${nameWithoutExtension}${insertOptions.value.text}${extension}`
       } else if (insertOptions.value.position === 'index') {
         const index = Math.min(insertOptions.value.index, nameWithoutExtension.length)
         const before = nameWithoutExtension.substring(0, index)
         const after = nameWithoutExtension.substring(index)
-        newName = `${before}${insertOptions.value.text}${after}${extension}`
+        tmpName = `${before}${insertOptions.value.text}${after}${extension}`
       }
     }
 
@@ -737,10 +738,10 @@ const generatePreview = () => {
         Math.min(end, nameWithoutExtension.length),
       )
 
-      newName = `${truncatedName}${extension}`
+      tmpName = `${truncatedName}${extension}`
     }
 
-    file.newName = newName
+    file.tmpName = tmpName
   })
 
   hasPreview.value = true
@@ -771,9 +772,10 @@ const generateScriptContent = () => {
     content += 'for %%i in (*.*) do (\n'
 
     sortedFiles.value.forEach((file) => {
-      // Only generate commands for files that have a new name different from original
-      if (file.newName && file.newName !== file.originalName) {
-        content += '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.newName + '"\n'
+      // Only generate commands for files that have a current name different from original
+      if (file.currentName && file.currentName !== file.originalName) {
+        content +=
+          '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.currentName + '"\n'
       }
     })
 
@@ -789,10 +791,10 @@ const generateScriptContent = () => {
     content += 'for file in *; do\n'
 
     sortedFiles.value.forEach((file) => {
-      // Only generate commands for files that have a new name different from original
-      if (file.newName && file.newName !== file.originalName) {
+      // Only generate commands for files that have a current name different from original
+      if (file.currentName && file.currentName !== file.originalName) {
         content += '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n'
-        content += '    mv "$file" "' + file.newName + '"\n'
+        content += '    mv "$file" "' + file.currentName + '"\n'
         content += '  fi\n'
       }
     })
@@ -809,9 +811,10 @@ const generateScriptContent = () => {
     content += 'for %%i in (*.*) do (\n'
 
     sortedFiles.value.forEach((file) => {
-      // Only generate commands for files that have a new name different from original
-      if (file.newName && file.newName !== file.originalName) {
-        content += '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.newName + '"\n'
+      // Only generate commands for files that have a current name different from original
+      if (file.currentName && file.currentName !== file.originalName) {
+        content +=
+          '  if "%%~nxi"=="' + file.originalName + '" ren "%%i" "' + file.currentName + '"\n'
       }
     })
 
@@ -828,10 +831,10 @@ const generateScriptContent = () => {
     content += 'for file in *; do\n'
 
     sortedFiles.value.forEach((file) => {
-      // Only generate commands for files that have a new name different from original
-      if (file.newName && file.newName !== file.originalName) {
+      // Only generate commands for files that have a current name different from original
+      if (file.currentName && file.currentName !== file.originalName) {
         content += '  if [ "$(basename "$file")" = "' + file.originalName + '" ]; then\n'
-        content += '    mv "$file" "' + file.newName + '"\n'
+        content += '    mv "$file" "' + file.currentName + '"\n'
         content += '  fi\n'
       }
     })
@@ -854,12 +857,12 @@ const applyRename = () => {
   isApplying.value = true
 
   sortedFiles.value.forEach((file) => {
-    if (file.newName && file.newName !== file.originalName) {
+    if (file.tmpName && file.tmpName !== file.originalName) {
       // Create a new file with the new name
-      const newFile = new File([file.file], file.newName, { type: file.file.type })
+      const newFile = new File([file.file], file.tmpName, { type: file.file.type })
       file.file = newFile
-      file.originalName = file.newName // Update original name to the new name
-      delete file.newName // Clear the new name since it's now the original
+      file.currentName = file.tmpName // Update current name to the temp name
+      delete file.tmpName // Clear the temp name since it's now the current
     }
   })
 
@@ -878,7 +881,7 @@ const downloadFiles = async () => {
     const zip = new JSZip()
 
     sortedFiles.value.forEach((file) => {
-      zip.file(file.originalName, file.file)
+      zip.file(file.currentName, file.file)
     })
 
     const content = await zip.generateAsync({ type: 'blob' })
@@ -1014,6 +1017,7 @@ const processFiles = (fileList: File[]) => {
     id: `${file.name}-${file.lastModified}-${file.size}`, // Unique ID for each file
     file,
     originalName: file.name,
+    currentName: file.name, // Initialize currentName with originalName
     size: file.size,
     type: file.type,
     lastModified: file.lastModified,
