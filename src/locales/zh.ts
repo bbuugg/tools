@@ -916,7 +916,6 @@ export default {
       },
       messages: {
         filesAdded: '成功添加 {count} 个文件！',
-        previewGenerated: '预览生成成功！',
         renameApplied: '重命名应用成功！',
         downloadStarted: '下载已开始！请检查您的下载文件夹。',
         downloadError: '下载失败！请重试。',
@@ -924,8 +923,6 @@ export default {
         noFilesToProcess: '没有要处理的文件！请先添加文件。',
         noScriptToDownload: '没有可下载的脚本！请先生成脚本。',
         scriptDownloaded: '脚本 "{fileName}" 下载成功！',
-        applyInProgress: '正在应用重命名，请稍候...',
-        unappliedChanges: '您有未应用的更改。确定要切换标签页吗？',
       },
     },
     imageCompressor: {

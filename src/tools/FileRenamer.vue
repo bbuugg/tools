@@ -747,7 +747,6 @@ const generatePreview = () => {
   })
 
   hasPreview.value = true
-  success(t('tools.fileRenamer.messages.previewGenerated'))
 
   // Generate script content immediately after preview, regardless of active tab
   if (files.value.length > 0) {
@@ -929,18 +928,11 @@ const renamingTabs = [
 const handleTabChange = (tabId: string) => {
   // Prevent tab switching while applying rename
   if (isApplying.value) {
-    info(t('tools.fileRenamer.messages.applyInProgress'))
     return
   }
 
-  // If there's a preview but not applied, warn the user
-  if (hasPreview.value && !hasRenamed.value && activeTab.value !== tabId) {
-    if (confirm(t('tools.fileRenamer.messages.unappliedChanges'))) {
-      activeTab.value = tabId
-    }
-  } else {
-    activeTab.value = tabId
-  }
+  // Always allow tab switching
+  activeTab.value = tabId
 }
 
 // Sorting options

@@ -997,7 +997,6 @@ export default {
       },
       messages: {
         filesAdded: '{count} file(s) added successfully!',
-        previewGenerated: 'Preview generated successfully!',
         renameApplied: 'Rename applied successfully!',
         downloadStarted: 'Download started! Please check your downloads folder.',
         downloadError: 'Download failed! Please try again.',
@@ -1005,8 +1004,6 @@ export default {
         noFilesToProcess: 'No files to process! Please add files first.',
         noScriptToDownload: 'No script to download! Please generate a script first.',
         scriptDownloaded: 'Script "{fileName}" downloaded successfully!',
-        applyInProgress: 'Rename application in progress. Please wait...',
-        unappliedChanges: 'You have unapplied changes. Are you sure you want to switch tabs?',
       },
     },
     imageCompressor: {
