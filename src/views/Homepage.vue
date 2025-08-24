@@ -44,7 +44,7 @@
                   <span
                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
                   >
-                    {{ $t(`categories.${tool.category}.name`) }}
+                    {{ $t(`categories.${tool.pid}.name`) }}
                   </span>
                 </div>
               </div>
@@ -121,10 +121,10 @@ import { useI18n } from 'vue-i18n'
 
 interface Tool {
   id: string
+  pid?: string
   name: string
   icon: string
   path: string
-  category: string
   status?: 'active' | 'coming-soon'
 }
 
@@ -147,10 +147,10 @@ const categories: Category[] = [
     tools: [
       {
         id: 'htmlExtractor',
+        pid: 'webTools',
         name: 'HTML Content Extractor',
         icon: '🖼️',
         path: '/web-tools/html-extractor',
-        category: 'web-tools',
         status: 'active',
       },
     ],
@@ -162,42 +162,42 @@ const categories: Category[] = [
     tools: [
       {
         id: 'jsonToExcel',
+        pid: 'jsonTools',
         name: 'JSON to Excel Converter',
         icon: '📊',
         path: '/json-tools/json-to-excel',
-        category: 'json-tools',
         status: 'active',
       },
       {
         id: 'excelToJson',
+        pid: 'jsonTools',
         name: 'Excel to JSON Converter',
         icon: '📈',
         path: '/json-tools/excel-to-json',
-        category: 'json-tools',
         status: 'active',
       },
       {
         id: 'jsonFormatter',
+        pid: 'jsonTools',
         name: 'JSON Formatter',
         icon: '🎨',
         path: '/json-tools/json-formatter',
-        category: 'json-tools',
         status: 'active',
       },
       {
         id: 'jsonExtractor',
+        pid: 'jsonTools',
         name: 'JSON Extractor',
         icon: '🔍',
         path: '/json-tools/json-extractor',
-        category: 'json-tools',
         status: 'active',
       },
       {
         id: 'jsonPathExtractor',
+        pid: 'jsonTools',
         name: 'JSON Path Extractor',
         icon: '🛤️',
         path: '/json-tools/json-path-extractor',
-        category: 'json-tools',
         status: 'active',
       },
     ],
@@ -209,26 +209,26 @@ const categories: Category[] = [
     tools: [
       {
         id: 'imageListProcessor',
+        pid: 'imageTools',
         name: 'Image List Processor',
         icon: '🖼️',
         path: '/image-tools/image-list-processor',
-        category: 'image-tools',
         status: 'active',
       },
       {
         id: 'imageCompressor',
+        pid: 'imageTools',
         name: 'Image Compressor',
         icon: '🗂',
         path: '/image-tools/image-compressor',
-        category: 'image-tools',
         status: 'active',
       },
       {
         id: 'apngGenerator',
+        pid: 'imageTools',
         name: 'APNG Generator',
         icon: '🎬',
         path: '/image-tools/apng-generator',
-        category: 'image-tools',
         status: 'active',
       },
     ],
@@ -240,10 +240,10 @@ const categories: Category[] = [
     tools: [
       {
         id: 'fileRenamer',
+        pid: 'converters',
         name: 'File Renamer',
         icon: '📝',
         path: '/converters/file-renamer',
-        category: 'converters',
         status: 'active',
       },
     ],
@@ -255,10 +255,10 @@ const categories: Category[] = [
     tools: [
       {
         id: 'faviconGenerator',
+        pid: 'generators',
         name: 'Favicon Generator',
         icon: '🎯',
         path: '/generators/favicon-generator',
-        category: 'generators',
         status: 'active',
       },
     ],
