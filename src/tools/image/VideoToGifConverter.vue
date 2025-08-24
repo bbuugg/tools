@@ -157,7 +157,7 @@
                 </button>
                 <button
                   @click="generateGif"
-                  :disabled="capturedFrames.length === 0 || isProcessing"
+                  :disabled="isProcessing"
                   class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{
@@ -468,9 +468,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 // @ts-expect-error No type definitions available for gif.js
 import GIF from 'gif.js'
 
@@ -729,7 +729,7 @@ async function createGifFromVideo() {
     quality: qualityMap[gifSettings.quality],
     width: canvas.width,
     height: canvas.height,
-    workerScript: '/gif.worker.js', // Use local worker script
+    workerScript: '/gif.worker.js',
   })
 
   const duration = Math.min(timeRange.end - timeRange.start, 15) // Limit to 15 seconds
