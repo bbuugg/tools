@@ -357,57 +357,69 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr
-                  v-for="(file, index) in sortedFiles"
-                  :key="index"
-                  :draggable="sortType === 'manual'"
-                  @dragstart="handleDragStart(index)"
-                  @dragover="handleDragOver($event, index)"
-                  @drop="handleDragDrop($event, index)"
-                  @dragend="handleDragEnd"
-                  :class="{
-                    'cursor-move': sortType === 'manual',
-                    'bg-blue-50': dragOverItemIndex === index,
-                  }"
-                >
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div
-                      v-if="sortType === 'manual'"
-                      class="cursor-move text-gray-400 hover:text-gray-600"
-                      title="Drag to reorder"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M4 8h16M4 16h16"
-                        />
-                      </svg>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {{ file.originalName }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span
-                      :class="{
-                        'text-green-600 font-medium':
-                          file.newName && file.newName !== file.originalName,
-                      }"
-                    >
-                      {{ file.newName || file.originalName }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatFileSize(file.size) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ file.type || '—' }}
-                  </td>
-                </tr>
-              </tbody>
+              <draggable
+                v-model="files"
+                tag="tbody"
+                item-key="id"
+                @start="handleDragStart"
+                @end="handleDragEnd"
+                :disabled="sortType !== 'manual'"
+                class="divide-y divide-gray-200 bg-white"
+              >
+                <template #item="{ element: file }">
+                  <tr
+                    :class="{
+                      'cursor-move': sortType === 'manual',
+                    }"
+                  >
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div
+                        v-if="sortType === 'manual'"
+                        class="cursor-move text-gray-400 hover:text-gray-600"
+                        title="Drag to reorder"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                          />
+                        </svg>
+                      </div>
+                      <div v-else class="text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                          />
+                        </svg>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {{ file.originalName }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span
+                        :class="{
+                          'text-green-600 font-medium':
+                            file.newName && file.newName !== file.originalName,
+                        }"
+                      >
+                        {{ file.newName || file.originalName }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {{ formatFileSize(file.size) }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {{ file.type || '—' }}
+                    </td>
+                  </tr>
+                </template>
+              </draggable>
             </table>
           </div>
         </div>
@@ -431,18 +443,19 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+import draggable from 'vuedraggable'
 
 const { t } = useI18n()
 const { success, info } = useToast()
 
 interface FileItem {
+  id: string
   file: File
   originalName: string
   newName?: string
   size: number
   type: string
   lastModified: number
-  sortOrder?: number // Add this property for drag-and-drop sorting
 }
 
 // State
@@ -453,17 +466,15 @@ const hasPreview = ref(false)
 const hasRenamed = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const sortType = ref('natural')
-const dragItemIndex = ref<number | null>(null)
-const dragOverItemIndex = ref<number | null>(null)
 
 // Computed property for sorted files
 const sortedFiles = computed(() => {
-  const filesArray = [...files.value]
-
-  // If we're in manual sort mode (drag-and-drop), use the sortOrder property
+  // For manual sorting, we return the files array directly as it's managed by vuedraggable
   if (sortType.value === 'manual') {
-    return filesArray.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+    return files.value
   }
+
+  const filesArray = [...files.value]
 
   switch (sortType.value) {
     case 'natural':
@@ -533,7 +544,7 @@ const sortingOptions = [
   { id: 'modifiedTimeDesc', label: t('tools.fileRenamer.sorting.modifiedTimeDesc') },
   { id: 'random', label: t('tools.fileRenamer.sorting.random') },
   { id: 'reverse', label: t('tools.fileRenamer.sorting.reverse') },
-  { id: 'manual', label: t('tools.fileRenamer.sorting.manual') }, // Add manual sort option
+  { id: 'manual', label: t('tools.fileRenamer.sorting.manual') },
 ]
 
 // File handling
@@ -557,15 +568,14 @@ const fileInputClick = () => {
   }
 }
 
-// Initialize sortOrder when files are added
 const processFiles = (fileList: File[]) => {
-  const newFiles: FileItem[] = fileList.map((file, index) => ({
+  const newFiles: FileItem[] = fileList.map((file) => ({
+    id: `${file.name}-${file.lastModified}-${file.size}`, // Unique ID for each file
     file,
     originalName: file.name,
     size: file.size,
     type: file.type,
     lastModified: file.lastModified,
-    sortOrder: files.value.length + index, // Set initial sort order
   }))
 
   files.value = [...files.value, ...newFiles]
@@ -608,7 +618,7 @@ const generatePreview = () => {
 
     // Apply sequential renaming
     if (activeTab.value === 'sequential') {
-      const nameWithoutExt = getFileNameWithoutExtension(file.originalName)
+      const nameWithoutExt = getFileNameWithoutExtension(file.originalName) // eslint-disable-line @typescript-eslint/no-unused-vars
       const extension = getFileExtension(file.originalName)
       const number = (sequentialOptions.value.startNumber + index)
         .toString()
@@ -734,50 +744,16 @@ const clearFiles = () => {
   info(t('tools.fileRenamer.messages.filesCleared'))
 }
 
-// Drag and drop functions
-const handleDragStart = (index: number) => {
-  dragItemIndex.value = index
-}
-
-const handleDragOver = (event: DragEvent, index: number) => {
-  event.preventDefault()
-  dragOverItemIndex.value = index
-}
-
-const handleDragDrop = (event: DragEvent, targetIndex: number) => {
-  event.preventDefault()
-
-  if (dragItemIndex.value === null) return
-
-  const draggedItem = sortedFiles.value[dragItemIndex.value]
-  const targetItem = sortedFiles.value[targetIndex]
-
-  // Update sort orders
-  const newFiles = [...files.value]
-  const draggedFileIndex = newFiles.findIndex(
-    (f) =>
-      f.originalName === draggedItem.originalName && f.lastModified === draggedItem.lastModified,
-  )
-  const targetFileIndex = newFiles.findIndex(
-    (f) => f.originalName === targetItem.originalName && f.lastModified === targetItem.lastModified,
-  )
-
-  if (draggedFileIndex !== -1 && targetFileIndex !== -1) {
-    // Swap sort orders
-    const tempSortOrder = newFiles[draggedFileIndex].sortOrder
-    newFiles[draggedFileIndex].sortOrder = newFiles[targetFileIndex].sortOrder
-    newFiles[targetFileIndex].sortOrder = tempSortOrder
-
-    files.value = newFiles
-    sortType.value = 'manual' // Switch to manual sort mode
-  }
-
-  dragItemIndex.value = null
-  dragOverItemIndex.value = null
+// Drag and drop event handlers for vue.draggable
+const handleDragStart = () => {
+  // Can be used for additional logic when dragging starts
 }
 
 const handleDragEnd = () => {
-  dragItemIndex.value = null
-  dragOverItemIndex.value = null
+  // Can be used for additional logic when dragging ends
+  // For manual sorting, we might want to update the preview if it exists
+  if (hasPreview.value && sortType.value === 'manual') {
+    generatePreview()
+  }
 }
 </script>
