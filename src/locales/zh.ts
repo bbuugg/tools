@@ -955,6 +955,12 @@ export default {
       spaceSaved: '节省空间',
       original: '原始',
       compressed: '压缩后',
+      imagePreview: '图片预览',
+      originalImage: '原始图片',
+      compressedImage: '压缩后图片',
+      size: '大小',
+      dimensions: '尺寸',
+      saved: '节省',
       status: {
         pending: '等待中',
         compressing: '处理中',

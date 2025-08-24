@@ -1037,6 +1037,12 @@ export default {
       spaceSaved: 'Space Saved',
       original: 'Original',
       compressed: 'Compressed',
+      imagePreview: 'Image Preview',
+      originalImage: 'Original Image',
+      compressedImage: 'Compressed Image',
+      size: 'Size',
+      dimensions: 'Dimensions',
+      saved: 'Saved',
       status: {
         pending: 'Pending',
         compressing: 'Processing',

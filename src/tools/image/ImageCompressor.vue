@@ -265,7 +265,6 @@
                 <!-- Actions -->
                 <div class="flex space-x-2">
                   <button
-                    v-if="image.status === 'pending' || image.status === 'error'"
                     @click="compressImage(index)"
                     :disabled="isCompressing"
                     class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -280,6 +279,13 @@
                     {{ $t('common.download') }}
                   </button>
                   <button
+                    v-if="image.status === 'completed' && image.compressedBlob"
+                    @click="previewImage(index)"
+                    class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                  >
+                    {{ $t('common.preview') }}
+                  </button>
+                  <button
                     @click="removeImage(index)"
                     class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                   >
@@ -288,6 +294,83 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Modal -->
+      <div
+        v-if="showPreviewModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      >
+        <div class="relative bg-white rounded-lg shadow-lg w-full max-w-4xl mx-4">
+          <div class="flex items-center justify-between p-4 border-b border-gray-200 rounded-t">
+            <h3 class="text-xl font-semibold text-gray-800">
+              {{ $t('tools.imageCompressor.imagePreview') }}
+            </h3>
+            <button
+              @click="showPreviewModal = false"
+              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="text-lg font-medium text-gray-900 mb-2">
+                  {{ $t('tools.imageCompressor.originalImage') }}
+                </h4>
+                <div class="border border-gray-200 rounded-lg p-2">
+                  <img
+                    :src="previewImageItem?.preview"
+                    :alt="previewImageItem?.name"
+                    class="w-full h-auto max-h-96 object-contain"
+                  />
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                  {{ previewImageItem?.name }}<br />
+                  {{ $t('tools.imageCompressor.size') }}:
+                  {{ formatFileSize(previewImageItem?.originalSize || 0) }}<br />
+                  {{ $t('tools.imageCompressor.dimensions') }}:
+                  {{ previewImageItem?.dimensions.width }} ×
+                  {{ previewImageItem?.dimensions.height }} px
+                </div>
+              </div>
+              <div v-if="previewImageItem?.compressedBlob">
+                <h4 class="text-lg font-medium text-gray-900 mb-2">
+                  {{ $t('tools.imageCompressor.compressedImage') }}
+                </h4>
+                <div class="border border-gray-200 rounded-lg p-2">
+                  <img
+                    :src="compressedPreviewUrl"
+                    :alt="previewImageItem?.name"
+                    class="w-full h-auto max-h-96 object-contain"
+                  />
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                  {{ previewImageItem?.name }}<br />
+                  {{ $t('tools.imageCompressor.size') }}:
+                  {{ formatFileSize(previewImageItem?.compressedSize || 0) }}<br />
+                  {{ $t('tools.imageCompressor.saved') }}: {{ previewImageItem?.savedPercentage }}%
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end p-6 border-t border-gray-200 rounded-b">
+            <button
+              @click="showPreviewModal = false"
+              class="text-gray-600 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
+            >
+              {{ $t('common.close') }}
+            </button>
           </div>
         </div>
       </div>
@@ -326,7 +409,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
@@ -357,6 +440,11 @@ const compressionQuality = ref(80)
 const outputFormat = ref('original')
 const maxWidth = ref<number | null>(null)
 
+// Preview modal
+const showPreviewModal = ref(false)
+const previewImageItem = ref<ImageItem | null>(null)
+const compressedPreviewUrl = ref<string>('')
+
 // Computed properties
 const hasCompressedImages = computed(() => {
   return images.value.some((img) => img.status === 'completed')
@@ -378,6 +466,15 @@ const compressionStats = computed(() => {
   }
 })
 
+// Watch for changes in previewImageItem to update compressedPreviewUrl
+watch(previewImageItem, (newVal) => {
+  if (newVal && newVal.compressedBlob) {
+    compressedPreviewUrl.value = URL.createObjectURL(newVal.compressedBlob)
+  } else {
+    compressedPreviewUrl.value = ''
+  }
+})
+
 // File handling
 function openFileSelector() {
   fileInput.value?.click()
@@ -387,6 +484,10 @@ function handleFileSelect(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (files) {
     addFiles(Array.from(files))
+  }
+  // Reset the input value to allow selecting the same file again
+  if (fileInput.value) {
+    fileInput.value.value = ''
   }
 }
 
@@ -409,28 +510,49 @@ async function addFiles(files: File[]) {
   }
 
   for (const file of imageFiles) {
-    // Check if file already exists
-    if (images.value.some((img) => img.name === file.name && img.originalSize === file.size)) {
-      continue
-    }
+    // Check if file already exists - now we allow duplicates
+    const existingIndex = images.value.findIndex(
+      (img) => img.name === file.name && img.originalSize === file.size,
+    )
 
-    try {
-      const dimensions = await getImageDimensions(file)
-      const preview = await createImagePreview(file)
+    if (existingIndex !== -1) {
+      // Update existing file
+      try {
+        const dimensions = await getImageDimensions(file)
+        const preview = await createImagePreview(file)
 
-      const imageItem: ImageItem = {
-        name: file.name,
-        file,
-        preview,
-        originalSize: file.size,
-        dimensions,
-        status: 'pending',
-        progress: 0,
+        images.value[existingIndex] = {
+          name: file.name,
+          file,
+          preview,
+          originalSize: file.size,
+          dimensions,
+          status: 'pending',
+          progress: 0,
+        }
+      } catch (err) {
+        console.error('Error processing file:', file.name, err)
       }
+    } else {
+      // Add new file
+      try {
+        const dimensions = await getImageDimensions(file)
+        const preview = await createImagePreview(file)
 
-      images.value.push(imageItem)
-    } catch (err) {
-      console.error('Error processing file:', file.name, err)
+        const imageItem: ImageItem = {
+          name: file.name,
+          file,
+          preview,
+          originalSize: file.size,
+          dimensions,
+          status: 'pending',
+          progress: 0,
+        }
+
+        images.value.push(imageItem)
+      } catch (err) {
+        console.error('Error processing file:', file.name, err)
+      }
     }
   }
 }
@@ -459,7 +581,7 @@ function createImagePreview(file: File): Promise<string> {
 // Compression functions
 async function compressImage(index: number) {
   const image = images.value[index]
-  if (!image || image.status === 'compressing') return
+  if (!image) return
 
   image.status = 'compressing'
   image.progress = 0
@@ -528,9 +650,7 @@ async function compressImage(index: number) {
 async function compressAll() {
   isCompressing.value = true
 
-  const pendingImages = images.value
-    .map((img, index) => ({ img, index }))
-    .filter(({ img }) => img.status === 'pending' || img.status === 'error')
+  const pendingImages = images.value.map((img, index) => ({ img, index }))
 
   // Process in batches of 3 to avoid overwhelming the browser
   const batchSize = 3
@@ -606,6 +726,12 @@ async function downloadAll() {
   success(t('tools.imageCompressor.success.downloadComplete'))
 }
 
+// Preview functions
+function previewImage(index: number) {
+  previewImageItem.value = images.value[index]
+  showPreviewModal.value = true
+}
+
 // Utility functions
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B'
@@ -618,12 +744,24 @@ function formatFileSize(bytes: number): string {
 function removeImage(index: number) {
   const image = images.value[index]
   URL.revokeObjectURL(image.preview)
+  if (image.compressedBlob) {
+    URL.revokeObjectURL(URL.createObjectURL(image.compressedBlob))
+  }
   images.value.splice(index, 1)
 }
 
 function clearAll() {
-  images.value.forEach((img) => URL.revokeObjectURL(img.preview))
+  images.value.forEach((img) => {
+    URL.revokeObjectURL(img.preview)
+    if (img.compressedBlob) {
+      URL.revokeObjectURL(URL.createObjectURL(img.compressedBlob))
+    }
+  })
   images.value = []
+  // Reset file input to allow selecting the same files again
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
 
 // Keyboard shortcuts
@@ -664,7 +802,16 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('paste', handlePaste)
-  images.value.forEach((img) => URL.revokeObjectURL(img.preview))
+  images.value.forEach((img) => {
+    URL.revokeObjectURL(img.preview)
+    if (img.compressedBlob) {
+      URL.revokeObjectURL(URL.createObjectURL(img.compressedBlob))
+    }
+  })
+  // Revoke the compressed preview URL if it exists
+  if (compressedPreviewUrl.value) {
+    URL.revokeObjectURL(compressedPreviewUrl.value)
+  }
 })
 </script>
 
