@@ -1122,6 +1122,11 @@ export default {
       processedSize: '处理后大小',
       processed: '已处理',
       original: '原始',
+      imagePreview: '图片预览',
+      originalImage: '原始图片',
+      processedImage: '处理后图片',
+      size: '大小',
+      dimensions: '尺寸',
       status: {
         pending: '等待中',
         processing: '处理中',

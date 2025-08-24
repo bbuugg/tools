@@ -1164,6 +1164,11 @@ export default {
       processedSize: 'Processed Size',
       processed: 'Processed',
       original: 'Original',
+      imagePreview: 'Image Preview',
+      originalImage: 'Original Image',
+      processedImage: 'Processed Image',
+      size: 'Size',
+      dimensions: 'Dimensions',
       status: {
         pending: 'Pending',
         processing: 'Processing',
