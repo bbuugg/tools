@@ -277,6 +277,21 @@ export default {
       title: 'Video to GIF Converter',
       description:
         'Convert videos to animated GIFs with customizable text overlays and timing controls',
+      howToUse: {
+        title: 'How to Use',
+        step1: 'Upload a video file by clicking "Select Video File" or dragging and dropping',
+        step2: 'Adjust GIF settings (width, quality, frame rate)',
+        step3: 'Set the time range for the GIF and add text overlays if desired',
+        step4: 'Click "Generate GIF" to create your animated GIF',
+      },
+      tips: {
+        title: 'Tips for Best Results',
+        tip1: 'For best results, use short video clips (under 10 seconds)',
+        tip2: 'Lower frame rates (10-15 FPS) create smaller file sizes',
+        tip3: 'Smaller GIF widths (200-400px) load faster and consume less memory',
+        tip4: 'Use medium quality for a good balance between file size and image quality',
+      },
+      loadingVideo: 'Loading video...',
       upload: {
         title: 'Upload Video',
         dragDrop: 'Drag & drop your video here',
@@ -327,6 +342,7 @@ export default {
       processing: {
         title: 'Processing Video',
         description: 'Converting your video to GIF with text overlays. This may take a moment...',
+        preview: 'Preview',
       },
       result: {
         title: 'Generated GIF',
@@ -354,6 +370,13 @@ export default {
         invalidFile: 'Please select a valid video file.',
         fileTooLarge: 'File size must be less than 100MB.',
         processingFailed: 'Failed to process video. Please try again.',
+        noVideoSelected: 'Please select a video file first.',
+        invalidTimeRange: 'Invalid time range. End time must be greater than start time.',
+      },
+      messages: {
+        fileLoaded: 'Video file loaded successfully!',
+        gifGenerated: 'GIF generated successfully!',
+        filePasted: 'Video file pasted from clipboard!',
       },
     },
     apngGenerator: {

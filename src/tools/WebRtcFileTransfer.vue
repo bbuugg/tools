@@ -19,7 +19,7 @@
           <span>{{ $t(`tools.webRtcFileTransfer.status.${connectionStatus}`) }}</span>
         </div>
         <div v-if="localDeviceId" class="text-sm text-gray-600 dark:text-gray-300">
-          {{ $t('tools.webRtcFileTransfer.deviceId') }}: {{ localDeviceId.substring(0, 8) }}...
+          {{ $t('tools.webRtcFileTransfer.deviceId') }}: {{ localDeviceId }}
         </div>
       </div>
     </div>
@@ -69,7 +69,7 @@
                 <div class="font-medium">
                   {{ device.name || $t('tools.webRtcFileTransfer.discovery.unknownDevice') }}
                 </div>
-                <div class="text-sm text-gray-500">{{ device.id.substring(0, 8) }}...</div>
+                <div class="text-sm text-gray-500">{{ device.id }}</div>
               </div>
               <button
                 @click="connectToDevice(device.id)"

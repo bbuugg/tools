@@ -426,6 +426,21 @@ export default {
     videoToGifConverter: {
       title: '视频转GIF工具',
       description: '将视频转换为动态GIF，支持自定义文字叠加和时间控制',
+      howToUse: {
+        title: '使用方法',
+        step1: '通过点击"选择视频文件"或拖拽来上传视频文件',
+        step2: '调整GIF设置（宽度、质量、帧率）',
+        step3: '设置GIF的时间范围，如果需要可以添加文字叠加',
+        step4: '点击"生成GIF"来创建您的动画GIF',
+      },
+      tips: {
+        title: '获得最佳效果的技巧',
+        tip1: '为获得最佳效果，请使用较短的视频片段（10秒以内）',
+        tip2: '较低的帧率（10-15 FPS）可创建较小的文件大小',
+        tip3: '较小的GIF宽度（200-400px）加载更快且消耗更少内存',
+        tip4: '使用中等质量可在文件大小和图像质量之间取得良好平衡',
+      },
+      loadingVideo: '正在加载视频...',
       upload: {
         title: '上传视频',
         dragDrop: '拖拽视频文件到此处',
@@ -476,6 +491,7 @@ export default {
       processing: {
         title: '处理视频中',
         description: '正在将您的视频转换为GIF并添加文字叠加。这可能需要一些时间...',
+        preview: '预览',
       },
       result: {
         title: '生成的GIF',
@@ -499,7 +515,14 @@ export default {
       errors: {
         invalidFile: '请选择有效的视频文件。',
         fileTooLarge: '文件大小必须小于100MB。',
+        noVideoSelected: '请先选择一个视频文件。',
+        invalidTimeRange: '时间范围无效。结束时间必须大于开始时间。',
         processingFailed: '视频处理失败，请重试。',
+      },
+      messages: {
+        fileLoaded: '视频文件加载成功！',
+        gifGenerated: 'GIF生成成功！',
+        filePasted: '已从剪贴板粘贴视频文件！',
       },
     },
     apngGenerator: {
