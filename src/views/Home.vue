@@ -1,8 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col">
-    <!-- Header -->
-    <Header @toggle-sidebar="toggleSidebar" :is-sidebar-open="isSidebarOpen" />
-
+  <div class="h-screen flex">
     <div class="flex flex-1 relative">
       <!-- Mobile Overlay -->
       <div
@@ -164,7 +161,7 @@
           </div>
 
           <!-- Tool Items - Scrollable Area -->
-          <div class="flex-1 overflow-y-auto p-4" style="max-height: calc(100vh - 320px)">
+          <div class="flex-1 overflow-y-auto p-4">
             <div v-if="filteredTools.length === 0" class="text-center py-8">
               <div class="text-gray-400 text-4xl mb-2">🔍</div>
               <p class="text-gray-500 text-sm">
@@ -212,15 +209,53 @@
             </div>
           </div>
         </div>
+
+        <!-- Language Switcher at Bottom -->
+        <div class="p-4 border-t border-gray-200 mt-auto">
+          <div class="relative">
+            <button
+              @click="showLanguageMenu = !showLanguageMenu"
+              class="w-full bg-gray-100 p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
+            >
+              <span>🌐</span>
+              <span class="text-sm">{{ currentLanguage.name }}</span>
+              <svg class="w-4 h-4 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <!-- Language Dropdown -->
+            <div
+              v-if="showLanguageMenu"
+              class="absolute bottom-full left-0 mb-2 w-full bg-white rounded-md shadow-lg z-50 border border-gray-200"
+            >
+              <div class="py-1">
+                <button
+                  v-for="lang in languages"
+                  :key="lang.code"
+                  @click="changeLanguage(lang.code)"
+                  :class="[
+                    'block w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer',
+                    currentLocale === lang.code
+                      ? 'bg-blue-50 text-blue-600 font-medium'
+                      : 'text-gray-700 hover:bg-gray-50',
+                  ]"
+                >
+                  <span class="mr-2">{{ lang.flag }}</span>
+                  {{ lang.name }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <!-- Main Content -->
-      <main
-        :class="[
-          'flex-1 overflow-auto transition-all duration-300 ease-in-out relative',
-          isMobile && isSidebarOpen ? 'lg:ml-0' : '',
-        ]"
-      >
+      <main class="flex-1 overflow-auto relative">
         <!-- Loading Overlay -->
         <transition
           enter-active-class="transition-opacity duration-200"
@@ -266,22 +301,17 @@
         </transition>
       </main>
     </div>
-
-    <!-- Footer -->
-    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
 import { menuConfig } from '@/config/routes'
-import Footer from '@/layouts/Footer.vue'
-import Header from '@/layouts/Header.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const {} = useI18n()
+const { locale, t } = useI18n()
 
 const selectedCategory = ref('web-tools')
 const isSidebarOpen = ref(false)
@@ -289,6 +319,18 @@ const isMobile = ref(false)
 const searchQuery = ref('')
 const isLoading = ref(false)
 const showCategoryView = ref(true) // true: show categories, false: show tools
+const showLanguageMenu = ref(false)
+
+// Language switcher data
+const languages = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'zh', name: '中文', flag: '🇨🇳' },
+]
+
+const currentLocale = computed(() => locale.value)
+const currentLanguage = computed(
+  () => languages.find((lang) => lang.code === currentLocale.value) || languages[0],
+)
 
 // Computed properties
 const currentCategoryTools = computed(() => {
@@ -370,6 +412,21 @@ function onToolClick(event: Event) {
   }
 }
 
+function changeLanguage(langCode: string) {
+  locale.value = langCode
+  localStorage.setItem('locale', langCode)
+  document.title = t('navigation.title')
+  showLanguageMenu.value = false
+}
+
+// Close language menu when clicking outside
+function handleClickOutside(event: Event) {
+  const target = event.target as HTMLElement
+  if (!target.closest('.relative')) {
+    showLanguageMenu.value = false
+  }
+}
+
 // Watch for route changes to update selected category
 watch(
   () => route.path,
@@ -436,9 +493,11 @@ onMounted(() => {
   // Check mobile state
   checkMobile()
   window.addEventListener('resize', checkMobile)
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
