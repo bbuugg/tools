@@ -20,7 +20,6 @@ const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const ListToJson = () => import('../tools/json/ListToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
 const HeaderToJson = () => import('../tools/json/HeaderToJson.vue')
-const JsonToSql = () => import('../tools/json/JsonToSql.vue')
 const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
 const JsonToList = () => import('../tools/json/JsonToList.vue')
 const JsonToGet = () => import('../tools/json/JsonToGet.vue')
@@ -178,16 +177,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'HTTP Headers to JSON',
           icon: '📡',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-to-sql',
-        name: 'jsonToSql',
-        component: JsonToSql,
-        meta: {
-          title: 'JSON to SQL Converter',
-          icon: '🗄️',
           status: 'active',
         },
       },
