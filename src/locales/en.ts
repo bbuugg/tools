@@ -2,6 +2,7 @@ export default {
   common: {
     clear: 'Clear',
     copy: 'Copy',
+    close: 'Close',
     download: 'Download',
     loadExample: 'Load Example',
     selectAll: 'Select All',
@@ -905,7 +906,7 @@ export default {
     },
     fileRenamer: {
       title: 'File Renamer Tool',
-      subtitle: 'Batch rename files with multiple modes - local processing for privacy',
+      description: 'Batch rename files with multiple modes - local processing for privacy',
       uploadArea: {
         title: 'Drag & Drop Files Here',
         subtitle: 'or click to select files',

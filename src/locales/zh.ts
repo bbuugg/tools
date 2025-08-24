@@ -2,6 +2,7 @@ export default {
   common: {
     clear: '清空',
     copy: '复制',
+    close: '关闭',
     download: '下载',
     loadExample: '加载示例',
     selectAll: '全选',
@@ -825,7 +826,7 @@ export default {
     },
     fileRenamer: {
       title: '文件重命名工具',
-      subtitle: '多模式批量重命名文件 - 本地处理保护隐私',
+      description: '多模式批量重命名文件 - 本地处理保护隐私',
       uploadArea: {
         title: '拖放文件到此处',
         subtitle: '或点击选择文件',

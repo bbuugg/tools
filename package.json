@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
+    "@material-tailwind/html": "^3.0.0-beta.7",
     "@tailwindcss/vite": "^4.1.12",
     "gif.js": "^0.2.0",
     "jsonpath-plus": "^10.3.0",
@@ -38,7 +39,6 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.7.0",
-    "daisyui": "^5.0.50",
     "eslint": "^9.31.0",
     "eslint-plugin-vue": "~10.3.0",
     "jiti": "^2.4.2",

@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.fileRenamer.title') }}</h1>
-        <p class="text-gray-600">{{ $t('tools.fileRenamer.subtitle') }}</p>
+        <p class="text-gray-600">{{ $t('tools.fileRenamer.description') }}</p>
       </div>
 
       <!-- Upload Area -->
@@ -36,7 +36,7 @@
       </div>
 
       <!-- File List and Options -->
-      <div class="bg-white p-6 rounded-lg shadow-sm border">
+      <div v-if="files.length > 0" class="bg-white p-6 rounded-lg shadow-sm border">
         <!-- File Count and Sorting -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div class="text-lg font-medium text-gray-900">
@@ -414,29 +414,60 @@
       </div>
     </div>
 
-    <!-- Script Modal -->
-    <div v-if="showScriptModal" class="modal modal-open">
-      <div class="modal-box max-w-4xl">
-        <h3 class="font-bold text-lg">{{ $t('tools.fileRenamer.script.scriptPreview') }}</h3>
-        <div class="py-4">
-          <div class="form-control w-full max-w-xs mb-4">
-            <label class="label">
-              <span class="label-text">{{ $t('tools.fileRenamer.script.scriptType') }}</span>
+    <!-- Script Modal using Material Tailwind -->
+    <div
+      v-if="showScriptModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="relative bg-white rounded-lg shadow-lg w-full max-w-4xl mx-4">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 rounded-t">
+          <h3 class="text-xl font-semibold text-gray-800">
+            {{ $t('tools.fileRenamer.script.scriptPreview') }}
+          </h3>
+          <button
+            @click="showScriptModal = false"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ $t('tools.fileRenamer.script.scriptType') }}
             </label>
-            <select v-model="scriptOptions.scriptType" class="select select-bordered">
+            <select
+              v-model="scriptOptions.scriptType"
+              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
               <option value="windows">{{ $t('tools.fileRenamer.script.windows') }}</option>
               <option value="linux">{{ $t('tools.fileRenamer.script.linux') }}</option>
             </select>
           </div>
-          <div class="bg-gray-800 text-green-400 p-4 font-mono text-sm overflow-x-auto max-h-96">
+          <div
+            class="bg-gray-800 text-green-400 p-4 font-mono text-sm overflow-x-auto max-h-96 rounded"
+          >
             <pre>{{ scriptContent || $t('tools.fileRenamer.script.noContent') }}</pre>
           </div>
         </div>
-        <div class="modal-action">
-          <button @click="showScriptModal = false" class="btn btn-ghost">
+        <div class="flex items-center justify-end p-6 border-t border-gray-200 rounded-b">
+          <button
+            @click="showScriptModal = false"
+            class="text-gray-600 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2"
+          >
             {{ $t('common.close') }}
           </button>
-          <button @click="downloadScript" class="btn btn-primary">
+          <button
+            @click="downloadScript"
+            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
             {{ $t('tools.fileRenamer.script.downloadScript') }}
           </button>
         </div>
