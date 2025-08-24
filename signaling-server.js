@@ -59,6 +59,20 @@ wss.on('connection', (ws) => {
           )
           break
 
+        case 'connection-request':
+          // Forward connection request to target device
+          if (clients.has(data.target)) {
+            const targetClient = clients.get(data.target)
+            targetClient.send(
+              JSON.stringify({
+                type: 'connection-request',
+                source: clientId,
+                name: data.name || `Device ${clientId.substring(0, 6)}`,
+              }),
+            )
+          }
+          break
+
         case 'offer':
           // Forward offer to target device
           if (clients.has(data.target)) {

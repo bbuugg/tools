@@ -218,6 +218,10 @@ let peerConnection: RTCPeerConnection | null = null
 let dataChannel: RTCDataChannel | null = null
 let signalServer: WebSocket | null = null
 let targetDeviceId = ''
+let connectionTimeout: number | null = null
+
+// Connection request handling
+const connectionRequests = ref<{ id: string; name?: string }[]>([])
 
 // Format file size
 const formatFileSize = (bytes: number): string => {
@@ -316,10 +320,7 @@ const handleMessageFromServer = (data: string) => {
     switch (message.type) {
       case 'id':
         localDeviceId.value = message.id
-        addLog(
-          t('tools.webRtcFileTransfer.logs.receivedDeviceId', { id: message.id.substring(0, 8) }),
-          'info',
-        )
+        addLog(t('tools.webRtcFileTransfer.logs.receivedDeviceId', { id: message.id }), 'info')
         break
 
       case 'devices':
@@ -338,10 +339,7 @@ const handleMessageFromServer = (data: string) => {
             id: message.id,
             name: message.name,
           })
-          addLog(
-            t('tools.webRtcFileTransfer.logs.deviceDiscovered', { id: message.id.substring(0, 8) }),
-            'info',
-          )
+          addLog(t('tools.webRtcFileTransfer.logs.deviceDiscovered', { id: message.id }), 'info')
         }
         break
 
@@ -350,10 +348,7 @@ const handleMessageFromServer = (data: string) => {
         discoveredDevices.value = discoveredDevices.value.filter(
           (device) => device.id !== message.id,
         )
-        addLog(
-          t('tools.webRtcFileTransfer.logs.deviceDisconnected', { id: message.id.substring(0, 8) }),
-          'info',
-        )
+        addLog(t('tools.webRtcFileTransfer.logs.deviceDisconnected', { id: message.id }), 'info')
         break
 
       case 'offer':
@@ -367,6 +362,20 @@ const handleMessageFromServer = (data: string) => {
       case 'ice-candidate':
         handleIceCandidate(message.candidate)
         break
+
+      case 'connection-request':
+        // Add connection request to the list
+        connectionRequests.value.push({
+          id: message.source,
+          name: message.name || message.source,
+        })
+        addLog(
+          t('tools.webRtcFileTransfer.logs.connectionRequestReceived', {
+            id: message.source,
+          }),
+          'info',
+        )
+        break
     }
   } catch (error) {
     addLog(
@@ -378,6 +387,16 @@ const handleMessageFromServer = (data: string) => {
 
 // Handle offer from another device
 const handleOffer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => {
+  // Check if we have a pending connection request from this device
+  const requestIndex = connectionRequests.value.findIndex((req) => req.id === sourceId)
+  if (requestIndex === -1) {
+    addLog(t('tools.webRtcFileTransfer.logs.unexpectedOffer', { id: sourceId }), 'warning')
+    return
+  }
+
+  // Remove the request from the list
+  connectionRequests.value.splice(requestIndex, 1)
+
   if (!peerConnection) {
     await initWebRTC(false) // Initialize as answerer
   }
@@ -410,11 +429,19 @@ const handleAnswer = async (sdp: RTCSessionDescriptionInit) => {
   try {
     await peerConnection?.setRemoteDescription(new RTCSessionDescription(sdp))
     addLog(t('tools.webRtcFileTransfer.logs.connectionEstablished'), 'success')
+
+    // Clear connection timeout since we've established connection
+    if (connectionTimeout) {
+      clearTimeout(connectionTimeout)
+      connectionTimeout = null
+    }
   } catch (error) {
     addLog(
       t('tools.webRtcFileTransfer.logs.answerHandlingFailed', { error: error.toString() }),
       'error',
     )
+    // Reset connection status on error
+    resetConnection()
   }
 }
 
@@ -487,11 +514,18 @@ const initWebRTC = async (isOfferer: boolean = true) => {
 
       if (peerConnection?.connectionState === 'connected') {
         connectionStatus.value = 'connected'
+        // Clear connection timeout since we've established connection
+        if (connectionTimeout) {
+          clearTimeout(connectionTimeout)
+          connectionTimeout = null
+        }
       } else if (
         peerConnection?.connectionState === 'disconnected' ||
         peerConnection?.connectionState === 'failed'
       ) {
         connectionStatus.value = 'disconnected'
+        // Reset connection on failure
+        resetConnection()
       }
     }
 
@@ -516,6 +550,12 @@ const initWebRTC = async (isOfferer: boolean = true) => {
         }),
       )
 
+      // Set connection timeout
+      connectionTimeout = window.setTimeout(() => {
+        addLog(t('tools.webRtcFileTransfer.logs.connectionTimeout'), 'warning')
+        resetConnection()
+      }, 30000) // 30 seconds timeout
+
       addLog(t('tools.webRtcFileTransfer.logs.offerSent'), 'info')
     }
   } catch (error) {
@@ -523,6 +563,8 @@ const initWebRTC = async (isOfferer: boolean = true) => {
       t('tools.webRtcFileTransfer.logs.webRTCInitFailed', { error: error.toString() }),
       'error',
     )
+    // Reset connection on error
+    resetConnection()
   }
 }
 
@@ -533,6 +575,11 @@ const setupDataChannelHandlers = () => {
   dataChannel.onopen = () => {
     connectionStatus.value = 'connected'
     addLog(t('tools.webRtcFileTransfer.logs.dataChannelOpened'), 'success')
+    // Clear connection timeout since we've established connection
+    if (connectionTimeout) {
+      clearTimeout(connectionTimeout)
+      connectionTimeout = null
+    }
   }
 
   dataChannel.onclose = () => {
@@ -545,11 +592,39 @@ const setupDataChannelHandlers = () => {
       t('tools.webRtcFileTransfer.logs.dataChannelError', { error: error.toString() }),
       'error',
     )
+    // Reset connection on error
+    resetConnection()
   }
 
   dataChannel.onmessage = (event) => {
     handleReceivedMessage(event.data)
   }
+}
+
+// Reset connection to initial state
+const resetConnection = () => {
+  connectionStatus.value = 'disconnected'
+  targetDeviceId = ''
+
+  // Clear connection timeout if exists
+  if (connectionTimeout) {
+    clearTimeout(connectionTimeout)
+    connectionTimeout = null
+  }
+
+  // Close peer connection
+  if (peerConnection) {
+    peerConnection.close()
+    peerConnection = null
+  }
+
+  // Close data channel
+  if (dataChannel) {
+    dataChannel.close()
+    dataChannel = null
+  }
+
+  addLog(t('tools.webRtcFileTransfer.logs.connectionReset'), 'info')
 }
 
 // Handle received message
@@ -659,13 +734,45 @@ const startDiscovery = async () => {
 const connectToDevice = async (deviceId: string) => {
   targetDeviceId = deviceId
   connectionStatus.value = 'connecting'
-  addLog(
-    t('tools.webRtcFileTransfer.logs.connectingToDevice', { deviceId: deviceId.substring(0, 8) }),
-    'info',
+  addLog(t('tools.webRtcFileTransfer.logs.connectingToDevice', { deviceId }), 'info')
+
+  // Send connection request to the target device
+  signalServer?.send(
+    JSON.stringify({
+      type: 'connection-request',
+      target: deviceId,
+      source: localDeviceId.value,
+      name: 'Device ' + localDeviceId.value, // Simple name for now
+    }),
   )
 
   // Initialize WebRTC as offerer
   await initWebRTC(true)
+}
+
+// Accept connection request
+const acceptConnectionRequest = async (deviceId: string) => {
+  // Remove the request from the list
+  connectionRequests.value = connectionRequests.value.filter((req) => req.id !== deviceId)
+
+  targetDeviceId = deviceId
+  connectionStatus.value = 'connecting'
+  addLog(t('tools.webRtcFileTransfer.logs.acceptingConnection', { deviceId }), 'info')
+
+  // Initialize WebRTC as answerer
+  await initWebRTC(false)
+}
+
+// Reject connection request
+const rejectConnectionRequest = (deviceId: string) => {
+  // Remove the request from the list
+  connectionRequests.value = connectionRequests.value.filter((req) => req.id !== deviceId)
+  addLog(
+    t('tools.webRtcFileTransfer.logs.connectionRequestRejected', {
+      deviceId,
+    }),
+    'info',
+  )
 }
 
 // Handle file selection
@@ -776,9 +883,8 @@ onUnmounted(() => {
   if (dataChannel) {
     dataChannel.close()
   }
+  if (connectionTimeout) {
+    clearTimeout(connectionTimeout)
+  }
 })
 </script>
-
-<style scoped>
-/* Add any component-specific styles here */
-</style>
