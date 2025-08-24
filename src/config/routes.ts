@@ -59,6 +59,7 @@ const JsonFieldSearcher = () => import('../tools/json/JsonFieldSearcher.vue')
 const ListDeduplicator = () => import('../tools/json/ListDeduplicator.vue')
 const JsonDuplicateDetector = () => import('../tools/json/JsonDuplicateDetector.vue')
 const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
+const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -727,7 +728,18 @@ export const routeConfig: RouteRecordRaw[] = [
       title: 'Data Tools',
       icon: '📊',
     },
-    children: [],
+    children: [
+      {
+        path: 'web-rtc-file-transfer',
+        name: 'webRtcFileTransfer',
+        component: WebRtcFileTransfer,
+        meta: {
+          title: 'WebRTC File Transfer',
+          icon: '📡',
+          status: 'active',
+        },
+      },
+    ],
   },
 ]
 
