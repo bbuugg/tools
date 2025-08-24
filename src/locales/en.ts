@@ -38,19 +38,19 @@ export default {
     by: 'by',
   },
   categories: {
-    'web-tools': {
+    webTools: {
       name: 'Web Tools',
       description: 'Tools for web development and analysis',
     },
-    'json-tools': {
+    jsonTools: {
       name: 'JSON Tools',
       description: 'Comprehensive JSON processing and conversion utilities',
     },
-    'data-tools': {
+    dataTools: {
       name: 'Data Tools',
       description: 'Tools for data processing and manipulation',
     },
-    'image-tools': {
+    imageTools: {
       name: 'Image Tools',
       description: 'Tools for image processing and management',
     },

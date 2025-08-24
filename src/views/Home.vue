@@ -68,7 +68,7 @@
             </div>
             <!-- Regular title when in category view -->
             <h2 v-else class="text-lg font-semibold text-gray-900">
-              {{ $t('navigation.categories') }}
+              {{ $t('navigation.tools') }}
             </h2>
             <button
               v-if="isMobile"
