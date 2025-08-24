@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { routeConfig } from '../config/routes'
-import HomePage from '../views/Home.vue'
 import HomePageContent from '../views/Homepage.vue'
 import NotFound from '../views/NotFound.vue'
 
@@ -19,7 +18,6 @@ const router = createRouter({
     {
       path: '/',
       name: 'landing',
-      component: HomePage,
       children: [
         {
           path: '',
