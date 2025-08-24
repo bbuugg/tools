@@ -483,49 +483,176 @@ function parseXml(content: string): any {
 function parseQuery(content: string): any {
   try {
     const params: any = {}
-    const pairs = content.split('&')
+
+    // 处理 URL 查询字符串，移除开头的 ? 如果存在
+    const cleanContent = content.startsWith('?') ? content.slice(1) : content
+    const pairs = cleanContent.split('&')
 
     for (const pair of pairs) {
-      if (!pair) continue
-      const [key, value] = pair.split('=')
-      if (key) {
-        const decodedKey = decodeURIComponent(key)
-        const decodedValue = value ? decodeURIComponent(value) : ''
+      if (!pair.trim()) continue
 
-        // Handle array notation like key[0], key[1] or key[]
-        const arrayMatch = decodedKey.match(/^(.+?)\[(\d*)\]$/)
-        if (arrayMatch) {
-          const [, baseKey, index] = arrayMatch
-          if (!params[baseKey]) {
-            params[baseKey] = []
-          }
-          if (index === '') {
-            // key[] notation - push to array
-            params[baseKey].push(decodedValue)
-          } else {
-            // key[0] notation - set at specific index
-            params[baseKey][parseInt(index)] = decodedValue
-          }
-        } else {
-          // Handle nested object notation like key[subkey]
-          const nestedMatch = decodedKey.match(/^(.+?)\[(.+?)\]$/)
-          if (nestedMatch) {
-            const [, baseKey, subKey] = nestedMatch
-            if (!params[baseKey]) {
-              params[baseKey] = {}
-            }
-            params[baseKey][subKey] = decodedValue
-          } else {
-            // Simple key-value pair
-            params[decodedKey] = decodedValue
-          }
-        }
+      // 处理没有等号的情况
+      const equalIndex = pair.indexOf('=')
+      let key: string, value: string
+
+      if (equalIndex === -1) {
+        key = pair
+        value = ''
+      } else {
+        key = pair.slice(0, equalIndex)
+        value = pair.slice(equalIndex + 1)
       }
+
+      if (!key) continue
+
+      const decodedKey = decodeURIComponent(key)
+      const decodedValue = decodeURIComponent(value)
+
+      // 尝试推断数据类型
+      const typedValue = inferType(decodedValue)
+
+      // 解析键路径，支持深度嵌套
+      setNestedValue(params, decodedKey, typedValue)
     }
 
     return params
   } catch (err) {
     throw new Error(t('tools.universalConverter.errors.invalidQuery'))
+  }
+}
+
+// 推断数据类型
+function inferType(value: string): any {
+  // 空字符串
+  if (value === '') {
+    return ''
+  }
+
+  // 布尔值
+  if (value === 'true') {
+    return true
+  }
+  if (value === 'false') {
+    return false
+  }
+
+  // null 和 undefined
+  if (value === 'null') {
+    return null
+  }
+  if (value === 'undefined') {
+    return undefined
+  }
+
+  // 数字（整数）
+  if (/^-?\d+$/.test(value)) {
+    const num = parseInt(value, 10)
+    if (!isNaN(num)) {
+      return num
+    }
+  }
+
+  // 数字（浮点数）
+  if (/^-?\d*\.\d+$/.test(value)) {
+    const num = parseFloat(value)
+    if (!isNaN(num)) {
+      return num
+    }
+  }
+
+  // 默认返回字符串
+  return value
+}
+
+// 设置嵌套值的辅助函数
+function setNestedValue(obj: any, keyPath: string, value: any): void {
+  // 解析键路径，如 "user[profile][name]" 或 "items[0]" 或 "tags[]"
+  const keys: Array<string | number> = []
+  let currentKey = ''
+  let inBracket = false
+
+  for (let i = 0; i < keyPath.length; i++) {
+    const char = keyPath[i]
+
+    if (char === '[') {
+      if (currentKey) {
+        keys.push(currentKey)
+        currentKey = ''
+      }
+      inBracket = true
+    } else if (char === ']') {
+      if (inBracket) {
+        if (currentKey === '') {
+          // 空括号表示数组追加
+          keys.push('[]')
+        } else if (/^\d+$/.test(currentKey)) {
+          // 数字索引
+          keys.push(parseInt(currentKey))
+        } else {
+          // 对象键
+          keys.push(currentKey)
+        }
+        currentKey = ''
+        inBracket = false
+      }
+    } else {
+      currentKey += char
+    }
+  }
+
+  // 添加最后的键
+  if (currentKey) {
+    keys.push(currentKey)
+  }
+
+  // 如果没有解析出键，直接设置
+  if (keys.length === 0) {
+    obj[keyPath] = value
+    return
+  }
+
+  // 遍历键路径并创建嵌套结构
+  let current = obj
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    const nextKey = keys[i + 1]
+
+    if (key === '[]') {
+      // 处理数组追加的情况
+      throw new Error('Array append notation [] can only be used as the last key')
+    }
+
+    if (!current[key]) {
+      // 根据下一个键的类型决定创建数组还是对象
+      if (typeof nextKey === 'number' || nextKey === '[]') {
+        current[key] = []
+      } else {
+        current[key] = {}
+      }
+    }
+
+    current = current[key]
+  }
+
+  // 设置最终值
+  const lastKey = keys[keys.length - 1]
+
+  if (lastKey === '[]') {
+    // 数组追加
+    if (!Array.isArray(current)) {
+      throw new Error('Cannot append to non-array')
+    }
+    current.push(value)
+  } else if (typeof lastKey === 'number') {
+    // 数组索引
+    if (!Array.isArray(current)) {
+      throw new Error('Cannot set array index on non-array')
+    }
+    current[lastKey] = value
+  } else {
+    // 对象属性
+    current[lastKey] = value
   }
 }
 
