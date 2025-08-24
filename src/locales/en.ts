@@ -1375,6 +1375,7 @@ export default {
         uploadInstruction: 'Upload QR Code Images',
         uploadDescription:
           'Drag and drop images here or click to select files. Supports JPG, PNG, WebP formats.',
+        pasteHint: 'Tip: You can also paste images directly from your clipboard',
         selectFiles: 'Select Files',
         resultsTitle: 'Recognition Results',
         copyAll: 'Copy All Results',
@@ -1404,6 +1405,7 @@ export default {
         copySuccess: 'QR code copied to clipboard!',
         copyAllSuccess: 'All recognition results copied to clipboard!',
         recognitionComplete: 'QR code recognition completed!',
+        pasteSuccess: 'Image pasted from clipboard and processing started!',
       },
       errors: {
         generateFailed: 'Failed to generate QR code. Please try again.',

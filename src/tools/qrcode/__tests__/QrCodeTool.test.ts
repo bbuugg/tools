@@ -8,12 +8,12 @@ import QrCodeTool from '../QrCodeTool.vue'
 // Mock the QR code libraries
 vi.mock('qrcode', () => ({
   default: {
-    toDataURL: vi.fn().mockResolvedValue('data:image/png;base64,test')
-  }
+    toDataURL: vi.fn().mockResolvedValue('data:image/png;base64,test'),
+  },
 }))
 
 vi.mock('jsqr', () => ({
-  default: vi.fn().mockReturnValue({ data: 'decoded text' })
+  default: vi.fn().mockReturnValue({ data: 'decoded text' }),
 }))
 
 // Create i18n instance
@@ -21,7 +21,7 @@ const i18n = createI18n({
   legacy: false,
   locale: 'en',
   fallbackLocale: 'en',
-  messages: { en, zh }
+  messages: { en, zh },
 })
 
 describe('QrCodeTool', () => {
@@ -33,8 +33,8 @@ describe('QrCodeTool', () => {
   it('renders properly', () => {
     const wrapper = mount(QrCodeTool, {
       global: {
-        plugins: [i18n]
-      }
+        plugins: [i18n],
+      },
     })
 
     expect(wrapper.find('h1').text()).toContain('QR Code Generator & Recognizer')
@@ -43,17 +43,19 @@ describe('QrCodeTool', () => {
   it('switches between tabs', async () => {
     const wrapper = mount(QrCodeTool, {
       global: {
-        plugins: [i18n]
-      }
+        plugins: [i18n],
+      },
     })
 
     // Initially should show generate tab
-    expect(wrapper.find('textarea[placeholder*="Enter text to generate QR code"]').exists()).toBe(true)
-    
+    expect(wrapper.find('textarea[placeholder*="Enter text to generate QR code"]').exists()).toBe(
+      true,
+    )
+
     // Switch to recognize tab
     const recognizeTab = wrapper.find('button:nth-child(2)')
     await recognizeTab.trigger('click')
-    
+
     // Should now show recognize tab content
     expect(wrapper.find('div[draggable]').exists()).toBe(true)
   })
@@ -61,8 +63,8 @@ describe('QrCodeTool', () => {
   it('generates a single QR code', async () => {
     const wrapper = mount(QrCodeTool, {
       global: {
-        plugins: [i18n]
-      }
+        plugins: [i18n],
+      },
     })
 
     const textarea = wrapper.find('textarea[placeholder*="Enter text to generate QR code"]')
@@ -78,8 +80,8 @@ describe('QrCodeTool', () => {
   it('handles batch QR code generation', async () => {
     const wrapper = mount(QrCodeTool, {
       global: {
-        plugins: [i18n]
-      }
+        plugins: [i18n],
+      },
     })
 
     // Switch to batch input section

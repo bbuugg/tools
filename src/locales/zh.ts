@@ -1323,6 +1323,7 @@ export default {
         uploadTitle: '识别二维码',
         uploadInstruction: '上传二维码图片',
         uploadDescription: '将图片拖放到此处或点击选择文件。支持 JPG、PNG、WebP 格式。',
+        pasteHint: '提示：您也可以直接从剪贴板粘贴图片',
         selectFiles: '选择文件',
         resultsTitle: '识别结果',
         copyAll: '复制所有结果',
@@ -1349,6 +1350,7 @@ export default {
         copySuccess: '二维码已复制到剪贴板！',
         copyAllSuccess: '所有识别结果已复制到剪贴板！',
         recognitionComplete: '二维码识别完成！',
+        pasteSuccess: '已从剪贴板粘贴图片并开始处理！',
       },
       errors: {
         generateFailed: '生成二维码失败。请重试。',

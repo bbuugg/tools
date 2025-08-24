@@ -11,33 +11,64 @@
         </p>
       </div>
 
-      <!-- Tab Navigation -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div class="border-b border-gray-200">
-          <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-            <button
-              @click="activeTab = 'generate'"
-              :class="[
-                activeTab === 'generate'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
-              ]"
-            >
-              {{ $t('tools.qrCodeTool.tabs.generate') }}
-            </button>
-            <button
-              @click="activeTab = 'recognize'"
-              :class="[
-                activeTab === 'recognize'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
-              ]"
-            >
-              {{ $t('tools.qrCodeTool.tabs.recognize') }}
-            </button>
-          </nav>
+      <!-- Toggle Switch -->
+      <div class="flex justify-center mb-6">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            type="button"
+            @click="activeTab = 'generate'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-l-lg',
+              activeTab === 'generate'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            {{ $t('tools.qrCodeTool.tabs.generate') }}
+          </button>
+          <button
+            type="button"
+            @click="activeTab = 'recognize'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
+              activeTab === 'recognize'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            {{ $t('tools.qrCodeTool.tabs.recognize') }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-sm border">
+          <div class="text-2xl mb-3">🔄</div>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.qrCodeTool.features.batch.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.qrCodeTool.features.batch.description') }}
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm border">
+          <div class="text-2xl mb-3">📱</div>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.qrCodeTool.features.generate.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.qrCodeTool.features.generate.description') }}
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm border">
+          <div class="text-2xl mb-3">🔍</div>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.qrCodeTool.features.recognize.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.qrCodeTool.features.recognize.description') }}
+          </p>
         </div>
       </div>
 
@@ -186,6 +217,9 @@
                 <p class="text-gray-600">
                   {{ $t('tools.qrCodeTool.recognize.uploadDescription') }}
                 </p>
+                <p class="text-sm text-gray-500 mt-2">
+                  {{ $t('tools.qrCodeTool.recognize.pasteHint') }}
+                </p>
               </div>
               <button
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -255,42 +289,12 @@
           </div>
         </div>
       </div>
-
-      <!-- Feature Descriptions -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            🔄 {{ $t('tools.qrCodeTool.features.batch.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.qrCodeTool.features.batch.description') }}
-          </p>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            📱 {{ $t('tools.qrCodeTool.features.generate.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.qrCodeTool.features.generate.description') }}
-          </p>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            🔍 {{ $t('tools.qrCodeTool.features.recognize.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.qrCodeTool.features.recognize.description') }}
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import QRCode from 'qrcode'
@@ -494,6 +498,25 @@ function handleDrop(event: DragEvent) {
   }
 }
 
+// Handle paste event for clipboard images
+function handlePaste(event: ClipboardEvent) {
+  const items = event.clipboardData?.items
+  if (!items) return
+
+  const files: File[] = []
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile()
+      if (file) files.push(file)
+    }
+  }
+
+  if (files.length > 0) {
+    recognizeFiles(files)
+    success(t('tools.qrCodeTool.messages.pasteSuccess'))
+  }
+}
+
 // Recognize QR codes from files
 async function recognizeFiles(files: File[]) {
   const imageFiles = files.filter((file) => file.type.startsWith('image/'))
@@ -598,6 +621,27 @@ function copyAllResults() {
 function clearRecognized() {
   recognizedResults.value = []
 }
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('paste', handlePaste)
+
+  // Drag and drop for whole page
+  document.addEventListener('dragenter', (e) => {
+    e.preventDefault()
+    isDragging.value = true
+  })
+
+  document.addEventListener('dragleave', (e) => {
+    if (!e.relatedTarget) {
+      isDragging.value = false
+    }
+  })
+})
+
+onUnmounted(() => {
+  document.removeEventListener('paste', handlePaste)
+})
 </script>
 
 <style scoped>

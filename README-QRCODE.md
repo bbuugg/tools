@@ -52,6 +52,7 @@ This tool allows you to generate QR codes from text and recognize QR codes from 
 ## Technical Implementation
 
 The tool uses:
+
 - [qrcode](https://www.npmjs.com/package/qrcode) for generating QR codes
 - [jsQR](https://www.npmjs.com/package/jsqr) for recognizing QR codes in images
 - [JSZip](https://www.npmjs.com/package/jszip) for creating ZIP files of multiple QR codes
@@ -63,6 +64,7 @@ The tool supports both English and Chinese languages, with all UI elements prope
 ## Testing
 
 To test the tool:
+
 1. Start the development server with `npm run dev`
 2. Navigate to the "Generators" section
 3. Select "QR Code Tool"
