@@ -86,54 +86,58 @@
             <textarea
               v-model="generateText"
               :placeholder="$t('tools.qrCodeTool.generate.textInputPlaceholder')"
-              class="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full h-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             ></textarea>
           </div>
+
+          <!-- Mode Toggle -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ $t('tools.qrCodeTool.generate.modeLabel') }}
+            </label>
+            <div class="flex items-center">
+              <label class="inline-flex items-center">
+                <input
+                  type="radio"
+                  v-model="generateMode"
+                  value="single"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span class="ml-2">{{ $t('tools.qrCodeTool.generate.singleMode') }}</span>
+              </label>
+              <label class="inline-flex items-center ml-6">
+                <input
+                  type="radio"
+                  v-model="generateMode"
+                  value="batch"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span class="ml-2">{{ $t('tools.qrCodeTool.generate.batchMode') }}</span>
+              </label>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">
+              {{
+                generateMode === 'single'
+                  ? $t('tools.qrCodeTool.generate.singleModeHint')
+                  : $t('tools.qrCodeTool.generate.batchModeHint')
+              }}
+            </p>
+          </div>
+
           <div class="flex flex-wrap gap-4">
             <button
-              @click="generateSingleQR"
+              @click="generateQR"
               :disabled="!generateText.trim()"
               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ $t('tools.qrCodeTool.generate.generateButton') }}
+              {{
+                generateMode === 'single'
+                  ? $t('tools.qrCodeTool.generate.generateSingleButton')
+                  : $t('tools.qrCodeTool.generate.generateBatchButton')
+              }}
             </button>
             <button
               @click="clearGenerated"
-              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              {{ $t('common.clear') }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Batch Generate Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">
-            {{ $t('tools.qrCodeTool.generate.batchTitle') }}
-          </h3>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ $t('tools.qrCodeTool.generate.batchInputLabel') }}
-            </label>
-            <textarea
-              v-model="batchText"
-              :placeholder="$t('tools.qrCodeTool.generate.batchInputPlaceholder')"
-              class="w-full h-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            ></textarea>
-            <p class="mt-2 text-sm text-gray-500">
-              {{ $t('tools.qrCodeTool.generate.batchInputHint') }}
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-4">
-            <button
-              @click="generateBatchQR"
-              :disabled="!batchText.trim()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ $t('tools.qrCodeTool.generate.batchGenerateButton') }}
-            </button>
-            <button
-              @click="clearBatch"
               class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               {{ $t('common.clear') }}
@@ -145,7 +149,13 @@
         <div v-if="generatedQRCodes.length > 0" class="bg-white rounded-lg shadow-md p-6">
           <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-semibold text-gray-900">
-              {{ $t('tools.qrCodeTool.generate.generatedTitle') }} ({{ generatedQRCodes.length }})
+              {{
+                generateMode === 'single'
+                  ? $t('tools.qrCodeTool.generate.singleGeneratedTitle')
+                  : $t('tools.qrCodeTool.generate.batchGeneratedTitle', {
+                      count: generatedQRCodes.length,
+                    })
+              }}
             </h3>
             <button
               @click="downloadAllGenerated"
@@ -321,7 +331,7 @@ const activeTab = ref<'generate' | 'recognize'>('generate')
 
 // Generate tab
 const generateText = ref('')
-const batchText = ref('')
+const generateMode = ref<'single' | 'batch'>('single')
 const generatedQRCodes = ref<GeneratedQR[]>([])
 
 // Recognize tab
@@ -329,51 +339,14 @@ const fileInput = ref<HTMLInputElement>()
 const isDragging = ref(false)
 const recognizedResults = ref<RecognizedResult[]>([])
 
-// Generate single QR code
-async function generateSingleQR() {
+// Generate QR codes based on mode
+async function generateQR() {
   if (!generateText.value.trim()) return
 
   try {
-    const dataUrl = await QRCode.toDataURL(generateText.value.trim(), {
-      width: 300,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#ffffff',
-      },
-    })
-
-    generatedQRCodes.value.unshift({
-      text: generateText.value.trim(),
-      dataUrl,
-    })
-
-    success(t('tools.qrCodeTool.messages.generateSuccess'))
-  } catch (err) {
-    console.error('QR Code generation error:', err)
-    showError(t('tools.qrCodeTool.errors.generateFailed'))
-  }
-}
-
-// Generate batch QR codes
-async function generateBatchQR() {
-  if (!batchText.value.trim()) return
-
-  const lines = batchText.value
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-
-  if (lines.length === 0) {
-    showError(t('tools.qrCodeTool.errors.emptyBatch'))
-    return
-  }
-
-  try {
-    const newQRCodes: GeneratedQR[] = []
-
-    for (const line of lines) {
-      const dataUrl = await QRCode.toDataURL(line, {
+    if (generateMode.value === 'single') {
+      // Generate single QR code
+      const dataUrl = await QRCode.toDataURL(generateText.value.trim(), {
         width: 300,
         margin: 2,
         color: {
@@ -382,18 +355,54 @@ async function generateBatchQR() {
         },
       })
 
-      newQRCodes.push({
-        text: line,
-        dataUrl,
-      })
-    }
+      generatedQRCodes.value = [
+        {
+          text: generateText.value.trim(),
+          dataUrl,
+        },
+      ]
 
-    generatedQRCodes.value = [...newQRCodes, ...generatedQRCodes.value]
-    batchText.value = ''
-    success(t('tools.qrCodeTool.messages.batchGenerateSuccess', { count: lines.length }))
+      success(t('tools.qrCodeTool.messages.generateSuccess'))
+    } else {
+      // Generate batch QR codes
+      const lines = generateText.value
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+
+      if (lines.length === 0) {
+        showError(t('tools.qrCodeTool.errors.emptyBatch'))
+        return
+      }
+
+      const newQRCodes: GeneratedQR[] = []
+
+      for (const line of lines) {
+        const dataUrl = await QRCode.toDataURL(line, {
+          width: 300,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#ffffff',
+          },
+        })
+
+        newQRCodes.push({
+          text: line,
+          dataUrl,
+        })
+      }
+
+      generatedQRCodes.value = newQRCodes
+      success(t('tools.qrCodeTool.messages.batchGenerateSuccess', { count: lines.length }))
+    }
   } catch (err) {
-    console.error('Batch QR Code generation error:', err)
-    showError(t('tools.qrCodeTool.errors.batchGenerateFailed'))
+    console.error('QR Code generation error:', err)
+    showError(
+      generateMode.value === 'single'
+        ? t('tools.qrCodeTool.errors.generateFailed')
+        : t('tools.qrCodeTool.errors.batchGenerateFailed'),
+    )
   }
 }
 
@@ -401,11 +410,6 @@ async function generateBatchQR() {
 function clearGenerated() {
   generatedQRCodes.value = []
   generateText.value = ''
-}
-
-// Clear batch input
-function clearBatch() {
-  batchText.value = ''
 }
 
 // Download single QR code

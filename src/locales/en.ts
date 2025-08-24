@@ -1358,16 +1358,17 @@ export default {
       generate: {
         inputTitle: 'Generate QR Code',
         textInputLabel: 'Text to encode',
-        textInputPlaceholder: 'Enter text to generate QR code...',
-        generateButton: 'Generate QR Code',
-        batchTitle: 'Batch Generate QR Codes',
-        batchInputLabel: 'Multiple texts (one per line)',
-        batchInputPlaceholder:
-          'Enter multiple texts, one per line...\nhttps://example.com\nContact: John Doe\nEmail: john@example.com',
-        batchInputHint:
-          'Enter multiple texts, one per line. Each line will generate a separate QR code.',
-        batchGenerateButton: 'Generate Batch QR Codes',
-        generatedTitle: 'Generated QR Codes',
+        textInputPlaceholder:
+          'Enter text to generate QR code...\nFor batch mode, enter one text per line',
+        modeLabel: 'Generation Mode',
+        singleMode: 'Single QR Code',
+        batchMode: 'Batch QR Codes',
+        singleModeHint: 'Generates one QR code from all the text',
+        batchModeHint: 'Generates multiple QR codes, one for each line of text',
+        generateSingleButton: 'Generate QR Code',
+        generateBatchButton: 'Generate Batch QR Codes',
+        singleGeneratedTitle: 'Generated QR Code',
+        batchGeneratedTitle: 'Generated QR Codes ({count})',
         downloadAll: 'Download All as ZIP',
       },
       recognize: {
