@@ -710,6 +710,13 @@ const categories = ref<Category[]>([
         status: 'active',
       },
       {
+        id: 'imageWatermark',
+        name: 'Image Watermark',
+        icon: '✂️',
+        path: '/image-tools/image-watermark',
+        status: 'active',
+      },
+      {
         id: 'videoToGifConverter',
         name: 'Video to GIF Converter',
         icon: '🎬',

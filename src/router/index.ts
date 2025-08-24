@@ -13,6 +13,7 @@ const ImageCompressor = () => import('../tools/image/ImageCompressor.vue')
 const ImageListProcessor = () => import('../tools/image/ImageListProcessor.vue')
 const VideoToGifConverter = () => import('../tools/image/VideoToGifConverter.vue')
 const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
+const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const ExcelToJson = () => import('../tools/json/ExcelToJson.vue')
 const JsonToCsv = () => import('../tools/json/JsonToCsv.vue')
@@ -581,6 +582,15 @@ const router = createRouter({
           meta: {
             category: 'image-tools',
             title: 'APNG Generator',
+          },
+        },
+        {
+          path: 'image-tools/image-watermark',
+          name: 'image-watermark',
+          component: ImageWatermark,
+          meta: {
+            category: 'image-tools',
+            title: 'Image Watermark',
           },
         },
         {
