@@ -75,7 +75,7 @@
           <!-- Category List (shown in category view) -->
           <nav v-if="showCategoryView" class="space-y-2">
             <button
-              v-for="category in categories"
+              v-for="category in menuConfig"
               :key="category.id"
               @click="enterCategory(category.id)"
               class="w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer hover:bg-gray-100 border border-gray-200 hover:border-gray-300"
@@ -94,7 +94,7 @@
                 </div>
                 <div class="flex items-center">
                   <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full mr-2">
-                    {{ category.tools.length }}
+                    {{ category.children?.length || 0 }}
                   </span>
                   <svg
                     class="w-4 h-4 text-gray-400"
@@ -273,26 +273,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import Header from '@/layouts/Header.vue'
+import { menuConfig } from '@/config/routes'
 import Footer from '@/layouts/Footer.vue'
-
-interface Tool {
-  id: string
-  name: string
-  icon: string
-  path: string
-  status?: 'active' | 'coming-soon'
-}
-
-interface Category {
-  id: string
-  name: string
-  icon: string
-  tools: Tool[]
-}
+import Header from '@/layouts/Header.vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const {} = useI18n()
@@ -304,496 +290,10 @@ const searchQuery = ref('')
 const isLoading = ref(false)
 const showCategoryView = ref(true) // true: show categories, false: show tools
 
-// Tool categories configuration
-const categories = ref<Category[]>([
-  {
-    id: 'web-tools',
-    name: 'Web Tools',
-    icon: '🌐',
-    tools: [
-      {
-        id: 'htmlExtractor',
-        name: 'HTML Content Extractor',
-        icon: '🖼️',
-        path: '/web-tools/html-extractor',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'json-tools',
-    name: 'JSON Tools',
-    icon: '📋',
-    tools: [
-      {
-        id: 'jsonToExcel',
-        name: 'JSON to Excel Converter',
-        icon: '📊',
-        path: '/json-tools/json-to-excel',
-        status: 'active',
-      },
-      {
-        id: 'excelToJson',
-        name: 'Excel to JSON Converter',
-        icon: '📈',
-        path: '/json-tools/excel-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonToCsv',
-        name: 'JSON to CSV Converter',
-        icon: '📄',
-        path: '/json-tools/json-to-csv',
-        status: 'active',
-      },
-      {
-        id: 'jsonFormatter',
-        name: 'JSON Formatter',
-        icon: '🎨',
-        path: '/json-tools/json-formatter',
-        status: 'active',
-      },
-      {
-        id: 'jsonExtractor',
-        name: 'JSON Extractor',
-        icon: '🔍',
-        path: '/json-tools/json-extractor',
-        status: 'active',
-      },
-      {
-        id: 'excelTextToJson',
-        name: 'Excel Text to JSON',
-        icon: '📋',
-        path: '/json-tools/excel-text-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonMerge',
-        name: 'JSON File Merge',
-        icon: '🔗',
-        path: '/json-tools/json-merge',
-        status: 'active',
-      },
-      {
-        id: 'getToJson',
-        name: 'GET Parameters to JSON',
-        icon: '🌐',
-        path: '/json-tools/get-to-json',
-        status: 'active',
-      },
-      {
-        id: 'cookieToJson',
-        name: 'Cookie to JSON',
-        icon: '🍪',
-        path: '/json-tools/cookie-to-json',
-        status: 'active',
-      },
-      {
-        id: 'listToJson',
-        name: 'Text List to JSON',
-        icon: '📝',
-        path: '/json-tools/list-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonKeysExtractor',
-        name: 'JSON Keys Extractor',
-        icon: '🔑',
-        path: '/json-tools/json-keys-extractor',
-        status: 'active',
-      },
-      {
-        id: 'headerToJson',
-        name: 'HTTP Headers to JSON',
-        icon: '📡',
-        path: '/json-tools/header-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonToSql',
-        name: 'JSON to SQL Converter',
-        icon: '🗄️',
-        path: '/json-tools/json-to-sql',
-        status: 'active',
-      },
-      {
-        id: 'jsonSplitter',
-        name: 'JSON File Splitter',
-        icon: '✂️',
-        path: '/json-tools/json-splitter',
-        status: 'active',
-      },
-      {
-        id: 'jsonToList',
-        name: 'JSON Array to Text List',
-        icon: '📋',
-        path: '/json-tools/json-to-list',
-        status: 'active',
-      },
-      {
-        id: 'jsonToGet',
-        name: 'JSON to GET Parameters',
-        icon: '🔗',
-        path: '/json-tools/json-to-get',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldValueExtractor',
-        name: 'JSON Field Value Extractor',
-        icon: '🎯',
-        path: '/json-tools/json-field-value-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonMinifier',
-        name: 'JSON Minifier',
-        icon: '📦',
-        path: '/json-tools/json-minifier',
-        status: 'active',
-      },
-      {
-        id: 'jsonUnicodeFixer',
-        name: 'JSON Unicode Fixer',
-        icon: '🛠️',
-        path: '/json-tools/json-unicode-fixer',
-        status: 'active',
-      },
-      {
-        id: 'jsonNumberToText',
-        name: 'JSON Number to Text',
-        icon: '🔢',
-        path: '/json-tools/json-number-to-text',
-        status: 'active',
-      },
-      {
-        id: 'json-array-to-lines',
-        name: 'JSON Array to Lines',
-        icon: '📄',
-        path: '/json-tools/json-array-to-lines',
-        status: 'active',
-      },
-      {
-        id: 'jsonArrayExtractor',
-        name: 'JSON Array Extractor',
-        icon: '🔍',
-        path: '/json-tools/json-array-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonLinesToArray',
-        name: 'JSON Lines to Array',
-        icon: '📊',
-        path: '/json-tools/json-lines-to-array',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldRemover',
-        name: 'JSON Field Remover',
-        icon: '🗑️',
-        path: '/json-tools/json-field-remover',
-        status: 'active',
-      },
-      {
-        id: 'jsonArrayShuffler',
-        name: 'JSON Array Shuffler',
-        icon: '🎲',
-        path: '/json-tools/json-array-shuffler',
-        status: 'active',
-      },
-      {
-        id: 'jsonUnicodeEncoder',
-        name: 'JSON Unicode Encoder',
-        icon: '🔒',
-        path: '/json-tools/json-unicode-encoder',
-        status: 'active',
-      },
-      {
-        id: 'jsonToCookie',
-        name: 'JSON to Cookie',
-        icon: '🍪',
-        path: '/json-tools/json-to-cookie',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldAdder',
-        name: 'JSON Field Adder',
-        icon: '➕',
-        path: '/json-tools/json-field-adder',
-        status: 'active',
-      },
-      {
-        id: 'jsonTextToNumber',
-        name: 'JSON Text to Number',
-        icon: '🔢',
-        path: '/json-tools/json-text-to-number',
-        status: 'active',
-      },
-      {
-        id: 'jsonValueResetter',
-        name: 'JSON Value Resetter',
-        icon: '🔄',
-        path: '/json-tools/json-value-resetter',
-        status: 'active',
-      },
-      {
-        id: 'jsonMissingKeyFinder',
-        name: 'JSON Missing Key Finder',
-        icon: '🔍',
-        path: '/json-tools/json-missing-key-finder',
-        status: 'active',
-      },
-      {
-        id: 'jsonObjectSlicer',
-        name: 'JSON Object Slicer',
-        icon: '✂️',
-        path: '/json-tools/json-object-slicer',
-        status: 'active',
-      },
-      {
-        id: 'jsonArraySlicer',
-        name: 'JSON Array Slicer',
-        icon: '📊',
-        path: '/json-tools/json-array-slicer',
-        status: 'active',
-      },
-      {
-        id: 'jsonObjectKeyExtractor',
-        name: 'JSON Object Key Extractor',
-        icon: '🔑',
-        path: '/json-tools/json-object-key-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonObjectValueExtractor',
-        name: 'JSON Object Value Extractor',
-        icon: '💎',
-        path: '/json-tools/json-object-value-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonKeyValueExtractor',
-        name: 'JSON Key-Value Extractor',
-        icon: '🔍',
-        path: '/json-tools/json-key-value-extractor',
-        status: 'active',
-      },
-      {
-        id: 'csvToJson',
-        name: 'CSV to JSON Converter',
-        icon: '📄',
-        path: '/json-tools/csv-to-json',
-        status: 'active',
-      },
-      {
-        id: 'listToJsonObject',
-        name: 'List to JSON Object',
-        icon: '📋',
-        path: '/json-tools/list-to-json-object',
-        status: 'active',
-      },
-      {
-        id: 'jsonCaseConverter',
-        name: 'JSON Case Converter',
-        icon: '🔤',
-        path: '/json-tools/json-case-converter',
-        status: 'active',
-      },
-      {
-        id: 'jsonPathExtractor',
-        name: 'JSON Path Extractor',
-        icon: '🛤️',
-        path: '/json-tools/json-path-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonTextParser',
-        name: 'JSON Text Parser',
-        icon: '🔍',
-        path: '/json-tools/json-text-parser',
-        status: 'active',
-      },
-      {
-        id: 'jsonArrayDeduplicator',
-        name: 'JSON Array Deduplicator',
-        icon: '🔄',
-        path: '/json-tools/json-array-deduplicator',
-        status: 'active',
-      },
-      {
-        id: 'jsonLineSplitter',
-        name: 'JSON Line Splitter',
-        icon: '📄',
-        path: '/json-tools/json-line-splitter',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldReplacer',
-        name: 'JSON Field Replacer',
-        icon: '🔄',
-        path: '/json-tools/json-field-replacer',
-        status: 'active',
-      },
-      {
-        id: 'jsToJson',
-        name: 'JavaScript to JSON',
-        icon: '⚡',
-        path: '/json-tools/js-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonTextFormatter',
-        name: 'JSON Text Formatter',
-        icon: '🎨',
-        path: '/json-tools/json-text-formatter',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldMapper',
-        name: 'JSON Field Mapper',
-        icon: '🗺️',
-        path: '/json-tools/json-field-mapper',
-        status: 'active',
-      },
-      {
-        id: 'jsonFieldSearcher',
-        name: 'JSON Field Searcher',
-        icon: '🔍',
-        path: '/json-tools/json-field-searcher',
-        status: 'active',
-      },
-      {
-        id: 'listDeduplicator',
-        name: 'List Deduplicator',
-        icon: '📋',
-        path: '/json-tools/list-deduplicator',
-        status: 'active',
-      },
-      {
-        id: 'jsonDuplicateDetector',
-        name: 'JSON Duplicate Detector',
-        icon: '🔍',
-        path: '/json-tools/json-duplicate-detector',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'data-tools',
-    name: 'Data Tools',
-    icon: '📊',
-    tools: [],
-  },
-  {
-    id: 'image-tools',
-    name: 'Image Tools',
-    icon: '🖼️',
-    tools: [
-      {
-        id: 'imageListProcessor',
-        name: 'Image List Processor',
-        icon: '🖼️',
-        path: '/image-tools/image-list-processor',
-        status: 'active',
-      },
-      {
-        id: 'imageCompressor',
-        name: 'Image Compressor Master',
-        icon: '🗂',
-        path: '/image-tools/image-compressor',
-        status: 'active',
-      },
-      {
-        id: 'backgroundRemover',
-        name: 'Background Remover',
-        icon: '✂️',
-        path: '/image-tools/background-remover',
-        status: 'active',
-      },
-      {
-        id: 'imageWatermark',
-        name: 'Image Watermark',
-        icon: '✂️',
-        path: '/image-tools/image-watermark',
-        status: 'active',
-      },
-      {
-        id: 'videoToGifConverter',
-        name: 'Video to GIF Converter',
-        icon: '🎬',
-        path: '/image-tools/video-to-gif-converter',
-        status: 'active',
-      },
-      {
-        id: 'apngGenerator',
-        name: 'APNG Converter',
-        icon: '🎬',
-        path: '/image-tools/apng-generator',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'converters',
-    name: 'Converters',
-    icon: '🔄',
-    tools: [
-      {
-        id: 'fileRenamer',
-        name: 'Batch File Renamer',
-        icon: '📝',
-        path: '/converters/file-renamer',
-        status: 'active',
-      },
-      {
-        id: 'urlEncoder',
-        name: 'URL Encoder',
-        icon: '🔗',
-        path: '/converters/url-encoder',
-        status: 'coming-soon',
-      },
-      {
-        id: 'base64Converter',
-        name: 'Base64 Converter',
-        icon: '🔄',
-        path: '/converters/base64-converter',
-        status: 'coming-soon',
-      },
-    ],
-  },
-  {
-    id: 'generators',
-    name: 'Generators',
-    icon: '⚡',
-    tools: [
-      {
-        id: 'faviconGenerator',
-        name: 'Favicon Generator',
-        icon: '🎯',
-        path: '/generators/favicon-generator',
-        status: 'active',
-      },
-      {
-        id: 'colorPicker',
-        name: 'Color Picker',
-        icon: '🎨',
-        path: '/generators/color-picker',
-        status: 'coming-soon',
-      },
-      {
-        id: 'qrGenerator',
-        name: 'QR Generator',
-        icon: '📱',
-        path: '/generators/qr-generator',
-        status: 'coming-soon',
-      },
-    ],
-  },
-])
-
 // Computed properties
 const currentCategoryTools = computed(() => {
-  const category = categories.value.find((cat) => cat.id === selectedCategory.value)
-  return category?.tools || []
+  const category = menuConfig.find((cat) => cat.id === selectedCategory.value)
+  return category?.children || []
 })
 
 const filteredTools = computed(() => {
@@ -875,15 +375,17 @@ watch(
   () => route.path,
   (newPath, oldPath) => {
     // Find category based on current route
-    for (const category of categories.value) {
-      for (const tool of category.tools) {
-        if (tool.path === newPath) {
-          selectedCategory.value = category.id
-          // If we're on a tool page, show tool view
-          if (newPath !== '/') {
-            showCategoryView.value = false
+    for (const category of menuConfig) {
+      if (category.children) {
+        for (const tool of category.children) {
+          if (tool.path === newPath) {
+            selectedCategory.value = category.id
+            // If we're on a tool page, show tool view
+            if (newPath !== '/') {
+              showCategoryView.value = false
+            }
+            break
           }
-          break
         }
       }
     }
@@ -912,16 +414,18 @@ onMounted(() => {
   const currentPath = route.path
   let foundTool = false
 
-  for (const category of categories.value) {
-    for (const tool of category.tools) {
-      if (tool.path === currentPath) {
-        selectedCategory.value = category.id
-        showCategoryView.value = false // Show tool view if on a tool page
-        foundTool = true
-        break
+  for (const category of menuConfig) {
+    if (category.children) {
+      for (const tool of category.children) {
+        if (tool.path === currentPath) {
+          selectedCategory.value = category.id
+          showCategoryView.value = false // Show tool view if on a tool page
+          foundTool = true
+          break
+        }
       }
+      if (foundTool) break
     }
-    if (foundTool) break
   }
 
   // If not on a tool page, show category view

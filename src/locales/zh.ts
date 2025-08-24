@@ -68,19 +68,19 @@ export default {
     by: '制作',
   },
   categories: {
-    'web-tools': {
+    webTools: {
       name: '网页工具',
       description: '网页开发和分析工具',
     },
-    'json-tools': {
+    jsonTools: {
       name: 'JSON工具',
       description: '全面的JSON处理和转换实用程序',
     },
-    'data-tools': {
+    dataTools: {
       name: '数据工具',
       description: '数据处理和操作工具',
     },
-    'image-tools': {
+    imageTools: {
       name: '图片工具',
       description: '图片处理和管理工具',
     },
