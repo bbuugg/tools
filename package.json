@@ -28,8 +28,7 @@
     "vue-i18n": "^9.14.5",
     "vue-router": "^4.5.1",
     "vuedraggable": "^4.1.0",
-    "xlsx": "^0.18.5",
-    "xml2js": "^0.6.2"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
