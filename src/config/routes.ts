@@ -18,7 +18,6 @@ const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
-const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
 const JsonArrayToLines = () => import('../tools/json/JsonArrayToLines.vue')
 const JsonLinesToArray = () => import('../tools/json/JsonLinesToArray.vue')
@@ -29,7 +28,6 @@ const JsonFieldAdder = () => import('../tools/json/JsonFieldAdder.vue')
 const JsonValueResetter = () => import('../tools/json/JsonValueResetter.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
-const JsonKeyValueExtractor = () => import('../tools/json/JsonKeyValueExtractor.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
 const JsonLineSplitter = () => import('../tools/json/JsonLineSplitter.vue')
@@ -146,16 +144,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-splitter',
-        name: 'jsonSplitter',
-        component: JsonSplitter,
-        meta: {
-          title: 'JSON File Splitter',
-          icon: '✂️',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-number-to-text',
         name: 'jsonNumberToText',
         component: JsonNumberToText,
@@ -252,16 +240,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array Slicer',
           icon: '📊',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-key-value-extractor',
-        name: 'jsonKeyValueExtractor',
-        component: JsonKeyValueExtractor,
-        meta: {
-          title: 'JSON Key-Value Extractor',
-          icon: '🔍',
           status: 'active',
         },
       },

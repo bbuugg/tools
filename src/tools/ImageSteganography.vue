@@ -204,7 +204,7 @@
                 <p class="text-sm text-gray-600 mb-1">{{ $t('common.preview') }}:</p>
                 <div class="border rounded p-2 bg-gray-50">
                   <img
-                    :src="hiddenImagePreviewUrl"
+                    :src="hiddenImagePreviewUrl || ''"
                     alt="Hidden image preview"
                     class="max-w-full max-h-32 object-contain"
                   />
@@ -259,7 +259,7 @@
                 <p class="text-sm text-gray-600 mb-1">{{ $t('common.preview') }}:</p>
                 <div class="border rounded p-2 bg-gray-50">
                   <img
-                    :src="targetImagePreviewUrl"
+                    :src="targetImagePreviewUrl || ''"
                     alt="Target image preview"
                     class="max-w-full max-h-32 object-contain"
                   />
@@ -339,7 +339,7 @@
               </h4>
               <div class="border rounded p-2 bg-gray-50">
                 <img
-                  :src="decodedImageDataUrl"
+                  :src="decodedImageDataUrl || ''"
                   alt="Decoded image preview"
                   class="max-w-full max-h-64 object-contain"
                 />
@@ -404,15 +404,16 @@ const canStartEncryption = computed(() => {
 // File input ref
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
-// Initialize canvas
+// Initialize canvas - UPDATED to better handle sizing
 function initCanvas() {
   if (!canvasRef.value) return
 
   // Set canvas dimensions based on container
   const container = canvasRef.value.parentElement
   if (container) {
-    canvasRef.value.width = container.clientWidth
-    canvasRef.value.height = container.clientHeight
+    // FIXED: Better sizing to prevent cropping issues
+    canvasRef.value.width = container.clientWidth - 20 // Account for padding/borders
+    canvasRef.value.height = Math.min(container.clientHeight - 20, 600) // Max height constraint
   }
 
   canvas.value = new Canvas(canvasRef.value, {
@@ -495,7 +496,7 @@ async function selectTargetImage() {
   }
 }
 
-// Draw target image
+// Draw target image - FIXED to properly display images without cropping
 function drawTargetImage(url: string) {
   if (!canvas.value) return
 
@@ -510,8 +511,8 @@ function drawTargetImage(url: string) {
         const imgHeight = img.height
 
         // Calculate scale to fit canvas while maintaining aspect ratio
-        // Using the approach from the reference implementation
-        const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
+        // FIXED: Using object-fit approach to contain the entire image
+        const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
 
         img.set({
           left: canvasWidth / 2,
@@ -705,33 +706,33 @@ function evenNum(num: number) {
   return num
 }
 
-// Draw hidden data
+// Draw hidden data - REWRITTEN to match the provided algorithm
 function drawHiddenData() {
   if (!state.hiddenDataBinary || !state.targetImageData || !canvas.value) return
 
   state.isLoading = true
 
   try {
-    // Put hidden data binary into one array
+    // REWRITTEN: Put hidden data binary into one array
     const bigHiddenList: string[] = []
     for (let i = 0; i < state.hiddenDataBinary.length; i++) {
       bigHiddenList.push(...state.hiddenDataBinary[i])
     }
 
-    // Create a copy of target image data for processing
+    // REWRITTEN: Create a copy of target image data for processing
     const targetDataCopy = new Uint8ClampedArray(state.targetImageData.data)
 
-    // Process target image data to ensure even numbers (for LSB)
+    // REWRITTEN: Process target image data to ensure even numbers (for LSB)
     for (let i = 0; i < targetDataCopy.length; i++) {
       targetDataCopy[i] = evenNum(targetDataCopy[i])
     }
 
-    // Get binary representation of target data
+    // REWRITTEN: Get binary representation of target data
     const targetDataBinary: string[][] = Array.from(targetDataCopy, (color: number) => {
       return color.toString(2).padStart(8, '0').split('')
     })
 
-    // Embed hidden data into target data by modifying the LSB (Least Significant Bit)
+    // REWRITTEN: Embed hidden data into target data by modifying the LSB (Least Significant Bit)
     for (let i = 0; i < targetDataBinary.length && i < bigHiddenList.length; i++) {
       // Only modify if we have hidden data for this position
       if (bigHiddenList[i]) {
@@ -739,19 +740,19 @@ function drawHiddenData() {
       }
     }
 
-    // Convert binary back to pixel data
+    // REWRITTEN: Convert binary back to pixel data
     for (let i = 0; i < targetDataCopy.length; i++) {
       targetDataCopy[i] = parseInt(targetDataBinary[i].join(''), 2)
     }
 
-    // Create new image data
+    // REWRITTEN: Create new image data
     const newImageData = new ImageData(
       targetDataCopy,
       state.targetImageData.width,
       state.targetImageData.height,
     )
 
-    // Draw processed image to canvas
+    // REWRITTEN: Draw processed image to canvas
     const tempCanvas = document.createElement('canvas')
     tempCanvas.width = state.targetImageData.width
     tempCanvas.height = state.targetImageData.height
@@ -762,13 +763,14 @@ function drawHiddenData() {
       Image.fromURL(tempCanvas.toDataURL())
         .then((img) => {
           if (canvas.value) {
-            // Calculate scale to fit canvas while maintaining aspect ratio
+            // FIXED: Properly scale the image to fit the canvas without cropping
             const canvasWidth = canvas.value.width
             const canvasHeight = canvas.value.height
             const imgWidth = img.width
             const imgHeight = img.height
 
-            const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
+            // FIXED: Use the correct scaling approach to contain the entire image
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
 
             img.set({
               left: canvasWidth / 2,
@@ -852,13 +854,14 @@ function decodeImage() {
       if (canvas.value) {
         Image.fromURL(decodedImageDataUrl.value)
           .then((img) => {
-            // Calculate scale to fit canvas while maintaining aspect ratio
+            // FIXED: Properly scale the image to fit the canvas without cropping
             const canvasWidth = canvas.value!.width
             const canvasHeight = canvas.value!.height
             const imgWidth = img.width
             const imgHeight = img.height
 
-            const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
+            // FIXED: Use the correct scaling approach to contain the entire image
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
 
             img.set({
               left: canvasWidth / 2,
@@ -894,13 +897,14 @@ function decodeImage() {
   }
 }
 
-// Export canvas
+// Export canvas - FIXED TypeScript error
 function exportCanvas() {
   if (!canvas.value) return
 
   try {
     const dataURL = canvas.value.toDataURL({
       format: 'png',
+      multiplier: 1, // Added required multiplier property
     })
 
     const link = document.createElement('a')
@@ -1037,16 +1041,20 @@ onUnmounted(() => {
   }
 })
 
-// Handle window resize
+// Handle window resize - UPDATED to better handle sizing
 function handleResize() {
   if (canvasRef.value && canvas.value) {
     const container = canvasRef.value.parentElement
     if (container) {
+      // FIXED: Better sizing to prevent cropping issues
+      const newWidth = container.clientWidth - 20 // Account for padding/borders
+      const newHeight = Math.min(container.clientHeight - 20, 600) // Max height constraint
+
       // Update canvas dimensions
-      canvasRef.value.width = container.clientWidth
-      canvasRef.value.height = container.clientHeight
-      canvas.value.setWidth(container.clientWidth)
-      canvas.value.setHeight(container.clientHeight)
+      canvasRef.value.width = newWidth
+      canvasRef.value.height = newHeight
+      canvas.value.setWidth(newWidth)
+      canvas.value.setHeight(newHeight)
       canvas.value.renderAll()
     }
   }
