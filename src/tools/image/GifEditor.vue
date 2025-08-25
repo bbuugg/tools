@@ -566,7 +566,7 @@ async function parseGifFrames(file: File) {
       }
     }
 
-    // Decompress frames
+    // Decompress frames with buildPatch = true to get full RGBA frame data
     const decompressedFrames = decompressFrames(gif, true)
 
     // Convert frames to data URLs
@@ -584,56 +584,18 @@ async function parseGifFrames(file: File) {
 
       const ctx = canvas.getContext('2d', { willReadFrequently: true })
       if (ctx) {
-        // Handle transparency properly
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-        // Create ImageData from frame patch
-        const imageData = ctx.createImageData(frame.dims.width, frame.dims.height)
-        imageData.data.set(frame.patch)
-
-        // Handle transparency - set alpha channel for transparent pixels
-        if (frame.transparentIndex !== undefined && frame.transparentIndex >= 0) {
-          // Find the transparent color from the palette if available
-          let transparentR = 0,
-            transparentG = 0,
-            transparentB = 0
-
-          if (frame.palette && frame.transparentIndex < frame.palette.length) {
-            const transparentColor = frame.palette[frame.transparentIndex]
-            transparentR = transparentColor[0]
-            transparentG = transparentColor[1]
-            transparentB = transparentColor[2]
-          }
-
-          // Set alpha to 0 for transparent pixels
-          for (let i = 0; i < imageData.data.length; i += 4) {
-            const r = imageData.data[i]
-            const g = imageData.data[i + 1]
-            const b = imageData.data[i + 2]
-
-            // Check if this pixel matches the transparent color
-            if (r === transparentR && g === transparentG && b === transparentB) {
-              imageData.data[i + 3] = 0 // Make transparent
-            } else {
-              // Ensure non-transparent pixels have full opacity
-              if (imageData.data[i + 3] === 0) {
-                imageData.data[i + 3] = 255
-              }
-            }
-          }
-        } else {
-          // If no transparent index, ensure all pixels are opaque
-          for (let i = 3; i < imageData.data.length; i += 4) {
-            if (imageData.data[i] === 0) {
-              imageData.data[i] = 255
-            }
-          }
-        }
+        // When buildPatch=true, gifuct-js provides full RGBA data with transparency already handled
+        // Create ImageData directly from the patch
+        const imageData = new ImageData(
+          new Uint8ClampedArray(frame.patch),
+          frame.dims.width,
+          frame.dims.height,
+        )
 
         // Draw the frame with transparency
         ctx.putImageData(imageData, 0, 0)
 
-        // Convert to data URL
+        // Convert to data URL with transparency preserved
         const dataUrl = canvas.toDataURL('image/png')
 
         frames.value.push({
@@ -782,13 +744,14 @@ async function createGifFromFrames() {
     low: 20,
   }
 
-  // Create GIF with original dimensions
+  // Create GIF with original dimensions and transparency support
   const gif = new GIF({
     workers: 2,
     quality: qualityMap[gifSettings.quality],
     width: gifWidth,
     height: gifHeight,
     workerScript: '/gif.worker.js',
+    transparent: 0x00000000, // Explicitly set transparent color as 0x00000000 (RGBA)
   })
 
   const totalFrames = frames.value.length
@@ -814,15 +777,18 @@ async function createGifFromFrames() {
         continue
       }
 
-      // Clear canvas and draw image at original size
+      // Clear canvas with transparent background
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+      // Set a transparent background explicitly
+      ctx.fillStyle = 'rgba(0, 0, 0, 0)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
       // Draw the image maintaining original GIF dimensions
-      // This ensures we don't scale the image and preserve the original size
       ctx.drawImage(img, 0, 0, gifWidth, gifHeight)
 
       // Add frame to GIF with delay in milliseconds
-      gif.addFrame(canvas, { copy: true, delay: frame.delay })
+      gif.addFrame(ctx, { copy: true, delay: frame.delay })
 
       processedFrames++
       processingProgress.value = Math.round((processedFrames / totalFrames) * 100)
