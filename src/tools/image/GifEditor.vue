@@ -168,6 +168,11 @@
                   <p class="text-xs text-gray-500">
                     {{ $t('tools.gifEditor.preview.delay') }}: {{ frame.delay }}ms
                   </p>
+                  <p class="text-xs text-gray-500">
+                    Position: ({{ frame.left }}, {{ frame.top }}) {{ frame.width }}×{{
+                      frame.height
+                    }}
+                  </p>
                 </div>
                 <div class="flex items-center">
                   <input
@@ -406,6 +411,12 @@ interface GifFrame {
   dataUrl: string
   delay: number
   imageData: ImageData
+  // Add frame metadata for proper reconstruction
+  left: number
+  top: number
+  width: number
+  height: number
+  dispose: number
 }
 
 // Type definitions for gifuct-js
@@ -578,22 +589,25 @@ async function parseGifFrames(file: File) {
         continue
       }
 
+      // Create a full canvas for this frame to preserve positioning
       const canvas = document.createElement('canvas')
-      canvas.width = frame.dims.width
-      canvas.height = frame.dims.height
+      canvas.width = selectedGif.value?.width || frame.dims.width
+      canvas.height = selectedGif.value?.height || frame.dims.height
 
       const ctx = canvas.getContext('2d', { willReadFrequently: true })
       if (ctx) {
-        // When buildPatch=true, gifuct-js provides full RGBA data with transparency already handled
-        // Create ImageData directly from the patch
+        // Clear canvas with transparent background
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        // Create ImageData directly from the patch (which is full RGBA data when buildPatch=true)
         const imageData = new ImageData(
           new Uint8ClampedArray(frame.patch),
           frame.dims.width,
           frame.dims.height,
         )
 
-        // Draw the frame with transparency
-        ctx.putImageData(imageData, 0, 0)
+        // Draw the frame at its correct position
+        ctx.putImageData(imageData, frame.dims.left || 0, frame.dims.top || 0)
 
         // Convert to data URL with transparency preserved
         const dataUrl = canvas.toDataURL('image/png')
@@ -602,6 +616,11 @@ async function parseGifFrames(file: File) {
           dataUrl,
           delay: frame.delay,
           imageData,
+          left: frame.dims.left || 0,
+          top: frame.dims.top || 0,
+          width: frame.dims.width,
+          height: frame.dims.height,
+          dispose: frame.disposalType || 0,
         })
       }
     }
@@ -760,6 +779,9 @@ async function createGifFromFrames() {
   // Process each frame
   for (const frame of frames.value) {
     try {
+      // Clear canvas with transparent background
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
       // Draw frame on canvas
       const img = new Image()
       const imageLoaded = new Promise<void>((resolve, reject) => {
@@ -777,18 +799,11 @@ async function createGifFromFrames() {
         continue
       }
 
-      // Clear canvas with transparent background
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Set a transparent background explicitly
-      ctx.fillStyle = 'rgba(0, 0, 0, 0)'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      // Draw the image maintaining original GIF dimensions
-      ctx.drawImage(img, 0, 0, gifWidth, gifHeight)
+      // Draw the image on the full canvas
+      ctx.drawImage(img, 0, 0)
 
       // Add frame to GIF with delay in milliseconds
-      gif.addFrame(ctx, { copy: true, delay: frame.delay })
+      gif.addFrame(canvas, { copy: true, delay: frame.delay })
 
       processedFrames++
       processingProgress.value = Math.round((processedFrames / totalFrames) * 100)
