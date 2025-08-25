@@ -367,7 +367,6 @@ const { success, error: showError } = useToast()
 
 // Refs
 const fileInput = ref<HTMLInputElement | null>(null)
-const mainCanvas = ref<HTMLCanvasElement | null>(null)
 const canvasContainer = ref<HTMLDivElement | null>(null)
 
 // Add new refs for better drag handling
@@ -624,6 +623,17 @@ async function autoArrange() {
 
   positionedImages.value = []
 
+  // Shuffle images for random arrangement
+  const shuffledImages = [...images.value]
+  for (let i = shuffledImages.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffledImages[i], shuffledImages[j]] = [shuffledImages[j], shuffledImages[i]]
+  }
+
+  // Temporarily replace images with shuffled version
+  const originalImages = images.value
+  images.value = shuffledImages
+
   switch (arrangementType.value) {
     case 'random':
       await arrangeRandomly()
@@ -635,6 +645,9 @@ async function autoArrange() {
       await fitAllImages()
       break
   }
+
+  // Restore original images order
+  images.value = originalImages
 
   success(t('tools.heartCollage.messages.arranged'))
 }
@@ -1071,8 +1084,12 @@ function endDrag() {
 }
 
 // Download collage
-function downloadCollage() {
-  if (!mainCanvas.value) return
+async function downloadCollage() {
+  // Check if there are positioned images
+  if (positionedImages.value.length === 0) {
+    showError(t('tools.heartCollage.errors.noImagesSelected'))
+    return
+  }
 
   try {
     const canvas = document.createElement('canvas')
@@ -1085,10 +1102,22 @@ function downloadCollage() {
       ctx.fillStyle = backgroundColor.value
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+      // Load all images first
+      const imagePromises = positionedImages.value.map((image) => {
+        return new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image()
+          img.onload = () => resolve(img)
+          img.onerror = reject
+          img.src = image.src
+        })
+      })
+
+      // Wait for all images to load
+      const loadedImages = await Promise.all(imagePromises)
+
       // Draw positioned images
-      positionedImages.value.forEach((image) => {
-        const img = new Image()
-        img.src = image.src
+      positionedImages.value.forEach((image, index) => {
+        const img = loadedImages[index]
 
         // We need to draw the image with the same clipping as in the UI
         ctx.save()
