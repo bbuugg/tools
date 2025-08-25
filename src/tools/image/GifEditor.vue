@@ -554,15 +554,21 @@ async function parseGifFrames(file: File) {
     const arrayBuffer = await file.arrayBuffer()
     const gif = parseGIF(arrayBuffer)
 
-    // Get dimensions from the first frame
+    // Get dimensions from the first valid frame
     if (gif && gif.frames && gif.frames.length > 0) {
-      // Find the first frame with dimensions
-      const firstFrame = gif.frames.find(isFrame)
-      if (firstFrame && selectedGif.value) {
-        // Type assertion to tell TypeScript this is definitely a Frame
-        const frame = firstFrame as unknown as Frame
-        selectedGif.value.width = frame.dims.width
-        selectedGif.value.height = frame.dims.height
+      // Find the first frame with valid dimensions
+      let firstValidFrame = null
+      for (const frame of gif.frames) {
+        if (isFrame(frame) && frame.dims.width > 0 && frame.dims.height > 0) {
+          firstValidFrame = frame as unknown as Frame
+          break
+        }
+      }
+
+      // Set GIF dimensions from the first valid frame
+      if (firstValidFrame && selectedGif.value) {
+        selectedGif.value.width = firstValidFrame.dims.width
+        selectedGif.value.height = firstValidFrame.dims.height
       }
 
       // Decompress frames
@@ -571,6 +577,12 @@ async function parseGifFrames(file: File) {
       // Convert frames to data URLs
       frames.value = []
       for (const frame of decompressedFrames) {
+        // Validate frame dimensions
+        if (frame.dims.width <= 0 || frame.dims.height <= 0) {
+          console.warn('Skipping frame with invalid dimensions')
+          continue
+        }
+
         const canvas = document.createElement('canvas')
         canvas.width = frame.dims.width
         canvas.height = frame.dims.height
@@ -593,6 +605,16 @@ async function parseGifFrames(file: File) {
             imageData,
           })
         }
+      }
+
+      // If we still don't have GIF dimensions but have frames, set from first frame
+      if (
+        selectedGif.value &&
+        (!selectedGif.value.width || !selectedGif.value.height) &&
+        frames.value.length > 0
+      ) {
+        selectedGif.value.width = frames.value[0].imageData.width
+        selectedGif.value.height = frames.value[0].imageData.height
       }
     }
   } catch (err) {
@@ -669,6 +691,12 @@ async function generateGif() {
     return
   }
 
+  // Additional validation to ensure we have valid frames
+  if (!frames.value.some((frame) => frame.dataUrl && frame.delay > 0)) {
+    error(t('tools.gifEditor.errors.noFrames'))
+    return
+  }
+
   isProcessing.value = true
   processingProgress.value = 0
 
@@ -686,6 +714,49 @@ async function generateGif() {
 async function createGifFromFrames() {
   if (!selectedGif.value) return
 
+  // Validate that we have frames to process
+  if (frames.value.length === 0) {
+    throw new Error('No frames to process. Please try another GIF file.')
+  }
+
+  // Try to get dimensions from the first frame if not set
+  let gifWidth = selectedGif.value.width
+  let gifHeight = selectedGif.value.height
+
+  // If GIF dimensions are not set, try to get them from the first frame
+  if (!gifWidth || !gifHeight) {
+    if (frames.value.length > 0 && frames.value[0].imageData) {
+      gifWidth = frames.value[0].imageData.width
+      gifHeight = frames.value[0].imageData.height
+    }
+  }
+
+  // If we still don't have valid dimensions, try to get them from the first frame's data URL
+  if (!gifWidth || !gifHeight) {
+    if (frames.value.length > 0 && frames.value[0].dataUrl) {
+      // Create a temporary image to get dimensions
+      const img = new Image()
+      img.src = frames.value[0].dataUrl
+      // Wait for image to load
+      await new Promise((resolve) => {
+        img.onload = () => resolve(void 0)
+        img.onerror = () => resolve(void 0)
+      })
+
+      if (img.width > 0 && img.height > 0) {
+        gifWidth = img.width
+        gifHeight = img.height
+      }
+    }
+  }
+
+  // If we still don't have valid dimensions, use default values
+  if (!gifWidth || !gifHeight) {
+    gifWidth = 300
+    gifHeight = 300
+    console.warn('Using default dimensions for GIF')
+  }
+
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
 
@@ -695,8 +766,13 @@ async function createGifFromFrames() {
 
   // Set canvas dimensions based on original GIF or settings
   const targetWidth = gifSettings.width
-  const scaleFactor = targetWidth / selectedGif.value.width
-  const targetHeight = Math.round(selectedGif.value.height * scaleFactor)
+  const scaleFactor = targetWidth / gifWidth
+  const targetHeight = Math.round(gifHeight * scaleFactor)
+
+  // Validate that we have valid target dimensions
+  if (targetWidth <= 0 || targetHeight <= 0) {
+    throw new Error('Invalid target dimensions. Please check your GIF settings.')
+  }
 
   canvas.width = targetWidth
   canvas.height = targetHeight
@@ -734,6 +810,12 @@ async function createGifFromFrames() {
       // Wait for image to load
       await imageLoaded
 
+      // Validate that the image has valid dimensions
+      if (img.width <= 0 || img.height <= 0) {
+        console.warn('Skipping frame with invalid dimensions')
+        continue
+      }
+
       // Clear canvas and draw resized image
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
@@ -747,6 +829,11 @@ async function createGifFromFrames() {
       console.error('Error processing frame:', err)
       // Continue with next frame instead of stopping the whole process
     }
+  }
+
+  // If no frames were processed, throw an error
+  if (processedFrames === 0) {
+    throw new Error('No frames could be processed. Please try another GIF file.')
   }
 
   // Render GIF
