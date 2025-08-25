@@ -1546,5 +1546,37 @@ export default {
         connectionRequestRejected: 'Connection request from device {id} rejected',
       },
     },
+    textSteganography: {
+      title: 'Text Steganography',
+      description: 'Hide secret messages within plain text using invisible Unicode characters',
+      encryptionTitle: 'Encryption',
+      decryptionTitle: 'Decryption',
+      visibleText: 'Visible Text',
+      visibleTextPlaceholder: 'Enter the text that will be visible',
+      hiddenText: 'Hidden Text',
+      hiddenTextPlaceholder: 'Enter the secret message to hide',
+      steganographyText: 'Steganography Text',
+      steganographyTextPlaceholder: 'Paste the steganography text here to decode',
+      steganographyResult: 'Steganography Result',
+      decodedText: 'Decoded Text',
+      generateSteganography: 'Generate Steganography Text',
+      features: {
+        encryption: {
+          title: 'Text Encryption',
+          description: 'Hide secret messages within plain text using invisible Unicode characters',
+        },
+        decryption: {
+          title: 'Text Decryption',
+          description: 'Extract hidden messages from steganography text',
+        },
+        security: {
+          title: 'Secure Communication',
+          description: 'Share sensitive information discreetly through seemingly normal text',
+        },
+      },
+      errors: {
+        decodingFailed: 'Failed to decode the steganography text',
+      },
+    },
   },
 }

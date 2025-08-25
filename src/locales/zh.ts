@@ -1491,5 +1491,37 @@ export default {
         connectionRequestRejected: '已拒绝来自设备 {id} 的连接请求',
       },
     },
+    textSteganography: {
+      title: '文本隐写术',
+      description: '使用不可见的Unicode字符在普通文本中隐藏秘密信息',
+      encryptionTitle: '加密',
+      decryptionTitle: '解密',
+      visibleText: '可见文本',
+      visibleTextPlaceholder: '输入将可见的文本',
+      hiddenText: '隐藏文本',
+      hiddenTextPlaceholder: '输入要隐藏的秘密信息',
+      steganographyText: '隐写文本',
+      steganographyTextPlaceholder: '在此粘贴隐写文本来解码',
+      steganographyResult: '隐写结果',
+      decodedText: '解码文本',
+      generateSteganography: '生成隐写文本',
+      features: {
+        encryption: {
+          title: '文本加密',
+          description: '使用不可见的Unicode字符在普通文本中隐藏秘密信息',
+        },
+        decryption: {
+          title: '文本解密',
+          description: '从隐写文本中提取隐藏信息',
+        },
+        security: {
+          title: '安全通信',
+          description: '通过看似正常的文本隐秘分享敏感信息',
+        },
+      },
+      errors: {
+        decodingFailed: '解码隐写文本失败',
+      },
+    },
   },
 }

@@ -53,6 +53,7 @@ const ListDeduplicator = () => import('../tools/json/ListDeduplicator.vue')
 const JsonDuplicateDetector = () => import('../tools/json/JsonDuplicateDetector.vue')
 const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
 const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
+const TextSteganography = () => import('../tools/TextSteganography.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -668,6 +669,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'WebRTC File Transfer',
           icon: '📡',
+          status: 'active',
+        },
+      },
+      {
+        path: 'text-steganography',
+        name: 'textSteganography',
+        component: TextSteganography,
+        meta: {
+          title: 'Text Steganography',
+          icon: '🔒',
           status: 'active',
         },
       },
