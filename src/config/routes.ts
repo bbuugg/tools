@@ -405,6 +405,16 @@ export const routeConfig: RouteRecordRaw[] = [
           status: 'active',
         },
       },
+      {
+        path: 'heart-collage',
+        name: 'heartCollage',
+        component: () => import('../tools/image/HeartCollage.vue'),
+        meta: {
+          title: 'Heart Collage',
+          icon: '❤️',
+          status: 'active',
+        },
+      },
     ],
   },
   // Converters Routes
