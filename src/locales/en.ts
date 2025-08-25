@@ -1139,6 +1139,93 @@ export default {
         pasteSuccess: 'Images pasted successfully!',
       },
     },
+    imageToGifConverter: {
+      title: 'Image to GIF Converter',
+      description: 'Convert multiple images to animated GIFs with customizable timing and settings',
+      howToUse: {
+        title: 'How to Use',
+        step1:
+          'Upload multiple image files by clicking "Select Image Files" or dragging and dropping',
+        step2: 'Adjust GIF settings (width, quality, frame rate)',
+        step3: 'Set individual frame delays and reorder images as needed',
+        step4: 'Click "Generate GIF" to create your animated GIF',
+      },
+      tips: {
+        title: 'Tips for Best Results',
+        tip1: 'For best results, use images with similar dimensions',
+        tip2: 'Lower frame rates (1-5 FPS) create smoother animations',
+        tip3: 'Smaller GIF widths (200-400px) load faster and consume less memory',
+        tip4: 'Use medium quality for a good balance between file size and image quality',
+      },
+      upload: {
+        title: 'Upload Images',
+        dragDrop: 'Drag & drop your images here',
+        selectFile: 'Select Image Files',
+        supportedFormats: 'Supports JPG, PNG, WebP and other image formats',
+      },
+      settings: {
+        width: 'GIF Width (px)',
+        quality: 'Quality',
+        fps: 'Frame Rate (FPS)',
+        loopCount: 'Loop Count',
+        infinite: 'Infinite',
+        qualityOptions: {
+          high: 'High Quality',
+          medium: 'Medium Quality',
+          low: 'Low Quality (Smaller File)',
+        },
+      },
+      preview: {
+        title: 'Image Preview & Controls',
+        selectedImages: 'Selected Images',
+        moveUp: 'Move First to End',
+        moveDown: 'Move Last to Start',
+        reverse: 'Reverse Order',
+        shuffle: 'Shuffle Images',
+      },
+      actions: {
+        generateGif: 'Generate GIF',
+      },
+      processing: {
+        title: 'Processing Images',
+        description: 'Converting your images to GIF. This may take a moment...',
+        preview: 'Preview',
+      },
+      result: {
+        title: 'Generated GIF',
+        download: 'Download GIF',
+        createNew: 'Create New GIF',
+      },
+      features: {
+        conversion: {
+          title: 'Image Conversion',
+          description:
+            'Convert multiple images to high-quality animated GIFs with customizable frame rate and dimensions.',
+        },
+        customization: {
+          title: 'Full Customization',
+          description:
+            'Control every aspect including quality, size, timing, and loop count for perfect results.',
+        },
+        animation: {
+          title: 'Animation Control',
+          description:
+            'Set individual frame delays, reorder images, and control animation loop behavior.',
+        },
+      },
+      errors: {
+        noImages: 'Please select valid image files.',
+        processingFailed: 'Failed to process images. Please try again.',
+        noImagesSelected: 'Please select image files first.',
+        fileProcessing: 'Failed to process selected files.',
+      },
+      messages: {
+        filesAdded: '{count} image(s) added successfully!',
+        gifGenerated: 'GIF generated successfully!',
+        filesPasted: '{count} image(s) pasted from clipboard!',
+        cleared: 'All images cleared!',
+      },
+    },
     imageWatermark: {
       title: 'Image Watermark Master',
       description:

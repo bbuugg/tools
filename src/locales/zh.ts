@@ -1599,6 +1599,89 @@ export default {
         exportFailed: '图片导出失败',
       },
     },
+    imageToGifConverter: {
+      title: '图片转GIF工具',
+      description: '将多张图片转换为动态GIF，支持自定义时间和设置',
+      howToUse: {
+        title: '使用方法',
+        step1: '通过点击"选择图片文件"或拖拽来上传多张图片',
+        step2: '调整GIF设置（宽度、质量、帧率）',
+        step3: '设置单独的帧延迟并根据需要重新排序图片',
+        step4: '点击"生成GIF"来创建您的动画GIF',
+      },
+      tips: {
+        title: '获得最佳效果的技巧',
+        tip1: '为获得最佳效果，请使用尺寸相似的图片',
+        tip2: '较低的帧率（1-5 FPS）可创建更流畅的动画',
+        tip3: '较小的GIF宽度（200-400px）加载更快且消耗更少内存',
+        tip4: '使用中等质量可在文件大小和图像质量之间取得良好平衡',
+      },
+      upload: {
+        title: '上传图片',
+        dragDrop: '拖拽图片到此处',
+        selectFile: '选择图片文件',
+        supportedFormats: '支持JPG、PNG、WebP等图片格式',
+      },
+      settings: {
+        width: 'GIF宽度（像素）',
+        quality: '质量',
+        fps: '帧率（FPS）',
+        loopCount: '循环次数',
+        infinite: '无限循环',
+        qualityOptions: {
+          high: '高质量',
+          medium: '中等质量',
+          low: '低质量（文件更小）',
+        },
+      },
+      preview: {
+        title: '图片预览和控制',
+        selectedImages: '已选图片',
+        moveUp: '首个移至末尾',
+        moveDown: '末个移至开头',
+        reverse: '反转顺序',
+        shuffle: '随机排序',
+      },
+      actions: {
+        generateGif: '生成GIF',
+      },
+      processing: {
+        title: '处理图片中',
+        description: '正在将您的图片转换为GIF。这可能需要一些时间...',
+        preview: '预览',
+      },
+      result: {
+        title: '生成的GIF',
+        download: '下载GIF',
+        createNew: '创建新的GIF',
+      },
+      features: {
+        conversion: {
+          title: '图片转换',
+          description: '将多张图片转换为高质量的动态GIF，支持自定义帧率和尺寸。',
+        },
+        customization: {
+          title: '全面自定义',
+          description: '控制质量、大小、时间、循环次数等各个方面，获得完美效果。',
+        },
+        animation: {
+          title: '动画控制',
+          description: '设置单独的帧延迟、重新排序图片并控制动画循环行为。',
+        },
+      },
+      errors: {
+        noImages: '请选择有效的图片文件。',
+        processingFailed: '处理图片失败，请重试。',
+        noImagesSelected: '请先选择图片文件。',
+        fileProcessing: '处理选中的文件失败。',
+      },
+      messages: {
+        filesAdded: '成功添加 {count} 个文件！',
+        gifGenerated: 'GIF生成成功！',
+        filesPasted: '从剪贴板粘贴了 {count} 个文件！',
+        cleared: '所有图片已清除！',
+      },
+    },
     heartCollage: {
       title: '形状拼贴生成器',
       description: '用您的图片创建各种形状的美丽拼贴',
