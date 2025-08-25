@@ -6,32 +6,40 @@ import en from '../../locales/en'
 import zh from '../../locales/zh'
 
 // Mock fabric
+const mockImage = {
+  width: 100,
+  height: 100,
+  getElement: vi.fn().mockReturnValue({}),
+  set: vi.fn(),
+}
+
 vi.mock('fabric', () => {
   return {
-    fabric: {
-      Canvas: vi.fn().mockImplementation(() => ({
-        clear: vi.fn(),
-        add: vi.fn(),
-        renderAll: vi.fn(),
-        setWidth: vi.fn(),
-        setHeight: vi.fn(),
-        getWidth: vi.fn().mockReturnValue(500),
-        getHeight: vi.fn().mockReturnValue(500),
-        toDataURL: vi.fn().mockReturnValue('data:image/png;base64,test'),
-      })),
-      Image: {
-        fromURL: vi.fn().mockImplementation((url, callback) => {
-          const mockImage = {
-            width: 100,
-            height: 100,
-            getElement: vi.fn().mockReturnValue({}),
-            set: vi.fn(),
-          }
-          callback(mockImage)
-        }),
-      },
-    },
+    Canvas: vi.fn().mockImplementation(() => ({
+      clear: vi.fn(),
+      add: vi.fn(),
+      renderAll: vi.fn(),
+      setWidth: vi.fn(),
+      setHeight: vi.fn(),
+      getWidth: vi.fn().mockReturnValue(500),
+      getHeight: vi.fn().mockReturnValue(500),
+      toDataURL: vi.fn().mockReturnValue('data:image/png;base64,test'),
+      width: 500,
+      height: 500,
+    })),
+    FabricImage: vi.fn().mockImplementation(() => mockImage),
   }
+})
+
+// Mock FabricImage.fromURL separately
+import * as fabric from 'fabric'
+fabric.FabricImage.fromURL = vi.fn().mockImplementation((url, options) => {
+  return Promise.resolve({
+    width: 100,
+    height: 100,
+    getElement: vi.fn().mockReturnValue({}),
+    set: vi.fn(),
+  })
 })
 
 const i18n = createI18n({

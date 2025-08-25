@@ -222,7 +222,7 @@
 import { ref, reactive, onMounted, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
-import { Canvas, Image } from 'fabric'
+import { Canvas, FabricImage as Image } from 'fabric'
 
 const { t } = useI18n()
 const { success, error: showError } = useToast()
@@ -298,7 +298,7 @@ async function selectHiddenImage() {
     const file = await getFile()
     if (file) {
       const url = URL.createObjectURL(file)
-      const img = new Image()
+      const img = new window.Image()
       img.onload = () => {
         // Create a canvas to get image data
         const tempCanvas = document.createElement('canvas')
@@ -351,54 +351,60 @@ function drawTargetImage(url: string) {
   if (!canvas.value) return
 
   state.isLoading = true
-  Image.fromURL(url, { crossOrigin: 'anonymous' }, (img) => {
-    try {
-      // Calculate scale to fit canvas while maintaining aspect ratio
-      const canvasWidth = canvas.value!.width
-      const canvasHeight = canvas.value!.height
-      const imgWidth = img.width
-      const imgHeight = img.height
+  Image.fromURL(url, { crossOrigin: 'anonymous' })
+    .then((img) => {
+      try {
+        // Calculate scale to fit canvas while maintaining aspect ratio
+        const canvasWidth = canvas.value!.width
+        const canvasHeight = canvas.value!.height
+        const imgWidth = img.width
+        const imgHeight = img.height
 
-      const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
+        const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
 
-      img.set({
-        left: canvasWidth / 2,
-        originX: 'center',
-        originY: 'center',
-        top: canvasHeight / 2,
-        scaleX: scale,
-        scaleY: scale,
-        selectable: false,
-      })
+        img.set({
+          left: canvasWidth / 2,
+          originX: 'center',
+          originY: 'center',
+          top: canvasHeight / 2,
+          scaleX: scale,
+          scaleY: scale,
+          selectable: false,
+        })
 
-      canvas.value!.clear()
-      canvas.value!.add(img)
-      canvas.value!.renderAll()
+        canvas.value!.clear()
+        canvas.value!.add(img)
+        canvas.value!.renderAll()
 
-      // Get image data for steganography
-      const tempCanvas = document.createElement('canvas')
-      tempCanvas.width = imgWidth
-      tempCanvas.height = imgHeight
-      const tempCtx = tempCanvas.getContext('2d')
-      if (tempCtx) {
-        tempCtx.drawImage(img.getElement(), 0, 0)
-        state.targetImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height)
+        // Get image data for steganography
+        const tempCanvas = document.createElement('canvas')
+        tempCanvas.width = imgWidth
+        tempCanvas.height = imgHeight
+        const tempCtx = tempCanvas.getContext('2d')
+        if (tempCtx) {
+          tempCtx.drawImage(img.getElement(), 0, 0)
+          state.targetImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height)
 
-        // Create preview URL
-        if (targetImagePreviewUrl.value) {
-          URL.revokeObjectURL(targetImagePreviewUrl.value)
+          // Create preview URL
+          if (targetImagePreviewUrl.value) {
+            URL.revokeObjectURL(targetImagePreviewUrl.value)
+          }
+          targetImagePreviewUrl.value = tempCanvas.toDataURL()
         }
-        targetImagePreviewUrl.value = tempCanvas.toDataURL()
-      }
 
-      success(t('tools.imageSteganography.messages.imageLoaded'))
-    } catch (err) {
+        success(t('tools.imageSteganography.messages.imageLoaded'))
+      } catch (err) {
+        showError(t('tools.imageSteganography.errors.imageLoadFailed'))
+        console.error(err)
+      } finally {
+        state.isLoading = false
+      }
+    })
+    .catch((err) => {
+      state.isLoading = false
       showError(t('tools.imageSteganography.errors.imageLoadFailed'))
       console.error(err)
-    } finally {
-      state.isLoading = false
-    }
-  })
+    })
 }
 
 // Preview hidden image
@@ -534,33 +540,39 @@ function drawHiddenData() {
 
     if (tempCtx) {
       tempCtx.putImageData(newImageData, 0, 0)
-      Image.fromURL(tempCanvas.toDataURL(), {}, (img) => {
-        if (canvas.value) {
-          // Calculate scale to fit canvas while maintaining aspect ratio
-          const canvasWidth = canvas.value.width
-          const canvasHeight = canvas.value.height
-          const imgWidth = img.width
-          const imgHeight = img.height
+      Image.fromURL(tempCanvas.toDataURL())
+        .then((img) => {
+          if (canvas.value) {
+            // Calculate scale to fit canvas while maintaining aspect ratio
+            const canvasWidth = canvas.value.width
+            const canvasHeight = canvas.value.height
+            const imgWidth = img.width
+            const imgHeight = img.height
 
-          const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
 
-          img.set({
-            left: canvasWidth / 2,
-            originX: 'center',
-            originY: 'center',
-            top: canvasHeight / 2,
-            scaleX: scale,
-            scaleY: scale,
-            selectable: false,
-          })
+            img.set({
+              left: canvasWidth / 2,
+              originX: 'center',
+              originY: 'center',
+              top: canvasHeight / 2,
+              scaleX: scale,
+              scaleY: scale,
+              selectable: false,
+            })
 
-          canvas.value.clear()
-          canvas.value.add(img)
-          canvas.value.renderAll()
-        }
-        state.isLoading = false
-        success(t('tools.imageSteganography.messages.encryptionComplete'))
-      })
+            canvas.value.clear()
+            canvas.value.add(img)
+            canvas.value.renderAll()
+          }
+          state.isLoading = false
+          success(t('tools.imageSteganography.messages.encryptionComplete'))
+        })
+        .catch((err) => {
+          state.isLoading = false
+          showError(t('tools.imageSteganography.errors.encryptionFailed'))
+          console.error(err)
+        })
     } else {
       state.isLoading = false
     }
