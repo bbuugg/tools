@@ -1226,6 +1226,97 @@ export default {
         cleared: 'All images cleared!',
       },
     },
+    gifEditor: {
+      title: 'GIF Editor',
+      description: 'Split, edit, and modify GIF frames with customizable timing and settings',
+      howToUse: {
+        title: 'How to Use',
+        step1: 'Upload a GIF file by clicking "Select GIF File" or dragging and dropping',
+        step2: 'Adjust GIF settings (width, quality, frame rate)',
+        step3: 'Modify individual frame delays, reorder frames, or remove unwanted frames',
+        step4: 'Click "Generate GIF" to create your edited GIF',
+      },
+      tips: {
+        title: 'Tips for Best Results',
+        tip1: 'For best results, use GIFs with consistent frame dimensions',
+        tip2: 'Frame delays below 20ms may not display correctly in all browsers',
+        tip3: 'Smaller GIF widths (200-400px) load faster and consume less memory',
+        tip4: 'Use medium quality for a good balance between file size and image quality',
+      },
+      upload: {
+        title: 'Upload GIF',
+        dragDrop: 'Drag & drop your GIF here',
+        selectFile: 'Select GIF File',
+        supportedFormats: 'Supports GIF format only (Max: 50MB)',
+      },
+      settings: {
+        width: 'GIF Width (px)',
+        quality: 'Quality',
+        fps: 'Frame Rate (FPS)',
+        qualityOptions: {
+          high: 'High Quality',
+          medium: 'Medium Quality',
+          low: 'Low Quality (Smaller File)',
+        },
+      },
+      preview: {
+        title: 'GIF Preview & Controls',
+        originalGif: 'Original GIF',
+        frames: 'Frames',
+        frame: 'Frame',
+        delay: 'Delay',
+        dimensions: 'Dimensions',
+        pixels: 'pixels',
+        moveUp: 'Move First to End',
+        moveDown: 'Move Last to Start',
+        reverse: 'Reverse Order',
+        shuffle: 'Shuffle Frames',
+      },
+      actions: {
+        generateGif: 'Generate GIF',
+      },
+      processing: {
+        title: 'Processing GIF',
+        description: 'Editing your GIF frames. This may take a moment...',
+        preview: 'Preview',
+      },
+      result: {
+        title: 'Generated GIF',
+        download: 'Download GIF',
+        createNew: 'Edit Another GIF',
+      },
+      features: {
+        frameEditing: {
+          title: 'Frame Editing',
+          description:
+            "Split GIFs into individual frames and modify each frame's delay, order, or remove unwanted frames.",
+        },
+        customization: {
+          title: 'Full Customization',
+          description:
+            'Control every aspect including quality, size, timing, and frame order for perfect results.',
+        },
+        animation: {
+          title: 'Animation Control',
+          description:
+            'Set individual frame delays, reorder frames, and control animation loop behavior.',
+        },
+      },
+      errors: {
+        noGif: 'Please select a valid GIF file.',
+        invalidFile: 'Please select a valid GIF file.',
+        fileTooLarge: 'File size must be less than 50MB.',
+        processingFailed: 'Failed to process GIF. Please try again.',
+        noFrames: 'No frames to process. Please upload a GIF file first.',
+        fileProcessing: 'Failed to process selected file.',
+        frameParsingFailed: 'Failed to parse GIF frames.',
+      },
+      messages: {
+        fileLoaded: 'GIF file loaded successfully!',
+        gifGenerated: 'GIF generated successfully!',
+        filePasted: 'GIF file pasted from clipboard!',
+      },
+    },
     imageWatermark: {
       title: 'Image Watermark Master',
       description:

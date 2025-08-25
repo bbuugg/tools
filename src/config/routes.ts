@@ -9,6 +9,7 @@ const ImageCompressor = () => import('../tools/image/ImageCompressor.vue')
 const ImageListProcessor = () => import('../tools/image/ImageListProcessor.vue')
 const VideoToGifConverter = () => import('../tools/image/VideoToGifConverter.vue')
 const ImageToGifConverter = () => import('../tools/image/ImageToGifConverter.vue')
+const GifEditor = () => import('../tools/image/GifEditor.vue')
 const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
@@ -403,6 +404,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image to GIF Converter',
           icon: '🖼️',
+          status: 'active',
+        },
+      },
+      {
+        path: 'gif-editor',
+        name: 'gifEditor',
+        component: GifEditor,
+        meta: {
+          title: 'GIF Editor',
+          icon: '🎞️',
           status: 'active',
         },
       },
