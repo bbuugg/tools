@@ -12,8 +12,10 @@ let mainWindow
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1000,
+    height: 600,
+    frame: false, // 移除默认窗口框架
+    titleBarStyle: 'hidden', // 隐藏标题栏
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -109,4 +111,31 @@ app.on('window-all-closed', () => {
 // IPC handlers
 ipcMain.handle('get-app-version', () => {
   return app.getVersion()
+})
+
+// 窗口控制IPC处理程序
+ipcMain.handle('window-minimize', () => {
+  if (mainWindow) {
+    mainWindow.minimize()
+  }
+})
+
+ipcMain.handle('window-maximize', () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow.maximize()
+    }
+  }
+})
+
+ipcMain.handle('window-close', () => {
+  if (mainWindow) {
+    mainWindow.close()
+  }
+})
+
+ipcMain.handle('window-is-maximized', () => {
+  return mainWindow ? mainWindow.isMaximized() : false
 })

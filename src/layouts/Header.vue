@@ -1,5 +1,8 @@
 <template>
-  <header class="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+  <header
+    class="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg"
+    :class="{ 'mt-8': isElectron }"
+  >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <!-- Logo and Title -->
@@ -95,6 +98,7 @@ defineEmits<{
 
 const { locale, t } = useI18n()
 const showLanguageMenu = ref(false)
+const isElectron = ref(false)
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -123,6 +127,8 @@ function handleClickOutside(event: Event) {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  // 检查是否在Electron环境中
+  isElectron.value = !!(window as any).electronAPI
 })
 
 onUnmounted(() => {

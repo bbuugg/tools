@@ -3,3 +3,38 @@
 button {
   cursor: pointer;
 }
+
+/* 自定义断点 - 1000px */
+@media (min-width: 1000px) {
+  .custom-mobile\:hidden {
+    display: none;
+  }
+  .custom-mobile\:relative {
+    position: relative;
+  }
+  .custom-mobile\:translate-x-0 {
+    transform: translateX(0);
+  }
+}
+
+/* Electron specific styles */
+.electron-titlebar {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 隐藏Electron环境下的滚动条 */
+.electron-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.electron-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Ensure proper z-index for Electron title bar */
+body {
+  margin: 0;
+  padding: 0;
+}

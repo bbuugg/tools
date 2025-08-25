@@ -1,7 +1,9 @@
 <template>
   <div class="h-screen flex">
+    <!-- Electron Title Bar -->
+    <ElectronTitleBar />
     <!-- Mobile Menu Button Fixed at Top Left -->
-    <div class="lg:hidden fixed bottom-4 left-4 z-20">
+    <div class="custom-mobile:hidden fixed bottom-4 left-4 z-20">
       <button
         @click="toggleSidebar"
         class="p-2 rounded-md bg-white shadow-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
@@ -22,14 +24,14 @@
       <div
         v-if="isSidebarOpen && isMobile"
         @click="closeSidebar"
-        class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden transition-opacity duration-300"
+        class="fixed inset-0 bg-black bg-opacity-50 z-30 custom-mobile:hidden transition-opacity duration-300"
       ></div>
 
       <!-- Sidebar -->
       <aside
         :class="[
           'bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-40',
-          'lg:relative lg:translate-x-0',
+          'custom-mobile:relative custom-mobile:translate-x-0',
           isMobile
             ? ['fixed inset-y-0 left-0 w-80', isSidebarOpen ? 'translate-x-0' : '-translate-x-full']
             : 'w-72 xl:w-80', // Wider on large and extra-large screens
@@ -73,7 +75,7 @@
             <button
               v-if="isMobile"
               @click="closeSidebar"
-              class="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+              class="custom-mobile:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -289,7 +291,13 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 overflow-auto relative">
+      <main
+        class="flex-1 overflow-auto relative"
+        :class="{
+          'pt-8': isElectron,
+          'electron-scrollbar': isElectron,
+        }"
+      >
         <!-- Loading Overlay -->
         <transition
           enter-active-class="transition-opacity duration-200"
@@ -343,6 +351,7 @@ import { menuConfig } from '@/config/routes'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import ElectronTitleBar from '@/components/ElectronTitleBar.vue'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -354,6 +363,7 @@ const searchQuery = ref('')
 const isLoading = ref(false)
 const showCategoryView = ref(true) // true: show categories, false: show tools
 const showLanguageMenu = ref(false)
+const isElectron = ref(false)
 
 // Language switcher data
 const languages = [
@@ -396,7 +406,7 @@ function closeSidebar() {
 }
 
 function checkMobile() {
-  isMobile.value = window.innerWidth < 1024 // lg breakpoint
+  isMobile.value = window.innerWidth < 1000 // 自定义断点：1000px
   if (!isMobile.value) {
     isSidebarOpen.value = false
   }
@@ -528,6 +538,9 @@ onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
   document.addEventListener('click', handleClickOutside)
+
+  // Check if running in Electron
+  isElectron.value = !!(window as any).electronAPI
 
   // Fix for mobile sidebar appearing on refresh
   if (isMobile.value) {
