@@ -559,6 +559,151 @@
                     />
                   </template>
                 </g>
+
+                <!-- Polygon -->
+                <g v-else-if="shape.type === 'polygon'">
+                  <polygon
+                    :points="shape.points"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :fill-opacity="shape.fillOpacity"
+                    :stroke-opacity="shape.strokeOpacity"
+                    :transform="`rotate(${shape.rotation || 0} ${getPolygonCenter(shape.points).x} ${getPolygonCenter(shape.points).y})`"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Selection highlight -->
+                  <polygon
+                    v-if="selectedShapeId === shape.id"
+                    :points="getEnlargedPolygonPoints(shape.points)"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${getPolygonCenter(shape.points).x} ${getPolygonCenter(shape.points).y})`"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="getPolygonCenter(shape.points).x"
+                    :y1="getPolygonCenter(shape.points).y - 30"
+                    :x2="getPolygonCenter(shape.points).x"
+                    :y2="getPolygonCenter(shape.points).y"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="getPolygonCenter(shape.points).x"
+                    :cy="getPolygonCenter(shape.points).y - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
+
+                <!-- Star -->
+                <g v-else-if="shape.type === 'star'">
+                  <polygon
+                    :points="generateStarPoints(shape)"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :fill-opacity="shape.fillOpacity"
+                    :stroke-opacity="shape.strokeOpacity"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})`"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Selection highlight -->
+                  <polygon
+                    v-if="selectedShapeId === shape.id"
+                    :points="generateEnlargedStarPoints(shape)"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})`"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.cx"
+                    :y1="shape.cy - Math.max(shape.outerRadius, shape.innerRadius) - 30"
+                    :x2="shape.cx"
+                    :y2="shape.cy - Math.max(shape.outerRadius, shape.innerRadius)"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx"
+                    :cy="shape.cy - Math.max(shape.outerRadius, shape.innerRadius) - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
+
+                <!-- Heart -->
+                <g v-else-if="shape.type === 'heart'">
+                  <path
+                    :d="generateHeartPath(shape)"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :fill-opacity="shape.fillOpacity"
+                    :stroke-opacity="shape.strokeOpacity"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})`"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Selection highlight -->
+                  <path
+                    v-if="selectedShapeId === shape.id"
+                    :d="generateHeartPath(shape)"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="2"
+                    stroke-dasharray="5,5"
+                    stroke-opacity="0.7"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy}) scale(1.1)`"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.cx"
+                    :y1="shape.cy - shape.size - 30"
+                    :x2="shape.cx"
+                    :y2="shape.cy - shape.size"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx"
+                    :cy="shape.cy - shape.size - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
               </g>
             </svg>
           </div>
@@ -791,7 +936,37 @@ interface PathShape extends BaseShape {
   controlPoints: ControlPoint[]
 }
 
-type Shape = RectangleShape | CircleShape | EllipseShape | LineShape | TriangleShape | PathShape
+interface PolygonShape extends BaseShape {
+  type: 'polygon'
+  points: string
+}
+
+interface StarShape extends BaseShape {
+  type: 'star'
+  cx: number
+  cy: number
+  outerRadius: number
+  innerRadius: number
+  points: number
+}
+
+interface HeartShape extends BaseShape {
+  type: 'heart'
+  cx: number
+  cy: number
+  size: number
+}
+
+type Shape =
+  | RectangleShape
+  | CircleShape
+  | EllipseShape
+  | LineShape
+  | TriangleShape
+  | PathShape
+  | PolygonShape
+  | StarShape
+  | HeartShape
 
 interface DragState {
   startX: number
@@ -865,6 +1040,9 @@ const shapes = [
   { type: 'ellipse', name: t('tools.svgEditor.shapes.ellipse'), icon: '◇' },
   { type: 'line', name: t('tools.svgEditor.shapes.line'), icon: '/' },
   { type: 'triangle', name: t('tools.svgEditor.shapes.triangle'), icon: '△' },
+  { type: 'polygon', name: t('tools.svgEditor.shapes.polygon'), icon: '⬟' },
+  { type: 'star', name: t('tools.svgEditor.shapes.star'), icon: '★' },
+  { type: 'heart', name: t('tools.svgEditor.shapes.heart'), icon: '❤' },
   { type: 'path', name: t('tools.svgEditor.shapes.path'), icon: '⌒' },
 ]
 
@@ -977,8 +1155,9 @@ async function copyToClipboard() {
   try {
     navigator.clipboard.writeText(svgCode.value)
     success(t('tools.svgEditor.messages.codeCopied'))
-  } catch (_err) {
+  } catch (err) {
     // Error handling
+    console.error('Failed to copy to clipboard:', err)
     error(t('tools.svgEditor.errors.copyFailed'))
   }
 }
@@ -1081,6 +1260,51 @@ function addShape(type: string) {
         strokeWidth: 2,
         rotation: 0,
       } as TriangleShape
+      break
+    case 'polygon':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'polygon',
+        points: '100,50 150,75 130,130 70,130 50,75',
+        fill: '#3b82f6',
+        fillOpacity: 1,
+        stroke: '#1e40af',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as PolygonShape
+      break
+    case 'star':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'star',
+        cx: 100,
+        cy: 100,
+        outerRadius: 50,
+        innerRadius: 25,
+        points: 5,
+        fill: '#3b82f6',
+        fillOpacity: 1,
+        stroke: '#1e40af',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as StarShape
+      break
+    case 'heart':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'heart',
+        cx: 100,
+        cy: 100,
+        size: 50,
+        fill: '#ef4444',
+        fillOpacity: 1,
+        stroke: '#dc2626',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as HeartShape
       break
     case 'path':
       newShape = {
@@ -1203,6 +1427,19 @@ function startRotate(event: MouseEvent, shapeId: string) {
       centerX = center.x
       centerY = center.y
       break
+    case 'polygon':
+      const polyCenter = getPolygonCenter(shape.points)
+      centerX = polyCenter.x
+      centerY = polyCenter.y
+      break
+    case 'star':
+      centerX = shape.cx
+      centerY = shape.cy
+      break
+    case 'heart':
+      centerX = shape.cx
+      centerY = shape.cy
+      break
     case 'path':
       // For paths, we'll use the first control point as reference
       if (shape.controlPoints && shape.controlPoints.length > 0) {
@@ -1277,6 +1514,23 @@ function handleMouseMove(event: MouseEvent) {
             return `${x + dx},${y + dy}`
           })
           .join(' ')
+        break
+      case 'polygon':
+        const polyPoints = shape.points.split(' ')
+        shape.points = polyPoints
+          .map((point) => {
+            const [x, y] = point.split(',').map(Number)
+            return `${x + dx},${y + dy}`
+          })
+          .join(' ')
+        break
+      case 'star':
+        shape.cx += dx
+        shape.cy += dy
+        break
+      case 'heart':
+        shape.cx += dx
+        shape.cy += dy
         break
       case 'path':
         // Move all control points
@@ -1510,6 +1764,24 @@ function updateSvgFromCanvas() {
         const center = getTriangleCenter(shape.points)
         svgContent += `  <polygon points="${shape.points}" fill="${triangleFill}" fill-opacity="${shape.fillOpacity}" stroke="${triangleStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${center.x} ${center.y})" />\n`
         break
+      case 'polygon':
+        const polygonFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const polygonStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        const polyCenter = getPolygonCenter(shape.points)
+        svgContent += `  <polygon points="${shape.points}" fill="${polygonFill}" fill-opacity="${shape.fillOpacity}" stroke="${polygonStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${polyCenter.x} ${polyCenter.y})" />\n`
+        break
+      case 'star':
+        const starFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const starStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        const starPoints = generateStarPoints(shape as StarShape)
+        svgContent += `  <polygon points="${starPoints}" fill="${starFill}" fill-opacity="${shape.fillOpacity}" stroke="${starStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
+        break
+      case 'heart':
+        const heartFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const heartStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        const heartPath = generateHeartPath(shape as HeartShape)
+        svgContent += `  <path d="${heartPath}" fill="${heartFill}" fill-opacity="${shape.fillOpacity}" stroke="${heartStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
+        break
       case 'path':
         const pathFill = shape.fillOpacity === 0 ? 'none' : shape.fill
         const pathStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
@@ -1574,6 +1846,66 @@ function setTransparentStroke() {
     selectedShape.value.strokeOpacity = 0
     updateSvgFromCanvas()
   }
+}
+
+// New helper functions for additional shapes
+function getPolygonCenter(points: string) {
+  const coords = points.split(' ').map((p: string) => {
+    const [x, y] = p.split(',').map(Number)
+    return { x, y }
+  })
+
+  const centerX = coords.reduce((sum, point) => sum + point.x, 0) / coords.length
+  const centerY = coords.reduce((sum, point) => sum + point.y, 0) / coords.length
+
+  return { x: centerX, y: centerY }
+}
+
+function getEnlargedPolygonPoints(points: string): string {
+  // For simplicity, we'll just return the original points
+  // In a more complex implementation, we might enlarge the polygon
+  return points
+}
+
+function generateStarPoints(shape: StarShape): string {
+  const points = []
+  const outerRadius = shape.outerRadius
+  const innerRadius = shape.innerRadius
+  const cx = shape.cx
+  const cy = shape.cy
+  const numPoints = shape.points
+
+  for (let i = 0; i < numPoints * 2; i++) {
+    const radius = i % 2 === 0 ? outerRadius : innerRadius
+    const angle = Math.PI / 2 + (i * Math.PI) / numPoints
+    const x = cx + radius * Math.cos(angle)
+    const y = cy - radius * Math.sin(angle)
+    points.push(`${x},${y}`)
+  }
+
+  return points.join(' ')
+}
+
+function generateEnlargedStarPoints(shape: StarShape): string {
+  // Create a slightly larger star for selection highlighting
+  const enlargedShape = {
+    ...shape,
+    outerRadius: shape.outerRadius + 2,
+    innerRadius: shape.innerRadius + 2,
+  }
+  return generateStarPoints(enlargedShape as StarShape)
+}
+
+function generateHeartPath(shape: HeartShape): string {
+  const cx = shape.cx
+  const cy = shape.cy
+  const size = shape.size
+
+  // Parametric heart shape
+  return `M ${cx} ${cy + size * 0.6}
+          C ${cx - size * 0.4} ${cy + size * 0.2}, ${cx - size * 0.6} ${cy - size * 0.2}, ${cx} ${cy - size * 0.6}
+          C ${cx + size * 0.6} ${cy - size * 0.2}, ${cx + size * 0.4} ${cy + size * 0.2}, ${cx} ${cy + size * 0.6}
+          Z`
 }
 </script>
 
