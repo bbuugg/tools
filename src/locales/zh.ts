@@ -1811,6 +1811,7 @@ export default {
         fill: '填充颜色',
         stroke: '描边颜色',
         strokeWidth: '描边宽度',
+        transparent: '透明',
       },
       shapes: {
         rectangle: '矩形',

@@ -163,7 +163,7 @@
 
           <!-- Canvas -->
           <div
-            class="md:col-span-2 border border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center min-h-96 relative"
+            class="md:col-span-2 border border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center min-h-[500px] relative"
           >
             <svg
               ref="svgCanvas"
@@ -192,8 +192,8 @@
                     :y="shape.y"
                     :width="shape.width"
                     :height="shape.height"
-                    :fill="shape.fill"
-                    :stroke="shape.stroke"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :fill-opacity="shape.fillOpacity"
                     :stroke-opacity="shape.strokeOpacity"
@@ -201,23 +201,51 @@
                     @mousedown="startDrag($event, shape.id)"
                     :class="{ 'cursor-move': !isResizing }"
                   />
+                  <!-- Selection highlight -->
+                  <rect
+                    v-if="selectedShapeId === shape.id"
+                    :x="shape.x - 2"
+                    :y="shape.y - 2"
+                    :width="shape.width + 4"
+                    :height="shape.height + 4"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.x + shape.width / 2} ${shape.y + shape.height / 2})`"
+                  />
                   <!-- Resize handles -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.x + shape.width"
                     :cy="shape.y + shape.height"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 'se')"
                     class="cursor-se-resize"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.x + shape.width / 2"
+                    :y1="shape.y - 30"
+                    :x2="shape.x + shape.width / 2"
+                    :y2="shape.y"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
                   />
                   <!-- Rotate handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.x + shape.width / 2"
                     :cy="shape.y - 30"
-                    r="5"
-                    fill="red"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
                     @mousedown="startRotate($event, shape.id)"
                     class="cursor-move"
                   />
@@ -229,8 +257,8 @@
                     :cx="shape.cx"
                     :cy="shape.cy"
                     :r="shape.r"
-                    :fill="shape.fill"
-                    :stroke="shape.stroke"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :fill-opacity="shape.fillOpacity"
                     :stroke-opacity="shape.strokeOpacity"
@@ -238,23 +266,50 @@
                     @mousedown="startDrag($event, shape.id)"
                     class="cursor-move"
                   />
+                  <!-- Selection highlight -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx"
+                    :cy="shape.cy"
+                    :r="shape.r + 2"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})`"
+                  />
                   <!-- Resize handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.cx + shape.r"
                     :cy="shape.cy"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 'e')"
                     class="cursor-ew-resize"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.cx"
+                    :y1="shape.cy - shape.r - 30"
+                    :x2="shape.cx"
+                    :y2="shape.cy - shape.r"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
                   />
                   <!-- Rotate handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.cx"
                     :cy="shape.cy - shape.r - 30"
-                    r="5"
-                    fill="red"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
                     @mousedown="startRotate($event, shape.id)"
                     class="cursor-move"
                   />
@@ -267,8 +322,8 @@
                     :cy="shape.cy"
                     :rx="shape.rx"
                     :ry="shape.ry"
-                    :fill="shape.fill"
-                    :stroke="shape.stroke"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :fill-opacity="shape.fillOpacity"
                     :stroke-opacity="shape.strokeOpacity"
@@ -276,13 +331,28 @@
                     @mousedown="startDrag($event, shape.id)"
                     class="cursor-move"
                   />
+                  <!-- Selection highlight -->
+                  <ellipse
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx"
+                    :cy="shape.cy"
+                    :rx="shape.rx + 2"
+                    :ry="shape.ry + 2"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})`"
+                  />
                   <!-- Resize handles -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.cx + shape.rx"
                     :cy="shape.cy"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 'e')"
                     class="cursor-ew-resize"
                   />
@@ -291,17 +361,32 @@
                     :cx="shape.cx"
                     :cy="shape.cy + shape.ry"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 's')"
                     class="cursor-ns-resize"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.cx"
+                    :y1="shape.cy - Math.max(shape.rx, shape.ry) - 30"
+                    :x2="shape.cx"
+                    :y2="shape.cy - Math.max(shape.rx, shape.ry)"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
                   />
                   <!-- Rotate handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="shape.cx"
                     :cy="shape.cy - Math.max(shape.rx, shape.ry) - 30"
-                    r="5"
-                    fill="red"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
                     @mousedown="startRotate($event, shape.id)"
                     class="cursor-move"
                   />
@@ -314,11 +399,22 @@
                     :y1="shape.y1"
                     :x2="shape.x2"
                     :y2="shape.y2"
-                    :stroke="shape.stroke"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :stroke-opacity="shape.strokeOpacity"
                     @mousedown="startDrag($event, shape.id)"
                     class="cursor-move"
+                  />
+                  <!-- Selection highlight -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="shape.x1"
+                    :y1="shape.y1"
+                    :x2="shape.x2"
+                    :y2="shape.y2"
+                    stroke="blue"
+                    stroke-width="3"
+                    stroke-opacity="0.3"
                   />
                   <!-- End point handles -->
                   <circle
@@ -326,7 +422,9 @@
                     :cx="shape.x1"
                     :cy="shape.y1"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 'start')"
                     class="cursor-move"
                   />
@@ -335,17 +433,32 @@
                     :cx="shape.x2"
                     :cy="shape.y2"
                     r="5"
-                    fill="blue"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
                     @mousedown="startResize($event, shape.id, 'end')"
                     class="cursor-move"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="(shape.x1 + shape.x2) / 2"
+                    :y1="(shape.y1 + shape.y2) / 2 - 30"
+                    :x2="(shape.x1 + shape.x2) / 2"
+                    :y2="(shape.y1 + shape.y2) / 2"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
                   />
                   <!-- Rotate handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="(shape.x1 + shape.x2) / 2"
                     :cy="(shape.y1 + shape.y2) / 2 - 30"
-                    r="5"
-                    fill="red"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
                     @mousedown="startRotate($event, shape.id)"
                     class="cursor-move"
                   />
@@ -355,8 +468,8 @@
                 <g v-else-if="shape.type === 'triangle'">
                   <polygon
                     :points="shape.points"
-                    :fill="shape.fill"
-                    :stroke="shape.stroke"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :fill-opacity="shape.fillOpacity"
                     :stroke-opacity="shape.strokeOpacity"
@@ -364,13 +477,36 @@
                     @mousedown="startDrag($event, shape.id)"
                     class="cursor-move"
                   />
+                  <!-- Selection highlight -->
+                  <polygon
+                    v-if="selectedShapeId === shape.id"
+                    :points="getEnlargedTrianglePoints(shape.points)"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="1"
+                    stroke-dasharray="5,5"
+                    :transform="`rotate(${shape.rotation || 0} ${getTriangleCenter(shape.points).x} ${getTriangleCenter(shape.points).y})`"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="getTriangleCenter(shape.points).x"
+                    :y1="getTriangleCenter(shape.points).y - 30"
+                    :x2="getTriangleCenter(shape.points).x"
+                    :y2="getTriangleCenter(shape.points).y"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
                   <!-- Rotate handle -->
                   <circle
                     v-if="selectedShapeId === shape.id"
                     :cx="getTriangleCenter(shape.points).x"
                     :cy="getTriangleCenter(shape.points).y - 30"
-                    r="5"
-                    fill="red"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
                     @mousedown="startRotate($event, shape.id)"
                     class="cursor-move"
                   />
@@ -380,13 +516,23 @@
                 <g v-else-if="shape.type === 'path'">
                   <path
                     :d="shape.d"
-                    :fill="shape.fill"
-                    :stroke="shape.stroke"
+                    :fill="shape.fillOpacity === 0 ? 'none' : shape.fill"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :fill-opacity="shape.fillOpacity"
                     :stroke-opacity="shape.strokeOpacity"
                     @mousedown="startDrag($event, shape.id)"
                     class="cursor-move"
+                  />
+                  <!-- Selection highlight -->
+                  <path
+                    v-if="selectedShapeId === shape.id"
+                    :d="shape.d"
+                    fill="none"
+                    stroke="blue"
+                    stroke-width="2"
+                    stroke-dasharray="5,5"
+                    stroke-opacity="0.7"
                   />
                   <!-- Control points for curve adjustment -->
                   <template v-for="(point, index) in getControlPointsForShape(shape)" :key="index">
@@ -394,7 +540,9 @@
                       :cx="point.x"
                       :cy="point.y"
                       r="4"
-                      fill="red"
+                      fill="white"
+                      stroke="red"
+                      stroke-width="1"
                       @mousedown="startControlPointDrag($event, shape.id, index)"
                       class="cursor-move"
                     />
@@ -414,17 +562,26 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.svgEditor.visualEditor.fill') }}
                 </label>
-                <input
-                  v-model="selectedShape.fill"
-                  type="color"
-                  class="w-full h-10 border border-gray-300 rounded"
-                />
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="selectedShape.fill"
+                    type="color"
+                    class="w-3/4 h-10 border border-gray-300 rounded"
+                  />
+                  <button
+                    @click="setTransparentFill"
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    :class="{ 'ring-2 ring-blue-500': selectedShape.fillOpacity === 0 }"
+                  >
+                    {{ $t('tools.svgEditor.visualEditor.transparent') }}
+                  </button>
+                </div>
                 <input
                   v-model="selectedShape.fillOpacity"
                   type="range"
                   min="0"
                   max="1"
-                  step="0.1"
+                  step="0.01"
                   class="w-full mt-1"
                 />
                 <div class="text-xs text-gray-500 text-right">
@@ -435,17 +592,26 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   {{ $t('tools.svgEditor.visualEditor.stroke') }}
                 </label>
-                <input
-                  v-model="selectedShape.stroke"
-                  type="color"
-                  class="w-full h-10 border border-gray-300 rounded"
-                />
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="selectedShape.stroke"
+                    type="color"
+                    class="w-3/4 h-10 border border-gray-300 rounded"
+                  />
+                  <button
+                    @click="setTransparentStroke"
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    :class="{ 'ring-2 ring-blue-500': selectedShape.strokeOpacity === 0 }"
+                  >
+                    {{ $t('tools.svgEditor.visualEditor.transparent') }}
+                  </button>
+                </div>
                 <input
                   v-model="selectedShape.strokeOpacity"
                   type="range"
                   min="0"
                   max="1"
-                  step="0.1"
+                  step="0.01"
                   class="w-full mt-1"
                 />
                 <div class="text-xs text-gray-500 text-right">
@@ -622,6 +788,9 @@ interface DragState {
   shapeId: string
   resizeDirection: string
   controlPointIndex: number
+  initialRotation?: number
+  centerX?: number
+  centerY?: number
 }
 
 interface Tutorial {
@@ -677,7 +846,7 @@ const svgHeight = computed(() => {
 
 // Visual editor
 const svgCanvas = ref<SVGElement | null>(null)
-const canvasSize = ref({ width: 400, height: 300 })
+const canvasSize = ref({ width: 600, height: 500 })
 
 const shapes = [
   { type: 'rectangle', name: t('tools.svgEditor.shapes.rectangle'), icon: '▭' },
@@ -926,6 +1095,7 @@ function addShape(type: string) {
   }
 
   canvasShapes.value.push(newShape)
+  selectedShapeId.value = newShape.id // Automatically select the new shape
   saveToHistory()
   updateSvgFromCanvas()
 }
@@ -942,9 +1112,12 @@ function getTriangleCenter(points: string) {
   return { x: centerX, y: centerY }
 }
 
-function handleCanvasClick(_event: MouseEvent) {
-  // Deselect if clicking on empty space
-  selectedShapeId.value = null
+function handleCanvasClick(event: MouseEvent) {
+  // Only deselect if clicking on empty space (not on a shape)
+  const target = event.target as SVGElement
+  if (!target.closest('rect, circle, ellipse, line, polygon, path')) {
+    selectedShapeId.value = null
+  }
 }
 
 function startDrag(event: MouseEvent, shapeId: string) {
@@ -979,12 +1152,54 @@ function startRotate(event: MouseEvent, shapeId: string) {
   event.stopPropagation()
   isRotating.value = true
   selectedShapeId.value = shapeId
+
+  // Get the shape center for rotation
+  const shape = canvasShapes.value.find((s) => s.id === shapeId)
+  if (!shape) return
+
+  let centerX = 0
+  let centerY = 0
+
+  switch (shape.type) {
+    case 'rectangle':
+      centerX = shape.x + shape.width / 2
+      centerY = shape.y + shape.height / 2
+      break
+    case 'circle':
+      centerX = shape.cx
+      centerY = shape.cy
+      break
+    case 'ellipse':
+      centerX = shape.cx
+      centerY = shape.cy
+      break
+    case 'line':
+      centerX = (shape.x1 + shape.x2) / 2
+      centerY = (shape.y1 + shape.y2) / 2
+      break
+    case 'triangle':
+      const center = getTriangleCenter(shape.points)
+      centerX = center.x
+      centerY = center.y
+      break
+    case 'path':
+      // For paths, we'll use the first control point as reference
+      if (shape.controlPoints && shape.controlPoints.length > 0) {
+        centerX = shape.controlPoints[0].x
+        centerY = shape.controlPoints[0].y
+      }
+      break
+  }
+
   dragState.value = {
     startX: event.clientX,
     startY: event.clientY,
     shapeId,
     resizeDirection: '',
     controlPointIndex: -1,
+    initialRotation: shape.rotation || 0,
+    centerX,
+    centerY,
   }
 }
 
@@ -1060,18 +1275,25 @@ function handleMouseMove(event: MouseEvent) {
         if (dragState.value.resizeDirection === 'se') {
           shape.width += dx
           shape.height += dy
+          // Ensure minimum size
+          if (shape.width < 5) shape.width = 5
+          if (shape.height < 5) shape.height = 5
         }
         break
       case 'circle':
         if (dragState.value.resizeDirection === 'e') {
           shape.r += dx
+          // Ensure minimum size
+          if (shape.r < 5) shape.r = 5
         }
         break
       case 'ellipse':
         if (dragState.value.resizeDirection === 'e') {
           shape.rx += dx
+          if (shape.rx < 5) shape.rx = 5
         } else if (dragState.value.resizeDirection === 's') {
           shape.ry += dy
+          if (shape.ry < 5) shape.ry = 5
         }
         break
       case 'line':
@@ -1085,37 +1307,31 @@ function handleMouseMove(event: MouseEvent) {
         break
     }
   } else if (isRotating.value) {
-    // Rotate shape
-    let centerX, centerY
-    switch (shape.type) {
-      case 'rectangle':
-        centerX = shape.x + shape.width / 2
-        centerY = shape.y + shape.height / 2
-        break
-      case 'circle':
-        centerX = shape.cx
-        centerY = shape.cy
-        break
-      case 'ellipse':
-        centerX = shape.cx
-        centerY = shape.cy
-        break
-      case 'line':
-        centerX = (shape.x1 + shape.x2) / 2
-        centerY = (shape.y1 + shape.y2) / 2
-        break
-      case 'triangle':
-        const center = getTriangleCenter(shape.points)
-        centerX = center.x
-        centerY = center.y
-        break
-      default:
-        return
-    }
+    // Rotate shape using relative angle calculation
+    const centerX = dragState.value.centerX || 0
+    const centerY = dragState.value.centerY || 0
 
-    // Calculate angle between center and mouse position
-    const angle = (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI
-    shape.rotation = angle
+    // Calculate initial angle
+    const initialAngle = Math.atan2(
+      dragState.value.startY - centerY,
+      dragState.value.startX - centerX,
+    )
+
+    // Calculate current angle
+    const currentAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX)
+
+    // Calculate rotation difference
+    let angleDiff = (currentAngle - initialAngle) * (180 / Math.PI)
+
+    // Normalize angle difference
+    angleDiff = ((angleDiff + 180) % 360) - 180
+
+    // Apply rotation (maintaining initial rotation)
+    const initialRotation = dragState.value.initialRotation || 0
+    shape.rotation = initialRotation + angleDiff
+
+    // Normalize rotation to 0-360 range
+    shape.rotation = (shape.rotation + 360) % 360
   } else if (isControlPointDragging.value) {
     // Move control point for paths
     if (shape.type === 'path' && shape.controlPoints) {
@@ -1180,6 +1396,7 @@ function handleMouseUp() {
     isRotating.value = false
     isControlPointDragging.value = false
     saveToHistory()
+    // Don't deselect the shape after operations
   }
 }
 
@@ -1239,23 +1456,34 @@ function updateSvgFromCanvas() {
   canvasShapes.value.forEach((shape) => {
     switch (shape.type) {
       case 'rectangle':
-        svgContent += `  <rect x="${shape.x}" y="${shape.y}" width="${shape.width}" height="${shape.height}" fill="${shape.fill}" fill-opacity="${shape.fillOpacity}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.x + shape.width / 2} ${shape.y + shape.height / 2})" />\n`
+        const fill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const stroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <rect x="${shape.x}" y="${shape.y}" width="${shape.width}" height="${shape.height}" fill="${fill}" fill-opacity="${shape.fillOpacity}" stroke="${stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.x + shape.width / 2} ${shape.y + shape.height / 2})" />\n`
         break
       case 'circle':
-        svgContent += `  <circle cx="${shape.cx}" cy="${shape.cy}" r="${shape.r}" fill="${shape.fill}" fill-opacity="${shape.fillOpacity}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
+        const circleFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const circleStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <circle cx="${shape.cx}" cy="${shape.cy}" r="${shape.r}" fill="${circleFill}" fill-opacity="${shape.fillOpacity}" stroke="${circleStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
         break
       case 'ellipse':
-        svgContent += `  <ellipse cx="${shape.cx}" cy="${shape.cy}" rx="${shape.rx}" ry="${shape.ry}" fill="${shape.fill}" fill-opacity="${shape.fillOpacity}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
+        const ellipseFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const ellipseStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <ellipse cx="${shape.cx}" cy="${shape.cy}" rx="${shape.rx}" ry="${shape.ry}" fill="${ellipseFill}" fill-opacity="${shape.fillOpacity}" stroke="${ellipseStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${shape.cx} ${shape.cy})" />\n`
         break
       case 'line':
-        svgContent += `  <line x1="${shape.x1}" y1="${shape.y1}" x2="${shape.x2}" y2="${shape.y2}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${(shape.x1 + shape.x2) / 2} ${(shape.y1 + shape.y2) / 2})" />\n`
+        const lineStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <line x1="${shape.x1}" y1="${shape.y1}" x2="${shape.x2}" y2="${shape.y2}" stroke="${lineStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${(shape.x1 + shape.x2) / 2} ${(shape.y1 + shape.y2) / 2})" />\n`
         break
       case 'triangle':
+        const triangleFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const triangleStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
         const center = getTriangleCenter(shape.points)
-        svgContent += `  <polygon points="${shape.points}" fill="${shape.fill}" fill-opacity="${shape.fillOpacity}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${center.x} ${center.y})" />\n`
+        svgContent += `  <polygon points="${shape.points}" fill="${triangleFill}" fill-opacity="${shape.fillOpacity}" stroke="${triangleStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${center.x} ${center.y})" />\n`
         break
       case 'path':
-        svgContent += `  <path d="${shape.d}" fill="${shape.fill}" fill-opacity="${shape.fillOpacity}" stroke="${shape.stroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" />\n`
+        const pathFill = shape.fillOpacity === 0 ? 'none' : shape.fill
+        const pathStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <path d="${shape.d}" fill="${pathFill}" fill-opacity="${shape.fillOpacity}" stroke="${pathStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" />\n`
         break
     }
   })
@@ -1296,6 +1524,27 @@ watch(
   },
   { deep: true },
 )
+
+function getEnlargedTrianglePoints(points: string): string {
+  // For simplicity, we'll just return the original points
+  // In a more complex implementation, we might enlarge the triangle
+  return points
+}
+
+// Functions to set transparent colors
+function setTransparentFill() {
+  if (selectedShape.value) {
+    selectedShape.value.fillOpacity = 0
+    updateSvgFromCanvas()
+  }
+}
+
+function setTransparentStroke() {
+  if (selectedShape.value) {
+    selectedShape.value.strokeOpacity = 0
+    updateSvgFromCanvas()
+  }
+}
 </script>
 
 <style scoped>

@@ -1359,6 +1359,7 @@ export default {
         fill: 'Fill Color',
         stroke: 'Stroke Color',
         strokeWidth: 'Stroke Width',
+        transparent: 'Transparent',
       },
       shapes: {
         rectangle: 'Rectangle',
