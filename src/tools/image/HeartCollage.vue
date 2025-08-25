@@ -208,27 +208,40 @@
               height: `${canvasDimensions.height}px`,
             }"
           >
-            <canvas
-              ref="mainCanvas"
-              class="absolute inset-0 w-full h-full"
-              @mousedown="startDrag"
-              @mousemove="drag"
-              @mouseup="endDrag"
-              @mouseleave="endDrag"
-            ></canvas>
+            <!-- Heart shape mask background -->
+            <div
+              v-if="selectedShape === 'heart'"
+              class="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
+              :style="{
+                backgroundImage: 'url(/images/heart.png)',
+                backgroundSize: '80%',
+                backgroundPosition: 'center',
+                opacity: 0.2,
+                zIndex: 0,
+              }"
+            ></div>
+
+            <canvas ref="mainCanvas" class="absolute inset-0 w-full h-full"></canvas>
 
             <!-- Draggable images -->
             <div
               v-for="(image, index) in positionedImages"
               :key="index"
-              :class="['absolute cursor-move', draggingImage === index ? 'z-10' : 'z-0']"
+              :class="[
+                'absolute cursor-move transition-all duration-75 ease-out',
+                draggingImage === index ? 'z-10' : 'z-0',
+              ]"
               :style="{
                 left: `${image.x}px`,
                 top: `${image.y}px`,
                 width: `${image.width}px`,
                 height: `${image.height}px`,
+                transition: draggingImage === index ? 'none' : 'all 0.1s ease-out',
               }"
               @mousedown="startImageDrag($event, index)"
+              @mousemove="drag"
+              @mouseup="endDrag"
+              @mouseleave="endDrag"
             >
               <div
                 :class="[
@@ -241,7 +254,12 @@
                 ]"
                 :style="{
                   border: showBorder ? '2px solid white' : 'none',
-                  boxShadow: draggingImage === index ? '0 0 0 2px #3b82f6' : 'none',
+                  boxShadow:
+                    draggingImage === index
+                      ? '0 0 0 2px #3b82f6, 0 4px 12px rgba(0, 0, 0, 0.15)'
+                      : 'none',
+                  transform: draggingImage === index ? 'scale(1.03)' : 'scale(1)',
+                  transition: 'transform 0.1s ease-out, box-shadow 0.1s ease-out',
                 }"
               >
                 <img :src="image.src" :alt="image.name" class="w-full h-full object-cover" />
@@ -301,7 +319,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 
@@ -312,6 +330,10 @@ const { success, error: showError } = useToast()
 const fileInput = ref<HTMLInputElement | null>(null)
 const mainCanvas = ref<HTMLCanvasElement | null>(null)
 const canvasContainer = ref<HTMLDivElement | null>(null)
+
+// Add new refs for better drag handling
+const dragStart = reactive({ x: 0, y: 0 })
+const dragStartTime = ref(0)
 
 // State
 const isDragging = ref(false)
@@ -550,7 +572,7 @@ function drawShape(
 }
 
 // Auto arrange images within the selected shape
-function autoArrange() {
+async function autoArrange() {
   if (images.value.length === 0) {
     showError(t('tools.heartCollage.errors.noImagesSelected'))
     return
@@ -558,6 +580,115 @@ function autoArrange() {
 
   positionedImages.value = []
 
+  // For heart shape, use the mask approach
+  if (selectedShape.value === 'heart') {
+    try {
+      // Create a temporary canvas to generate the heart mask
+      const maskCanvas = document.createElement('canvas')
+      maskCanvas.width = canvasDimensions.width
+      maskCanvas.height = canvasDimensions.height
+      const maskCtx = maskCanvas.getContext('2d')
+
+      if (maskCtx) {
+        // Create heart mask using the image
+        const heartImg = new Image()
+        const heartImageLoaded = new Promise<void>((resolve, reject) => {
+          heartImg.onload = () => resolve()
+          heartImg.onerror = () => reject(new Error('Failed to load heart image'))
+          heartImg.src = '/images/heart.png'
+        })
+
+        // Wait for image to load
+        await heartImageLoaded
+
+        // Draw the heart image as a mask
+        maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height)
+
+        // Calculate dimensions to center the heart
+        const scale = Math.min(maskCanvas.width, maskCanvas.height) * 0.8
+        const x = (maskCanvas.width - scale) / 2
+        const y = (maskCanvas.height - scale) / 2
+
+        maskCtx.drawImage(heartImg, x, y, scale, scale)
+
+        // Get image data to find valid positions
+        const imageData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height)
+        const data = imageData.data
+
+        // Find valid points within the heart shape
+        const validPoints = []
+        const step = Math.max(
+          1,
+          Math.floor(Math.min(canvasDimensions.width, canvasDimensions.height) / 50),
+        )
+
+        for (let y = 0; y < maskCanvas.height; y += step) {
+          for (let x = 0; x < maskCanvas.width; x += step) {
+            const index = (y * maskCanvas.width + x) * 4
+            // Check if pixel is not transparent (alpha > 0)
+            if (data[index + 3] > 0) {
+              validPoints.push({ x, y })
+            }
+          }
+        }
+
+        // Shuffle points for random distribution
+        for (let i = validPoints.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[validPoints[i], validPoints[j]] = [validPoints[j], validPoints[i]]
+        }
+
+        // Calculate image size based on available points and number of images
+        const minSize = 30
+        const maxSize = 150
+        const imageSize = Math.min(
+          Math.max(
+            minSize,
+            Math.floor(
+              Math.sqrt(
+                (canvasDimensions.width * canvasDimensions.height) /
+                  Math.max(1, images.value.length),
+              ) * 0.8,
+            ),
+          ),
+          maxSize,
+        )
+
+        // Position images
+        for (let i = 0; i < Math.min(images.value.length, validPoints.length); i++) {
+          const point = validPoints[i]
+          const x = point.x - imageSize / 2
+          const y = point.y - imageSize / 2
+
+          // Ensure image is within canvas bounds
+          const finalX = Math.max(0, Math.min(canvasDimensions.width - imageSize, x))
+          const finalY = Math.max(0, Math.min(canvasDimensions.height - imageSize, y))
+
+          positionedImages.value.push({
+            src: images.value[i].previewUrl,
+            name: images.value[i].name,
+            x: finalX,
+            y: finalY,
+            width: imageSize,
+            height: imageSize,
+          })
+        }
+
+        success(t('tools.heartCollage.messages.arranged'))
+      }
+    } catch (err) {
+      console.error('Error in heart mask processing:', err)
+      // Fallback to parametric heart if image fails to load
+      fallbackToParametricHeart()
+    }
+  } else {
+    // For other shapes, use the existing algorithm
+    fallbackToParametricHeart()
+  }
+}
+
+// Fallback method for parametric shapes
+function fallbackToParametricHeart() {
   // Calculate grid dimensions based on number of images
   const gridSize = Math.ceil(Math.sqrt(images.value.length))
   const cellWidth = canvasDimensions.width / gridSize
@@ -615,41 +746,76 @@ function autoArrange() {
         height: imageSize,
       })
     }
-  }
 
-  success(t('tools.heartCollage.messages.arranged'))
+    success(t('tools.heartCollage.messages.arranged'))
+  }
 }
 
-// Drag and drop functionality for images
+// Add RAF for smoother dragging
+let dragRAF: number | null = null
+
+// Improved drag and drop functionality for images
 function startImageDrag(event: MouseEvent, index: number) {
   event.preventDefault()
+  event.stopPropagation()
+
   draggingImage.value = index
+  dragStartTime.value = Date.now()
 
   const image = positionedImages.value[index]
+  dragStart.x = event.clientX
+  dragStart.y = event.clientY
   dragOffset.x = event.clientX - image.x
   dragOffset.y = event.clientY - image.y
+
+  // Prevent text selection during drag
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = 'grabbing'
 }
 
 function drag(event: MouseEvent) {
   if (draggingImage.value !== null) {
-    const image = positionedImages.value[draggingImage.value]
+    // Use requestAnimationFrame for smoother updates
+    if (dragRAF) {
+      cancelAnimationFrame(dragRAF)
+    }
 
-    // Calculate new position
-    let newX = event.clientX - dragOffset.x
-    let newY = event.clientY - dragOffset.y
+    dragRAF = requestAnimationFrame(() => {
+      const image = positionedImages.value[draggingImage.value!]
 
-    // Constrain to canvas bounds
-    newX = Math.max(0, Math.min(canvasDimensions.width - image.width, newX))
-    newY = Math.max(0, Math.min(canvasDimensions.height - image.height, newY))
+      // Calculate new position with smoother movement
+      let newX = event.clientX - dragOffset.x
+      let newY = event.clientY - dragOffset.y
 
-    // Update position
-    image.x = newX
-    image.y = newY
+      // Constrain to canvas bounds with better boundary handling
+      newX = Math.max(0, Math.min(canvasDimensions.width - image.width, newX))
+      newY = Math.max(0, Math.min(canvasDimensions.height - image.height, newY))
+
+      // Apply position with smoother updates
+      image.x = newX
+      image.y = newY
+
+      dragRAF = null
+    })
   }
 }
 
 function endDrag() {
-  draggingImage.value = null
+  if (dragRAF) {
+    cancelAnimationFrame(dragRAF)
+    dragRAF = null
+  }
+
+  if (draggingImage.value !== null) {
+    // Restore normal cursor
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+
+    // Add a small delay to ensure smooth transition restoration
+    setTimeout(() => {
+      draggingImage.value = null
+    }, 50)
+  }
 }
 
 // Download collage
@@ -801,6 +967,15 @@ onUnmounted(() => {
   images.value.forEach((image) => {
     URL.revokeObjectURL(image.previewUrl)
   })
+
+  // Cancel any pending RAF
+  if (dragRAF) {
+    cancelAnimationFrame(dragRAF)
+  }
+
+  // Restore body styles
+  document.body.style.userSelect = ''
+  document.body.style.cursor = ''
 })
 </script>
 
