@@ -1228,39 +1228,40 @@ export default {
     },
     gifEditor: {
       title: 'GIF Editor',
-      description: 'Split, edit, and modify GIF frames with customizable timing and settings',
+      description: 'Split, edit and modify GIF frames with custom timing and settings',
       howToUse: {
         title: 'How to Use',
         step1: 'Upload a GIF file by clicking "Select GIF File" or dragging and dropping',
         step2: 'Adjust GIF settings (width, quality, frame rate)',
-        step3: 'Modify individual frame delays, reorder frames, or remove unwanted frames',
+        step3: 'Modify individual frame delays, reorder frames or delete unwanted frames',
         step4: 'Click "Generate GIF" to create your edited GIF',
       },
       tips: {
         title: 'Tips for Best Results',
         tip1: 'For best results, use GIFs with consistent frame dimensions',
-        tip2: 'Frame delays below 20ms may not display correctly in all browsers',
+        tip2: 'Frame delays below 20ms may not display correctly in some browsers',
         tip3: 'Smaller GIF widths (200-400px) load faster and consume less memory',
-        tip4: 'Use medium quality for a good balance between file size and image quality',
+        tip4: 'Medium quality provides a good balance between file size and image quality',
       },
       upload: {
         title: 'Upload GIF',
-        dragDrop: 'Drag & drop your GIF here',
+        dragDrop: 'Drag GIF here',
         selectFile: 'Select GIF File',
-        supportedFormats: 'Supports GIF format only (Max: 50MB)',
+        supportedFormats: 'GIF format only (max: 50MB)',
       },
       settings: {
-        width: 'GIF Width (px)',
+        width: 'GIF Width (pixels)',
         quality: 'Quality',
         fps: 'Frame Rate (FPS)',
+        preserveOriginal: 'Preserved from original GIF',
         qualityOptions: {
           high: 'High Quality',
           medium: 'Medium Quality',
-          low: 'Low Quality (Smaller File)',
+          low: 'Low Quality (smaller file)',
         },
       },
       preview: {
-        title: 'GIF Preview & Controls',
+        title: 'GIF Preview and Controls',
         originalGif: 'Original GIF',
         frames: 'Frames',
         frame: 'Frame',
@@ -1268,7 +1269,7 @@ export default {
         dimensions: 'Dimensions',
         pixels: 'pixels',
         moveUp: 'Move First to End',
-        moveDown: 'Move Last to Start',
+        moveDown: 'Move Last to Beginning',
         reverse: 'Reverse Order',
         shuffle: 'Shuffle Frames',
       },
@@ -1277,7 +1278,7 @@ export default {
       },
       processing: {
         title: 'Processing GIF',
-        description: 'Editing your GIF frames. This may take a moment...',
+        description: 'Editing your GIF frames. This may take some time...',
         preview: 'Preview',
       },
       result: {
@@ -1289,24 +1290,24 @@ export default {
         frameEditing: {
           title: 'Frame Editing',
           description:
-            "Split GIFs into individual frames and modify each frame's delay, order, or remove unwanted frames.",
+            'Split GIF into individual frames and modify delay, order or delete unwanted frames.',
         },
         customization: {
           title: 'Full Customization',
           description:
-            'Control every aspect including quality, size, timing, and frame order for perfect results.',
+            'Control quality, size, timing, frame order and all aspects for perfect results.',
         },
         animation: {
           title: 'Animation Control',
           description:
-            'Set individual frame delays, reorder frames, and control animation loop behavior.',
+            'Set individual frame delays, reorder frames and control animation loop behavior.',
         },
       },
       errors: {
         noGif: 'Please select a valid GIF file.',
         invalidFile: 'Please select a valid GIF file.',
         fileTooLarge: 'File size must be less than 50MB.',
-        processingFailed: 'Failed to process GIF. Please try again.',
+        processingFailed: 'Failed to process GIF, please try again.',
         noFrames: 'No frames to process. Please upload a GIF file first.',
         fileProcessing: 'Failed to process selected file.',
         frameParsingFailed: 'Failed to parse GIF frames.',
@@ -1314,7 +1315,7 @@ export default {
       messages: {
         fileLoaded: 'GIF file loaded successfully!',
         gifGenerated: 'GIF generated successfully!',
-        filePasted: 'GIF file pasted from clipboard!',
+        filePasted: 'Pasted GIF file from clipboard!',
       },
     },
     imageWatermark: {

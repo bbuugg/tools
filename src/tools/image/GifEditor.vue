@@ -70,7 +70,11 @@
               min="100"
               max="800"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled
             />
+            <p class="text-xs text-gray-500 mt-1">
+              {{ $t('tools.gifEditor.settings.preserveOriginal') }}
+            </p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -554,68 +558,100 @@ async function parseGifFrames(file: File) {
     const arrayBuffer = await file.arrayBuffer()
     const gif = parseGIF(arrayBuffer)
 
-    // Get dimensions from the first valid frame
-    if (gif && gif.frames && gif.frames.length > 0) {
-      // Find the first frame with valid dimensions
-      let firstValidFrame = null
-      for (const frame of gif.frames) {
-        if (isFrame(frame) && frame.dims.width > 0 && frame.dims.height > 0) {
-          firstValidFrame = frame as unknown as Frame
-          break
+    // Get dimensions from the GIF header
+    if (gif && gif.lsd) {
+      if (selectedGif.value) {
+        selectedGif.value.width = gif.lsd.width
+        selectedGif.value.height = gif.lsd.height
+      }
+    }
+
+    // Decompress frames
+    const decompressedFrames = decompressFrames(gif, true)
+
+    // Convert frames to data URLs
+    frames.value = []
+    for (const frame of decompressedFrames) {
+      // Validate frame dimensions
+      if (frame.dims.width <= 0 || frame.dims.height <= 0) {
+        console.warn('Skipping frame with invalid dimensions')
+        continue
+      }
+
+      const canvas = document.createElement('canvas')
+      canvas.width = frame.dims.width
+      canvas.height = frame.dims.height
+
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
+      if (ctx) {
+        // Handle transparency properly
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        // Create ImageData from frame patch
+        const imageData = ctx.createImageData(frame.dims.width, frame.dims.height)
+        imageData.data.set(frame.patch)
+
+        // Handle transparency - set alpha channel for transparent pixels
+        if (frame.transparentIndex !== undefined && frame.transparentIndex >= 0) {
+          // Find the transparent color from the palette if available
+          let transparentR = 0,
+            transparentG = 0,
+            transparentB = 0
+
+          if (frame.palette && frame.transparentIndex < frame.palette.length) {
+            const transparentColor = frame.palette[frame.transparentIndex]
+            transparentR = transparentColor[0]
+            transparentG = transparentColor[1]
+            transparentB = transparentColor[2]
+          }
+
+          // Set alpha to 0 for transparent pixels
+          for (let i = 0; i < imageData.data.length; i += 4) {
+            const r = imageData.data[i]
+            const g = imageData.data[i + 1]
+            const b = imageData.data[i + 2]
+
+            // Check if this pixel matches the transparent color
+            if (r === transparentR && g === transparentG && b === transparentB) {
+              imageData.data[i + 3] = 0 // Make transparent
+            } else {
+              // Ensure non-transparent pixels have full opacity
+              if (imageData.data[i + 3] === 0) {
+                imageData.data[i + 3] = 255
+              }
+            }
+          }
+        } else {
+          // If no transparent index, ensure all pixels are opaque
+          for (let i = 3; i < imageData.data.length; i += 4) {
+            if (imageData.data[i] === 0) {
+              imageData.data[i] = 255
+            }
+          }
         }
+
+        // Draw the frame with transparency
+        ctx.putImageData(imageData, 0, 0)
+
+        // Convert to data URL
+        const dataUrl = canvas.toDataURL('image/png')
+
+        frames.value.push({
+          dataUrl,
+          delay: frame.delay,
+          imageData,
+        })
       }
+    }
 
-      // Set GIF dimensions from the first valid frame
-      if (firstValidFrame && selectedGif.value) {
-        selectedGif.value.width = firstValidFrame.dims.width
-        selectedGif.value.height = firstValidFrame.dims.height
-      }
-
-      // Decompress frames
-      const decompressedFrames = decompressFrames(gif, true)
-
-      // Convert frames to data URLs
-      frames.value = []
-      for (const frame of decompressedFrames) {
-        // Validate frame dimensions
-        if (frame.dims.width <= 0 || frame.dims.height <= 0) {
-          console.warn('Skipping frame with invalid dimensions')
-          continue
-        }
-
-        const canvas = document.createElement('canvas')
-        canvas.width = frame.dims.width
-        canvas.height = frame.dims.height
-
-        const ctx = canvas.getContext('2d')
-        if (ctx) {
-          // Create ImageData from frame patch
-          const imageData = ctx.createImageData(frame.dims.width, frame.dims.height)
-          imageData.data.set(frame.patch)
-
-          // Draw the frame
-          ctx.putImageData(imageData, 0, 0)
-
-          // Convert to data URL
-          const dataUrl = canvas.toDataURL('image/png')
-
-          frames.value.push({
-            dataUrl,
-            delay: frame.delay,
-            imageData,
-          })
-        }
-      }
-
-      // If we still don't have GIF dimensions but have frames, set from first frame
-      if (
-        selectedGif.value &&
-        (!selectedGif.value.width || !selectedGif.value.height) &&
-        frames.value.length > 0
-      ) {
-        selectedGif.value.width = frames.value[0].imageData.width
-        selectedGif.value.height = frames.value[0].imageData.height
-      }
+    // If we still don't have GIF dimensions but have frames, set from first frame
+    if (
+      selectedGif.value &&
+      (!selectedGif.value.width || !selectedGif.value.height) &&
+      frames.value.length > 0
+    ) {
+      selectedGif.value.width = frames.value[0].imageData.width
+      selectedGif.value.height = frames.value[0].imageData.height
     }
   } catch (err) {
     console.error('Error parsing GIF frames:', err)
@@ -719,63 +755,25 @@ async function createGifFromFrames() {
     throw new Error('No frames to process. Please try another GIF file.')
   }
 
-  // Try to get dimensions from the first frame if not set
-  let gifWidth = selectedGif.value.width
-  let gifHeight = selectedGif.value.height
+  // Use original GIF dimensions
+  const gifWidth = selectedGif.value.width
+  const gifHeight = selectedGif.value.height
 
-  // If GIF dimensions are not set, try to get them from the first frame
-  if (!gifWidth || !gifHeight) {
-    if (frames.value.length > 0 && frames.value[0].imageData) {
-      gifWidth = frames.value[0].imageData.width
-      gifHeight = frames.value[0].imageData.height
-    }
-  }
-
-  // If we still don't have valid dimensions, try to get them from the first frame's data URL
-  if (!gifWidth || !gifHeight) {
-    if (frames.value.length > 0 && frames.value[0].dataUrl) {
-      // Create a temporary image to get dimensions
-      const img = new Image()
-      img.src = frames.value[0].dataUrl
-      // Wait for image to load
-      await new Promise((resolve) => {
-        img.onload = () => resolve(void 0)
-        img.onerror = () => resolve(void 0)
-      })
-
-      if (img.width > 0 && img.height > 0) {
-        gifWidth = img.width
-        gifHeight = img.height
-      }
-    }
-  }
-
-  // If we still don't have valid dimensions, use default values
-  if (!gifWidth || !gifHeight) {
-    gifWidth = 300
-    gifHeight = 300
-    console.warn('Using default dimensions for GIF')
+  // Validate dimensions
+  if (!gifWidth || !gifHeight || gifWidth <= 0 || gifHeight <= 0) {
+    throw new Error('Invalid GIF dimensions. Please try another GIF file.')
   }
 
   const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })
 
   if (!ctx) {
     throw new Error('Unable to get canvas context. Your browser may not support this feature.')
   }
 
-  // Set canvas dimensions based on original GIF or settings
-  const targetWidth = gifSettings.width
-  const scaleFactor = targetWidth / gifWidth
-  const targetHeight = Math.round(gifHeight * scaleFactor)
-
-  // Validate that we have valid target dimensions
-  if (targetWidth <= 0 || targetHeight <= 0) {
-    throw new Error('Invalid target dimensions. Please check your GIF settings.')
-  }
-
-  canvas.width = targetWidth
-  canvas.height = targetHeight
+  // Set canvas dimensions to match original GIF exactly
+  canvas.width = gifWidth
+  canvas.height = gifHeight
 
   // Configure GIF quality based on settings
   const qualityMap = {
@@ -784,12 +782,12 @@ async function createGifFromFrames() {
     low: 20,
   }
 
-  // Create GIF
+  // Create GIF with original dimensions
   const gif = new GIF({
     workers: 2,
     quality: qualityMap[gifSettings.quality],
-    width: canvas.width,
-    height: canvas.height,
+    width: gifWidth,
+    height: gifHeight,
     workerScript: '/gif.worker.js',
   })
 
@@ -816,9 +814,12 @@ async function createGifFromFrames() {
         continue
       }
 
-      // Clear canvas and draw resized image
+      // Clear canvas and draw image at original size
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Draw the image maintaining original GIF dimensions
+      // This ensures we don't scale the image and preserve the original size
+      ctx.drawImage(img, 0, 0, gifWidth, gifHeight)
 
       // Add frame to GIF with delay in milliseconds
       gif.addFrame(canvas, { copy: true, delay: frame.delay })

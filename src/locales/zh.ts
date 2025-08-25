@@ -1626,8 +1626,7 @@ export default {
         width: 'GIF宽度（像素）',
         quality: '质量',
         fps: '帧率（FPS）',
-        loopCount: '循环次数',
-        infinite: '无限循环',
+        preserveOriginal: '保持原始GIF尺寸',
         qualityOptions: {
           high: '高质量',
           medium: '中等质量',
