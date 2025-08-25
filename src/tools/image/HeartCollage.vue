@@ -76,6 +76,23 @@
             </select>
           </div>
 
+          <!-- Shape Selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ $t('tools.heartCollage.shape') }}
+            </label>
+            <select
+              v-model="selectedShape"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            >
+              <option value="heart">{{ $t('tools.heartCollage.heart') }}</option>
+              <option value="square">{{ $t('tools.heartCollage.square') }}</option>
+              <option value="rectangle">{{ $t('tools.heartCollage.rectangle') }}</option>
+              <option value="circle">{{ $t('tools.heartCollage.circle') }}</option>
+              <option value="star">{{ $t('tools.heartCollage.star') }}</option>
+            </select>
+          </div>
+
           <!-- Image Shape -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -90,41 +107,26 @@
               <option value="rounded">{{ $t('tools.heartCollage.rounded') }}</option>
             </select>
           </div>
-
-          <!-- Spacing -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ $t('tools.heartCollage.spacing') }}: {{ spacing }}px
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="20"
-              v-model="spacing"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-            />
-          </div>
         </div>
 
-        <!-- Heart Shape Options -->
+        <!-- Additional Options -->
         <div class="mt-6 pt-6 border-t border-gray-200">
           <h4 class="text-md font-medium text-gray-900 mb-4">
-            {{ $t('tools.heartCollage.heartShapeOptions') }}
+            {{ $t('tools.heartCollage.additionalOptions') }}
           </h4>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Heart Size -->
+            <!-- Spacing -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
-                {{ $t('tools.heartCollage.heartSize') }}
+                {{ $t('tools.heartCollage.spacing') }}: {{ spacing }}px
               </label>
-              <select
-                v-model="heartSize"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-              >
-                <option value="small">{{ $t('tools.heartCollage.small') }}</option>
-                <option value="medium" selected>{{ $t('tools.heartCollage.medium') }}</option>
-                <option value="large">{{ $t('tools.heartCollage.large') }}</option>
-              </select>
+              <input
+                type="range"
+                min="0"
+                max="20"
+                v-model="spacing"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
             </div>
 
             <!-- Background Color -->
@@ -164,49 +166,26 @@
         </div>
       </div>
 
-      <!-- Preview and Action Buttons -->
+      <!-- Canvas and Controls -->
       <div v-if="images.length > 0" class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div
           class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
         >
           <h3 class="text-lg font-semibold text-gray-900">
-            {{ $t('tools.heartCollage.preview') }} ({{ images.length }}
+            {{ $t('tools.heartCollage.canvas') }} ({{ images.length }}
             {{ $t('tools.heartCollage.images') }})
           </h3>
           <div class="flex flex-wrap gap-3">
             <button
-              @click="generateCollage"
-              :disabled="isGenerating"
-              class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="autoArrange"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <span v-if="isGenerating" class="flex items-center">
-                <svg
-                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                {{ $t('tools.heartCollage.generating') }}
-              </span>
-              <span v-else>{{ $t('tools.heartCollage.generateCollage') }}</span>
+              {{ $t('tools.heartCollage.autoArrange') }}
             </button>
             <button
-              v-if="collageResult"
               @click="downloadCollage"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              :disabled="!collageResult"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ $t('tools.heartCollage.downloadCollage') }}
             </button>
@@ -219,33 +198,59 @@
           </div>
         </div>
 
-        <!-- Preview Canvas -->
+        <!-- Interactive Canvas -->
         <div class="flex flex-col items-center">
           <div
-            ref="previewContainer"
+            ref="canvasContainer"
             class="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100"
             :style="{
-              width: `${previewSize.width}px`,
-              height: `${previewSize.height}px`,
+              width: `${canvasDimensions.width}px`,
+              height: `${canvasDimensions.height}px`,
             }"
           >
             <canvas
-              ref="previewCanvas"
-              class="w-full h-full"
-              :width="previewSize.width"
-              :height="previewSize.height"
+              ref="mainCanvas"
+              class="absolute inset-0 w-full h-full"
+              @mousedown="startDrag"
+              @mousemove="drag"
+              @mouseup="endDrag"
+              @mouseleave="endDrag"
             ></canvas>
+
+            <!-- Draggable images -->
             <div
-              v-if="!collageResult && !isGenerating"
-              class="absolute inset-0 flex items-center justify-center text-gray-500"
+              v-for="(image, index) in positionedImages"
+              :key="index"
+              :class="['absolute cursor-move', draggingImage === index ? 'z-10' : 'z-0']"
+              :style="{
+                left: `${image.x}px`,
+                top: `${image.y}px`,
+                width: `${image.width}px`,
+                height: `${image.height}px`,
+              }"
+              @mousedown="startImageDrag($event, index)"
             >
-              {{ $t('tools.heartCollage.previewPlaceholder') }}
+              <div
+                :class="[
+                  'w-full h-full overflow-hidden',
+                  imageShape === 'circle'
+                    ? 'rounded-full'
+                    : imageShape === 'rounded'
+                      ? 'rounded-xl'
+                      : 'rounded-none',
+                ]"
+                :style="{
+                  border: showBorder ? '2px solid white' : 'none',
+                  boxShadow: draggingImage === index ? '0 0 0 2px #3b82f6' : 'none',
+                }"
+              >
+                <img :src="image.src" :alt="image.name" class="w-full h-full object-cover" />
+              </div>
             </div>
           </div>
 
-          <div v-if="collageResult" class="mt-4 text-sm text-gray-600">
-            {{ $t('tools.heartCollage.collageSize') }}: {{ collageResult.width }} ×
-            {{ collageResult.height }} px
+          <div class="mt-4 text-sm text-gray-600">
+            {{ $t('tools.heartCollage.dragInstructions') }}
           </div>
         </div>
       </div>
@@ -305,12 +310,11 @@ const { success, error: showError } = useToast()
 
 // Refs
 const fileInput = ref<HTMLInputElement | null>(null)
-const previewCanvas = ref<HTMLCanvasElement | null>(null)
-const previewContainer = ref<HTMLDivElement | null>(null)
+const mainCanvas = ref<HTMLCanvasElement | null>(null)
+const canvasContainer = ref<HTMLDivElement | null>(null)
 
 // State
 const isDragging = ref(false)
-const isGenerating = ref(false)
 const images = ref<
   Array<{
     file: File
@@ -322,39 +326,53 @@ const images = ref<
 >([])
 const collageResult = ref<string | null>(null)
 
+// Interactive state
+const positionedImages = ref<
+  Array<{
+    src: string
+    name: string
+    x: number
+    y: number
+    width: number
+    height: number
+  }>
+>([])
+const draggingImage = ref<number | null>(null)
+const dragOffset = reactive({ x: 0, y: 0 })
+
 // Settings
 const canvasSize = ref<'small' | 'medium' | 'large'>('medium')
+const selectedShape = ref<'heart' | 'square' | 'rectangle' | 'circle' | 'star'>('heart')
 const imageShape = ref<'square' | 'circle' | 'rounded'>('square')
 const spacing = ref(2)
-const heartSize = ref<'small' | 'medium' | 'large'>('medium')
 const backgroundColor = ref('#ffffff')
 const showBorder = ref(false)
 
 // Computed
-const previewSize = reactive({
+const canvasDimensions = reactive({
   width: 600,
   height: 600,
 })
 
 // Watch for canvas size changes
 watch(canvasSize, () => {
-  updatePreviewSize()
+  updateCanvasDimensions()
 })
 
-// Update preview size based on canvas size setting
-function updatePreviewSize() {
+// Update canvas dimensions based on size setting
+function updateCanvasDimensions() {
   switch (canvasSize.value) {
     case 'small':
-      previewSize.width = 400
-      previewSize.height = 400
+      canvasDimensions.width = 600
+      canvasDimensions.height = 600
       break
     case 'medium':
-      previewSize.width = 600
-      previewSize.height = 600
+      canvasDimensions.width = 800
+      canvasDimensions.height = 800
       break
     case 'large':
-      previewSize.width = 800
-      previewSize.height = 800
+      canvasDimensions.width = 1000
+      canvasDimensions.height = 1000
       break
   }
 }
@@ -442,257 +460,331 @@ function clearAll() {
   })
 
   images.value = []
+  positionedImages.value = []
   collageResult.value = null
   success(t('tools.heartCollage.messages.cleared'))
 }
 
-// Heart shape functions
-function drawHeart(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
-  // Using parametric equations for a more precise heart shape
-  const points: { x: number; y: number }[] = []
-  for (let t = 0; t <= Math.PI * 2; t += 0.01) {
-    const heartX = 16 * Math.pow(Math.sin(t), 3)
-    const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
-
-    // Scale and position the heart
-    const scaledX = x + (heartX * size) / 16
-    const scaledY = y + (heartY * size) / 16
-
-    points.push({ x: scaledX, y: scaledY })
-  }
-
-  // Draw the heart using the calculated points
+// Shape drawing functions
+function drawShape(
+  ctx: CanvasRenderingContext2D,
+  shape: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
   ctx.beginPath()
-  ctx.moveTo(points[0].x, points[0].y)
-  for (let i = 1; i < points.length; i++) {
-    ctx.lineTo(points[i].x, points[i].y)
+
+  switch (shape) {
+    case 'heart':
+      // Heart shape using parametric equations
+      const size = Math.min(width, height) * 0.4
+      const centerX = x + width / 2
+      const centerY = y + height / 2
+
+      for (let t = 0; t <= Math.PI * 2; t += 0.01) {
+        const heartX = 16 * Math.pow(Math.sin(t), 3)
+        const heartY = -(
+          13 * Math.cos(t) -
+          5 * Math.cos(2 * t) -
+          2 * Math.cos(3 * t) -
+          Math.cos(4 * t)
+        )
+
+        const px = centerX + (heartX * size) / 16
+        const py = centerY + (heartY * size) / 16
+
+        if (t === 0) {
+          ctx.moveTo(px, py)
+        } else {
+          ctx.lineTo(px, py)
+        }
+      }
+      break
+
+    case 'square':
+      ctx.rect(x + width * 0.1, y + height * 0.1, width * 0.8, height * 0.8)
+      break
+
+    case 'rectangle':
+      ctx.rect(x + width * 0.05, y + height * 0.2, width * 0.9, height * 0.6)
+      break
+
+    case 'circle':
+      ctx.arc(x + width / 2, y + height / 2, Math.min(width, height) * 0.4, 0, Math.PI * 2)
+      break
+
+    case 'star':
+      const cx = x + width / 2
+      const cy = y + height / 2
+      const outerRadius = Math.min(width, height) * 0.4
+      const innerRadius = outerRadius * 0.5
+      const spikes = 5
+
+      let rot = (Math.PI / 2) * 3
+      let x1 = cx
+      let y1 = cy
+      let x2 = cx
+      let y2 = cy
+
+      ctx.moveTo(cx, cy - outerRadius)
+
+      for (let i = 0; i < spikes; i++) {
+        x1 = cx + Math.cos(rot) * outerRadius
+        y1 = cy + Math.sin(rot) * outerRadius
+        ctx.lineTo(x1, y1)
+        rot += Math.PI / spikes
+
+        x2 = cx + Math.cos(rot) * innerRadius
+        y2 = cy + Math.sin(rot) * innerRadius
+        ctx.lineTo(x2, y2)
+        rot += Math.PI / spikes
+      }
+
+      ctx.lineTo(cx, cy - outerRadius)
+      break
   }
+
   ctx.closePath()
 }
 
-// Generate heart-shaped collage
-async function generateCollage() {
+// Auto arrange images within the selected shape
+function autoArrange() {
   if (images.value.length === 0) {
     showError(t('tools.heartCollage.errors.noImagesSelected'))
     return
   }
 
-  isGenerating.value = true
-  collageResult.value = null
+  positionedImages.value = []
 
-  try {
-    await nextTick()
+  // Calculate grid dimensions based on number of images
+  const gridSize = Math.ceil(Math.sqrt(images.value.length))
+  const cellWidth = canvasDimensions.width / gridSize
+  const cellHeight = canvasDimensions.height / gridSize
 
-    const canvas = previewCanvas.value
-    if (!canvas) {
-      throw new Error('Canvas not available')
-    }
+  // Create a mask for the selected shape
+  const maskCanvas = document.createElement('canvas')
+  maskCanvas.width = canvasDimensions.width
+  maskCanvas.height = canvasDimensions.height
+  const maskCtx = maskCanvas.getContext('2d')
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) {
-      throw new Error('Could not get canvas context')
-    }
-
-    // Set canvas dimensions based on selected size
-    let canvasWidth: number, canvasHeight: number
-    switch (canvasSize.value) {
-      case 'small':
-        canvasWidth = 800
-        canvasHeight = 800
-        break
-      case 'medium':
-        canvasWidth = 1200
-        canvasHeight = 1200
-        break
-      case 'large':
-        canvasWidth = 1600
-        canvasHeight = 1600
-        break
-    }
-
-    canvas.width = canvasWidth
-    canvas.height = canvasHeight
-
-    // Clear canvas with background color
-    ctx.fillStyle = backgroundColor.value
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight)
-
-    // Calculate heart parameters
-    const centerX = canvasWidth / 2
-    const centerY = canvasHeight / 2
-    let heartSizeValue: number
-
-    switch (heartSize.value) {
-      case 'small':
-        heartSizeValue = Math.min(canvasWidth, canvasHeight) * 0.3
-        break
-      case 'medium':
-        heartSizeValue = Math.min(canvasWidth, canvasHeight) * 0.4
-        break
-      case 'large':
-        heartSizeValue = Math.min(canvasWidth, canvasHeight) * 0.5
-        break
-    }
-
-    // Create a temporary canvas for the heart mask
-    const maskCanvas = document.createElement('canvas')
-    maskCanvas.width = canvasWidth
-    maskCanvas.height = canvasHeight
-    const maskCtx = maskCanvas.getContext('2d')
-    if (!maskCtx) {
-      throw new Error('Could not get mask canvas context')
-    }
-
-    // Draw heart shape on mask
+  if (maskCtx) {
     maskCtx.fillStyle = '#ffffff'
-    drawHeart(maskCtx, centerX - heartSizeValue / 2, centerY - heartSizeValue / 2, heartSizeValue)
+    drawShape(maskCtx, selectedShape.value, 0, 0, canvasDimensions.width, canvasDimensions.height)
     maskCtx.fill()
 
-    // Get heart shape pixel data
-    const maskData = maskCtx.getImageData(0, 0, canvasWidth, canvasHeight)
+    // Get mask pixel data
+    const maskData = maskCtx.getImageData(0, 0, canvasDimensions.width, canvasDimensions.height)
 
-    // Find all points within the heart shape
-    const heartPoints: { x: number; y: number }[] = []
-    for (let y = 0; y < canvasHeight; y++) {
-      for (let x = 0; x < canvasWidth; x++) {
-        const index = (y * canvasWidth + x) * 4
-        // Check if pixel is part of the heart (white in mask)
+    // Find points within the shape
+    const shapePoints: { x: number; y: number }[] = []
+    for (let y = 0; y < canvasDimensions.height; y += 10) {
+      for (let x = 0; x < canvasDimensions.width; x += 10) {
+        const index = (y * canvasDimensions.width + x) * 4
         if (maskData.data[index] > 0) {
-          heartPoints.push({ x, y })
+          shapePoints.push({ x, y })
         }
       }
     }
 
-    // If we don't have enough points, reduce the requirement
-    if (heartPoints.length === 0) {
-      showError(t('tools.heartCollage.errors.generationFailed'))
-      return
-    }
-
-    // Shuffle points to distribute images randomly
-    for (let i = heartPoints.length - 1; i > 0; i--) {
+    // Shuffle points
+    for (let i = shapePoints.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[heartPoints[i], heartPoints[j]] = [heartPoints[j], heartPoints[i]]
+      ;[shapePoints[i], shapePoints[j]] = [shapePoints[j], shapePoints[i]]
     }
 
-    // Calculate image size based on number of images and available points
-    const minImageSize = 20
-    const maxImageSize = Math.min(canvasWidth, canvasHeight) * 0.1
-    const imageSize = Math.max(
-      minImageSize,
-      Math.min(
-        maxImageSize,
-        Math.floor(Math.sqrt((heartPoints.length * 0.7) / images.value.length)),
-      ),
-    )
+    // Position images
+    const imageSize = Math.min(cellWidth, cellHeight) * 0.8
 
-    // Place images at heart points
-    const pointsToUse = Math.min(images.value.length, heartPoints.length)
-    const step = Math.max(1, Math.floor(heartPoints.length / pointsToUse))
-
-    for (let i = 0; i < pointsToUse; i++) {
-      const pointIndex = i * step
-      if (pointIndex >= heartPoints.length) break
-
-      const point = heartPoints[pointIndex]
-      const img = new Image()
-      img.src = images.value[i].previewUrl
-
-      // Wait for image to load
-      await new Promise((resolve) => {
-        img.onload = resolve
-      })
-
-      // Calculate position to center image at the point
+    for (let i = 0; i < Math.min(images.value.length, shapePoints.length); i++) {
+      const point = shapePoints[i]
       const x = point.x - imageSize / 2
       const y = point.y - imageSize / 2
 
-      // Save context for clipping
-      ctx.save()
+      // Ensure image is within canvas bounds
+      const finalX = Math.max(0, Math.min(canvasDimensions.width - imageSize, x))
+      const finalY = Math.max(0, Math.min(canvasDimensions.height - imageSize, y))
 
-      // Create clipping region based on selected shape
-      if (imageShape.value === 'circle') {
-        ctx.beginPath()
-        ctx.arc(point.x, point.y, imageSize / 2, 0, Math.PI * 2)
-        ctx.clip()
-      } else if (imageShape.value === 'rounded') {
-        const radius = imageSize * 0.1
-        ctx.beginPath()
-        ctx.moveTo(x + radius, y)
-        ctx.lineTo(x + imageSize - radius, y)
-        ctx.quadraticCurveTo(x + imageSize, y, x + imageSize, y + radius)
-        ctx.lineTo(x + imageSize, y + imageSize - radius)
-        ctx.quadraticCurveTo(x + imageSize, y + imageSize, x + imageSize - radius, y + imageSize)
-        ctx.lineTo(x + radius, y + imageSize)
-        ctx.quadraticCurveTo(x, y + imageSize, x, y + imageSize - radius)
-        ctx.lineTo(x, y + radius)
-        ctx.quadraticCurveTo(x, y, x + radius, y)
-        ctx.closePath()
-        ctx.clip()
-      }
-
-      // Draw the image
-      const scale = Math.max(imageSize / img.width, imageSize / img.height)
-      const scaledWidth = img.width * scale
-      const scaledHeight = img.height * scale
-      const offsetX = x + (imageSize - scaledWidth) / 2
-      const offsetY = y + (imageSize - scaledHeight) / 2
-
-      ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
-
-      // Apply border if enabled
-      if (showBorder.value) {
-        ctx.restore()
-        ctx.strokeStyle = '#ffffff'
-        ctx.lineWidth = 2
-        if (imageShape.value === 'circle') {
-          ctx.beginPath()
-          ctx.arc(point.x, point.y, imageSize / 2 - 1, 0, Math.PI * 2)
-          ctx.stroke()
-        } else if (imageShape.value === 'rounded') {
-          const radius = imageSize * 0.1
-          ctx.beginPath()
-          ctx.moveTo(x + radius, y)
-          ctx.lineTo(x + imageSize - radius, y)
-          ctx.quadraticCurveTo(x + imageSize, y, x + imageSize, y + radius)
-          ctx.lineTo(x + imageSize, y + imageSize - radius)
-          ctx.quadraticCurveTo(x + imageSize, y + imageSize, x + imageSize - radius, y + imageSize)
-          ctx.lineTo(x + radius, y + imageSize)
-          ctx.quadraticCurveTo(x, y + imageSize, x, y + imageSize - radius)
-          ctx.lineTo(x, y + radius)
-          ctx.quadraticCurveTo(x, y, x + radius, y)
-          ctx.closePath()
-          ctx.stroke()
-        } else {
-          ctx.strokeRect(x + 1, y + 1, imageSize - 2, imageSize - 2)
-        }
-      } else {
-        ctx.restore()
-      }
+      positionedImages.value.push({
+        src: images.value[i].previewUrl,
+        name: images.value[i].name,
+        x: finalX,
+        y: finalY,
+        width: imageSize,
+        height: imageSize,
+      })
     }
+  }
 
-    // Convert to data URL
-    collageResult.value = canvas.toDataURL('image/png')
-    success(t('tools.heartCollage.messages.collageGenerated'))
-  } catch (err) {
-    showError(t('tools.heartCollage.errors.generationFailed'))
-    console.error(err)
-  } finally {
-    isGenerating.value = false
+  success(t('tools.heartCollage.messages.arranged'))
+}
+
+// Drag and drop functionality for images
+function startImageDrag(event: MouseEvent, index: number) {
+  event.preventDefault()
+  draggingImage.value = index
+
+  const image = positionedImages.value[index]
+  dragOffset.x = event.clientX - image.x
+  dragOffset.y = event.clientY - image.y
+}
+
+function drag(event: MouseEvent) {
+  if (draggingImage.value !== null) {
+    const image = positionedImages.value[draggingImage.value]
+
+    // Calculate new position
+    let newX = event.clientX - dragOffset.x
+    let newY = event.clientY - dragOffset.y
+
+    // Constrain to canvas bounds
+    newX = Math.max(0, Math.min(canvasDimensions.width - image.width, newX))
+    newY = Math.max(0, Math.min(canvasDimensions.height - image.height, newY))
+
+    // Update position
+    image.x = newX
+    image.y = newY
   }
 }
 
+function endDrag() {
+  draggingImage.value = null
+}
+
+// Download collage
 function downloadCollage() {
-  if (!collageResult.value) return
+  if (!mainCanvas.value) return
 
   try {
-    const link = document.createElement('a')
-    link.download = `heart-collage-${new Date().getTime()}.png`
-    link.href = collageResult.value
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    success(t('tools.heartCollage.messages.downloadSuccess'))
+    const canvas = document.createElement('canvas')
+    canvas.width = canvasDimensions.width
+    canvas.height = canvasDimensions.height
+    const ctx = canvas.getContext('2d')
+
+    if (ctx) {
+      // Draw background
+      ctx.fillStyle = backgroundColor.value
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Draw positioned images
+      positionedImages.value.forEach((image) => {
+        const img = new Image()
+        img.src = image.src
+
+        // We need to draw the image with the same clipping as in the UI
+        ctx.save()
+
+        if (imageShape.value === 'circle') {
+          ctx.beginPath()
+          ctx.arc(
+            image.x + image.width / 2,
+            image.y + image.height / 2,
+            image.width / 2,
+            0,
+            Math.PI * 2,
+          )
+          ctx.clip()
+        } else if (imageShape.value === 'rounded') {
+          const radius = image.width * 0.1
+          ctx.beginPath()
+          ctx.moveTo(image.x + radius, image.y)
+          ctx.lineTo(image.x + image.width - radius, image.y)
+          ctx.quadraticCurveTo(
+            image.x + image.width,
+            image.y,
+            image.x + image.width,
+            image.y + radius,
+          )
+          ctx.lineTo(image.x + image.width, image.y + image.height - radius)
+          ctx.quadraticCurveTo(
+            image.x + image.width,
+            image.y + image.height,
+            image.x + image.width - radius,
+            image.y + image.height,
+          )
+          ctx.lineTo(image.x + radius, image.y + image.height)
+          ctx.quadraticCurveTo(
+            image.x,
+            image.y + image.height,
+            image.x,
+            image.y + image.height - radius,
+          )
+          ctx.lineTo(image.x, image.y + radius)
+          ctx.quadraticCurveTo(image.x, image.y, image.x + radius, image.y)
+          ctx.closePath()
+          ctx.clip()
+        }
+
+        // Draw the image
+        ctx.drawImage(img, image.x, image.y, image.width, image.height)
+
+        // Draw border if enabled
+        if (showBorder.value) {
+          ctx.restore()
+          ctx.strokeStyle = '#ffffff'
+          ctx.lineWidth = 2
+
+          if (imageShape.value === 'circle') {
+            ctx.beginPath()
+            ctx.arc(
+              image.x + image.width / 2,
+              image.y + image.height / 2,
+              image.width / 2 - 1,
+              0,
+              Math.PI * 2,
+            )
+            ctx.stroke()
+          } else if (imageShape.value === 'rounded') {
+            const radius = image.width * 0.1
+            ctx.beginPath()
+            ctx.moveTo(image.x + radius, image.y)
+            ctx.lineTo(image.x + image.width - radius, image.y)
+            ctx.quadraticCurveTo(
+              image.x + image.width,
+              image.y,
+              image.x + image.width,
+              image.y + radius,
+            )
+            ctx.lineTo(image.x + image.width, image.y + image.height - radius)
+            ctx.quadraticCurveTo(
+              image.x + image.width,
+              image.y + image.height,
+              image.x + image.width - radius,
+              image.y + image.height,
+            )
+            ctx.lineTo(image.x + radius, image.y + image.height)
+            ctx.quadraticCurveTo(
+              image.x,
+              image.y + image.height,
+              image.x,
+              image.y + image.height - radius,
+            )
+            ctx.lineTo(image.x, image.y + radius)
+            ctx.quadraticCurveTo(image.x, image.y, image.x + radius, image.y)
+            ctx.closePath()
+            ctx.stroke()
+          } else {
+            ctx.strokeRect(image.x + 1, image.y + 1, image.width - 2, image.height - 2)
+          }
+        } else {
+          ctx.restore()
+        }
+      })
+
+      // Convert to data URL
+      collageResult.value = canvas.toDataURL('image/png')
+
+      // Trigger download
+      const link = document.createElement('a')
+      link.download = `collage-${selectedShape.value}-${new Date().getTime()}.png`
+      link.href = collageResult.value
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      success(t('tools.heartCollage.messages.downloadSuccess'))
+    }
   } catch (err) {
     showError(t('tools.heartCollage.errors.downloadFailed'))
     console.error(err)
@@ -701,7 +793,7 @@ function downloadCollage() {
 
 // Lifecycle
 onMounted(() => {
-  updatePreviewSize()
+  updateCanvasDimensions()
 })
 
 onUnmounted(() => {
