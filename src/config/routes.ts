@@ -17,43 +17,33 @@ const JsonExtractor = () => import('../tools/json/JsonExtractor.vue')
 const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
-const ListToJson = () => import('../tools/json/ListToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
 const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
-const JsonToList = () => import('../tools/json/JsonToList.vue')
 const JsonToGet = () => import('../tools/json/JsonToGet.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
 const JsonArrayToLines = () => import('../tools/json/JsonArrayToLines.vue')
-const JsonArrayExtractor = () => import('../tools/json/JsonArrayExtractor.vue')
 const JsonLinesToArray = () => import('../tools/json/JsonLinesToArray.vue')
 const JsonFieldRemover = () => import('../tools/json/JsonFieldRemover.vue')
 const JsonArrayShuffler = () => import('../tools/json/JsonArrayShuffler.vue')
 const JsonToCookie = () => import('../tools/json/JsonToCookie.vue')
 const JsonFieldAdder = () => import('../tools/json/JsonFieldAdder.vue')
-const JsonTextToNumber = () => import('../tools/json/JsonTextToNumber.vue')
 const JsonValueResetter = () => import('../tools/json/JsonValueResetter.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
-const JsonObjectSlicer = () => import('../tools/json/JsonObjectSlicer.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
-const JsonObjectKeyExtractor = () => import('../tools/json/JsonObjectKeyExtractor.vue')
-const JsonObjectValueExtractor = () => import('../tools/json/JsonObjectValueExtractor.vue')
 const JsonKeyValueExtractor = () => import('../tools/json/JsonKeyValueExtractor.vue')
 const CsvToJson = () => import('../tools/json/CsvToJson.vue')
-const ListToJsonObject = () => import('../tools/json/ListToJsonObject.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
-const JsonTextParser = () => import('../tools/json/JsonTextParser.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
 const JsonLineSplitter = () => import('../tools/json/JsonLineSplitter.vue')
 const JsonFieldReplacer = () => import('../tools/json/JsonFieldReplacer.vue')
 const JsToJson = () => import('../tools/json/JsToJson.vue')
-const JsonTextFormatter = () => import('../tools/json/JsonTextFormatter.vue')
 const JsonFieldMapper = () => import('../tools/json/JsonFieldMapper.vue')
 const JsonFieldSearcher = () => import('../tools/json/JsonFieldSearcher.vue')
-const ListDeduplicator = () => import('../tools/json/ListDeduplicator.vue')
 const JsonDuplicateDetector = () => import('../tools/json/JsonDuplicateDetector.vue')
 const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
 const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
 const TextSteganography = () => import('../tools/TextSteganography.vue')
+const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -148,16 +138,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'list-to-json',
-        name: 'listToJson',
-        component: ListToJson,
-        meta: {
-          title: 'Text List to JSON',
-          icon: '📝',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-keys-extractor',
         name: 'jsonKeysExtractor',
         component: JsonKeysExtractor,
@@ -174,16 +154,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON File Splitter',
           icon: '✂️',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-to-list',
-        name: 'jsonToList',
-        component: JsonToList,
-        meta: {
-          title: 'JSON Array to Text List',
-          icon: '📋',
           status: 'active',
         },
       },
@@ -214,16 +184,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array to Lines',
           icon: '📄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-array-extractor',
-        name: 'jsonArrayExtractor',
-        component: JsonArrayExtractor,
-        meta: {
-          title: 'JSON Array Extractor',
-          icon: '🔍',
           status: 'active',
         },
       },
@@ -278,16 +238,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-text-to-number',
-        name: 'jsonTextToNumber',
-        component: JsonTextToNumber,
-        meta: {
-          title: 'JSON Text to Number',
-          icon: '🔢',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-value-resetter',
         name: 'jsonValueResetter',
         component: JsonValueResetter,
@@ -308,42 +258,12 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-object-slicer',
-        name: 'jsonObjectSlicer',
-        component: JsonObjectSlicer,
-        meta: {
-          title: 'JSON Object Slicer',
-          icon: '✂️',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-array-slicer',
         name: 'jsonArraySlicer',
         component: JsonArraySlicer,
         meta: {
           title: 'JSON Array Slicer',
           icon: '📊',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-object-key-extractor',
-        name: 'jsonObjectKeyExtractor',
-        component: JsonObjectKeyExtractor,
-        meta: {
-          title: 'JSON Object Key Extractor',
-          icon: '🔑',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-object-value-extractor',
-        name: 'jsonObjectValueExtractor',
-        component: JsonObjectValueExtractor,
-        meta: {
-          title: 'JSON Object Value Extractor',
-          icon: '💎',
           status: 'active',
         },
       },
@@ -364,26 +284,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'CSV to JSON Converter',
           icon: '📄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'list-to-json-object',
-        name: 'listToJsonObject',
-        component: ListToJsonObject,
-        meta: {
-          title: 'List to JSON Object',
-          icon: '📋',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-text-parser',
-        name: 'jsonTextParser',
-        component: JsonTextParser,
-        meta: {
-          title: 'JSON Text Parser',
-          icon: '🔍',
           status: 'active',
         },
       },
@@ -428,16 +328,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-text-formatter',
-        name: 'jsonTextFormatter',
-        component: JsonTextFormatter,
-        meta: {
-          title: 'JSON Text Formatter',
-          icon: '🎨',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-field-mapper',
         name: 'jsonFieldMapper',
         component: JsonFieldMapper,
@@ -454,16 +344,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Field Searcher',
           icon: '🔍',
-          status: 'active',
-        },
-      },
-      {
-        path: 'list-deduplicator',
-        name: 'listDeduplicator',
-        component: ListDeduplicator,
-        meta: {
-          title: 'List Deduplicator',
-          icon: '📋',
           status: 'active',
         },
       },
@@ -679,6 +559,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Text Steganography',
           icon: '🔒',
+          status: 'active',
+        },
+      },
+      {
+        path: 'image-steganography',
+        name: 'imageSteganography',
+        component: ImageSteganography,
+        meta: {
+          title: 'Image Steganography',
+          icon: '🖼️',
           status: 'active',
         },
       },

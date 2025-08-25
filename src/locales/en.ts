@@ -1578,5 +1578,52 @@ export default {
         decodingFailed: 'Failed to decode the steganography text',
       },
     },
+    imageSteganography: {
+      title: 'Image Steganography',
+      description:
+        'Hide secret images within other images using LSB (Least Significant Bit) steganography technique',
+      canvasTitle: 'Image Canvas',
+      operationsTitle: 'Operations',
+      canvasPlaceholder: 'Select an image to begin',
+      exportImage: 'Export Image',
+      step1: 'Step 1: Select Image to Hide',
+      step1Desc: 'Choose the image you want to hide within another image',
+      step2: 'Step 2: Save Hidden Image Data',
+      step2Desc: 'Save the pixel data of the hidden image for steganography',
+      step3: 'Step 3: Select Target Image',
+      step3Desc: 'Choose the image in which you want to hide the secret image',
+      step4: 'Step 4: Start Encryption',
+      step4Desc: 'Embed the hidden image data into the target image',
+      selectHiddenImage: 'Select Hidden Image',
+      saveHiddenData: 'Save Hidden Image Data',
+      selectTargetImage: 'Select Target Image',
+      startEncryption: 'Start Encryption',
+      features: {
+        encryption: {
+          title: 'Image Encryption',
+          description:
+            'Hide secret images within other images using advanced steganography techniques',
+        },
+        steganography: {
+          title: 'LSB Steganography',
+          description: 'Utilize Least Significant Bit technique to embed data invisibly',
+        },
+        export: {
+          title: 'Export Results',
+          description: 'Download the steganography result as a PNG image file',
+        },
+      },
+      messages: {
+        imageLoaded: 'Image loaded successfully',
+        dataSaved: 'Hidden image data saved successfully',
+        encryptionComplete: 'Encryption completed successfully',
+        imageExported: 'Image exported successfully',
+        canvasCleared: 'Canvas cleared',
+      },
+      errors: {
+        imageLoadFailed: 'Failed to load image',
+        exportFailed: 'Failed to export image',
+      },
+    },
   },
 }
