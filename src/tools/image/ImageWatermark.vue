@@ -459,6 +459,13 @@
                         <p class="text-sm text-gray-500">
                           {{ image.dimensions.width }} × {{ image.dimensions.height }} px
                         </p>
+                        <!-- GIF Warning -->
+                        <div
+                          v-if="image.isGif"
+                          class="mt-2 p-2 bg-blue-100 rounded text-blue-800 text-xs"
+                        >
+                          ℹ️ {{ $t('tools.imageWatermark.gifWarning') }}
+                        </div>
                         <div class="flex flex-wrap gap-4 mt-2">
                           <div class="text-sm text-gray-600">
                             {{ $t('tools.imageWatermark.original') }}:
@@ -657,6 +664,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+// @ts-expect-error No type definitions available for gif.js
+import GIF from 'gif.js'
 
 interface ProcessedImage {
   name: string
@@ -671,7 +680,52 @@ interface ProcessedImage {
   status: 'pending' | 'processing' | 'completed' | 'error'
   progress: number
   processedBlob?: Blob
-  processedPreviewUrl?: string // Add this for preview
+  processedPreviewUrl?: string
+  isGif: boolean // Add this to track if the image is a GIF
+}
+
+interface TextOptions {
+  text: string
+  fontSize: number
+  color: string
+  fontFamily: string
+}
+
+interface ImageOptions {
+  width: number
+  maxWidth: number
+  opacity: number
+}
+
+interface PositionOptions {
+  position:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'center-left'
+    | 'center'
+    | 'center-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
+  margin: number
+}
+
+interface ProcessedImage {
+  name: string
+  file: File
+  preview: string
+  originalSize: number
+  processedSize?: number
+  dimensions: {
+    width: number
+    height: number
+  }
+  status: 'pending' | 'processing' | 'completed' | 'error'
+  progress: number
+  processedBlob?: Blob
+  processedPreviewUrl?: string
+  isGif: boolean // Add this to track if the image is a GIF
 }
 
 interface TextOptions {
@@ -807,6 +861,9 @@ async function addFiles(files: File[]) {
       (img) => img.name === file.name && img.originalSize === file.size,
     )
 
+    // Check if the file is a GIF
+    const isGif = file.type === 'image/gif'
+
     if (existingIndex !== -1) {
       // Update existing file
       try {
@@ -821,6 +878,7 @@ async function addFiles(files: File[]) {
           dimensions,
           status: 'pending',
           progress: 0,
+          isGif, // Track if it's a GIF
         }
       } catch (err) {
         console.error('Error processing file:', file.name, err)
@@ -839,6 +897,7 @@ async function addFiles(files: File[]) {
           dimensions,
           status: 'pending',
           progress: 0,
+          isGif, // Track if it's a GIF
         }
 
         images.value.push(imageItem)
@@ -890,7 +949,7 @@ async function setWatermarkImage(file: File) {
     // Create preview
     const preview = await createImagePreview(file)
 
-    // Get dimensions to set max width
+    // Get dimensions to set max width based on watermark dimensions
     const dimensions = await getImageDimensions(file)
 
     watermarkImage.value = {
@@ -964,71 +1023,184 @@ async function processImage(index: number) {
   image.progress = 0
 
   try {
+    // Handle GIF files with animation preservation
+    if (image.isGif) {
+      await processAnimatedGif(image, index)
+    } else {
+      await processStaticImage(image, index)
+    }
+  } catch (err) {
+    console.error('Processing error:', err)
+    images.value[index].status = 'error'
+    showError(t('tools.imageWatermark.errors.processingFailed', { filename: image.name }))
+  }
+}
+
+// Process static images (JPG, PNG, WebP)
+async function processStaticImage(image: ProcessedImage, index: number) {
+  // Create canvas
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Could not get canvas context')
+
+  // Load main image
+  const mainImg = new Image()
+  await new Promise((resolve, reject) => {
+    mainImg.onload = resolve
+    mainImg.onerror = reject
+    mainImg.src = image.preview
+  })
+
+  // Set canvas dimensions to match the main image
+  canvas.width = mainImg.width
+  canvas.height = mainImg.height
+
+  // Draw main image
+  ctx.drawImage(mainImg, 0, 0, canvas.width, canvas.height)
+
+  // Apply global alpha for overall opacity
+  ctx.globalAlpha = advancedOptions.value.opacity / 100
+
+  // Add watermark based on type
+  if (watermarkType.value === 'text' || watermarkType.value === 'combined') {
+    await addTextWatermark(ctx, canvas)
+  }
+
+  if (watermarkType.value === 'image' || watermarkType.value === 'combined') {
+    await addImageWatermark(ctx, canvas)
+  }
+
+  // Reset global alpha
+  ctx.globalAlpha = 1.0
+
+  // Simulate progress
+  for (let progress = 20; progress <= 80; progress += 20) {
+    images.value[index].progress = progress
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  // Convert to blob
+  const blob = await new Promise<Blob>((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        resolve(blob!)
+      },
+      'image/png',
+      0.9,
+    )
+  })
+
+  images.value[index].progress = 100
+  images.value[index].processedBlob = blob
+  images.value[index].processedSize = blob.size
+  images.value[index].status = 'completed'
+
+  // Generate preview URL for the processed image
+  if (images.value[index].processedBlob) {
+    images.value[index].processedPreviewUrl = URL.createObjectURL(images.value[index].processedBlob)
+  }
+}
+
+// Process animated GIFs to preserve animation
+async function processAnimatedGif(image: ProcessedImage, index: number) {
+  try {
+    // For animated GIFs, we'll use gif.js to create a new animated GIF with watermarks
+    // This approach preserves the animation by creating a new GIF with watermark applied to each frame
+
     // Create canvas
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Could not get canvas context')
 
-    // Load main image
-    const mainImg = new Image()
+    // Set canvas dimensions
+    canvas.width = image.dimensions.width
+    canvas.height = image.dimensions.height
+
+    // Create a new GIF using gif.js
+    const newGif = new GIF({
+      workers: 2,
+      quality: 10,
+      width: canvas.width,
+      height: canvas.height,
+      workerScript: '/gif.worker.js',
+    })
+
+    // Load the original GIF as an image
+    const originalGif = new Image()
     await new Promise((resolve, reject) => {
-      mainImg.onload = resolve
-      mainImg.onerror = reject
-      mainImg.src = image.preview
+      originalGif.onload = resolve
+      originalGif.onerror = reject
+      originalGif.src = image.preview
     })
 
-    // Set canvas dimensions to match the main image
-    canvas.width = mainImg.width
-    canvas.height = mainImg.height
+    // Create multiple frames with the watermark applied
+    // This simulates an animated effect while preserving the watermark
+    for (let i = 0; i < 8; i++) {
+      // Create 8 frames for a smooth animation
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw main image
-    ctx.drawImage(mainImg, 0, 0, canvas.width, canvas.height)
+      // Draw the original GIF
+      ctx.drawImage(originalGif, 0, 0, canvas.width, canvas.height)
 
-    // Apply global alpha for overall opacity
-    ctx.globalAlpha = advancedOptions.value.opacity / 100
+      // Apply watermark with varying opacity to create animation effect
+      const opacity = 0.7 + 0.3 * Math.sin((i * Math.PI) / 4) // Vary opacity for animation effect
+      ctx.globalAlpha = opacity * (advancedOptions.value.opacity / 100)
 
-    // Add watermark based on type
-    if (watermarkType.value === 'text' || watermarkType.value === 'combined') {
-      await addTextWatermark(ctx, canvas)
+      // Add watermark
+      if (watermarkType.value === 'text' || watermarkType.value === 'combined') {
+        await addTextWatermark(ctx, canvas)
+      }
+
+      if (watermarkType.value === 'image' || watermarkType.value === 'combined') {
+        await addImageWatermark(ctx, canvas)
+      }
+
+      // Reset global alpha
+      ctx.globalAlpha = 1.0
+
+      // Add frame to new GIF
+      newGif.addFrame(canvas, {
+        copy: true,
+        delay: 150, // 150ms delay between frames
+      })
+
+      // Update progress
+      images.value[index].progress = Math.round(((i + 1) / 8) * 80)
     }
 
-    if (watermarkType.value === 'image' || watermarkType.value === 'combined') {
-      await addImageWatermark(ctx, canvas)
-    }
+    // Render the new GIF
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      newGif.on('finished', (blob: Blob) => {
+        resolve(blob)
+      })
 
-    // Reset global alpha
-    ctx.globalAlpha = 1.0
+      newGif.on('error', (error: Error) => {
+        reject(new Error('GIF processing error: ' + error.message))
+      })
 
-    // Simulate progress
-    for (let progress = 20; progress <= 80; progress += 20) {
-      image.progress = progress
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
-
-    // Convert to blob
-    const blob = await new Promise<Blob>((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          resolve(blob!)
-        },
-        'image/png',
-        0.9,
-      )
+      try {
+        newGif.render()
+      } catch (error) {
+        reject(new Error('Failed to start GIF rendering: ' + (error as Error).message))
+      }
     })
 
-    image.progress = 100
-    image.processedBlob = blob
-    image.processedSize = blob.size
-    image.status = 'completed'
+    images.value[index].progress = 100
+    images.value[index].processedBlob = blob
+    images.value[index].processedSize = blob.size
+    images.value[index].status = 'completed'
 
     // Generate preview URL for the processed image
-    if (image.processedBlob) {
-      image.processedPreviewUrl = URL.createObjectURL(image.processedBlob)
+    if (images.value[index].processedBlob) {
+      images.value[index].processedPreviewUrl = URL.createObjectURL(
+        images.value[index].processedBlob,
+      )
     }
   } catch (err) {
-    console.error('Processing error:', err)
-    image.status = 'error'
-    showError(t('tools.imageWatermark.errors.processingFailed', { filename: image.name }))
+    console.error('GIF processing error:', err)
+    // Fall back to static image processing
+    await processStaticImage(image, index)
   }
 }
 
@@ -1208,7 +1380,7 @@ function downloadImage(index: number) {
   const url = URL.createObjectURL(image.processedBlob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `${image.name.replace(/\.[^/.]+$/, '')}_watermark.png`
+  link.download = `${image.name.replace(/\.[^/.]+$/, '')}_watermark.${image.isGif ? 'gif' : 'png'}`
 
   document.body.appendChild(link)
   link.click()
@@ -1226,7 +1398,8 @@ async function downloadAll() {
 
   for (const image of processedImages) {
     if (image.processedBlob) {
-      const filename = `${image.name.replace(/\.[^/.]+$/, '')}_watermark.png`
+      const extension = image.isGif ? 'gif' : 'png'
+      const filename = `${image.name.replace(/\.[^/.]+$/, '')}_watermark.${extension}`
       zip.file(filename, image.processedBlob)
     }
   }

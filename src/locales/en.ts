@@ -1193,6 +1193,7 @@ export default {
       processedImage: 'Processed Image',
       size: 'Size',
       dimensions: 'Dimensions',
+      gifWarning: 'Watermark will be applied to all frames of the animated GIF',
       status: {
         pending: 'Pending',
         processing: 'Processing',

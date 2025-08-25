@@ -1152,6 +1152,7 @@ export default {
       processedImage: '处理后图片',
       size: '大小',
       dimensions: '尺寸',
+      gifWarning: '水印将应用于动图的所有帧',
       status: {
         pending: '等待中',
         processing: '处理中',
