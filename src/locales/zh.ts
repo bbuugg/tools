@@ -1828,6 +1828,9 @@ export default {
         polygon: '多边形',
         star: '星形',
         heart: '心形',
+        quadraticCurve: '二次曲线',
+        cubicCurve: '三次曲线',
+        arcCurve: '弧线',
       },
       tutorials: {
         title: 'SVG教程',

@@ -1376,6 +1376,9 @@ export default {
         polygon: 'Polygon',
         star: 'Star',
         heart: 'Heart',
+        quadraticCurve: 'Quadratic Curve',
+        cubicCurve: 'Cubic Curve',
+        arcCurve: 'Arc Curve',
       },
       tutorials: {
         title: 'SVG Tutorials',

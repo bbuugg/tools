@@ -704,6 +704,272 @@
                     class="cursor-move"
                   />
                 </g>
+
+                <!-- Quadratic Curve -->
+                <g v-else-if="shape.type === 'quadraticCurve'">
+                  <!-- Invisible thicker line for easier clicking -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} Q ${shape.cx} ${shape.cy} ${shape.x2} ${shape.y2}`"
+                    stroke="transparent"
+                    :stroke-width="Math.max(12, shape.strokeWidth + 6)"
+                    fill="none"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Actual visible curve -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} Q ${shape.cx} ${shape.cy} ${shape.x2} ${shape.y2}`"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :stroke-opacity="shape.strokeOpacity"
+                    fill="none"
+                    style="pointer-events: none"
+                  />
+                  <!-- Selection highlight -->
+                  <path
+                    v-if="selectedShapeId === shape.id"
+                    :d="`M ${shape.x1} ${shape.y1} Q ${shape.cx} ${shape.cy} ${shape.x2} ${shape.y2}`"
+                    stroke="blue"
+                    stroke-width="3"
+                    stroke-opacity="0.3"
+                    fill="none"
+                  />
+                  <!-- Control point handles -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx"
+                    :cy="shape.cy"
+                    r="5"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'control')"
+                    class="cursor-move"
+                  />
+                  <!-- End point handles -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x1"
+                    :cy="shape.y1"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'start')"
+                    class="cursor-move"
+                  />
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x2"
+                    :cy="shape.y2"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'end')"
+                    class="cursor-move"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="(shape.x1 + shape.x2) / 2"
+                    :y1="(shape.y1 + shape.y2) / 2 - 30"
+                    :x2="(shape.x1 + shape.x2) / 2"
+                    :y2="(shape.y1 + shape.y2) / 2"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="(shape.x1 + shape.x2) / 2"
+                    :cy="(shape.y1 + shape.y2) / 2 - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
+
+                <!-- Cubic Curve -->
+                <g v-else-if="shape.type === 'cubicCurve'">
+                  <!-- Invisible thicker line for easier clicking -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} C ${shape.cx1} ${shape.cy1} ${shape.cx2} ${shape.cy2} ${shape.x2} ${shape.y2}`"
+                    stroke="transparent"
+                    :stroke-width="Math.max(12, shape.strokeWidth + 6)"
+                    fill="none"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Actual visible curve -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} C ${shape.cx1} ${shape.cy1} ${shape.cx2} ${shape.cy2} ${shape.x2} ${shape.y2}`"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :stroke-opacity="shape.strokeOpacity"
+                    fill="none"
+                    style="pointer-events: none"
+                  />
+                  <!-- Selection highlight -->
+                  <path
+                    v-if="selectedShapeId === shape.id"
+                    :d="`M ${shape.x1} ${shape.y1} C ${shape.cx1} ${shape.cy1} ${shape.cx2} ${shape.cy2} ${shape.x2} ${shape.y2}`"
+                    stroke="blue"
+                    stroke-width="3"
+                    stroke-opacity="0.3"
+                    fill="none"
+                  />
+                  <!-- Control point handles -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx1"
+                    :cy="shape.cy1"
+                    r="5"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'control1')"
+                    class="cursor-move"
+                  />
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.cx2"
+                    :cy="shape.cy2"
+                    r="5"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'control2')"
+                    class="cursor-move"
+                  />
+                  <!-- End point handles -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x1"
+                    :cy="shape.y1"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'start')"
+                    class="cursor-move"
+                  />
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x2"
+                    :cy="shape.y2"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'end')"
+                    class="cursor-move"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="(shape.x1 + shape.x2) / 2"
+                    :y1="(shape.y1 + shape.y2) / 2 - 30"
+                    :x2="(shape.x1 + shape.x2) / 2"
+                    :y2="(shape.y1 + shape.y2) / 2"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="(shape.x1 + shape.x2) / 2"
+                    :cy="(shape.y1 + shape.y2) / 2 - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
+
+                <!-- Arc Curve -->
+                <g v-else-if="shape.type === 'arcCurve'">
+                  <!-- Invisible thicker line for easier clicking -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} A ${shape.rx} ${shape.ry} ${shape.xAxisRotation} ${shape.largeArcFlag} ${shape.sweepFlag} ${shape.x2} ${shape.y2}`"
+                    stroke="transparent"
+                    :stroke-width="Math.max(12, shape.strokeWidth + 6)"
+                    fill="none"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Actual visible curve -->
+                  <path
+                    :d="`M ${shape.x1} ${shape.y1} A ${shape.rx} ${shape.ry} ${shape.xAxisRotation} ${shape.largeArcFlag} ${shape.sweepFlag} ${shape.x2} ${shape.y2}`"
+                    :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
+                    :stroke-width="shape.strokeWidth"
+                    :stroke-opacity="shape.strokeOpacity"
+                    fill="none"
+                    style="pointer-events: none"
+                  />
+                  <!-- Selection highlight -->
+                  <path
+                    v-if="selectedShapeId === shape.id"
+                    :d="`M ${shape.x1} ${shape.y1} A ${shape.rx} ${shape.ry} ${shape.xAxisRotation} ${shape.largeArcFlag} ${shape.sweepFlag} ${shape.x2} ${shape.y2}`"
+                    stroke="blue"
+                    stroke-width="3"
+                    stroke-opacity="0.3"
+                    fill="none"
+                  />
+                  <!-- End point handles -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x1"
+                    :cy="shape.y1"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'start')"
+                    class="cursor-move"
+                  />
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="shape.x2"
+                    :cy="shape.y2"
+                    r="5"
+                    fill="white"
+                    stroke="blue"
+                    stroke-width="1"
+                    @mousedown="startResize($event, shape.id, 'end')"
+                    class="cursor-move"
+                  />
+                  <!-- Rotate handle line -->
+                  <line
+                    v-if="selectedShapeId === shape.id"
+                    :x1="(shape.x1 + shape.x2) / 2"
+                    :y1="(shape.y1 + shape.y2) / 2 - 30"
+                    :x2="(shape.x1 + shape.x2) / 2"
+                    :y2="(shape.y1 + shape.y2) / 2"
+                    stroke="red"
+                    stroke-width="1"
+                    stroke-dasharray="3,3"
+                  />
+                  <!-- Rotate handle -->
+                  <circle
+                    v-if="selectedShapeId === shape.id"
+                    :cx="(shape.x1 + shape.x2) / 2"
+                    :cy="(shape.y1 + shape.y2) / 2 - 30"
+                    r="6"
+                    fill="white"
+                    stroke="red"
+                    stroke-width="1"
+                    @mousedown="startRotate($event, shape.id)"
+                    class="cursor-move"
+                  />
+                </g>
               </g>
             </svg>
           </div>
@@ -957,6 +1223,41 @@ interface HeartShape extends BaseShape {
   size: number
 }
 
+interface QuadraticCurveShape extends BaseShape {
+  type: 'quadraticCurve'
+  x1: number
+  y1: number
+  cx: number
+  cy: number
+  x2: number
+  y2: number
+}
+
+interface CubicCurveShape extends BaseShape {
+  type: 'cubicCurve'
+  x1: number
+  y1: number
+  cx1: number
+  cy1: number
+  cx2: number
+  cy2: number
+  x2: number
+  y2: number
+}
+
+interface ArcCurveShape extends BaseShape {
+  type: 'arcCurve'
+  x1: number
+  y1: number
+  rx: number
+  ry: number
+  xAxisRotation: number
+  largeArcFlag: number
+  sweepFlag: number
+  x2: number
+  y2: number
+}
+
 type Shape =
   | RectangleShape
   | CircleShape
@@ -967,6 +1268,9 @@ type Shape =
   | PolygonShape
   | StarShape
   | HeartShape
+  | QuadraticCurveShape
+  | CubicCurveShape
+  | ArcCurveShape
 
 interface DragState {
   startX: number
@@ -1040,10 +1344,13 @@ const shapes = [
   { type: 'ellipse', name: t('tools.svgEditor.shapes.ellipse'), icon: '◇' },
   { type: 'line', name: t('tools.svgEditor.shapes.line'), icon: '/' },
   { type: 'triangle', name: t('tools.svgEditor.shapes.triangle'), icon: '△' },
+  { type: 'quadraticCurve', name: t('tools.svgEditor.shapes.quadraticCurve'), icon: '⌒' },
+  { type: 'cubicCurve', name: t('tools.svgEditor.shapes.cubicCurve'), icon: '⌓' },
+  { type: 'arcCurve', name: t('tools.svgEditor.shapes.arcCurve'), icon: '⌓' },
   { type: 'polygon', name: t('tools.svgEditor.shapes.polygon'), icon: '⬟' },
   { type: 'star', name: t('tools.svgEditor.shapes.star'), icon: '★' },
   { type: 'heart', name: t('tools.svgEditor.shapes.heart'), icon: '❤' },
-  { type: 'path', name: t('tools.svgEditor.shapes.path'), icon: '⌒' },
+  { type: 'path', name: t('tools.svgEditor.shapes.path'), icon: '✎' },
 ]
 
 // Shape management
@@ -1261,6 +1568,65 @@ function addShape(type: string) {
         rotation: 0,
       } as TriangleShape
       break
+    case 'quadraticCurve':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'quadraticCurve',
+        x1: 50,
+        y1: 100,
+        cx: 100,
+        cy: 50,
+        x2: 150,
+        y2: 100,
+        fill: 'none',
+        fillOpacity: 0,
+        stroke: '#3b82f6',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as QuadraticCurveShape
+      break
+    case 'cubicCurve':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'cubicCurve',
+        x1: 50,
+        y1: 100,
+        cx1: 75,
+        cy1: 50,
+        cx2: 125,
+        cy2: 150,
+        x2: 150,
+        y2: 100,
+        fill: 'none',
+        fillOpacity: 0,
+        stroke: '#3b82f6',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as CubicCurveShape
+      break
+    case 'arcCurve':
+      newShape = {
+        id: `shape-${Date.now()}`,
+        type: 'arcCurve',
+        x1: 50,
+        y1: 100,
+        rx: 50,
+        ry: 50,
+        xAxisRotation: 0,
+        largeArcFlag: 0,
+        sweepFlag: 1,
+        x2: 150,
+        y2: 100,
+        fill: 'none',
+        fillOpacity: 0,
+        stroke: '#3b82f6',
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        rotation: 0,
+      } as ArcCurveShape
+      break
     case 'polygon':
       newShape = {
         id: `shape-${Date.now()}`,
@@ -1427,6 +1793,18 @@ function startRotate(event: MouseEvent, shapeId: string) {
       centerX = center.x
       centerY = center.y
       break
+    case 'quadraticCurve':
+      centerX = (shape.x1 + shape.x2) / 2
+      centerY = (shape.y1 + shape.y2) / 2
+      break
+    case 'cubicCurve':
+      centerX = (shape.x1 + shape.x2) / 2
+      centerY = (shape.y1 + shape.y2) / 2
+      break
+    case 'arcCurve':
+      centerX = (shape.x1 + shape.x2) / 2
+      centerY = (shape.y1 + shape.y2) / 2
+      break
     case 'polygon':
       const polyCenter = getPolygonCenter(shape.points)
       centerX = polyCenter.x
@@ -1579,6 +1957,43 @@ function handleMouseMove(event: MouseEvent) {
           shape.x2 += dx
           shape.y2 += dy
         }
+        break
+      case 'quadraticCurve':
+        if (dragState.value.resizeDirection === 'start') {
+          shape.x1 += dx
+          shape.y1 += dy
+        } else if (dragState.value.resizeDirection === 'end') {
+          shape.x2 += dx
+          shape.y2 += dy
+        } else if (dragState.value.resizeDirection === 'control') {
+          shape.cx += dx
+          shape.cy += dy
+        }
+        break
+      case 'cubicCurve':
+        if (dragState.value.resizeDirection === 'start') {
+          shape.x1 += dx
+          shape.y1 += dy
+        } else if (dragState.value.resizeDirection === 'end') {
+          shape.x2 += dx
+          shape.y2 += dy
+        } else if (dragState.value.resizeDirection === 'control1') {
+          shape.cx1 += dx
+          shape.cy1 += dy
+        } else if (dragState.value.resizeDirection === 'control2') {
+          shape.cx2 += dx
+          shape.cy2 += dy
+        }
+        break
+      case 'arcCurve':
+        if (dragState.value.resizeDirection === 'start') {
+          shape.x1 += dx
+          shape.y1 += dy
+        } else if (dragState.value.resizeDirection === 'end') {
+          shape.x2 += dx
+          shape.y2 += dy
+        }
+        // For arc curves, we could also adjust rx, ry, but for simplicity we'll just move the endpoints
         break
     }
   } else if (isRotating.value) {
@@ -1763,6 +2178,18 @@ function updateSvgFromCanvas() {
         const triangleStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
         const center = getTriangleCenter(shape.points)
         svgContent += `  <polygon points="${shape.points}" fill="${triangleFill}" fill-opacity="${shape.fillOpacity}" stroke="${triangleStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${center.x} ${center.y})" />\n`
+        break
+      case 'quadraticCurve':
+        const quadStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <path d="M ${shape.x1} ${shape.y1} Q ${shape.cx} ${shape.cy} ${shape.x2} ${shape.y2}" fill="none" stroke="${quadStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${(shape.x1 + shape.x2) / 2} ${(shape.y1 + shape.y2) / 2})" />\n`
+        break
+      case 'cubicCurve':
+        const cubicStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <path d="M ${shape.x1} ${shape.y1} C ${shape.cx1} ${shape.cy1} ${shape.cx2} ${shape.cy2} ${shape.x2} ${shape.y2}" fill="none" stroke="${cubicStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${(shape.x1 + shape.x2) / 2} ${(shape.y1 + shape.y2) / 2})" />\n`
+        break
+      case 'arcCurve':
+        const arcStroke = shape.strokeOpacity === 0 ? 'none' : shape.stroke
+        svgContent += `  <path d="M ${shape.x1} ${shape.y1} A ${shape.rx} ${shape.ry} ${shape.xAxisRotation} ${shape.largeArcFlag} ${shape.sweepFlag} ${shape.x2} ${shape.y2}" fill="none" stroke="${arcStroke}" stroke-opacity="${shape.strokeOpacity}" stroke-width="${shape.strokeWidth}" transform="rotate(${shape.rotation || 0} ${(shape.x1 + shape.x2) / 2} ${(shape.y1 + shape.y2) / 2})" />\n`
         break
       case 'polygon':
         const polygonFill = shape.fillOpacity === 0 ? 'none' : shape.fill
