@@ -1610,6 +1610,10 @@ export default {
       canvasSize: '画布大小',
       shape: '形状',
       imageShape: '图片形状',
+      arrangement: '排列方式',
+      random: '随机',
+      grid: '网格',
+      fitAll: '适应所有图片',
       spacing: '间距',
       additionalOptions: '附加选项',
       backgroundColor: '背景颜色',
@@ -1629,7 +1633,7 @@ export default {
       autoArrange: '自动排列',
       downloadCollage: '下载拼贴',
       selectedImages: '已选图片',
-      dragInstructions: '拖动图片以在形状内重新定位',
+      dragInstructions: '拖动图片以在形状内重新定位。拖动角落可调整大小。',
       features: {
         collage: {
           title: '形状拼贴',

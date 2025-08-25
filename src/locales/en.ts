@@ -1667,6 +1667,10 @@ export default {
       canvasSize: 'Canvas Size',
       shape: 'Shape',
       imageShape: 'Image Shape',
+      arrangement: 'Arrangement',
+      random: 'Random',
+      grid: 'Grid',
+      fitAll: 'Fit All Images',
       spacing: 'Spacing',
       additionalOptions: 'Additional Options',
       backgroundColor: 'Background Color',
@@ -1686,7 +1690,7 @@ export default {
       autoArrange: 'Auto Arrange',
       downloadCollage: 'Download Collage',
       selectedImages: 'Selected Images',
-      dragInstructions: 'Drag images to reposition them within the shape',
+      dragInstructions: 'Drag images to reposition them within the shape. Drag corners to resize.',
       features: {
         collage: {
           title: 'Shape Collage',

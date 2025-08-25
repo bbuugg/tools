@@ -58,7 +58,7 @@
         <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
           {{ $t('tools.heartCollage.settings') }}
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <!-- Canvas Size -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -68,11 +68,11 @@
               v-model="canvasSize"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             >
-              <option value="small">{{ $t('tools.heartCollage.small') }} (800×800)</option>
+              <option value="small">{{ $t('tools.heartCollage.small') }} (600×600)</option>
               <option value="medium" selected>
-                {{ $t('tools.heartCollage.medium') }} (1200×1200)
+                {{ $t('tools.heartCollage.medium') }} (800×800)
               </option>
-              <option value="large">{{ $t('tools.heartCollage.large') }} (1600×1600)</option>
+              <option value="large">{{ $t('tools.heartCollage.large') }} (1000×1000)</option>
             </select>
           </div>
 
@@ -105,6 +105,21 @@
               <option value="square">{{ $t('tools.heartCollage.square') }}</option>
               <option value="circle">{{ $t('tools.heartCollage.circle') }}</option>
               <option value="rounded">{{ $t('tools.heartCollage.rounded') }}</option>
+            </select>
+          </div>
+
+          <!-- Arrangement Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ $t('tools.heartCollage.arrangement') }}
+            </label>
+            <select
+              v-model="arrangementType"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            >
+              <option value="random">{{ $t('tools.heartCollage.random') }}</option>
+              <option value="grid">{{ $t('tools.heartCollage.grid') }}</option>
+              <option value="fit">{{ $t('tools.heartCollage.fitAll') }}</option>
             </select>
           </div>
         </div>
@@ -184,7 +199,7 @@
             </button>
             <button
               @click="downloadCollage"
-              :disabled="!collageResult"
+              :disabled="positionedImages.length === 0"
               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ $t('tools.heartCollage.downloadCollage') }}
@@ -207,6 +222,9 @@
               width: `${canvasDimensions.width}px`,
               height: `${canvasDimensions.height}px`,
             }"
+            @mouseup="endDrag"
+            @mouseleave="endDrag"
+            @mousemove="drag"
           >
             <!-- Draggable images -->
             <div
@@ -224,13 +242,10 @@
                 transition: draggingImage === index ? 'none' : 'all 0.1s ease-out',
               }"
               @mousedown="startImageDrag($event, index)"
-              @mousemove="drag"
-              @mouseup="endDrag"
-              @mouseleave="endDrag"
             >
               <div
                 :class="[
-                  'w-full h-full overflow-hidden',
+                  'w-full h-full overflow-hidden relative',
                   imageShape === 'circle'
                     ? 'rounded-full'
                     : imageShape === 'rounded'
@@ -248,6 +263,32 @@
                 }"
               >
                 <img :src="image.src" :alt="image.name" class="w-full h-full object-cover" />
+
+                <!-- Resize handles -->
+                <div
+                  v-if="draggingImage === index"
+                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-se-resize"
+                  style="right: -6px; bottom: -6px"
+                  @mousedown.stop="startResize($event, index, 'se')"
+                ></div>
+                <div
+                  v-if="draggingImage === index"
+                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-sw-resize"
+                  style="left: -6px; bottom: -6px"
+                  @mousedown.stop="startResize($event, index, 'sw')"
+                ></div>
+                <div
+                  v-if="draggingImage === index"
+                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-nw-resize"
+                  style="left: -6px; top: -6px"
+                  @mousedown.stop="startResize($event, index, 'nw')"
+                ></div>
+                <div
+                  v-if="draggingImage === index"
+                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-ne-resize"
+                  style="right: -6px; top: -6px"
+                  @mousedown.stop="startResize($event, index, 'ne')"
+                ></div>
               </div>
             </div>
 
@@ -330,7 +371,7 @@ const mainCanvas = ref<HTMLCanvasElement | null>(null)
 const canvasContainer = ref<HTMLDivElement | null>(null)
 
 // Add new refs for better drag handling
-const dragStart = reactive({ x: 0, y: 0 })
+const dragStart = reactive({ x: 0, y: 0, width: 0, height: 0 })
 const dragStartTime = ref(0)
 
 // State
@@ -355,15 +396,20 @@ const positionedImages = ref<
     y: number
     width: number
     height: number
+    originalWidth: number
+    originalHeight: number
   }>
 >([])
 const draggingImage = ref<number | null>(null)
 const dragOffset = reactive({ x: 0, y: 0 })
+const isResizing = ref(false)
+const resizeDirection = ref<'se' | 'sw' | 'ne' | 'nw' | null>(null)
 
 // Settings
 const canvasSize = ref<'small' | 'medium' | 'large'>('medium')
 const selectedShape = ref<'heart' | 'square' | 'rectangle' | 'circle' | 'star'>('heart')
 const imageShape = ref<'square' | 'circle' | 'rounded'>('square')
+const arrangementType = ref<'random' | 'grid' | 'fit'>('random')
 const spacing = ref(2)
 const backgroundColor = ref('#ffffff')
 const showBorder = ref(false)
@@ -578,6 +624,23 @@ async function autoArrange() {
 
   positionedImages.value = []
 
+  switch (arrangementType.value) {
+    case 'random':
+      await arrangeRandomly()
+      break
+    case 'grid':
+      arrangeInGrid()
+      break
+    case 'fit':
+      await fitAllImages()
+      break
+  }
+
+  success(t('tools.heartCollage.messages.arranged'))
+}
+
+// Random arrangement within shape
+async function arrangeRandomly() {
   // For heart shape, use the mask approach
   if (selectedShape.value === 'heart') {
     try {
@@ -669,10 +732,10 @@ async function autoArrange() {
             y: finalY,
             width: imageSize,
             height: imageSize,
+            originalWidth: images.value[i].width,
+            originalHeight: images.value[i].height,
           })
         }
-
-        success(t('tools.heartCollage.messages.arranged'))
       }
     } catch (err) {
       console.error('Error in heart mask processing:', err)
@@ -682,6 +745,112 @@ async function autoArrange() {
   } else {
     // For other shapes, use the existing algorithm
     fallbackToParametricHeart()
+  }
+}
+
+// Grid arrangement
+function arrangeInGrid() {
+  if (images.value.length === 0) return
+
+  // Calculate grid dimensions
+  const gridSize = Math.ceil(Math.sqrt(images.value.length))
+  const cellWidth = (canvasDimensions.width - spacing.value * (gridSize - 1)) / gridSize
+  const cellHeight = (canvasDimensions.height - spacing.value * (gridSize - 1)) / gridSize
+
+  // Calculate image size to fit in cell
+  const imageSize = Math.min(cellWidth, cellHeight) * 0.9
+
+  for (let i = 0; i < images.value.length; i++) {
+    const row = Math.floor(i / gridSize)
+    const col = i % gridSize
+
+    const x = col * (cellWidth + spacing.value) + (cellWidth - imageSize) / 2
+    const y = row * (cellHeight + spacing.value) + (cellHeight - imageSize) / 2
+
+    positionedImages.value.push({
+      src: images.value[i].previewUrl,
+      name: images.value[i].name,
+      x,
+      y,
+      width: imageSize,
+      height: imageSize,
+      originalWidth: images.value[i].width,
+      originalHeight: images.value[i].height,
+    })
+  }
+}
+
+// Fit all images arrangement
+async function fitAllImages() {
+  if (images.value.length === 0) return
+
+  // Calculate total area and individual image areas
+  const canvasArea = canvasDimensions.width * canvasDimensions.height
+  const avgImageArea = (canvasArea / images.value.length) * 0.8 // Leave some space
+
+  // Sort images by aspect ratio (most square first)
+  const sortedImages = [...images.value].sort((a, b) => {
+    const aspectA = Math.abs(a.width / a.height - 1)
+    const aspectB = Math.abs(b.width / b.height - 1)
+    return aspectA - aspectB
+  })
+
+  // Pack images using a simple algorithm
+  let x = 0
+  let y = 0
+  let rowHeight = 0
+
+  for (let i = 0; i < sortedImages.length; i++) {
+    const img = sortedImages[i]
+    const aspectRatio = img.width / img.height
+
+    // Calculate dimensions based on average area
+    let width, height
+    if (aspectRatio > 1) {
+      width = Math.sqrt(avgImageArea * aspectRatio)
+      height = avgImageArea / width
+    } else {
+      height = Math.sqrt(avgImageArea / aspectRatio)
+      width = avgImageArea / height
+    }
+
+    // Scale down if too large
+    const maxSize = Math.min(canvasDimensions.width, canvasDimensions.height) * 0.3
+    if (width > maxSize || height > maxSize) {
+      const scale = maxSize / Math.max(width, height)
+      width *= scale
+      height *= scale
+    }
+
+    // Ensure minimum size
+    width = Math.max(30, width)
+    height = Math.max(30, height)
+
+    // Check if we need to move to next row
+    if (x + width > canvasDimensions.width) {
+      x = 0
+      y += rowHeight + spacing.value
+      rowHeight = 0
+    }
+
+    // Update row height
+    rowHeight = Math.max(rowHeight, height)
+
+    // Position image
+    if (y + height <= canvasDimensions.height) {
+      positionedImages.value.push({
+        src: img.previewUrl,
+        name: img.name,
+        x,
+        y,
+        width,
+        height,
+        originalWidth: img.width,
+        originalHeight: img.height,
+      })
+
+      x += width + spacing.value
+    }
   }
 }
 
@@ -742,10 +911,10 @@ function fallbackToParametricHeart() {
         y: finalY,
         width: imageSize,
         height: imageSize,
+        originalWidth: images.value[i].width,
+        originalHeight: images.value[i].height,
       })
     }
-
-    success(t('tools.heartCollage.messages.arranged'))
   }
 }
 
@@ -756,6 +925,8 @@ let dragRAF: number | null = null
 function startImageDrag(event: MouseEvent, index: number) {
   event.preventDefault()
   event.stopPropagation()
+
+  if (isResizing.value) return
 
   draggingImage.value = index
   dragStartTime.value = Date.now()
@@ -771,31 +942,110 @@ function startImageDrag(event: MouseEvent, index: number) {
   document.body.style.cursor = 'grabbing'
 }
 
+function startResize(event: MouseEvent, index: number, direction: 'se' | 'sw' | 'ne' | 'nw') {
+  event.preventDefault()
+  event.stopPropagation()
+
+  isResizing.value = true
+  resizeDirection.value = direction
+  draggingImage.value = index
+
+  const image = positionedImages.value[index]
+  dragStart.x = event.clientX
+  dragStart.y = event.clientY
+  dragStart.width = image.width
+  dragStart.height = image.height
+
+  // Set appropriate cursor
+  document.body.style.cursor = `${direction}-resize`
+
+  // Prevent text selection during resize
+  document.body.style.userSelect = 'none'
+}
+
 function drag(event: MouseEvent) {
-  if (draggingImage.value !== null) {
-    // Use requestAnimationFrame for smoother updates
-    if (dragRAF) {
-      cancelAnimationFrame(dragRAF)
-    }
+  if (draggingImage.value === null) return
 
-    dragRAF = requestAnimationFrame(() => {
-      const image = positionedImages.value[draggingImage.value!]
+  // Use requestAnimationFrame for smoother updates
+  if (dragRAF) {
+    cancelAnimationFrame(dragRAF)
+  }
 
-      // Calculate new position with smoother movement
+  dragRAF = requestAnimationFrame(() => {
+    const image = positionedImages.value[draggingImage.value!]
+
+    if (isResizing.value && resizeDirection.value) {
+      // Handle resizing
+      const deltaX = event.clientX - dragStart.x
+      const deltaY = event.clientY - dragStart.y
+
+      let newWidth = dragStart.width
+      let newHeight = dragStart.height
+      let newX = image.x
+      let newY = image.y
+
+      // Calculate new dimensions based on resize direction
+      switch (resizeDirection.value) {
+        case 'se': // Bottom-right
+          newWidth = Math.max(30, dragStart.width + deltaX)
+          newHeight = Math.max(30, dragStart.height + deltaY)
+          break
+        case 'sw': // Bottom-left
+          newWidth = Math.max(30, dragStart.width - deltaX)
+          newHeight = Math.max(30, dragStart.height + deltaY)
+          newX = image.x + (dragStart.width - newWidth)
+          break
+        case 'ne': // Top-right
+          newWidth = Math.max(30, dragStart.width + deltaX)
+          newHeight = Math.max(30, dragStart.height - deltaY)
+          newY = image.y + (dragStart.height - newHeight)
+          break
+        case 'nw': // Top-left
+          newWidth = Math.max(30, dragStart.width - deltaX)
+          newHeight = Math.max(30, dragStart.height - deltaY)
+          newX = image.x + (dragStart.width - newWidth)
+          newY = image.y + (dragStart.height - newHeight)
+          break
+      }
+
+      // Maintain aspect ratio
+      const aspectRatio = image.originalWidth / image.originalHeight
+      if (event.shiftKey) {
+        // When shift is pressed, maintain aspect ratio
+        if (newWidth / newHeight > aspectRatio) {
+          newHeight = newWidth / aspectRatio
+        } else {
+          newWidth = newHeight * aspectRatio
+        }
+      }
+
+      // Constrain to canvas bounds
+      newWidth = Math.min(newWidth, canvasDimensions.width - newX)
+      newHeight = Math.min(newHeight, canvasDimensions.height - newY)
+      newX = Math.max(0, Math.min(newX, canvasDimensions.width - newWidth))
+      newY = Math.max(0, Math.min(newY, canvasDimensions.height - newHeight))
+
+      // Apply changes
+      image.x = newX
+      image.y = newY
+      image.width = newWidth
+      image.height = newHeight
+    } else {
+      // Handle dragging
       let newX = event.clientX - dragOffset.x
       let newY = event.clientY - dragOffset.y
 
-      // Constrain to canvas bounds with better boundary handling
+      // Constrain to canvas bounds
       newX = Math.max(0, Math.min(canvasDimensions.width - image.width, newX))
       newY = Math.max(0, Math.min(canvasDimensions.height - image.height, newY))
 
       // Apply position with smoother updates
       image.x = newX
       image.y = newY
+    }
 
-      dragRAF = null
-    })
-  }
+    dragRAF = null
+  })
 }
 
 function endDrag() {
@@ -808,6 +1058,10 @@ function endDrag() {
     // Restore normal cursor
     document.body.style.userSelect = ''
     document.body.style.cursor = ''
+
+    // Reset resize state
+    isResizing.value = false
+    resizeDirection.value = null
 
     // Add a small delay to ensure smooth transition restoration
     setTimeout(() => {
