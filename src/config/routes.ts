@@ -16,24 +16,18 @@ const JsonFormatter = () => import('../tools/json/JsonFormatter.vue')
 const JsonExtractor = () => import('../tools/json/JsonExtractor.vue')
 const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
-const GetToJson = () => import('../tools/json/GetToJson.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const ListToJson = () => import('../tools/json/ListToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
-const HeaderToJson = () => import('../tools/json/HeaderToJson.vue')
 const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
 const JsonToList = () => import('../tools/json/JsonToList.vue')
 const JsonToGet = () => import('../tools/json/JsonToGet.vue')
-
-const JsonMinifier = () => import('../tools/json/JsonMinifier.vue')
-const JsonUnicodeFixer = () => import('../tools/json/JsonUnicodeFixer.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
 const JsonArrayToLines = () => import('../tools/json/JsonArrayToLines.vue')
 const JsonArrayExtractor = () => import('../tools/json/JsonArrayExtractor.vue')
 const JsonLinesToArray = () => import('../tools/json/JsonLinesToArray.vue')
 const JsonFieldRemover = () => import('../tools/json/JsonFieldRemover.vue')
 const JsonArrayShuffler = () => import('../tools/json/JsonArrayShuffler.vue')
-const JsonUnicodeEncoder = () => import('../tools/json/JsonUnicodeEncoder.vue')
 const JsonToCookie = () => import('../tools/json/JsonToCookie.vue')
 const JsonFieldAdder = () => import('../tools/json/JsonFieldAdder.vue')
 const JsonTextToNumber = () => import('../tools/json/JsonTextToNumber.vue')
@@ -46,7 +40,6 @@ const JsonObjectValueExtractor = () => import('../tools/json/JsonObjectValueExtr
 const JsonKeyValueExtractor = () => import('../tools/json/JsonKeyValueExtractor.vue')
 const CsvToJson = () => import('../tools/json/CsvToJson.vue')
 const ListToJsonObject = () => import('../tools/json/ListToJsonObject.vue')
-const JsonCaseConverter = () => import('../tools/json/JsonCaseConverter.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
 const JsonTextParser = () => import('../tools/json/JsonTextParser.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
@@ -144,16 +137,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'get-to-json',
-        name: 'getToJson',
-        component: GetToJson,
-        meta: {
-          title: 'GET Parameters to JSON',
-          icon: '🌐',
-          status: 'active',
-        },
-      },
-      {
         path: 'cookie-to-json',
         name: 'cookieToJson',
         component: CookieToJson,
@@ -184,16 +167,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'header-to-json',
-        name: 'headerToJson',
-        component: HeaderToJson,
-        meta: {
-          title: 'HTTP Headers to JSON',
-          icon: '📡',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-splitter',
         name: 'jsonSplitter',
         component: JsonSplitter,
@@ -220,27 +193,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON to GET Parameters',
           icon: '🔗',
-          status: 'active',
-        },
-      },
-
-      {
-        path: 'json-minifier',
-        name: 'jsonMinifier',
-        component: JsonMinifier,
-        meta: {
-          title: 'JSON Minifier',
-          icon: '📦',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-unicode-fixer',
-        name: 'jsonUnicodeFixer',
-        component: JsonUnicodeFixer,
-        meta: {
-          title: 'JSON Unicode Fixer',
-          icon: '🛠️',
           status: 'active',
         },
       },
@@ -301,16 +253,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array Shuffler',
           icon: '🎲',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-unicode-encoder',
-        name: 'jsonUnicodeEncoder',
-        component: JsonUnicodeEncoder,
-        meta: {
-          title: 'JSON Unicode Encoder',
-          icon: '🔒',
           status: 'active',
         },
       },
@@ -431,16 +373,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'List to JSON Object',
           icon: '📋',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-case-converter',
-        name: 'jsonCaseConverter',
-        component: JsonCaseConverter,
-        meta: {
-          title: 'JSON Case Converter',
-          icon: '🔤',
           status: 'active',
         },
       },

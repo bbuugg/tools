@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex">
     <!-- Mobile Menu Button Fixed at Top Left -->
-    <div class="lg:hidden fixed top-4 left-4 z-20">
+    <div class="lg:hidden fixed bottom-4 left-4 z-20">
       <button
         @click="toggleSidebar"
         class="p-2 rounded-md bg-white shadow-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
