@@ -208,21 +208,6 @@
               height: `${canvasDimensions.height}px`,
             }"
           >
-            <!-- Heart shape mask background -->
-            <div
-              v-if="selectedShape === 'heart'"
-              class="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
-              :style="{
-                backgroundImage: 'url(/images/heart.png)',
-                backgroundSize: '80%',
-                backgroundPosition: 'center',
-                opacity: 0.2,
-                zIndex: 0,
-              }"
-            ></div>
-
-            <canvas ref="mainCanvas" class="absolute inset-0 w-full h-full"></canvas>
-
             <!-- Draggable images -->
             <div
               v-for="(image, index) in positionedImages"
@@ -265,6 +250,19 @@
                 <img :src="image.src" :alt="image.name" class="w-full h-full object-cover" />
               </div>
             </div>
+
+            <!-- Heart shape mask overlay -->
+            <div
+              v-if="selectedShape === 'heart'"
+              class="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
+              :style="{
+                backgroundImage: 'url(/images/heart.png)',
+                backgroundSize: '100%',
+                backgroundPosition: 'center',
+                opacity: 0.9,
+                zIndex: 5,
+              }"
+            ></div>
           </div>
 
           <div class="mt-4 text-sm text-gray-600">
