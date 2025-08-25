@@ -661,11 +661,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 // @ts-expect-error No type definitions available for gif.js
 import GIF from 'gif.js'
+import { decompressFrames, parseGIF } from 'gifuct-js'
 
 interface ProcessedImage {
   name: string
@@ -1104,50 +1105,84 @@ async function processStaticImage(image: ProcessedImage, index: number) {
 // Process animated GIFs to preserve animation
 async function processAnimatedGif(image: ProcessedImage, index: number) {
   try {
-    // For animated GIFs, we'll use gif.js to create a new animated GIF with watermarks
-    // This approach preserves the animation by creating a new GIF with watermark applied to each frame
+    // Read the GIF file as an ArrayBuffer
+    const arrayBuffer = await image.file.arrayBuffer()
 
-    // Create canvas
+    // Parse the GIF using gifuct-js
+    const gif = parseGIF(arrayBuffer)
+    const frames = decompressFrames(gif, true)
+
+    if (frames.length === 0) {
+      throw new Error('No frames found in GIF')
+    }
+
+    // Get canvas dimensions from the GIF header
+    const width = gif.lsd.width
+    const height = gif.lsd.height
+
+    // Create canvas for processing
     const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Could not get canvas context')
-
-    // Set canvas dimensions
-    canvas.width = image.dimensions.width
-    canvas.height = image.dimensions.height
 
     // Create a new GIF using gif.js
     const newGif = new GIF({
       workers: 2,
       quality: 10,
-      width: canvas.width,
-      height: canvas.height,
+      width: width,
+      height: height,
       workerScript: '/gif.worker.js',
     })
 
-    // Load the original GIF as an image
-    const originalGif = new Image()
-    await new Promise((resolve, reject) => {
-      originalGif.onload = resolve
-      originalGif.onerror = reject
-      originalGif.src = image.preview
-    })
+    // Create an offscreen canvas for proper frame handling
+    const offscreenCanvas = document.createElement('canvas')
+    offscreenCanvas.width = width
+    offscreenCanvas.height = height
+    const offscreenCtx = offscreenCanvas.getContext('2d')
+    if (!offscreenCtx) throw new Error('Could not get offscreen canvas context')
 
-    // Create multiple frames with the watermark applied
-    // This simulates an animated effect while preserving the watermark
-    for (let i = 0; i < 8; i++) {
-      // Create 8 frames for a smooth animation
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // Process each frame
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i]
 
-      // Draw the original GIF
-      ctx.drawImage(originalGif, 0, 0, canvas.width, canvas.height)
+      // Handle frame disposal methods
+      if (i === 0) {
+        // First frame - clear canvas
+        offscreenCtx.clearRect(0, 0, width, height)
+      } else {
+        const prevFrame = frames[i - 1]
+        // Handle disposal method of previous frame
+        if (prevFrame.disposalType === 2) {
+          // Restore to background color
+          offscreenCtx.clearRect(0, 0, width, height)
+        } else if (prevFrame.disposalType === 3) {
+          // Restore to previous state (not implemented in this simple version)
+          // For simplicity, we'll just keep the current state
+        }
+        // For disposalType 1 (do not dispose) or 0 (unspecified), we keep the current state
+      }
 
-      // Apply watermark with varying opacity to create animation effect
-      const opacity = 0.7 + 0.3 * Math.sin((i * Math.PI) / 4) // Vary opacity for animation effect
-      ctx.globalAlpha = opacity * (advancedOptions.value.opacity / 100)
+      // Create ImageData from the frame patch
+      if (frame.patch) {
+        const patchImageData = new ImageData(
+          new Uint8ClampedArray(frame.patch),
+          frame.dims.width,
+          frame.dims.height,
+        )
 
-      // Add watermark
+        // Draw the frame patch at the correct position
+        offscreenCtx.putImageData(patchImageData, frame.dims.left, frame.dims.top)
+      }
+
+      // Copy the offscreen canvas to the main canvas
+      ctx.clearRect(0, 0, width, height)
+      ctx.drawImage(offscreenCanvas, 0, 0)
+
+      // Apply watermark to this frame
+      ctx.globalAlpha = advancedOptions.value.opacity / 100
+
       if (watermarkType.value === 'text' || watermarkType.value === 'combined') {
         await addTextWatermark(ctx, canvas)
       }
@@ -1159,14 +1194,14 @@ async function processAnimatedGif(image: ProcessedImage, index: number) {
       // Reset global alpha
       ctx.globalAlpha = 1.0
 
-      // Add frame to new GIF
-      newGif.addFrame(canvas, {
+      // Add frame to new GIF with original delay
+      newGif.addFrame(ctx, {
         copy: true,
-        delay: 150, // 150ms delay between frames
+        delay: frame.delay || 100,
       })
 
       // Update progress
-      images.value[index].progress = Math.round(((i + 1) / 8) * 80)
+      images.value[index].progress = Math.round(((i + 1) / frames.length) * 80)
     }
 
     // Render the new GIF
