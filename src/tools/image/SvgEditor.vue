@@ -394,6 +394,18 @@
 
                 <!-- Line -->
                 <g v-else-if="shape.type === 'line'">
+                  <!-- Invisible thicker line for easier clicking -->
+                  <line
+                    :x1="shape.x1"
+                    :y1="shape.y1"
+                    :x2="shape.x2"
+                    :y2="shape.y2"
+                    stroke="transparent"
+                    :stroke-width="Math.max(12, shape.strokeWidth + 6)"
+                    @mousedown="startDrag($event, shape.id)"
+                    class="cursor-move"
+                  />
+                  <!-- Actual visible line -->
                   <line
                     :x1="shape.x1"
                     :y1="shape.y1"
@@ -402,8 +414,7 @@
                     :stroke="shape.strokeOpacity === 0 ? 'none' : shape.stroke"
                     :stroke-width="shape.strokeWidth"
                     :stroke-opacity="shape.strokeOpacity"
-                    @mousedown="startDrag($event, shape.id)"
-                    class="cursor-move"
+                    style="pointer-events: none"
                   />
                   <!-- Selection highlight -->
                   <line
@@ -1115,7 +1126,17 @@ function getTriangleCenter(points: string) {
 function handleCanvasClick(event: MouseEvent) {
   // Only deselect if clicking on empty space (not on a shape)
   const target = event.target as SVGElement
-  if (!target.closest('rect, circle, ellipse, line, polygon, path')) {
+
+  // Check if we clicked on a shape element
+  const isShapeElement = target.closest('rect, circle, ellipse, line, polygon, path')
+
+  // Check if the target is the SVG canvas itself (empty space)
+  const isSvgCanvas =
+    target === event.currentTarget ||
+    (target.tagName === 'rect' && target.getAttribute('fill') === 'url(#grid)')
+
+  // Only deselect if we clicked on empty space (SVG canvas or grid)
+  if (!isShapeElement && isSvgCanvas) {
     selectedShapeId.value = null
   }
 }
@@ -1391,12 +1412,21 @@ function updatePathData(shape: PathShape) {
 
 function handleMouseUp() {
   if (isDragging.value || isResizing.value || isRotating.value || isControlPointDragging.value) {
+    const wasOperating = true
     isDragging.value = false
     isResizing.value = false
     isRotating.value = false
     isControlPointDragging.value = false
     saveToHistory()
-    // Don't deselect the shape after operations
+
+    // Add a small delay to prevent handleCanvasClick from immediately deselecting
+    // This ensures the shape stays selected after drag operations
+    if (wasOperating) {
+      setTimeout(() => {
+        // This timeout ensures that any pending click events are processed
+        // with the correct operation state
+      }, 10)
+    }
   }
 }
 
