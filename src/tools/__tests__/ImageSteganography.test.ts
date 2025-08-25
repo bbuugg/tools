@@ -82,7 +82,7 @@ describe('ImageSteganography', () => {
     expect(wrapper.find('h1').text()).toContain('Image Steganography')
   })
 
-  it('displays step instructions', () => {
+  it('displays step instructions for encoding mode', () => {
     const wrapper = mount(ImageSteganography, {
       global: {
         plugins: [i18n],
@@ -92,6 +92,21 @@ describe('ImageSteganography', () => {
     expect(wrapper.text()).toContain('Step 2: Save Hidden Image Data')
     expect(wrapper.text()).toContain('Step 3: Select Target Image')
     expect(wrapper.text()).toContain('Step 4: Start Encryption')
+  })
+
+  it('displays step instructions for decoding mode', async () => {
+    const wrapper = mount(ImageSteganography, {
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Switch to decode mode
+    const decodeTab = wrapper.find('button:nth-child(2)')
+    await decodeTab.trigger('click')
+
+    expect(wrapper.text()).toContain('Step 1: Select Image to Decode')
+    expect(wrapper.text()).toContain('Step 2: Start Decoding')
   })
 
   it('has all required buttons', () => {
@@ -123,5 +138,33 @@ describe('ImageSteganography', () => {
     // Find and click the select hidden image button
     const selectHiddenBtn = wrapper.find('button')
     expect(selectHiddenBtn.exists()).toBe(true)
+  })
+
+  it('switches between encode and decode modes', async () => {
+    const wrapper = mount(ImageSteganography, {
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Check that we start in encode mode
+    expect(wrapper.text()).toContain('Operations')
+    expect(wrapper.text()).toContain('Step 1: Select Image to Hide')
+
+    // Switch to decode mode
+    const decodeTab = wrapper.find('button:nth-child(2)')
+    await decodeTab.trigger('click')
+
+    // Check that we're now in decode mode
+    expect(wrapper.text()).toContain('Decoding')
+    expect(wrapper.text()).toContain('Step 1: Select Image to Decode')
+
+    // Switch back to encode mode
+    const encodeTab = wrapper.find('button:first-child')
+    await encodeTab.trigger('click')
+
+    // Check that we're back in encode mode
+    expect(wrapper.text()).toContain('Operations')
+    expect(wrapper.text()).toContain('Step 1: Select Image to Hide')
   })
 })

@@ -1583,9 +1583,17 @@ export default {
       description:
         'Hide secret images within other images using LSB (Least Significant Bit) steganography technique',
       canvasTitle: 'Image Canvas',
+      decodedImageTitle: 'Decoded Image',
       operationsTitle: 'Operations',
+      decodingTitle: 'Decoding',
       canvasPlaceholder: 'Select an image to begin',
+      decodedImagePlaceholder: 'Select an image to decode',
       exportImage: 'Export Image',
+      exportDecodedImage: 'Export Decoded Image',
+      modeToggle: {
+        encode: 'Encode',
+        decode: 'Decode',
+      },
       step1: 'Step 1: Select Image to Hide',
       step1Desc: 'Choose the image you want to hide within another image',
       step2: 'Step 2: Save Hidden Image Data',
@@ -1598,30 +1606,53 @@ export default {
       saveHiddenData: 'Save Hidden Image Data',
       selectTargetImage: 'Select Target Image',
       startEncryption: 'Start Encryption',
+      decodeStep1: 'Step 1: Select Image to Decode',
+      decodeStep1Desc: 'Choose the image containing hidden data to decode',
+      decodeStep2: 'Step 2: Start Decoding',
+      decodeStep2Desc: 'Extract the hidden image from the selected image',
+      selectImageToDecode: 'Select Image to Decode',
+      startDecoding: 'Start Decoding',
+      decodedImagePreview: 'Decoded Image Preview',
       features: {
         encryption: {
           title: 'Image Encryption',
           description:
             'Hide secret images within other images using advanced steganography techniques',
         },
+        decryption: {
+          title: 'Image Decryption',
+          description: 'Extract hidden images from steganography images',
+        },
         steganography: {
           title: 'LSB Steganography',
           description: 'Utilize Least Significant Bit technique to embed data invisibly',
         },
+        extraction: {
+          title: 'Data Extraction',
+          description: 'Recover hidden data from steganography images',
+        },
         export: {
           title: 'Export Results',
           description: 'Download the steganography result as a PNG image file',
+        },
+        result: {
+          title: 'Decoded Result',
+          description: 'View and export the extracted hidden image',
         },
       },
       messages: {
         imageLoaded: 'Image loaded successfully',
         dataSaved: 'Hidden image data saved successfully',
         encryptionComplete: 'Encryption completed successfully',
+        decryptionComplete: 'Decryption completed successfully',
         imageExported: 'Image exported successfully',
         canvasCleared: 'Canvas cleared',
       },
       errors: {
         imageLoadFailed: 'Failed to load image',
+        dataSaveFailed: 'Failed to save hidden image data',
+        encryptionFailed: 'Failed to encrypt image',
+        decryptionFailed: 'Failed to decrypt image',
         exportFailed: 'Failed to export image',
       },
     },

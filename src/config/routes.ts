@@ -19,7 +19,6 @@ const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
 const JsonSplitter = () => import('../tools/json/JsonSplitter.vue')
-const JsonToGet = () => import('../tools/json/JsonToGet.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
 const JsonArrayToLines = () => import('../tools/json/JsonArrayToLines.vue')
 const JsonLinesToArray = () => import('../tools/json/JsonLinesToArray.vue')
@@ -31,7 +30,6 @@ const JsonValueResetter = () => import('../tools/json/JsonValueResetter.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonKeyValueExtractor = () => import('../tools/json/JsonKeyValueExtractor.vue')
-const CsvToJson = () => import('../tools/json/CsvToJson.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
 const JsonLineSplitter = () => import('../tools/json/JsonLineSplitter.vue')
@@ -158,16 +156,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-to-get',
-        name: 'jsonToGet',
-        component: JsonToGet,
-        meta: {
-          title: 'JSON to GET Parameters',
-          icon: '🔗',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-number-to-text',
         name: 'jsonNumberToText',
         component: JsonNumberToText,
@@ -274,16 +262,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Key-Value Extractor',
           icon: '🔍',
-          status: 'active',
-        },
-      },
-      {
-        path: 'csv-to-json',
-        name: 'csvToJson',
-        component: CsvToJson,
-        meta: {
-          title: 'CSV to JSON Converter',
-          icon: '📄',
           status: 'active',
         },
       },

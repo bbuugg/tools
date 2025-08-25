@@ -270,6 +270,7 @@ const connectToSignalingServer = () => {
       signalServer.onopen = () => {
         signalServerConnected.value = true
         addLog(t('tools.webRtcFileTransfer.logs.signalServerConnected'), 'success')
+        startDiscovery()
       }
 
       signalServer.onmessage = (event) => {

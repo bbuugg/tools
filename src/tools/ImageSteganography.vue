@@ -11,33 +11,87 @@
         </p>
       </div>
 
+      <!-- Toggle Switch -->
+      <div class="flex justify-center mb-6">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            type="button"
+            @click="mode = 'encode'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-l-lg',
+              mode === 'encode'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            {{ $t('tools.imageSteganography.modeToggle.encode') }}
+          </button>
+          <button
+            type="button"
+            @click="mode = 'decode'"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
+              mode === 'decode'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100',
+            ]"
+          >
+            {{ $t('tools.imageSteganography.modeToggle.decode') }}
+          </button>
+        </div>
+      </div>
+
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔒</div>
+          <div class="text-2xl mb-3">{{ mode === 'encode' ? '🔒' : '🔓' }}</div>
           <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.imageSteganography.features.encryption.title') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.encryption.title')
+                : $t('tools.imageSteganography.features.decryption.title')
+            }}
           </h3>
           <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageSteganography.features.encryption.description') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.encryption.description')
+                : $t('tools.imageSteganography.features.decryption.description')
+            }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🖼️</div>
+          <div class="text-2xl mb-3">{{ mode === 'encode' ? '🖼️' : '🔍' }}</div>
           <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.imageSteganography.features.steganography.title') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.steganography.title')
+                : $t('tools.imageSteganography.features.extraction.title')
+            }}
           </h3>
           <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageSteganography.features.steganography.description') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.steganography.description')
+                : $t('tools.imageSteganography.features.extraction.description')
+            }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">📥</div>
+          <div class="text-2xl mb-3">{{ mode === 'encode' ? '📥' : '📤' }}</div>
           <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.imageSteganography.features.export.title') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.export.title')
+                : $t('tools.imageSteganography.features.result.title')
+            }}
           </h3>
           <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageSteganography.features.export.description') }}
+            {{
+              mode === 'encode'
+                ? $t('tools.imageSteganography.features.export.description')
+                : $t('tools.imageSteganography.features.result.description')
+            }}
           </p>
         </div>
       </div>
@@ -47,7 +101,11 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">
-              {{ $t('tools.imageSteganography.canvasTitle') }}
+              {{
+                mode === 'encode'
+                  ? $t('tools.imageSteganography.canvasTitle')
+                  : $t('tools.imageSteganography.decodedImageTitle')
+              }}
             </h3>
           </div>
 
@@ -64,22 +122,40 @@
                 style="width: 100%; height: 100%; object-fit: contain"
               ></canvas>
               <div
-                v-if="!canvasInitialized || !state.targetImageData"
+                v-if="
+                  !canvasInitialized ||
+                  (mode === 'encode' ? !state.targetImageData : !decodedImageDataUrl)
+                "
                 class="absolute inset-0 flex flex-col items-center justify-center text-gray-500"
               >
-                <div class="text-4xl mb-2">🖼️</div>
-                <p>{{ $t('tools.imageSteganography.canvasPlaceholder') }}</p>
+                <div class="text-4xl mb-2">{{ mode === 'encode' ? '🖼️' : '🔍' }}</div>
+                <p>
+                  {{
+                    mode === 'encode'
+                      ? $t('tools.imageSteganography.canvasPlaceholder')
+                      : $t('tools.imageSteganography.decodedImagePlaceholder')
+                  }}
+                </p>
               </div>
             </div>
           </div>
 
           <div class="mt-4 flex justify-center">
             <button
+              v-if="mode === 'encode'"
               @click="exportCanvas"
               :disabled="!canvasInitialized || state.isLoading || !state.targetImageData"
               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
             >
               {{ $t('tools.imageSteganography.exportImage') }}
+            </button>
+            <button
+              v-else
+              @click="exportDecodedImage"
+              :disabled="!decodedImageDataUrl || state.isLoading"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+            >
+              {{ $t('tools.imageSteganography.exportDecodedImage') }}
             </button>
           </div>
         </div>
@@ -88,11 +164,16 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">
-              {{ $t('tools.imageSteganography.operationsTitle') }}
+              {{
+                mode === 'encode'
+                  ? $t('tools.imageSteganography.operationsTitle')
+                  : $t('tools.imageSteganography.decodingTitle')
+              }}
             </h3>
           </div>
 
-          <div class="space-y-6">
+          <!-- Encoding Mode -->
+          <div v-if="mode === 'encode'" class="space-y-6">
             <!-- Step 1: Select image to hide -->
             <div class="space-y-2">
               <h4 class="font-medium text-gray-900">
@@ -212,6 +293,68 @@
               {{ $t('common.clear') }}
             </button>
           </div>
+
+          <!-- Decoding Mode -->
+          <div v-else class="space-y-6">
+            <!-- Step 1: Select image to decode -->
+            <div class="space-y-2">
+              <h4 class="font-medium text-gray-900">
+                {{ $t('tools.imageSteganography.decodeStep1') }}
+              </h4>
+              <p class="text-sm text-gray-600">
+                {{ $t('tools.imageSteganography.decodeStep1Desc') }}
+              </p>
+              <div class="flex space-x-2">
+                <button
+                  @click="selectImageToDecode"
+                  :disabled="state.isLoading"
+                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  {{ $t('tools.imageSteganography.selectImageToDecode') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Decode image -->
+            <div class="space-y-2">
+              <h4 class="font-medium text-gray-900">
+                {{ $t('tools.imageSteganography.decodeStep2') }}
+              </h4>
+              <p class="text-sm text-gray-600">
+                {{ $t('tools.imageSteganography.decodeStep2Desc') }}
+              </p>
+              <button
+                @click="decodeImage"
+                :disabled="!imageToDecodeData || state.isLoading"
+                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {{ $t('tools.imageSteganography.startDecoding') }}
+              </button>
+            </div>
+
+            <!-- Decoded image preview -->
+            <div v-if="decodedImageDataUrl" class="space-y-2">
+              <h4 class="font-medium text-gray-900">
+                {{ $t('tools.imageSteganography.decodedImagePreview') }}
+              </h4>
+              <div class="border rounded p-2 bg-gray-50">
+                <img
+                  :src="decodedImageDataUrl"
+                  alt="Decoded image preview"
+                  class="max-w-full max-h-64 object-contain"
+                />
+              </div>
+            </div>
+
+            <!-- Reset button -->
+            <button
+              @click="resetDecoding"
+              :disabled="state.isLoading"
+              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+            >
+              {{ $t('common.clear') }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -227,12 +370,17 @@ import { Canvas, FabricImage as Image } from 'fabric'
 const { t } = useI18n()
 const { success, error: showError } = useToast()
 
+// Mode state
+const mode = ref<'encode' | 'decode'>('encode')
+
 // Refs
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const canvas = ref<Canvas | null>(null)
 const canvasInitialized = ref(false)
 const hiddenImagePreviewUrl = ref<string | null>(null)
 const targetImagePreviewUrl = ref<string | null>(null)
+const decodedImageDataUrl = ref<string | null>(null)
+const imageToDecodeData = ref<ImageData | null>(null)
 
 // State
 const state = reactive({
@@ -269,6 +417,7 @@ function initCanvas() {
 
   canvas.value = new Canvas(canvasRef.value, {
     isDrawingMode: false,
+    selectable: false,
     selection: false,
     hoverCursor: 'pointer',
     devicePixelRatio: true,
@@ -360,7 +509,9 @@ function drawTargetImage(url: string) {
         const imgWidth = img.width
         const imgHeight = img.height
 
-        const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
+        // Calculate scale to fit canvas while maintaining aspect ratio
+        // Using the approach from the reference implementation
+        const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
 
         img.set({
           left: canvasWidth / 2,
@@ -382,6 +533,7 @@ function drawTargetImage(url: string) {
         tempCanvas.height = imgHeight
         const tempCtx = tempCanvas.getContext('2d')
         if (tempCtx) {
+          // Draw the image to the temporary canvas to get image data
           tempCtx.drawImage(img.getElement(), 0, 0)
           state.targetImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height)
 
@@ -475,19 +627,82 @@ function saveHiddenImageData() {
   state.isLoading = true
 
   try {
-    // Process hidden image data to binary
-    state.hiddenDataBinary = Array.from(state.hiddenImageData.data, (color: number) => {
-      color = color.toString(2).padStart(8, '0').split('')
-      return color
-    })
+    // Create a temporary canvas to process the hidden image data
+    const tempCanvas = document.createElement('canvas')
+    const tempCtx = tempCanvas.getContext('2d')
 
-    state.isLoading = false
-    success(t('tools.imageSteganography.messages.dataSaved'))
+    if (!tempCtx) {
+      throw new Error('Could not get canvas context')
+    }
+
+    // Calculate dimensions for the hidden image
+    // Small canvas dimensions = large canvas pixels / 8 then square root
+    // Because we need 8 pixels' LSB to represent one pixel's RGBA value in the small canvas
+    const totalPixels = state.hiddenImageData.width * state.hiddenImageData.height
+    const sqrtPixels = Math.sqrt(totalPixels / 8)
+    tempCanvas.width = Math.floor(sqrtPixels)
+    tempCanvas.height = Math.floor(sqrtPixels)
+
+    // Draw the hidden image data to the temporary canvas
+    tempCtx.putImageData(state.hiddenImageData, 0, 0)
+
+    // Resize the image to fit the smaller canvas if needed
+    const resizedCanvas = document.createElement('canvas')
+    resizedCanvas.width = tempCanvas.width
+    resizedCanvas.height = tempCanvas.height
+    const resizedCtx = resizedCanvas.getContext('2d')
+
+    if (resizedCtx) {
+      // If the hidden image is larger than the calculated size, resize it
+      if (
+        state.hiddenImageData.width > tempCanvas.width ||
+        state.hiddenImageData.height > tempCanvas.height
+      ) {
+        resizedCtx.drawImage(
+          tempCanvas,
+          0,
+          0,
+          state.hiddenImageData.width,
+          state.hiddenImageData.height,
+          0,
+          0,
+          tempCanvas.width,
+          tempCanvas.height,
+        )
+      } else {
+        // Otherwise, just draw it as is
+        resizedCtx.drawImage(tempCanvas, 0, 0)
+      }
+
+      // Get the resized image data
+      const resizedImageData = resizedCtx.getImageData(
+        0,
+        0,
+        resizedCanvas.width,
+        resizedCanvas.height,
+      )
+
+      // Process hidden image data to binary
+      state.hiddenDataBinary = Array.from(resizedImageData.data, (color: number) => {
+        return color.toString(2).padStart(8, '0').split('')
+      })
+
+      success(t('tools.imageSteganography.messages.dataSaved'))
+    }
   } catch (err) {
-    state.isLoading = false
     showError(t('tools.imageSteganography.errors.dataSaveFailed'))
     console.error(err)
+  } finally {
+    state.isLoading = false
   }
+}
+
+// Process target image data
+// Make numbers even (LSB approach from reference implementation)
+function evenNum(num: number) {
+  num = num > 254 ? num - 1 : num
+  num = num % 2 == 1 ? num - 1 : num
+  return num
 }
 
 // Draw hidden data
@@ -503,31 +718,35 @@ function drawHiddenData() {
       bigHiddenList.push(...state.hiddenDataBinary[i])
     }
 
-    // Process target image data
+    // Create a copy of target image data for processing
     const targetDataCopy = new Uint8ClampedArray(state.targetImageData.data)
+
+    // Process target image data to ensure even numbers (for LSB)
+    for (let i = 0; i < targetDataCopy.length; i++) {
+      targetDataCopy[i] = evenNum(targetDataCopy[i])
+    }
+
+    // Get binary representation of target data
     const targetDataBinary: string[][] = Array.from(targetDataCopy, (color: number) => {
-      // Make numbers even
-      color = color > 254 ? color - 1 : color
-      color = color % 2 == 1 ? color - 1 : color
       return color.toString(2).padStart(8, '0').split('')
     })
 
-    // Embed hidden data into target data
-    targetDataBinary.forEach((item: string[], index: number) => {
-      if (bigHiddenList[index]) {
-        item[7] = bigHiddenList[index]
+    // Embed hidden data into target data by modifying the LSB (Least Significant Bit)
+    for (let i = 0; i < targetDataBinary.length && i < bigHiddenList.length; i++) {
+      // Only modify if we have hidden data for this position
+      if (bigHiddenList[i]) {
+        targetDataBinary[i][7] = bigHiddenList[i]
       }
-    })
+    }
 
     // Convert binary back to pixel data
-    const processedData = new Uint8ClampedArray(targetDataBinary.length)
-    targetDataBinary.forEach((item: string[], index: number) => {
-      processedData[index] = parseInt(item.join(''), 2)
-    })
+    for (let i = 0; i < targetDataCopy.length; i++) {
+      targetDataCopy[i] = parseInt(targetDataBinary[i].join(''), 2)
+    }
 
     // Create new image data
     const newImageData = new ImageData(
-      processedData,
+      targetDataCopy,
       state.targetImageData.width,
       state.targetImageData.height,
     )
@@ -549,7 +768,7 @@ function drawHiddenData() {
             const imgWidth = img.width
             const imgHeight = img.height
 
-            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight)
+            const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
 
             img.set({
               left: canvasWidth / 2,
@@ -565,21 +784,113 @@ function drawHiddenData() {
             canvas.value.add(img)
             canvas.value.renderAll()
           }
-          state.isLoading = false
           success(t('tools.imageSteganography.messages.encryptionComplete'))
         })
         .catch((err) => {
-          state.isLoading = false
           showError(t('tools.imageSteganography.errors.encryptionFailed'))
           console.error(err)
         })
-    } else {
-      state.isLoading = false
     }
   } catch (err) {
-    state.isLoading = false
     showError(t('tools.imageSteganography.errors.encryptionFailed'))
     console.error(err)
+  } finally {
+    state.isLoading = false
+  }
+}
+
+// Decode image - implementing the functionality from the provided code
+function decodeImage() {
+  if (!imageToDecodeData.value) return
+
+  state.isLoading = true
+
+  try {
+    // Get image data binary representation
+    const targetDataBinary = Array.from(imageToDecodeData.value.data, (color) => {
+      return color.toString(2).padStart(8, '0').split('')
+    })
+
+    // Extract hidden data by getting the LSB from each byte
+    const decryptImageData: number[] = []
+
+    // Calculate the expected size of the hidden image
+    const totalPixels = imageToDecodeData.value.width * imageToDecodeData.value.height
+    const sqrtPixels = Math.sqrt(totalPixels / 8)
+    const maxSize = Math.floor(sqrtPixels)
+    const expectedSize = maxSize * maxSize * 4 // 4 channels (RGBA)
+
+    // Extract LSB from each byte to reconstruct the hidden image
+    for (let i = 0; i < targetDataBinary.length && decryptImageData.length < expectedSize; i++) {
+      // Extract the least significant bit (index 7) from each color channel
+      const lsb = parseInt(targetDataBinary[i][7], 2)
+      decryptImageData.push(lsb)
+    }
+
+    // Convert to Uint8ClampedArray
+    const decryptedData = new Uint8ClampedArray(decryptImageData)
+
+    // Create ImageData with the decrypted data
+    const decodedImageData = new ImageData(decryptedData, maxSize, maxSize)
+
+    // Draw decoded image to canvas and get data URL
+    const decodeCanvas = document.createElement('canvas')
+    decodeCanvas.width = maxSize
+    decodeCanvas.height = maxSize
+    const decodeCtx = decodeCanvas.getContext('2d')
+
+    if (decodeCtx) {
+      decodeCtx.putImageData(decodedImageData, 0, 0)
+
+      // Store the decoded image data URL
+      if (decodedImageDataUrl.value) {
+        URL.revokeObjectURL(decodedImageDataUrl.value)
+      }
+      decodedImageDataUrl.value = decodeCanvas.toDataURL()
+
+      // Display the decoded image on the main canvas
+      if (canvas.value) {
+        Image.fromURL(decodedImageDataUrl.value)
+          .then((img) => {
+            // Calculate scale to fit canvas while maintaining aspect ratio
+            const canvasWidth = canvas.value!.width
+            const canvasHeight = canvas.value!.height
+            const imgWidth = img.width
+            const imgHeight = img.height
+
+            const scale = imgHeight > imgWidth ? canvasWidth / imgWidth : canvasHeight / imgHeight
+
+            img.set({
+              left: canvasWidth / 2,
+              originX: 'center',
+              originY: 'center',
+              top: canvasHeight / 2,
+              scaleX: scale,
+              scaleY: scale,
+              selectable: false,
+            })
+
+            canvas.value!.clear()
+            canvas.value!.add(img)
+            canvas.value!.renderAll()
+
+            success(t('tools.imageSteganography.messages.decryptionComplete'))
+          })
+          .catch((err) => {
+            showError(t('tools.imageSteganography.errors.decryptionFailed'))
+            console.error(err)
+          })
+      } else {
+        success(t('tools.imageSteganography.messages.decryptionComplete'))
+      }
+    } else {
+      throw new Error('Could not get decoding canvas context')
+    }
+  } catch (err) {
+    showError(t('tools.imageSteganography.errors.decryptionFailed'))
+    console.error(err)
+  } finally {
+    state.isLoading = false
   }
 }
 
@@ -629,6 +940,73 @@ function resetCanvas() {
   success(t('tools.imageSteganography.messages.canvasCleared'))
 }
 
+// Decoding functions
+// Select image to decode
+async function selectImageToDecode() {
+  try {
+    state.isLoading = true
+    const file = await getFile()
+    if (file) {
+      const url = URL.createObjectURL(file)
+      const img = new window.Image()
+      img.onload = () => {
+        // Create a canvas to get image data
+        const tempCanvas = document.createElement('canvas')
+        tempCanvas.width = img.width
+        tempCanvas.height = img.height
+        const tempCtx = tempCanvas.getContext('2d')
+        if (tempCtx) {
+          tempCtx.drawImage(img, 0, 0)
+          imageToDecodeData.value = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height)
+          success(t('tools.imageSteganography.messages.imageLoaded'))
+        }
+        URL.revokeObjectURL(url)
+      }
+      img.src = url
+    }
+  } catch (err) {
+    showError(t('tools.imageSteganography.errors.imageLoadFailed'))
+    console.error(err)
+  } finally {
+    state.isLoading = false
+  }
+}
+
+// Export decoded image
+function exportDecodedImage() {
+  if (!decodedImageDataUrl.value) return
+
+  try {
+    const link = document.createElement('a')
+    link.download = 'decoded-image.png'
+    link.href = decodedImageDataUrl.value
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    success(t('tools.imageSteganography.messages.imageExported'))
+  } catch (err) {
+    showError(t('tools.imageSteganography.errors.exportFailed'))
+    console.error(err)
+  }
+}
+
+// Reset decoding
+function resetDecoding() {
+  imageToDecodeData.value = null
+
+  if (decodedImageDataUrl.value) {
+    URL.revokeObjectURL(decodedImageDataUrl.value)
+    decodedImageDataUrl.value = null
+  }
+
+  if (canvas.value) {
+    canvas.value.clear()
+  }
+
+  success(t('tools.imageSteganography.messages.canvasCleared'))
+}
+
 // Lifecycle
 onMounted(() => {
   // Initialize canvas when component is mounted
@@ -653,6 +1031,9 @@ onUnmounted(() => {
   }
   if (targetImagePreviewUrl.value) {
     URL.revokeObjectURL(targetImagePreviewUrl.value)
+  }
+  if (decodedImageDataUrl.value) {
+    URL.revokeObjectURL(decodedImageDataUrl.value)
   }
 })
 
