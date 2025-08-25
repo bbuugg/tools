@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { routeConfig } from '../config/routes'
 import HomePageContent from '../views/Homepage.vue'
 import NotFound from '../views/NotFound.vue'
+import i18n from '../i18n'
 
 // Flatten the routeConfig to get all individual tool routes
 const flattenRoutes = routeConfig.flatMap(
@@ -35,6 +36,15 @@ const router = createRouter({
       component: NotFound,
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'homepage') {
+    document.title = i18n.global.t('navigation.title')
+  } else {
+    document.title = i18n.global.t(`tools.${to.name}.title`)
+  }
+  next()
 })
 
 export default router
