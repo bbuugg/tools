@@ -418,6 +418,16 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'svg-editor',
+        name: 'svgEditor',
+        component: () => import('../tools/image/SvgEditor.vue'),
+        meta: {
+          title: 'SVG Editor',
+          icon: '🎨',
+          status: 'active',
+        },
+      },
+      {
         path: 'image-watermark',
         name: 'imageWatermark',
         component: ImageWatermark,
