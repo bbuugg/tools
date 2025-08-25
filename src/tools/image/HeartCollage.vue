@@ -202,7 +202,7 @@
         <div class="flex flex-col items-center">
           <div
             ref="canvasContainer"
-            class="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100"
+            class="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100 select-none"
             :style="{
               width: `${canvasDimensions.width}px`,
               height: `${canvasDimensions.height}px`,
