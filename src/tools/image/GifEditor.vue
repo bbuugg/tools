@@ -597,7 +597,7 @@ async function parseGifFrames(file: File) {
       const ctx = canvas.getContext('2d', { willReadFrequently: true })
       if (ctx) {
         // Clear canvas with transparent background
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // ctx.clearRect(0, 0, canvas.width, canvas.height)
 
         // Create ImageData directly from the patch (which is full RGBA data when buildPatch=true)
         const imageData = new ImageData(
@@ -780,7 +780,7 @@ async function createGifFromFrames() {
   for (const frame of frames.value) {
     try {
       // Clear canvas with transparent background
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      // ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Draw frame on canvas
       const img = new Image()
