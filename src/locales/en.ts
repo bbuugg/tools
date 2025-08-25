@@ -701,6 +701,12 @@ export default {
       characters: 'characters',
       smaller: 'smaller',
       larger: 'larger',
+      caseOptions: 'Case Options',
+      keyCase: 'Key Case',
+      valueCase: 'Value Case',
+      preserveCase: 'Preserve Original Case',
+      toUpperCase: 'Convert to Uppercase',
+      toLowerCase: 'Convert to Lowercase',
       features: {
         prettyFormat: {
           title: 'Pretty Format',

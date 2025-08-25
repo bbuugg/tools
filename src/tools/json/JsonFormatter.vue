@@ -141,6 +141,41 @@
             </div>
           </div>
 
+          <!-- Case Options -->
+          <div class="mt-4 space-y-3">
+            <h4 class="font-medium text-gray-900">{{ $t('tools.jsonFormatter.caseOptions') }}</h4>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="flex flex-col space-y-1">
+                <label class="text-sm font-medium text-gray-700"
+                  >{{ $t('tools.jsonFormatter.keyCase') }}:</label
+                >
+                <select
+                  v-model="options.keyCase"
+                  class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="preserve">{{ $t('tools.jsonFormatter.preserveCase') }}</option>
+                  <option value="upper">{{ $t('tools.jsonFormatter.toUpperCase') }}</option>
+                  <option value="lower">{{ $t('tools.jsonFormatter.toLowerCase') }}</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col space-y-1">
+                <label class="text-sm font-medium text-gray-700"
+                  >{{ $t('tools.jsonFormatter.valueCase') }}:</label
+                >
+                <select
+                  v-model="options.valueCase"
+                  class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="preserve">{{ $t('tools.jsonFormatter.preserveCase') }}</option>
+                  <option value="upper">{{ $t('tools.jsonFormatter.toUpperCase') }}</option>
+                  <option value="lower">{{ $t('tools.jsonFormatter.toLowerCase') }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <button
             @click="formatJson"
             :disabled="!inputJson.trim() || !isValid"
@@ -230,6 +265,8 @@ const options = reactive({
   sortKeys: false,
   compact: false,
   escapeUnicode: false,
+  keyCase: 'preserve', // preserve, upper, lower
+  valueCase: 'preserve', // preserve, upper, lower
 })
 
 function loadExample() {
@@ -282,6 +319,55 @@ function sortObjectKeys(obj: unknown): unknown {
   return obj
 }
 
+/**
+ * Convert keys or values case according to options
+ */
+function convertCase(obj: unknown): unknown {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertCase(item))
+  } else if (obj !== null && typeof obj === 'object') {
+    const convertedObj: Record<string, unknown> = {}
+
+    Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
+      // Convert key case
+      let convertedKey = key
+      if (options.keyCase === 'upper') {
+        convertedKey = key.toUpperCase()
+      } else if (options.keyCase === 'lower') {
+        convertedKey = key.toLowerCase()
+      }
+
+      // Convert value case if it's a string
+      let convertedValue = value
+      if (typeof value === 'string' && options.valueCase !== 'preserve') {
+        if (options.valueCase === 'upper') {
+          convertedValue = value.toUpperCase()
+        } else if (options.valueCase === 'lower') {
+          convertedValue = value.toLowerCase()
+        }
+      } else if (typeof value === 'object' && value !== null) {
+        // Recursively convert nested objects/arrays
+        convertedValue = convertCase(value)
+      }
+
+      convertedObj[convertedKey] = convertedValue
+    })
+
+    return convertedObj
+  }
+
+  // Handle primitive values (strings, numbers, booleans, null)
+  if (typeof obj === 'string' && options.valueCase !== 'preserve') {
+    if (options.valueCase === 'upper') {
+      return obj.toUpperCase()
+    } else if (options.valueCase === 'lower') {
+      return obj.toLowerCase()
+    }
+  }
+
+  return obj
+}
+
 function formatJson() {
   try {
     if (!inputJson.value.trim()) {
@@ -294,6 +380,11 @@ function formatJson() {
     // Sort keys if enabled
     if (options.sortKeys) {
       data = sortObjectKeys(data)
+    }
+
+    // Convert case if needed
+    if (options.keyCase !== 'preserve' || options.valueCase !== 'preserve') {
+      data = convertCase(data)
     }
 
     // Calculate original and formatted sizes

@@ -218,6 +218,12 @@ export default {
       characters: '字符',
       smaller: '减少',
       larger: '增加',
+      caseOptions: '大小写选项',
+      keyCase: '键名大小写',
+      valueCase: '值大小写',
+      preserveCase: '保持原有大小写',
+      toUpperCase: '转换为大写',
+      toLowerCase: '转换为小写',
       features: {
         prettyFormat: {
           title: '美化格式',
