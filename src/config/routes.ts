@@ -1,5 +1,21 @@
 import { type RouteRecordRaw } from 'vue-router'
 
+// ComingSoon component for tools under development
+const ComingSoon = () => import('../components/ComingSoon.vue')
+
+// Helper function to get the correct component based on development status
+const getComponent = (toolComponent: () => Promise<unknown>, status: Status = Status.Active) => {
+  if (status === Status.ComingSoon && import.meta.env.PROD) {
+    return ComingSoon
+  }
+  return toolComponent
+}
+
+export enum Status {
+  Active = 'active',
+  ComingSoon = 'coming-soon',
+}
+
 // Lazy loaded components
 const UniversalConverter = () => import('../tools/json/UniversalConverter.vue')
 const HtmlExtractor = () => import('../tools/HtmlExtractor.vue')
@@ -31,6 +47,7 @@ const TextSteganography = () => import('../tools/TextSteganography.vue')
 const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
+const HeartCollage = () => import('../tools/image/HeartCollage.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -54,7 +71,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Path Extractor',
           icon: '🛤️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -64,7 +81,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON to Excel Converter',
           icon: '📊',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -74,7 +91,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Excel to JSON Converter',
           icon: '📈',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -84,7 +101,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Formatter',
           icon: '🎨',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -94,7 +111,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Field Extractor',
           icon: '🔍',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -104,7 +121,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Excel Text to JSON',
           icon: '📋',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -114,7 +131,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON File Merger',
           icon: '🔗',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -124,7 +141,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Cookie to JSON',
           icon: '🍪',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -134,7 +151,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Keys Extractor',
           icon: '🔑',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -144,7 +161,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Number to Text',
           icon: '🔢',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -154,7 +171,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Missing Key Finder',
           icon: '🔍',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -164,7 +181,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array Slicer',
           icon: '📊',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -174,7 +191,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array Deduplicator',
           icon: '🔄',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
@@ -195,7 +212,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'HTML Content Extractor',
           icon: '🖼️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -205,7 +222,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Universal Format Converter',
           icon: '🔄',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
@@ -226,7 +243,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image List Processor',
           icon: '🖼️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -236,7 +253,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image Compressor',
           icon: '🗂',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -246,7 +263,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Background Remover',
           icon: '✂️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -256,7 +273,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Video to GIF Converter',
           icon: '🎬',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -266,7 +283,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image to GIF Converter',
           icon: '🖼️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -276,7 +293,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'GIF Editor',
           icon: '🎞️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -286,7 +303,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'SVG Editor',
           icon: '🎨',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -296,17 +313,17 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image Watermark',
           icon: '✂️',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
         path: 'heart-collage',
         name: 'heartCollage',
-        component: () => import('../tools/image/HeartCollage.vue'),
+        component: () => getComponent(HeartCollage, Status.ComingSoon),
         meta: {
           title: 'Heart Collage',
           icon: '❤️',
-          status: 'active',
+          status: Status.ComingSoon,
         },
       },
       {
@@ -316,7 +333,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Color Picker',
           icon: '🎨',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
@@ -337,7 +354,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'File Renamer',
           icon: '📝',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -347,7 +364,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Text Processor',
           icon: '📝',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
@@ -368,7 +385,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Favicon Generator',
           icon: '🎯',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -378,7 +395,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'QR Code Tool',
           icon: '📱',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
@@ -399,7 +416,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'WebRTC File Transfer',
           icon: '📡',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
@@ -409,17 +426,17 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Text Steganography',
           icon: '🔒',
-          status: 'active',
+          status: Status.Active,
         },
       },
       {
         path: 'image-steganography',
         name: 'imageSteganography',
-        component: ImageSteganography,
+        component: getComponent(ImageSteganography, Status.ComingSoon),
         meta: {
           title: 'Image Steganography',
           icon: '🖼️',
-          status: 'active',
+          status: Status.ComingSoon,
         },
       },
       {
@@ -429,7 +446,7 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'PDF Viewer',
           icon: '📄',
-          status: 'active',
+          status: Status.Active,
         },
       },
     ],
