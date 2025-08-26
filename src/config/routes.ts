@@ -32,6 +32,9 @@ const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 
+// Lazy loaded PDF Viewer component
+const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
+
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
   // JSON Tools Routes
@@ -416,6 +419,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Image Steganography',
           icon: '🖼️',
+          status: 'active',
+        },
+      },
+      {
+        path: 'pdf-viewer',
+        name: 'pdfViewer',
+        component: PdfViewer,
+        meta: {
+          title: 'PDF Viewer',
+          icon: '📄',
           status: 'active',
         },
       },
