@@ -1,10 +1,20 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ColorPickerTool from '../ColorPickerTool.vue'
 import { createI18n } from 'vue-i18n'
-import en from '@/locales/en'
+import en from '../../locales/en'
 
+// Mock the useToast composable
+vi.mock('../../composables/useToast', () => ({
+  useToast: () => ({
+    success: vi.fn(),
+    error: vi.fn(),
+  }),
+}))
+
+// Create i18n instance with proper configuration
 const i18n = createI18n({
+  legacy: false, // Add this to avoid legacy mode issues
   locale: 'en',
   messages: { en },
 })
@@ -23,7 +33,7 @@ describe('ColorPickerTool', () => {
     )
   })
 
-  it('should have color picker section', () => {
+  it('should have color picker section with slider mode selector', () => {
     const wrapper = mount(ColorPickerTool, {
       global: {
         plugins: [i18n],
@@ -32,9 +42,13 @@ describe('ColorPickerTool', () => {
 
     expect(wrapper.find('.bg-gray-50').exists()).toBe(true)
     expect(wrapper.text()).toContain('Color Picker')
+    expect(wrapper.text()).toContain('RGBA')
+    expect(wrapper.text()).toContain('HSL')
+    expect(wrapper.text()).toContain('HSV')
+    expect(wrapper.text()).toContain('CMYK')
   })
 
-  it('should have image color picker section with pick color button', () => {
+  it('should have image color picker section with image upload options', () => {
     const wrapper = mount(ColorPickerTool, {
       global: {
         plugins: [i18n],
@@ -44,7 +58,6 @@ describe('ColorPickerTool', () => {
     expect(wrapper.text()).toContain('Image Color Picker')
     expect(wrapper.text()).toContain('Drop an image here or click to select')
     expect(wrapper.text()).toContain('Select Image')
-    expect(wrapper.text()).toContain('Pick Color')
   })
 
   it('should have common colors section', () => {

@@ -2215,6 +2215,8 @@ export default {
       colorPicked: 'Color picked successfully!',
       colorUpdated: 'Color updated successfully!',
       colorPickError: 'Failed to pick color from image',
+      noImageInClipboard: 'No image found in clipboard',
+      pasteFailed: 'Failed to paste image from clipboard',
       invalidHex: 'Invalid HEX color format',
       invalidRgb: 'Invalid RGB color format',
       invalidRgbRange: 'RGB values must be between 0 and 255',

@@ -28,69 +28,335 @@
               />
             </div>
 
-            <!-- RGBA Sliders -->
+            <!-- Slider Mode Selector -->
+            <div class="mb-4">
+              <div class="flex space-x-2 mb-2">
+                <button
+                  @click="sliderMode = 'rgba'"
+                  :class="[
+                    'px-3 py-1 text-sm rounded transition-colors',
+                    sliderMode === 'rgba'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                  ]"
+                >
+                  RGBA
+                </button>
+                <button
+                  @click="sliderMode = 'hsl'"
+                  :class="[
+                    'px-3 py-1 text-sm rounded transition-colors',
+                    sliderMode === 'hsl'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                  ]"
+                >
+                  HSL
+                </button>
+                <button
+                  @click="sliderMode = 'hsv'"
+                  :class="[
+                    'px-3 py-1 text-sm rounded transition-colors',
+                    sliderMode === 'hsv'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                  ]"
+                >
+                  HSV
+                </button>
+                <button
+                  @click="sliderMode = 'cmyk'"
+                  :class="[
+                    'px-3 py-1 text-sm rounded transition-colors',
+                    sliderMode === 'cmyk'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                  ]"
+                >
+                  CMYK
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Sliders based on mode -->
             <div class="space-y-4">
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700">R</span>
-                  <span class="text-sm text-gray-500">{{ currentColor.rgb.r }}</span>
+              <!-- RGBA Sliders -->
+              <div v-if="sliderMode === 'rgba'">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">R</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.rgb.r }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    v-model.number="currentColor.rgb.r"
+                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onRgbChange"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="255"
-                  v-model.number="currentColor.rgb.r"
-                  class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer"
-                  @input="onRgbChange"
-                />
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">G</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.rgb.g }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    v-model.number="currentColor.rgb.g"
+                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onRgbChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">B</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.rgb.b }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    v-model.number="currentColor.rgb.b"
+                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onRgbChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">A</span>
+                    <span class="text-sm text-gray-500">{{
+                      parseFloat(String(currentColor.rgb.a)).toFixed(2)
+                    }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    v-model.number="currentColor.rgb.a"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onAlphaChange"
+                  />
+                </div>
               </div>
 
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700">G</span>
-                  <span class="text-sm text-gray-500">{{ currentColor.rgb.g }}</span>
+              <!-- HSL Sliders -->
+              <div v-else-if="sliderMode === 'hsl'">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">H</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsl.h }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    v-model.number="currentColor.hsl.h"
+                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHslChange"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="255"
-                  v-model.number="currentColor.rgb.g"
-                  class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer"
-                  @input="onRgbChange"
-                />
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">S</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsl.s }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.hsl.s"
+                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHslChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">L</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsl.l }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.hsl.l"
+                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHslChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">A</span>
+                    <span class="text-sm text-gray-500">{{
+                      parseFloat(String(currentColor.rgb.a)).toFixed(2)
+                    }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    v-model.number="currentColor.rgb.a"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onAlphaChange"
+                  />
+                </div>
               </div>
 
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700">B</span>
-                  <span class="text-sm text-gray-500">{{ currentColor.rgb.b }}</span>
+              <!-- HSV Sliders -->
+              <div v-else-if="sliderMode === 'hsv'">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">H</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsv.h }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    v-model.number="currentColor.hsv.h"
+                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHsvChange"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="255"
-                  v-model.number="currentColor.rgb.b"
-                  class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
-                  @input="onRgbChange"
-                />
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">S</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsv.s }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.hsv.s"
+                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHsvChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">V</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.hsv.v }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.hsv.v"
+                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onHsvChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">A</span>
+                    <span class="text-sm text-gray-500">{{
+                      parseFloat(String(currentColor.rgb.a)).toFixed(2)
+                    }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    v-model.number="currentColor.rgb.a"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onAlphaChange"
+                  />
+                </div>
               </div>
 
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700">A</span>
-                  <span class="text-sm text-gray-500">{{
-                    parseFloat(String(currentColor.rgb.a)).toFixed(2)
-                  }}</span>
+              <!-- CMYK Sliders -->
+              <div v-else-if="sliderMode === 'cmyk'">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">C</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.c }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.cmyk.c"
+                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onCmykChange"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  v-model.number="currentColor.rgb.a"
-                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  @input="onAlphaChange"
-                />
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">M</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.m }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.cmyk.m"
+                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onCmykChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">Y</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.y }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.cmyk.y"
+                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onCmykChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">K</span>
+                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.k }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    v-model.number="currentColor.cmyk.k"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onCmykChange"
+                  />
+                </div>
+
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-700">A</span>
+                    <span class="text-sm text-gray-500">{{
+                      parseFloat(String(currentColor.rgb.a)).toFixed(2)
+                    }}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    v-model.number="currentColor.rgb.a"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    @input="onAlphaChange"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -101,7 +367,9 @@
               {{ $t('tools.colorPicker.imagePicker') }}
             </h3>
 
+            <!-- Image input area (hidden when image is loaded) -->
             <div
+              v-if="!imagePreview"
               class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer mb-4"
               @drop="handleImageDrop"
               @dragover.prevent
@@ -126,24 +394,33 @@
               </div>
             </div>
 
-            <div v-if="imagePreview" class="mt-4">
+            <!-- Image preview and color picker (shown when image is loaded) -->
+            <div v-else>
               <div class="flex justify-between items-center mb-2">
                 <p class="text-sm text-gray-600">{{ $t('tools.colorPicker.imagePreview') }}</p>
-                <button
-                  @click="activateColorPicker"
-                  :class="[
-                    'px-3 py-1 text-sm rounded transition-colors',
-                    isColorPickerActive
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'bg-blue-600 text-white hover:bg-blue-700',
-                  ]"
-                >
-                  {{
-                    isColorPickerActive
-                      ? $t('tools.colorPicker.cancelPick')
-                      : $t('tools.colorPicker.pickColor')
-                  }}
-                </button>
+                <div class="flex space-x-2">
+                  <button
+                    @click="activateColorPicker"
+                    :class="[
+                      'px-3 py-1 text-sm rounded transition-colors',
+                      isColorPickerActive
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'bg-blue-600 text-white hover:bg-blue-700',
+                    ]"
+                  >
+                    {{
+                      isColorPickerActive
+                        ? $t('tools.colorPicker.cancelPick')
+                        : $t('tools.colorPicker.pickColor')
+                    }}
+                  </button>
+                  <button
+                    @click="clearImage"
+                    class="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                  >
+                    {{ $t('common.clear') }}
+                  </button>
+                </div>
               </div>
               <img
                 :src="imagePreview"
@@ -156,6 +433,22 @@
               <p v-if="isColorPickerActive" class="text-sm text-gray-500 mt-2">
                 {{ $t('tools.colorPicker.clickToPick') }}
               </p>
+
+              <!-- Re-select image options -->
+              <div class="mt-4 flex space-x-2">
+                <button
+                  @click="openImageSelector"
+                  class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                >
+                  {{ $t('tools.colorPicker.selectImage') }}
+                </button>
+                <button
+                  @click="pasteFromClipboard"
+                  class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                >
+                  {{ $t('common.paste') }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -464,6 +757,9 @@ const inputValues = reactive<InputValues>({
   hsv: 'hsv(217, 76%, 96%)',
   cmyk: 'cmyk(76%, 47%, 0%, 4%)',
 })
+
+// Slider mode state
+const sliderMode = ref<'rgba' | 'hsl' | 'hsv' | 'cmyk'>('rgba')
 
 // Common colors
 const commonColors = [
@@ -775,6 +1071,30 @@ const onAlphaChange = () => {
   updateAllColors()
 }
 
+// New event handlers for different color modes
+const onHslChange = () => {
+  const rgb = hslToRgb(currentColor.hsl.h, currentColor.hsl.s, currentColor.hsl.l)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onHsvChange = () => {
+  const rgb = hsvToRgb(currentColor.hsv.h, currentColor.hsv.s, currentColor.hsv.v)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onCmykChange = () => {
+  const rgb = cmykToRgb(
+    currentColor.cmyk.c,
+    currentColor.cmyk.m,
+    currentColor.cmyk.y,
+    currentColor.cmyk.k,
+  )
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
 const selectCommonColor = (color: string) => {
   currentColor.hex = color
   const rgb = hexToRgb(color)
@@ -821,6 +1141,36 @@ const handleImageDrop = (event: DragEvent) => {
       reader.readAsDataURL(file)
     }
   }
+}
+
+// New function to handle paste from clipboard
+const pasteFromClipboard = async () => {
+  try {
+    const clipboardItems = await navigator.clipboard.read()
+    for (const clipboardItem of clipboardItems) {
+      for (const type of clipboardItem.types) {
+        if (type.startsWith('image/')) {
+          const blob = await clipboardItem.getType(type)
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            imagePreview.value = e.target?.result as string
+            isColorPickerActive.value = false
+          }
+          reader.readAsDataURL(blob)
+          return
+        }
+      }
+    }
+    showError(t('tools.colorPicker.noImageInClipboard'))
+  } catch {
+    showError(t('tools.colorPicker.pasteFailed'))
+  }
+}
+
+// New function to clear the loaded image
+const clearImage = () => {
+  imagePreview.value = null
+  isColorPickerActive.value = false
 }
 
 const activateColorPicker = () => {
@@ -1027,5 +1377,67 @@ onUnmounted(() => {
 <style scoped>
 .cursor-crosshair {
   cursor: crosshair;
+}
+
+/* Fix for slider drag issues */
+.slider-fix {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+.slider-fix::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider-fix::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider-fix:active::-webkit-slider-thumb,
+.slider-fix:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+  background: #2563eb;
+}
+
+.slider-fix:active::-moz-range-thumb,
+.slider-fix:hover::-moz-range-thumb {
+  transform: scale(1.2);
+  background: #2563eb;
+}
+
+/* Additional fixes for better slider experience */
+.slider-fix:focus {
+  outline: none;
+}
+
+.slider-fix::-webkit-slider-thumb:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.slider-fix::-moz-range-thumb:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 </style>

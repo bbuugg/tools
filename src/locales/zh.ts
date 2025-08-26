@@ -2147,6 +2147,8 @@ export default {
       colorPicked: '颜色选择成功！',
       colorUpdated: '颜色更新成功！',
       colorPickError: '从图像中选择颜色失败',
+      noImageInClipboard: '剪贴板中未找到图像',
+      pasteFailed: '从剪贴板粘贴图像失败',
       invalidHex: 'HEX颜色格式无效',
       invalidRgb: 'RGB颜色格式无效',
       invalidRgbRange: 'RGB值必须在0-255之间',
