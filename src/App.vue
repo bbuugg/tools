@@ -350,10 +350,11 @@
 import { menuConfig } from '@/config/routes'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ElectronTitleBar from '@/components/ElectronTitleBar.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { locale, t } = useI18n()
 
 const selectedCategory = ref('web-tools')
@@ -423,6 +424,7 @@ function enterCategory(categoryId: string) {
 function backToCategories() {
   showCategoryView.value = true
   searchQuery.value = '' // Clear search when going back
+  router.replace('/')
 }
 
 function clearSearch() {
