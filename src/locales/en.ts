@@ -1921,6 +1921,46 @@ export default {
         exportFailed: 'Failed to export image',
       },
     },
+    textProcessor: {
+      title: 'Text Processor',
+      description:
+        'Process text with URL encoding/decoding, Base64 encoding/decoding, and hashing functions',
+      inputTitle: 'Input Text',
+      outputTitle: 'Output Text',
+      inputPlaceholder: 'Enter or paste your text here...',
+      outputPlaceholder: 'Processed text will appear here...',
+      chars: 'Characters',
+      words: 'Words',
+      lines: 'Lines',
+      operations: 'Text Operations',
+      urlEncode: 'URL Encode',
+      urlDecode: 'URL Decode',
+      base64Encode: 'Base64 Encode',
+      base64Decode: 'Base64 Decode',
+      md5Hash: 'MD5 Hash',
+      sha256Hash: 'SHA-256 Hash',
+      exampleText:
+        'Hello World! This is a sample text for processing. https://example.com/?param=value',
+      features: {
+        urlEncoding: {
+          title: 'URL Encoding',
+          description: 'Encode or decode URLs and URI components for safe transmission',
+        },
+        base64: {
+          title: 'Base64 Encoding',
+          description: 'Encode or decode data using Base64 encoding scheme',
+        },
+        hashing: {
+          title: 'Hash Functions',
+          description: 'Generate cryptographic hashes using MD5 or SHA-256 algorithms',
+        },
+      },
+      errors: {
+        encodingError: 'Failed to encode text. Please check your input.',
+        decodingError: 'Failed to decode text. Please check your input.',
+        hashingError: 'Failed to generate hash. Please check your input.',
+      },
+    },
     heartCollage: {
       title: 'Shape Collage Generator',
       description: 'Create beautiful collages in various shapes filled with your images',

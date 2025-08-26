@@ -25,6 +25,7 @@
     "@material-tailwind/html": "^3.0.0-beta.7",
     "@tailwindcss/vite": "^4.1.12",
     "@types/qrcode": "^1.5.5",
+    "crypto-js": "^4.2.0",
     "dompurify": "^3.2.6",
     "fabric": "^6.7.1",
     "gif.js": "^0.2.0",

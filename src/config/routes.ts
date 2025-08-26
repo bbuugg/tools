@@ -21,27 +21,15 @@ const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
 const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
-const JsonArrayToLines = () => import('../tools/json/JsonArrayToLines.vue')
-const JsonLinesToArray = () => import('../tools/json/JsonLinesToArray.vue')
-const JsonFieldRemover = () => import('../tools/json/JsonFieldRemover.vue')
-const JsonArrayShuffler = () => import('../tools/json/JsonArrayShuffler.vue')
-const JsonToCookie = () => import('../tools/json/JsonToCookie.vue')
-const JsonFieldAdder = () => import('../tools/json/JsonFieldAdder.vue')
-const JsonValueResetter = () => import('../tools/json/JsonValueResetter.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
-const JsonLineSplitter = () => import('../tools/json/JsonLineSplitter.vue')
-const JsonFieldReplacer = () => import('../tools/json/JsonFieldReplacer.vue')
-const JsToJson = () => import('../tools/json/JsToJson.vue')
-const JsonFieldMapper = () => import('../tools/json/JsonFieldMapper.vue')
-const JsonFieldSearcher = () => import('../tools/json/JsonFieldSearcher.vue')
-const JsonDuplicateDetector = () => import('../tools/json/JsonDuplicateDetector.vue')
 const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
 const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
 const TextSteganography = () => import('../tools/TextSteganography.vue')
 const ImageSteganography = () => import('../tools/ImageSteganography.vue')
+const TextProcessor = () => import('../tools/TextProcessor.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -156,76 +144,6 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'json-array-to-lines',
-        name: 'jsonArrayToLines',
-        component: JsonArrayToLines,
-        meta: {
-          title: 'JSON Array to Lines',
-          icon: '📄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-lines-to-array',
-        name: 'jsonLinesToArray',
-        component: JsonLinesToArray,
-        meta: {
-          title: 'JSON Lines to Array',
-          icon: '📊',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-field-remover',
-        name: 'jsonFieldRemover',
-        component: JsonFieldRemover,
-        meta: {
-          title: 'JSON Field Remover',
-          icon: '🗑️',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-array-shuffler',
-        name: 'jsonArrayShuffler',
-        component: JsonArrayShuffler,
-        meta: {
-          title: 'JSON Array Shuffler',
-          icon: '🎲',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-to-cookie',
-        name: 'jsonToCookie',
-        component: JsonToCookie,
-        meta: {
-          title: 'JSON to Cookie',
-          icon: '🍪',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-field-adder',
-        name: 'jsonFieldAdder',
-        component: JsonFieldAdder,
-        meta: {
-          title: 'JSON Field Adder',
-          icon: '➕',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-value-resetter',
-        name: 'jsonValueResetter',
-        component: JsonValueResetter,
-        meta: {
-          title: 'JSON Value Resetter',
-          icon: '🔄',
-          status: 'active',
-        },
-      },
-      {
         path: 'json-missing-key-finder',
         name: 'jsonMissingKeyFinder',
         component: JsonMissingKeyFinder,
@@ -252,66 +170,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Array Deduplicator',
           icon: '🔄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-line-splitter',
-        name: 'jsonLineSplitter',
-        component: JsonLineSplitter,
-        meta: {
-          title: 'JSON Line Splitter',
-          icon: '📄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-field-replacer',
-        name: 'jsonFieldReplacer',
-        component: JsonFieldReplacer,
-        meta: {
-          title: 'JSON Field Replacer',
-          icon: '🔄',
-          status: 'active',
-        },
-      },
-      {
-        path: 'js-to-json',
-        name: 'jsToJson',
-        component: JsToJson,
-        meta: {
-          title: 'JavaScript to JSON',
-          icon: '⚡',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-field-mapper',
-        name: 'jsonFieldMapper',
-        component: JsonFieldMapper,
-        meta: {
-          title: 'JSON Field Mapper',
-          icon: '🗺️',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-field-searcher',
-        name: 'jsonFieldSearcher',
-        component: JsonFieldSearcher,
-        meta: {
-          title: 'JSON Field Searcher',
-          icon: '🔍',
-          status: 'active',
-        },
-      },
-      {
-        path: 'json-duplicate-detector',
-        name: 'jsonDuplicateDetector',
-        component: JsonDuplicateDetector,
-        meta: {
-          title: 'JSON Duplicate Detector',
-          icon: '🔍',
           status: 'active',
         },
       },
@@ -469,23 +327,13 @@ export const routeConfig: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'url-encoder',
-        name: 'urlEncoder',
-        component: () => import('../tools/ComingSoon.vue'),
+        path: 'text-processor',
+        name: 'textProcessor',
+        component: TextProcessor,
         meta: {
-          title: 'URL Encoder',
-          icon: '🔗',
-          status: 'coming-soon',
-        },
-      },
-      {
-        path: 'base64-converter',
-        name: 'base64Converter',
-        component: () => import('../tools/ComingSoon.vue'),
-        meta: {
-          title: 'Base64 Converter',
-          icon: '🔄',
-          status: 'coming-soon',
+          title: 'Text Processor',
+          icon: '📝',
+          status: 'active',
         },
       },
     ],
@@ -507,16 +355,6 @@ export const routeConfig: RouteRecordRaw[] = [
           title: 'Favicon Generator',
           icon: '🎯',
           status: 'active',
-        },
-      },
-      {
-        path: 'color-picker',
-        name: 'colorPicker',
-        component: () => import('../tools/ComingSoon.vue'),
-        meta: {
-          title: 'Color Picker',
-          icon: '🎨',
-          status: 'coming-soon',
         },
       },
       {
