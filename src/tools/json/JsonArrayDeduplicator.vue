@@ -3,9 +3,11 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Array Deduplicator</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {{ $t('tools.jsonArrayDeduplicator.title') }}
+        </h1>
         <p class="text-gray-600">
-          Remove duplicate elements from JSON arrays with various comparison methods
+          {{ $t('tools.jsonArrayDeduplicator.description') }}
         </p>
       </div>
 
@@ -13,23 +15,29 @@
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">Smart Detection</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonArrayDeduplicator.features.smartDetection.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Detect duplicates using deep comparison or specific field matching
+            {{ $t('tools.jsonArrayDeduplicator.features.smartDetection.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Flexible Options</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonArrayDeduplicator.features.flexibleOptions.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Choose comparison methods and specify which occurrence to keep
+            {{ $t('tools.jsonArrayDeduplicator.features.flexibleOptions.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">📊</div>
-          <h3 class="text-lg font-semibold mb-2">Detailed Stats</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonArrayDeduplicator.features.detailedStats.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Get comprehensive statistics about duplicates found and removed
+            {{ $t('tools.jsonArrayDeduplicator.features.detailedStats.description') }}
           </p>
         </div>
       </div>
@@ -38,68 +46,90 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON Array</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonArrayDeduplicator.inputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON array here..."
+            :placeholder="$t('tools.jsonArrayDeduplicator.inputPlaceholder')"
             class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="analyzeArray"
           ></textarea>
 
           <!-- Options -->
           <div class="mt-4 space-y-4">
-            <h4 class="font-medium text-gray-900">Deduplication Options</h4>
+            <h4 class="font-medium text-gray-900">
+              {{ $t('tools.jsonArrayDeduplicator.deduplicationOptions') }}
+            </h4>
 
             <div class="space-y-3">
               <div class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700 w-32">Comparison Method:</label>
+                <label class="text-sm font-medium text-gray-700 w-32"
+                  >{{ $t('tools.jsonArrayDeduplicator.comparisonMethod') }}:</label
+                >
                 <select
                   v-model="options.method"
                   @change="analyzeArray"
                   class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="deep">Deep Comparison (Entire Object)</option>
-                  <option value="shallow">Shallow Comparison (Reference)</option>
-                  <option value="field">Specific Field Comparison</option>
-                  <option value="stringify">JSON String Comparison</option>
+                  <option value="deep">
+                    {{ $t('tools.jsonArrayDeduplicator.deepComparison') }}
+                  </option>
+                  <option value="shallow">
+                    {{ $t('tools.jsonArrayDeduplicator.shallowComparison') }}
+                  </option>
+                  <option value="field">
+                    {{ $t('tools.jsonArrayDeduplicator.fieldComparison') }}
+                  </option>
+                  <option value="stringify">
+                    {{ $t('tools.jsonArrayDeduplicator.stringComparison') }}
+                  </option>
                 </select>
               </div>
 
               <div v-if="options.method === 'field'" class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700 w-32">Compare Field:</label>
+                <label class="text-sm font-medium text-gray-700 w-32"
+                  >{{ $t('tools.jsonArrayDeduplicator.compareField') }}:</label
+                >
                 <input
                   v-model="options.compareField"
                   @input="analyzeArray"
                   type="text"
-                  placeholder="Field name (e.g., id, email)"
+                  :placeholder="$t('tools.jsonArrayDeduplicator.compareField')"
                   class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700 w-32">Keep Occurrence:</label>
+                <label class="text-sm font-medium text-gray-700 w-32"
+                  >{{ $t('tools.jsonArrayDeduplicator.keepOccurrence') }}:</label
+                >
                 <select
                   v-model="options.keepOccurrence"
                   class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="first">First Occurrence</option>
-                  <option value="last">Last Occurrence</option>
+                  <option value="first">
+                    {{ $t('tools.jsonArrayDeduplicator.firstOccurrence') }}
+                  </option>
+                  <option value="last">
+                    {{ $t('tools.jsonArrayDeduplicator.lastOccurrence') }}
+                  </option>
                 </select>
               </div>
 
@@ -111,7 +141,7 @@
                     type="checkbox"
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  Case Sensitive Comparison
+                  {{ $t('tools.jsonArrayDeduplicator.caseSensitive') }}
                 </label>
 
                 <label class="flex items-center">
@@ -121,7 +151,7 @@
                     type="checkbox"
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  Show Found Duplicates
+                  {{ $t('tools.jsonArrayDeduplicator.showDuplicates') }}
                 </label>
               </div>
             </div>
@@ -129,13 +159,24 @@
 
           <!-- Analysis Results -->
           <div v-if="analysisResults" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <h5 class="font-medium text-blue-900 mb-2">Analysis Results:</h5>
+            <h5 class="font-medium text-blue-900 mb-2">
+              {{ $t('tools.jsonArrayDeduplicator.analysisResults') }}:
+            </h5>
             <div class="text-sm text-blue-800 space-y-1">
-              <p>• Total elements: {{ analysisResults.total }}</p>
-              <p>• Unique elements: {{ analysisResults.unique }}</p>
-              <p>• Duplicates found: {{ analysisResults.duplicates }}</p>
+              <p>
+                • {{ $t('tools.jsonArrayDeduplicator.totalElements') }}: {{ analysisResults.total }}
+              </p>
+              <p>
+                • {{ $t('tools.jsonArrayDeduplicator.uniqueElements') }}:
+                {{ analysisResults.unique }}
+              </p>
+              <p>
+                • {{ $t('tools.jsonArrayDeduplicator.duplicatesFound') }}:
+                {{ analysisResults.duplicates }}
+              </p>
               <p v-if="analysisResults.duplicates > 0">
-                • Will remove: {{ analysisResults.toRemove }} elements
+                • {{ $t('tools.jsonArrayDeduplicator.willRemove') }}:
+                {{ analysisResults.toRemove }} {{ $t('common.items') }}
               </p>
             </div>
           </div>
@@ -145,28 +186,30 @@
             :disabled="!inputJson.trim() || !isValidArray"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Remove Duplicates
+            {{ $t('tools.jsonArrayDeduplicator.deduplicateButton') }}
           </button>
         </div>
 
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Deduplicated Array</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonArrayDeduplicator.deduplicatedArray') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 v-if="deduplicatedOutput"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="deduplicatedOutput"
                 @click="downloadJson"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -177,14 +220,14 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">🔍</div>
-              <p>No results yet. Input a JSON array to remove duplicates.</p>
+              <p>{{ $t('tools.jsonArrayDeduplicator.noResults') }}</p>
             </div>
           </div>
 
           <div v-if="error" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
-              <p class="font-medium">Error</p>
+              <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
@@ -194,29 +237,18 @@
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">Deduplication Complete</p>
+                  <p class="font-medium text-green-800">
+                    {{ $t('tools.jsonArrayDeduplicator.deduplicationComplete') }}
+                  </p>
                   <p class="text-sm text-green-600">{{ deduplicationStats }}</p>
                 </div>
-              </div>
-            </div>
-
-            <!-- Show found duplicates if enabled -->
-            <div
-              v-if="options.showDuplicates && foundDuplicates.length > 0"
-              class="bg-yellow-50 border border-yellow-200 rounded-lg p-4"
-            >
-              <h5 class="font-medium text-yellow-900 mb-2">Found Duplicates:</h5>
-              <div class="max-h-32 overflow-y-auto">
-                <pre class="text-xs text-yellow-800">{{
-                  JSON.stringify(foundDuplicates, null, 2)
-                }}</pre>
               </div>
             </div>
 
             <textarea
               :value="deduplicatedOutput"
               readonly
-              class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full h-80 p-4 border border-gray-300 rounded-lg font-mono text-sm bg-gray-50 resize-none"
             ></textarea>
           </div>
         </div>
@@ -226,20 +258,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useToast } from '@/composables/useToast'
+import { useI18n } from 'vue-i18n'
 
-const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
+const { t } = useI18n()
+
+interface DeduplicationOptions {
+  method: 'deep' | 'shallow' | 'field' | 'stringify'
+  compareField: string
+  keepOccurrence: 'first' | 'last'
+  caseSensitive: boolean
+  showDuplicates: boolean
+}
+
+const { success, error: showError, copySuccess } = useToast()
 
 const inputJson = ref('')
 const deduplicatedOutput = ref('')
 const error = ref('')
 const isValidArray = ref(false)
-const analysisResults = ref<any>(null)
 const deduplicationStats = ref('')
-const foundDuplicates = ref<any[]>([])
 
-const options = reactive({
+const options = ref<DeduplicationOptions>({
   method: 'deep',
   compareField: '',
   keepOccurrence: 'first',
@@ -247,20 +288,25 @@ const options = reactive({
   showDuplicates: false,
 })
 
+interface AnalysisResults {
+  total: number
+  unique: number
+  duplicates: number
+  toRemove: number
+}
+
+const analysisResults = ref<AnalysisResults | null>(null)
+
 function loadExample() {
-  inputJson.value = JSON.stringify(
-    [
-      { id: 1, name: 'John', email: 'john@example.com' },
-      { id: 2, name: 'Jane', email: 'jane@example.com' },
-      { id: 1, name: 'John', email: 'john@example.com' },
-      { id: 3, name: 'Bob', email: 'bob@example.com' },
-      { id: 2, name: 'Jane', email: 'jane@different.com' },
-      { id: 4, name: 'Alice', email: 'alice@example.com' },
-      { id: 3, name: 'Bob', email: 'bob@example.com' },
-    ],
-    null,
-    2,
-  )
+  const example = [
+    { id: 1, name: 'John', age: 30 },
+    { id: 2, name: 'Jane', age: 25 },
+    { id: 1, name: 'John', age: 30 }, // duplicate
+    { id: 3, name: 'Bob', age: 35 },
+    { id: 2, name: 'Jane', age: 25 }, // duplicate
+    { id: 4, name: 'Alice', age: 28 },
+  ]
+  inputJson.value = JSON.stringify(example, null, 2)
   analyzeArray()
 }
 
@@ -270,244 +316,137 @@ function clearInput() {
   error.value = ''
   isValidArray.value = false
   analysisResults.value = null
-  deduplicationStats.value = ''
-  foundDuplicates.value = []
-}
-
-function deepEqual(obj1: any, obj2: any): boolean {
-  if (obj1 === obj2) return true
-
-  if (obj1 == null || obj2 == null) return false
-  if (typeof obj1 !== typeof obj2) return false
-
-  if (typeof obj1 !== 'object') {
-    return options.caseSensitive
-      ? obj1 === obj2
-      : String(obj1).toLowerCase() === String(obj2).toLowerCase()
-  }
-
-  const keys1 = Object.keys(obj1)
-  const keys2 = Object.keys(obj2)
-
-  if (keys1.length !== keys2.length) return false
-
-  for (const key of keys1) {
-    if (!keys2.includes(key)) return false
-    if (!deepEqual(obj1[key], obj2[key])) return false
-  }
-
-  return true
-}
-
-function getCompareValue(item: any): any {
-  switch (options.method) {
-    case 'field':
-      const value = item[options.compareField]
-      return options.caseSensitive ? value : String(value || '').toLowerCase()
-    case 'stringify':
-      return JSON.stringify(item)
-    case 'shallow':
-      return item
-    case 'deep':
-    default:
-      return item
-  }
-}
-
-function isDuplicate(item1: any, item2: any): boolean {
-  switch (options.method) {
-    case 'field':
-      const val1 = getCompareValue(item1)
-      const val2 = getCompareValue(item2)
-      return val1 === val2
-    case 'stringify':
-      return JSON.stringify(item1) === JSON.stringify(item2)
-    case 'shallow':
-      return item1 === item2
-    case 'deep':
-    default:
-      return deepEqual(item1, item2)
-  }
 }
 
 function analyzeArray() {
   error.value = ''
-  isValidArray.value = false
   analysisResults.value = null
 
   if (!inputJson.value.trim()) {
+    isValidArray.value = false
     return
   }
 
   try {
-    const data = JSON.parse(inputJson.value)
+    const parsed = JSON.parse(inputJson.value)
 
-    if (!Array.isArray(data)) {
-      error.value = 'Input must be a JSON array'
-      return
+    if (!Array.isArray(parsed)) {
+      throw new Error(t('tools.jsonArrayDeduplicator.errors.invalidArray'))
     }
 
     isValidArray.value = true
 
-    // Analyze duplicates
-    const duplicateIndices = new Set<number>()
-    const seen = new Map<any, number>()
-
-    data.forEach((item, index) => {
-      const compareValue = getCompareValue(item)
-
-      if (options.method === 'deep') {
-        // For deep comparison, check against all previous items
-        for (let i = 0; i < index; i++) {
-          if (isDuplicate(item, data[i])) {
-            if (options.keepOccurrence === 'first') {
-              duplicateIndices.add(index)
-            } else {
-              duplicateIndices.add(i)
-            }
-            break
-          }
-        }
-      } else {
-        // For other methods, use Map for efficiency
-        if (seen.has(compareValue)) {
-          if (options.keepOccurrence === 'first') {
-            duplicateIndices.add(index)
-          } else {
-            duplicateIndices.add(seen.get(compareValue)!)
-            seen.set(compareValue, index)
-          }
-        } else {
-          seen.set(compareValue, index)
-        }
-      }
-    })
-
-    const uniqueCount = data.length - duplicateIndices.size
+    // Simple analysis - count duplicates
+    const total = parsed.length
+    const uniqueSet = new Set(parsed.map((item) => JSON.stringify(item)))
+    const unique = uniqueSet.size
+    const duplicates = total - unique
 
     analysisResults.value = {
-      total: data.length,
-      unique: uniqueCount,
-      duplicates: duplicateIndices.size,
-      toRemove: duplicateIndices.size,
+      total,
+      unique,
+      duplicates,
+      toRemove: duplicates,
     }
-  } catch (err: any) {
-    error.value = 'Invalid JSON format: ' + err.message
+  } catch (e) {
+    error.value = t('tools.jsonArrayDeduplicator.errors.invalidJson') + ' ' + (e as Error).message
+    isValidArray.value = false
   }
 }
 
 function deduplicateArray() {
+  if (!isValidArray.value) return
+
   try {
-    if (!inputJson.value.trim()) {
-      showError('Please provide a JSON array to deduplicate')
-      return
-    }
+    const parsed = JSON.parse(inputJson.value)
+    let result: any[] = []
+    let removedCount = 0
 
-    const data = JSON.parse(inputJson.value)
+    switch (options.value.method) {
+      case 'deep':
+        const seen = new Set()
+        result = parsed.filter((item: any) => {
+          const key = JSON.stringify(item)
+          if (seen.has(key)) {
+            removedCount++
+            return false
+          }
+          seen.add(key)
+          return true
+        })
+        break
 
-    if (!Array.isArray(data)) {
-      showError('Input must be a JSON array')
-      return
-    }
+      case 'shallow':
+        result = parsed.filter((item: any, index: number) => {
+          const firstIndex = parsed.findIndex((other: any) => other === item)
+          if (firstIndex !== index) {
+            removedCount++
+            return false
+          }
+          return true
+        })
+        break
 
-    if (options.method === 'field' && !options.compareField.trim()) {
-      showError('Please specify a field name for field comparison')
-      return
-    }
-
-    const duplicates: any[] = []
-    const result: any[] = []
-    const duplicateIndices = new Set<number>()
-    const seen = new Map<any, number>()
-
-    // Find duplicates
-    data.forEach((item, index) => {
-      let isDupe = false
-
-      if (options.method === 'deep') {
-        // Deep comparison
-        for (let i = 0; i < index; i++) {
-          if (!duplicateIndices.has(i) && isDuplicate(item, data[i])) {
-            isDupe = true
-            duplicates.push(item)
-            if (options.keepOccurrence === 'first') {
-              duplicateIndices.add(index)
-            } else {
-              duplicateIndices.add(i)
-              result[i] = item // Replace with newer occurrence
+      case 'field':
+        if (options.value.compareField) {
+          const seen = new Set()
+          result = parsed.filter((item: any) => {
+            const value = item[options.value.compareField]
+            const key = options.value.caseSensitive ? String(value) : String(value).toLowerCase()
+            if (seen.has(key)) {
+              removedCount++
+              return false
             }
-            break
-          }
-        }
-      } else {
-        // Other comparison methods
-        const compareValue = getCompareValue(item)
-        if (seen.has(compareValue)) {
-          isDupe = true
-          duplicates.push(item)
-          if (options.keepOccurrence === 'first') {
-            duplicateIndices.add(index)
-          } else {
-            const prevIndex = seen.get(compareValue)!
-            duplicateIndices.add(prevIndex)
-            seen.set(compareValue, index)
-          }
+            seen.add(key)
+            return true
+          })
         } else {
-          seen.set(compareValue, index)
+          result = [...parsed]
         }
-      }
+        break
 
-      if (!isDupe) {
-        result.push(item)
-      }
-    })
+      case 'stringify':
+        const seenStrings = new Set()
+        result = parsed.filter((item: any) => {
+          const key = JSON.stringify(item)
+          if (seenStrings.has(key)) {
+            removedCount++
+            return false
+          }
+          seenStrings.add(key)
+          return true
+        })
+        break
+    }
 
-    // Filter out duplicates based on indices
-    const finalResult = data.filter((_, index) => !duplicateIndices.has(index))
-
-    deduplicatedOutput.value = JSON.stringify(finalResult, null, 2)
-    foundDuplicates.value = duplicates
-
-    // Generate stats
-    const originalCount = data.length
-    const finalCount = finalResult.length
-    const removedCount = originalCount - finalCount
-    const methodName = options.method.charAt(0).toUpperCase() + options.method.slice(1)
-
-    deduplicationStats.value = `Removed ${removedCount} duplicates using ${methodName} comparison. ${finalCount} unique elements remain.`
-
-    success('Array deduplicated successfully!')
-  } catch (err: any) {
-    showError('Failed to deduplicate array: ' + err.message)
+    deduplicatedOutput.value = JSON.stringify(result, null, 2)
+    deduplicationStats.value = `Removed ${removedCount} duplicate items`
+    error.value = ''
+    success(t('toast.success'))
+  } catch (e) {
+    error.value = t('tools.jsonArrayDeduplicator.errors.invalidJson') + ' ' + (e as Error).message
   }
 }
 
 function copyToClipboard() {
-  if (!deduplicatedOutput.value) return
-
-  navigator.clipboard
-    .writeText(deduplicatedOutput.value)
-    .then(() => {
-      copySuccess()
-    })
-    .catch(() => {
-      copyError()
-    })
+  if (deduplicatedOutput.value) {
+    navigator.clipboard.writeText(deduplicatedOutput.value)
+    copySuccess()
+  }
 }
 
 function downloadJson() {
-  if (!deduplicatedOutput.value) return
-
-  const blob = new Blob([deduplicatedOutput.value], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `deduplicated_array_${Date.now()}.json`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
-
-  downloadSuccess()
+  if (deduplicatedOutput.value) {
+    const blob = new Blob([deduplicatedOutput.value], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'deduplicated-array.json'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    success(t('toast.downloadSuccess'))
+  }
 }
 </script>

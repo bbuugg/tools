@@ -3,9 +3,11 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Number to Text Converter</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {{ $t('tools.jsonNumberToText.title') }}
+        </h1>
         <p class="text-gray-600">
-          Convert numeric values to text strings in JSON objects and arrays
+          {{ $t('tools.jsonNumberToText.description') }}
         </p>
       </div>
 
@@ -13,20 +15,30 @@
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔢</div>
-          <h3 class="text-lg font-semibold mb-2">Type Conversion</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonNumberToText.features.typeConversion.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Convert numeric values to text while preserving JSON structure
+            {{ $t('tools.jsonNumberToText.features.typeConversion.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Selective Processing</h3>
-          <p class="text-gray-600 text-sm">Choose specific fields or convert all numeric values</p>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonNumberToText.features.selectiveProcessing.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.jsonNumberToText.features.selectiveProcessing.description') }}
+          </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🎯</div>
-          <h3 class="text-lg font-semibold mb-2">Format Options</h3>
-          <p class="text-gray-600 text-sm">Control decimal places and number formatting</p>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonNumberToText.features.formatOptions.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.jsonNumberToText.features.formatOptions.description') }}
+          </p>
         </div>
       </div>
 
@@ -34,56 +46,64 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonNumberToText.inputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON here..."
+            :placeholder="$t('tools.jsonNumberToText.inputPlaceholder')"
             class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="analyzeJson"
           ></textarea>
 
           <!-- Conversion Options -->
           <div class="mt-4 space-y-4">
-            <h4 class="font-medium text-gray-900">Conversion Options</h4>
+            <h4 class="font-medium text-gray-900">
+              {{ $t('tools.jsonNumberToText.conversionOptions') }}
+            </h4>
 
             <div class="space-y-3">
               <div class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700 w-32">Conversion Mode:</label>
+                <label class="text-sm font-medium text-gray-700 w-32"
+                  >{{ $t('tools.jsonNumberToText.conversionMode') }}:</label
+                >
                 <select
                   v-model="options.mode"
                   @change="analyzeJson"
                   class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="all">Convert All Numbers</option>
-                  <option value="fields">Specific Fields Only</option>
-                  <option value="integers">Integers Only</option>
-                  <option value="decimals">Decimals Only</option>
+                  <option value="all">{{ $t('tools.jsonNumberToText.convertAll') }}</option>
+                  <option value="fields">{{ $t('tools.jsonNumberToText.specificFields') }}</option>
+                  <option value="integers">{{ $t('tools.jsonNumberToText.integersOnly') }}</option>
+                  <option value="decimals">{{ $t('tools.jsonNumberToText.decimalsOnly') }}</option>
                 </select>
               </div>
 
               <div v-if="options.mode === 'fields'" class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700 w-32">Target Fields:</label>
+                <label class="text-sm font-medium text-gray-700 w-32"
+                  >{{ $t('tools.jsonNumberToText.targetFields') }}:</label
+                >
                 <input
                   v-model="options.targetFields"
                   @input="analyzeJson"
                   type="text"
-                  placeholder="field1,field2,nested.field"
+                  :placeholder="$t('tools.jsonNumberToText.targetFields')"
                   class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -96,18 +116,20 @@
                     type="checkbox"
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  Preserve Decimal Places
+                  {{ $t('tools.jsonNumberToText.preserveDecimals') }}
                 </label>
 
                 <div v-if="options.preserveDecimals" class="flex items-center space-x-4 ml-6">
-                  <label class="text-sm font-medium text-gray-700 w-24">Decimal Places:</label>
+                  <label class="text-sm font-medium text-gray-700 w-24"
+                    >{{ $t('tools.jsonNumberToText.decimalPlaces') }}:</label
+                  >
                   <input
                     v-model.number="options.decimalPlaces"
                     @input="analyzeJson"
                     type="number"
                     min="0"
                     max="10"
-                    placeholder="2"
+                    :placeholder="$t('tools.jsonNumberToText.decimalPlaces')"
                     class="w-20 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -119,7 +141,7 @@
                     type="checkbox"
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  Add Quotes Around Numbers
+                  {{ $t('tools.jsonNumberToText.addQuotes') }}
                 </label>
               </div>
             </div>
@@ -127,12 +149,21 @@
 
           <!-- Analysis Results -->
           <div v-if="analysisResults" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <h5 class="font-medium text-blue-900 mb-2">Analysis Results:</h5>
+            <h5 class="font-medium text-blue-900 mb-2">
+              {{ $t('tools.jsonNumberToText.analysisResults') }}:
+            </h5>
             <div class="text-sm text-blue-800 space-y-1">
-              <p>• Numbers found: {{ analysisResults.numbersFound }}</p>
-              <p>• Fields to convert: {{ analysisResults.fieldsToConvert }}</p>
+              <p>
+                • {{ $t('tools.jsonNumberToText.numbersFound') }}:
+                {{ analysisResults.numbersFound }}
+              </p>
+              <p>
+                • {{ $t('tools.jsonNumberToText.fieldsToConvert') }}:
+                {{ analysisResults.fieldsToConvert }}
+              </p>
               <p v-if="analysisResults.fieldNames.length > 0">
-                • Numeric fields: {{ analysisResults.fieldNames.join(', ') }}
+                • {{ $t('tools.jsonNumberToText.numericFields') }}:
+                {{ analysisResults.fieldNames.join(', ') }}
               </p>
             </div>
           </div>
@@ -142,28 +173,30 @@
             :disabled="!inputJson.trim() || !isValidJson"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Convert Numbers to Text
+            {{ $t('tools.jsonNumberToText.convertButton') }}
           </button>
         </div>
 
         <!-- Output Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Converted JSON</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonNumberToText.convertedJson') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 v-if="convertedOutput"
                 @click="copyToClipboard"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="convertedOutput"
                 @click="downloadJson"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -174,14 +207,14 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">🔢</div>
-              <p>No results yet. Input JSON to convert numbers to text.</p>
+              <p>{{ $t('tools.jsonNumberToText.noResults') }}</p>
             </div>
           </div>
 
           <div v-if="error" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
-              <p class="font-medium">Error</p>
+              <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
@@ -191,7 +224,9 @@
               <div class="flex items-center">
                 <div class="text-green-600 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">Conversion Complete</p>
+                  <p class="font-medium text-green-800">
+                    {{ $t('tools.jsonNumberToText.conversionComplete') }}
+                  </p>
                   <p class="text-sm text-green-600">{{ conversionStats }}</p>
                 </div>
               </div>
@@ -210,8 +245,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useToast } from '@/composables/useToast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface ConversionOptions {
   mode: 'all' | 'fields' | 'integers' | 'decimals'
@@ -284,7 +322,7 @@ function analyzeJson() {
     const analysis = analyzeNumbers(parsed)
     analysisResults.value = analysis
   } catch (e) {
-    error.value = 'Invalid JSON format'
+    error.value = t('tools.jsonNumberToText.errors.invalidJson') + ' ' + (e as Error).message
     isValidJson.value = false
   }
 }
@@ -361,9 +399,9 @@ function convertNumbers() {
     convertedOutput.value = JSON.stringify(converted, null, 2)
     conversionStats.value = `Converted ${convertedCount} numeric values to text`
     error.value = ''
-    success('Numbers converted to text successfully!')
+    success(t('toast.success'))
   } catch (e) {
-    error.value = 'Failed to convert numbers: ' + (e as Error).message
+    error.value = t('tools.jsonNumberToText.errors.invalidJson') + ' ' + (e as Error).message
   }
 }
 
@@ -424,7 +462,7 @@ function downloadJson() {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    success('JSON file downloaded successfully!')
+    success(t('toast.downloadSuccess'))
   }
 }
 </script>

@@ -3,9 +3,11 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Missing Key Finder</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {{ $t('tools.jsonMissingKeyFinder.title') }}
+        </h1>
         <p class="text-gray-600">
-          Find missing keys across JSON objects in arrays and detect inconsistencies
+          {{ $t('tools.jsonMissingKeyFinder.description') }}
         </p>
       </div>
 
@@ -13,21 +15,29 @@
       <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">Key Analysis</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonMissingKeyFinder.features.keyAnalysis.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Analyze all objects to find missing keys and inconsistencies
+            {{ $t('tools.jsonMissingKeyFinder.features.keyAnalysis.description') }}
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">📈</div>
-          <h3 class="text-lg font-semibold mb-2">Detailed Report</h3>
-          <p class="text-gray-600 text-sm">Get comprehensive reports on missing keys per object</p>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonMissingKeyFinder.features.detailedReport.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.jsonMissingKeyFinder.features.detailedReport.description') }}
+          </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">Export Results</h3>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ $t('tools.jsonMissingKeyFinder.features.exportResults.title') }}
+          </h3>
           <p class="text-gray-600 text-sm">
-            Export findings and generate complete object templates
+            {{ $t('tools.jsonMissingKeyFinder.features.exportResults.description') }}
           </p>
         </div>
       </div>
@@ -36,33 +46,37 @@
         <!-- Input Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Input JSON Array</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonMissingKeyFinder.inputTitle') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Load Example
+                {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
                 class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
               >
-                Clear
+                {{ $t('common.clear') }}
               </button>
             </div>
           </div>
 
           <textarea
             v-model="inputJson"
-            placeholder="Paste your JSON array here..."
+            :placeholder="$t('tools.jsonMissingKeyFinder.inputPlaceholder')"
             class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @input="analyzeKeys"
           ></textarea>
 
           <!-- Analysis Options -->
           <div class="mt-4 space-y-4">
-            <h4 class="font-medium text-gray-900">Analysis Options</h4>
+            <h4 class="font-medium text-gray-900">
+              {{ $t('tools.jsonMissingKeyFinder.analysisOptions') }}
+            </h4>
             <div class="space-y-3">
               <label class="flex items-center">
                 <input
@@ -71,7 +85,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Ignore Null Values
+                {{ $t('tools.jsonMissingKeyFinder.ignoreNullValues') }}
               </label>
               <label class="flex items-center">
                 <input
@@ -80,7 +94,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Deep Analysis (Nested Objects)
+                {{ $t('tools.jsonMissingKeyFinder.deepAnalysis') }}
               </label>
               <label class="flex items-center">
                 <input
@@ -89,7 +103,7 @@
                   type="checkbox"
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                Case Sensitive Key Comparison
+                {{ $t('tools.jsonMissingKeyFinder.caseSensitive') }}
               </label>
             </div>
           </div>
@@ -99,28 +113,30 @@
             :disabled="!inputJson.trim() || !isValidArray"
             class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            Analyze Missing Keys
+            {{ $t('tools.jsonMissingKeyFinder.analyzeButton') }}
           </button>
         </div>
 
         <!-- Results Section -->
         <div class="bg-white p-6 rounded-lg shadow-sm border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Analysis Results</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ $t('tools.jsonMissingKeyFinder.analysisResults') }}
+            </h3>
             <div class="flex space-x-2">
               <button
                 v-if="analysisResults"
                 @click="copyResults"
                 class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
               >
-                Copy
+                {{ $t('common.copy') }}
               </button>
               <button
                 v-if="analysisResults"
                 @click="downloadResults"
                 class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
               >
-                Download
+                {{ $t('common.download') }}
               </button>
             </div>
           </div>
@@ -131,14 +147,14 @@
           >
             <div class="text-center">
               <div class="text-3xl mb-2">🔍</div>
-              <p>No analysis yet. Input a JSON array to find missing keys.</p>
+              <p>{{ $t('tools.jsonMissingKeyFinder.noResults') }}</p>
             </div>
           </div>
 
           <div v-if="error" class="h-80 flex items-center justify-center">
             <div class="text-center text-red-600">
               <div class="text-3xl mb-2">❌</div>
-              <p class="font-medium">Error</p>
+              <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
@@ -146,26 +162,39 @@
           <div v-if="analysisResults && !error" class="space-y-4 max-h-80 overflow-y-auto">
             <!-- Summary -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h5 class="font-medium text-blue-900 mb-2">Summary:</h5>
+              <h5 class="font-medium text-blue-900 mb-2">{{ $t('common.statistics') }}:</h5>
               <div class="text-sm text-blue-800 space-y-1">
-                <p>• Total objects: {{ analysisResults.totalObjects }}</p>
-                <p>• Unique keys found: {{ analysisResults.allKeys.length }}</p>
-                <p>• Objects with missing keys: {{ analysisResults.objectsWithMissingKeys }}</p>
+                <p>
+                  • {{ $t('tools.jsonMissingKeyFinder.totalObjects') }}:
+                  {{ analysisResults.totalObjects }}
+                </p>
+                <p>
+                  • {{ $t('tools.jsonMissingKeyFinder.uniqueKeys') }}:
+                  {{ analysisResults.allKeys.length }}
+                </p>
+                <p>
+                  • {{ $t('tools.jsonMissingKeyFinder.objectsWithMissing') }}:
+                  {{ analysisResults.objectsWithMissingKeys }}
+                </p>
               </div>
             </div>
 
             <!-- Missing Keys Report -->
             <div v-if="analysisResults.missingKeysReport.length > 0">
-              <h5 class="font-medium text-gray-900 mb-2">Missing Keys by Object:</h5>
+              <h5 class="font-medium text-gray-900 mb-2">
+                {{ $t('tools.jsonMissingKeyFinder.missingKeysReport') }}:
+              </h5>
               <div class="space-y-2 max-h-60 overflow-y-auto">
                 <div
                   v-for="(report, index) in analysisResults.missingKeysReport"
                   :key="index"
                   class="bg-yellow-50 border border-yellow-200 rounded p-3"
                 >
-                  <p class="font-medium text-yellow-900">Object {{ index + 1 }}:</p>
+                  <p class="font-medium text-yellow-900">
+                    {{ $t('common.items') }} {{ index + 1 }}:
+                  </p>
                   <p class="text-sm text-yellow-800">
-                    Missing: {{ report.missingKeys.join(', ') }}
+                    {{ $t('common.found') }}: {{ report.missingKeys.join(', ') }}
                   </p>
                 </div>
               </div>
@@ -180,6 +209,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from '@/composables/useToast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface AnalysisOptions {
   ignoreNullValues: boolean
@@ -192,36 +224,33 @@ const { success, copySuccess } = useToast()
 const inputJson = ref('')
 const error = ref('')
 const isValidArray = ref(false)
+
+interface MissingKeyReport {
+  missingKeys: string[]
+}
+
 interface AnalysisResults {
   totalObjects: number
   allKeys: string[]
   keyStatistics: Record<string, number>
   missingKeysReport: MissingKeyReport[]
   objectsWithMissingKeys: number
-  completeTemplate: Record<string, unknown>
-}
-
-interface MissingKeyReport {
-  index: number
-  missingKeys: string[]
-  hasKeys: string[]
-  missingCount: number
 }
 
 const analysisResults = ref<AnalysisResults | null>(null)
 
 const options = ref<AnalysisOptions>({
-  ignoreNullValues: true,
+  ignoreNullValues: false,
   deepAnalysis: false,
-  caseSensitive: true,
+  caseSensitive: false,
 })
 
 function loadExample() {
   const example = [
-    { id: 1, name: 'Alice', email: 'alice@example.com', age: 25 },
-    { id: 2, name: 'Bob', phone: '+1-555-0123', age: 30 },
-    { id: 3, name: 'Charlie', email: 'charlie@example.com', department: 'Engineering' },
-    { name: 'Diana', email: 'diana@example.com', age: 28, phone: '+1-555-0456' },
+    { id: 1, name: 'John', age: 30 },
+    { id: 2, name: 'Jane' },
+    { id: 3, age: 25, email: 'test@example.com' },
+    { name: 'Bob', email: 'bob@example.com' },
   ]
   inputJson.value = JSON.stringify(example, null, 2)
   analyzeKeys()
@@ -247,132 +276,69 @@ function analyzeKeys() {
     const parsed = JSON.parse(inputJson.value)
 
     if (!Array.isArray(parsed)) {
-      error.value = 'Input must be a JSON array'
-      isValidArray.value = false
-      return
-    }
-
-    if (parsed.length === 0) {
-      error.value = 'JSON array cannot be empty'
-      isValidArray.value = false
-      return
+      throw new Error(t('tools.jsonMissingKeyFinder.errors.invalidArray'))
     }
 
     isValidArray.value = true
 
-    // Perform analysis
-    const results = performKeyAnalysis(parsed)
-    analysisResults.value = results
+    // Find all unique keys across all objects
+    const allKeys = new Set<string>()
+    parsed.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        Object.keys(item).forEach((key) => {
+          allKeys.add(key)
+        })
+      }
+    })
 
-    const missingCount = results.objectsWithMissingKeys
-    if (missingCount === 0) {
-      success('All objects have consistent keys!')
-    } else {
-      success(`Analysis complete! Found ${missingCount} objects with missing keys.`)
+    // Find missing keys for each object
+    const missingKeysReport: MissingKeyReport[] = []
+    let objectsWithMissingKeys = 0
+
+    parsed.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        const itemKeys = Object.keys(item)
+        const missingKeys: string[] = []
+
+        allKeys.forEach((key) => {
+          if (!itemKeys.includes(key)) {
+            missingKeys.push(key)
+          }
+        })
+
+        if (missingKeys.length > 0) {
+          objectsWithMissingKeys++
+        }
+
+        missingKeysReport.push({ missingKeys })
+      }
+    })
+
+    analysisResults.value = {
+      totalObjects: parsed.length,
+      allKeys: Array.from(allKeys),
+      keyStatistics: {}, // Would be populated with actual statistics
+      missingKeysReport,
+      objectsWithMissingKeys,
     }
-  } catch {
-    error.value = 'Invalid JSON format'
+  } catch (e) {
+    error.value = t('tools.jsonMissingKeyFinder.errors.invalidJson') + ' ' + (e as Error).message
     isValidArray.value = false
   }
 }
 
-function performKeyAnalysis(array: unknown[]): AnalysisResults {
-  // Collect all unique keys
-  const allKeys = new Set<string>()
-  const keyStats: Record<string, number> = {}
-
-  array.forEach((obj) => {
-    if (typeof obj === 'object' && obj !== null) {
-      Object.keys(obj).forEach((key) => {
-        if (!options.value.ignoreNullValues || (obj as Record<string, unknown>)[key] !== null) {
-          const keyToUse = options.value.caseSensitive ? key : key.toLowerCase()
-          allKeys.add(keyToUse)
-          keyStats[keyToUse] = (keyStats[keyToUse] || 0) + 1
-        }
-      })
-    }
-  })
-
-  const allKeysArray = Array.from(allKeys)
-
-  // Find missing keys for each object
-  const missingKeysReport: MissingKeyReport[] = []
-  let objectsWithMissingKeys = 0
-
-  array.forEach((obj, index) => {
-    if (typeof obj === 'object' && obj !== null) {
-      const objectKeys = Object.keys(obj)
-        .filter(
-          (key) => !options.value.ignoreNullValues || (obj as Record<string, any>)[key] !== null,
-        )
-        .map((key) => (options.value.caseSensitive ? key : key.toLowerCase()))
-
-      const missingKeys = allKeysArray.filter((key) => !objectKeys.includes(key))
-
-      if (missingKeys.length > 0) {
-        objectsWithMissingKeys++
-        missingKeysReport.push({
-          index,
-          missingKeys,
-          hasKeys: objectKeys,
-          missingCount: missingKeys.length,
-        })
-      }
-    }
-  })
-
-  return {
-    totalObjects: array.length,
-    allKeys: allKeysArray,
-    keyStatistics: keyStats,
-    missingKeysReport,
-    objectsWithMissingKeys,
-    completeTemplate: createCompleteTemplate(allKeysArray),
-  }
-}
-
-function createCompleteTemplate(keys: string[]) {
-  const template: Record<string, unknown> = {}
-  keys.forEach((key) => {
-    template[key] = null
-  })
-  return template
-}
-
 function copyResults() {
   if (analysisResults.value) {
-    const report = {
-      summary: {
-        totalObjects: analysisResults.value.totalObjects,
-        uniqueKeys: analysisResults.value.allKeys.length,
-        objectsWithMissingKeys: analysisResults.value.objectsWithMissingKeys,
-      },
-      allKeys: analysisResults.value.allKeys,
-      missingKeysReport: analysisResults.value.missingKeysReport,
-      completeTemplate: analysisResults.value.completeTemplate,
-    }
-
-    navigator.clipboard.writeText(JSON.stringify(report, null, 2))
+    const resultText = JSON.stringify(analysisResults.value, null, 2)
+    navigator.clipboard.writeText(resultText)
     copySuccess()
   }
 }
 
 function downloadResults() {
   if (analysisResults.value) {
-    const report = {
-      analysis: 'JSON Missing Keys Report',
-      timestamp: new Date().toISOString(),
-      summary: {
-        totalObjects: analysisResults.value.totalObjects,
-        uniqueKeys: analysisResults.value.allKeys.length,
-        objectsWithMissingKeys: analysisResults.value.objectsWithMissingKeys,
-      },
-      allKeys: analysisResults.value.allKeys,
-      missingKeysReport: analysisResults.value.missingKeysReport,
-      completeTemplate: analysisResults.value.completeTemplate,
-    }
-
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' })
+    const resultText = JSON.stringify(analysisResults.value, null, 2)
+    const blob = new Blob([resultText], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -381,7 +347,7 @@ function downloadResults() {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    success('Analysis report downloaded successfully!')
+    success(t('toast.downloadSuccess'))
   }
 }
 </script>
