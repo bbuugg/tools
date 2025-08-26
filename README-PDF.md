@@ -54,6 +54,7 @@ The tool implements the following functionality:
 ## Future Enhancements
 
 Possible future enhancements could include:
+
 - Text selection and copying
 - Annotation tools
 - Basic editing capabilities (adding text, shapes, images)

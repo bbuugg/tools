@@ -88,9 +88,7 @@
               >
                 ←
               </button>
-              <span class="text-gray-700">
-                {{ currentPage }} / {{ pageCount }}
-              </span>
+              <span class="text-gray-700"> {{ currentPage }} / {{ pageCount }} </span>
               <button
                 @click="nextPage"
                 :disabled="currentPage >= pageCount"
@@ -99,13 +97,10 @@
                 →
               </button>
             </div>
-            
+
             <div class="flex items-center gap-2">
               <label class="text-gray-700">{{ $t('tools.pdfViewer.zoom') }}:</label>
-              <select
-                v-model="scale"
-                class="px-3 py-1 border border-gray-300 rounded-lg"
-              >
+              <select v-model="scale" class="px-3 py-1 border border-gray-300 rounded-lg">
                 <option value="0.5">50%</option>
                 <option value="0.75">75%</option>
                 <option value="1">100%</option>
@@ -114,7 +109,7 @@
                 <option value="2">200%</option>
               </select>
             </div>
-            
+
             <button
               @click="rotateLeft"
               class="px-3 py-1 bg-white border border-gray-300 rounded-lg"
@@ -165,12 +160,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 // @ts-ignore
-import * as pdfjsLib from 'pdfjs-dist/build/pdf'
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/build/pdf.mjs'
 // @ts-ignore
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url'
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 
 // Set the worker path
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+GlobalWorkerOptions.workerSrc = pdfjsWorker
 
 // Reactive references
 const pdfFile = ref<File | null>(null)
@@ -215,7 +210,7 @@ function handleFileSelect(event: Event) {
 function handleDrop(event: DragEvent) {
   event.preventDefault()
   isDragging.value = false
-  
+
   if (event.dataTransfer && event.dataTransfer.files.length > 0) {
     const file = event.dataTransfer.files[0]
     if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
@@ -224,48 +219,57 @@ function handleDrop(event: DragEvent) {
   }
 }
 
-function loadPdf(file: File) {
+async function loadPdf(file: File) {
   pdfFile.value = file
   fileName.value = file.name
   fileSize.value = formatFileSize(file.size)
-  
-  const fileReader = new FileReader()
-  fileReader.onload = function() {
-    const typedarray = new Uint8Array(this.result as ArrayBuffer)
-    pdfjsLib.getDocument(typedarray).promise.then((pdfDoc: any) => {
-      pdfDocument.value = pdfDoc
-      pageCount.value = pdfDoc.numPages
-      currentPage.value = 1
-      renderPage()
-    }).catch((error: any) => {
-      console.error('Error loading PDF:', error)
-      // Reset on error
-      pdfFile.value = null
-      pdfDocument.value = null
-    })
+
+  try {
+    const arrayBuffer = await file.arrayBuffer()
+    const typedArray = new Uint8Array(arrayBuffer)
+
+    // Load the PDF document
+    const loadingTask = getDocument({ data: typedArray })
+    pdfDocument.value = await loadingTask.promise
+    pageCount.value = pdfDocument.value.numPages
+    currentPage.value = 1
+    await renderPage()
+  } catch (error) {
+    console.error('Error loading PDF:', error)
+    // Reset on error
+    pdfFile.value = null
+    pdfDocument.value = null
   }
-  fileReader.readAsArrayBuffer(file)
 }
 
-function renderPage() {
+async function renderPage() {
   if (!pdfDocument.value || !pdfCanvas.value) return
-  
-  pdfDocument.value.getPage(currentPage.value).then((page: any) => {
+
+  try {
+    // Get the page
+    const page = await pdfDocument.value.getPage(currentPage.value)
+
+    // Set up the viewport
     const viewport = page.getViewport({ scale: scale.value, rotation: rotation.value })
-    
-    const canvas = pdfCanvas.value!
+
+    // Set canvas dimensions
+    const canvas = pdfCanvas.value
     const context = canvas.getContext('2d')!
-    
+
     canvas.height = viewport.height
     canvas.width = viewport.width
-    
+
+    // Render the page
     const renderContext = {
       canvasContext: context,
-      viewport: viewport
+      viewport: viewport,
     }
-    
-    page.render(renderContext)
-  })
+
+    const renderTask = page.render(renderContext)
+    await renderTask.promise
+  } catch (error) {
+    console.error('Error rendering page:', error)
+  }
 }
 
 // Navigation methods
@@ -302,7 +306,7 @@ function resetPdf() {
 
 function downloadPdf() {
   if (!pdfFile.value) return
-  
+
   const url = URL.createObjectURL(pdfFile.value)
   const a = document.createElement('a')
   a.href = url
@@ -315,11 +319,11 @@ function downloadPdf() {
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes'
-  
+
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 </script>

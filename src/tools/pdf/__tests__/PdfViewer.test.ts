@@ -5,7 +5,7 @@ import PdfViewer from '../PdfViewer.vue'
 // Mock pdfjs-dist
 vi.mock('pdfjs-dist/build/pdf', () => ({
   GlobalWorkerOptions: {
-    workerSrc: ''
+    workerSrc: '',
   },
   getDocument: vi.fn().mockReturnValue({
     promise: Promise.resolve({
@@ -13,14 +13,14 @@ vi.mock('pdfjs-dist/build/pdf', () => ({
       getPage: vi.fn().mockResolvedValue({
         getViewport: vi.fn().mockReturnValue({
           width: 800,
-          height: 600
+          height: 600,
         }),
         render: vi.fn().mockReturnValue({
-          promise: Promise.resolve()
-        })
-      })
-    })
-  })
+          promise: Promise.resolve(),
+        }),
+      }),
+    }),
+  }),
 }))
 
 describe('PdfViewer', () => {
