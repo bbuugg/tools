@@ -422,14 +422,41 @@
                   </button>
                 </div>
               </div>
-              <img
-                :src="imagePreview"
-                alt="Preview"
-                class="max-w-full h-auto rounded-lg"
-                :class="{ 'cursor-crosshair': isColorPickerActive }"
-                @click="pickColorFromImage"
-                ref="previewImage"
-              />
+              <div class="relative">
+                <img
+                  :src="imagePreview"
+                  alt="Preview"
+                  class="max-w-full h-auto rounded-lg"
+                  :class="{ 'cursor-crosshair': isColorPickerActive }"
+                  @click="pickColorFromImage"
+                  @mousemove="handleMouseMove"
+                  @mouseleave="hideMagnifier"
+                  ref="previewImage"
+                />
+                <!-- Magnifier Canvas -->
+                <canvas
+                  v-show="showMagnifier && isColorPickerActive"
+                  ref="magnifierCanvas"
+                  class="absolute border-2 border-white shadow-lg rounded-lg pointer-events-none"
+                  :style="{
+                    width: magnifierSize + 'px',
+                    height: magnifierSize + 'px',
+                    left: magnifierPosition.x + 'px',
+                    top: magnifierPosition.y + 'px',
+                    transform: 'translate(-50%, -50%)',
+                  }"
+                ></canvas>
+                <!-- Crosshair -->
+                <div
+                  v-show="showMagnifier && isColorPickerActive"
+                  class="absolute w-4 h-4 border-2 border-white pointer-events-none"
+                  :style="{
+                    left: crosshairPosition.x + 'px',
+                    top: crosshairPosition.y + 'px',
+                    transform: 'translate(-50%, -50%)',
+                  }"
+                ></div>
+              </div>
               <p v-if="isColorPickerActive" class="text-sm text-gray-500 mt-2">
                 {{ $t('tools.colorPicker.clickToPick') }}
                 <br />
@@ -730,6 +757,16 @@ interface InputValues {
   cmyk: string
 }
 
+interface MagnifierPosition {
+  x: number
+  y: number
+}
+
+interface CrosshairPosition {
+  x: number
+  y: number
+}
+
 // Composables
 const { t } = useI18n()
 const { success, error: showError } = useToast()
@@ -738,9 +775,17 @@ const { success, error: showError } = useToast()
 const colorPickerInput = ref<HTMLInputElement | null>(null)
 const imageInput = ref<HTMLInputElement | null>(null)
 const previewImage = ref<HTMLImageElement | null>(null)
+const magnifierCanvas = ref<HTMLCanvasElement | null>(null)
 const imagePreview = ref<string | null>(null)
 const isImageDragging = ref(false)
 const isColorPickerActive = ref(false)
+
+// Magnifier refs
+const showMagnifier = ref(false)
+const magnifierPosition = reactive<MagnifierPosition>({ x: 0, y: 0 })
+const crosshairPosition = reactive<CrosshairPosition>({ x: 0, y: 0 })
+const magnifierSize = ref(150) // Size of the magnifier in pixels
+const magnificationLevel = ref(5) // Zoom level
 
 // Reactive state
 const currentColor = reactive<Color>({
@@ -1309,6 +1354,88 @@ const activateColorPicker = () => {
   isColorPickerActive.value = !isColorPickerActive.value
 }
 
+// Magnifier functions
+const handleMouseMove = (event: MouseEvent) => {
+  if (!isColorPickerActive.value || !previewImage.value || !imagePreview.value) return
+
+  const img = previewImage.value
+  const rect = img.getBoundingClientRect()
+
+  // Update crosshair position
+  crosshairPosition.x = event.clientX - rect.left
+  crosshairPosition.y = event.clientY - rect.top
+
+  // Update magnifier position (offset to avoid obstruction)
+  magnifierPosition.x = event.clientX - rect.left + 80
+  magnifierPosition.y = event.clientY - rect.top - 80
+
+  // Show magnifier
+  showMagnifier.value = true
+
+  // Draw magnified view
+  drawMagnifiedView(event)
+}
+
+const hideMagnifier = () => {
+  showMagnifier.value = false
+}
+
+const drawMagnifiedView = (event: MouseEvent) => {
+  if (!previewImage.value || !magnifierCanvas.value) return
+
+  const img = previewImage.value
+  const canvas = magnifierCanvas.value
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx) return
+
+  const rect = img.getBoundingClientRect()
+
+  // Calculate the correct coordinates accounting for image scaling
+  const xRatio = img.naturalWidth / rect.width
+  const yRatio = img.naturalHeight / rect.height
+  const x = Math.floor((event.clientX - rect.left) * xRatio)
+  const y = Math.floor((event.clientY - rect.top) * yRatio)
+
+  // Set canvas dimensions
+  const size = magnifierSize.value
+  canvas.width = size
+  canvas.height = size
+
+  // Draw magnified portion
+  const magnification = magnificationLevel.value
+  const sourceSize = size / magnification
+
+  // Draw the magnified image
+  ctx.drawImage(
+    img,
+    x - sourceSize / 2,
+    y - sourceSize / 2,
+    sourceSize,
+    sourceSize,
+    0,
+    0,
+    size,
+    size,
+  )
+
+  // Draw crosshair in the center
+  const center = size / 2
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(center, center - 10)
+  ctx.lineTo(center, center + 10)
+  ctx.moveTo(center - 10, center)
+  ctx.lineTo(center + 10, center)
+  ctx.stroke()
+
+  // Draw border
+  ctx.strokeStyle = '#000000'
+  ctx.lineWidth = 2
+  ctx.strokeRect(0, 0, size, size)
+}
+
 const pickColorFromImage = (event: MouseEvent) => {
   if (!isColorPickerActive.value || !previewImage.value || !imagePreview.value) return
 
@@ -1597,3 +1724,4 @@ const handlePasteEvent = (e: ClipboardEvent) => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 </style>
+</template>
