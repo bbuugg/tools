@@ -486,9 +486,17 @@
         <div class="space-y-6">
           <!-- Common Colors -->
           <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-              {{ $t('tools.colorPicker.commonColors') }}
-            </h3>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">
+                {{ $t('tools.colorPicker.commonColors') }}
+              </h3>
+              <button
+                @click="openModal"
+                class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                {{ $t('common.more') }}
+              </button>
+            </div>
             <div class="grid grid-cols-6 gap-2">
               <div
                 v-for="color in commonColors"
@@ -497,6 +505,82 @@
                 :style="{ backgroundColor: color }"
                 @click="selectCommonColor(color)"
               ></div>
+            </div>
+          </div>
+
+          <!-- Common Colors Modal -->
+          <div
+            v-if="showModal"
+            class="fixed inset-0 bg-slate-950/50 flex justify-center items-center z-[9999]"
+            @click="closeModal"
+            data-testid="color-modal"
+          >
+            <div
+              class="bg-white rounded-xl shadow-2xl shadow-slate-950/5 border border-slate-200 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto"
+              @click.stop
+            >
+              <div
+                class="p-4 pb-2 flex justify-between items-center sticky top-0 bg-white border-b"
+              >
+                <h1 class="text-lg text-slate-800 font-semibold">
+                  {{ $t('tools.colorPicker.commonColors') }}
+                </h1>
+                <button
+                  type="button"
+                  @click="closeModal"
+                  class="inline-grid place-items-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none data-[shape=circular]:rounded-full text-sm min-w-[34px] min-h-[34px] rounded-md bg-transparent border-transparent text-slate-200-foreground hover:bg-slate-200/10 hover:border-slate-200/10 shadow-none hover:shadow-none outline-none absolute right-2 top-2"
+                  aria-label="Close"
+                >
+                  <svg
+                    width="1.5em"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    color="currentColor"
+                    class="h-5 w-5"
+                  >
+                    <path
+                      d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="p-4">
+                <div class="space-y-6">
+                  <div
+                    v-for="colorGroup in materialColors"
+                    :key="colorGroup.name"
+                    class="space-y-2"
+                    data-testid="color-group"
+                  >
+                    <h2 class="text-md font-medium text-slate-800">{{ colorGroup.name }}</h2>
+                    <div class="grid grid-cols-10 gap-2">
+                      <div
+                        v-for="color in colorGroup.colors"
+                        :key="color"
+                        class="w-8 h-8 rounded cursor-pointer border border-gray-300 hover:scale-110 transition-transform"
+                        :style="{ backgroundColor: color }"
+                        @click="selectMaterialColor(color)"
+                        :title="color"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-4 flex justify-end gap-2 sticky bottom-0 bg-white border-t">
+                <button
+                  type="button"
+                  @click="closeModal"
+                  class="inline-flex items-center justify-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed data-[shape=pill]:rounded-full data-[width=full]:w-full focus:shadow-none text-sm rounded-md py-2 px-4 bg-transparent border-transparent text-red-500 hover:bg-red-500/10 hover:border-red-500/10 shadow-none hover:shadow-none outline-none"
+                >
+                  {{ $t('common.close') }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -822,6 +906,298 @@ const commonColors = [
   '#000000',
   '#ffffff',
   '#f4f4f5',
+]
+
+// Modal state
+const showModal = ref(false)
+
+// Material Design color palette
+const materialColors = [
+  {
+    name: 'Red',
+    colors: [
+      '#FFEBEE',
+      '#FFCDD2',
+      '#EF9A9A',
+      '#E57373',
+      '#EF5350',
+      '#F44336',
+      '#E53935',
+      '#D32F2F',
+      '#C62828',
+      '#B71C1C',
+    ],
+  },
+  {
+    name: 'Pink',
+    colors: [
+      '#FCE4EC',
+      '#F8BBD0',
+      '#F48FB1',
+      '#F06292',
+      '#EC407A',
+      '#E91E63',
+      '#D81B60',
+      '#C2185B',
+      '#AD1457',
+      '#880E4F',
+    ],
+  },
+  {
+    name: 'Purple',
+    colors: [
+      '#F3E5F5',
+      '#E1BEE7',
+      '#CE93D8',
+      '#BA68C8',
+      '#AB47BC',
+      '#9C27B0',
+      '#8E24AA',
+      '#7B1FA2',
+      '#6A1B9A',
+      '#4A148C',
+    ],
+  },
+  {
+    name: 'Deep Purple',
+    colors: [
+      '#EDE7F6',
+      '#D1C4E9',
+      '#B39DDB',
+      '#9575CD',
+      '#7E57C2',
+      '#673AB7',
+      '#5E35B1',
+      '#512DA8',
+      '#4527A0',
+      '#311B92',
+    ],
+  },
+  {
+    name: 'Indigo',
+    colors: [
+      '#E8EAF6',
+      '#C5CAE9',
+      '#9FA8DA',
+      '#7986CB',
+      '#5C6BC0',
+      '#3F51B5',
+      '#3949AB',
+      '#303F9F',
+      '#283593',
+      '#1A237E',
+    ],
+  },
+  {
+    name: 'Blue',
+    colors: [
+      '#E3F2FD',
+      '#BBDEFB',
+      '#90CAF9',
+      '#64B5F6',
+      '#42A5F5',
+      '#2196F3',
+      '#1E88E5',
+      '#1976D2',
+      '#1565C0',
+      '#0D47A1',
+    ],
+  },
+  {
+    name: 'Light Blue',
+    colors: [
+      '#E1F5FE',
+      '#B3E5FC',
+      '#81D4FA',
+      '#4FC3F7',
+      '#29B6F6',
+      '#03A9F4',
+      '#039BE5',
+      '#0288D1',
+      '#0277BD',
+      '#01579B',
+    ],
+  },
+  {
+    name: 'Cyan',
+    colors: [
+      '#E0F7FA',
+      '#B2EBF2',
+      '#80DEEA',
+      '#4DD0E1',
+      '#26C6DA',
+      '#00BCD4',
+      '#00ACC1',
+      '#0097A7',
+      '#00838F',
+      '#006064',
+    ],
+  },
+  {
+    name: 'Teal',
+    colors: [
+      '#E0F2F1',
+      '#B2DFDB',
+      '#80CBC4',
+      '#4DB6AC',
+      '#26A69A',
+      '#009688',
+      '#00897B',
+      '#00796B',
+      '#00695C',
+      '#004D40',
+    ],
+  },
+  {
+    name: 'Green',
+    colors: [
+      '#E8F5E9',
+      '#C8E6C9',
+      '#A5D6A7',
+      '#81C784',
+      '#66BB6A',
+      '#4CAF50',
+      '#43A047',
+      '#388E3C',
+      '#2E7D32',
+      '#1B5E20',
+    ],
+  },
+  {
+    name: 'Light Green',
+    colors: [
+      '#F1F8E9',
+      '#DCEDC8',
+      '#C5E1A5',
+      '#AED581',
+      '#9CCC65',
+      '#8BC34A',
+      '#7CB342',
+      '#689F38',
+      '#558B2F',
+      '#33691E',
+    ],
+  },
+  {
+    name: 'Lime',
+    colors: [
+      '#F9FBE7',
+      '#FFF9C4',
+      '#FFF59D',
+      '#FFF176',
+      '#FFEE58',
+      '#FFEB3B',
+      '#FDD835',
+      '#FBC02D',
+      '#F9A825',
+      '#F57F17',
+    ],
+  },
+  {
+    name: 'Yellow',
+    colors: [
+      '#FFFDE7',
+      '#FFF9C4',
+      '#FFF59D',
+      '#FFF176',
+      '#FFEE58',
+      '#FFEB3B',
+      '#FDD835',
+      '#FBC02D',
+      '#F9A825',
+      '#F57F17',
+    ],
+  },
+  {
+    name: 'Amber',
+    colors: [
+      '#FFF8E1',
+      '#FFECB3',
+      '#FFE082',
+      '#FFD54F',
+      '#FFCA28',
+      '#FFC107',
+      '#FFB300',
+      '#FFA000',
+      '#FF8F00',
+      '#FF6F00',
+    ],
+  },
+  {
+    name: 'Orange',
+    colors: [
+      '#FFF3E0',
+      '#FFE0B2',
+      '#FFCC80',
+      '#FFB74D',
+      '#FFA726',
+      '#FF9800',
+      '#FB8C00',
+      '#F57C00',
+      '#EF6C00',
+      '#E65100',
+    ],
+  },
+  {
+    name: 'Deep Orange',
+    colors: [
+      '#FBE9E7',
+      '#FFCCBC',
+      '#FFAB91',
+      '#FF8A65',
+      '#FF7043',
+      '#FF5722',
+      '#F4511E',
+      '#E64A19',
+      '#D84315',
+      '#BF360C',
+    ],
+  },
+  {
+    name: 'Brown',
+    colors: [
+      '#EFEBE9',
+      '#D7CCC8',
+      '#BCAAA4',
+      '#A1887F',
+      '#8D6E63',
+      '#795548',
+      '#6D4C41',
+      '#5D4037',
+      '#4E342E',
+      '#3E2723',
+    ],
+  },
+  {
+    name: 'Grey',
+    colors: [
+      '#FAFAFA',
+      '#F5F5F5',
+      '#EEEEEE',
+      '#E0E0E0',
+      '#BDBDBD',
+      '#9E9E9E',
+      '#757575',
+      '#616161',
+      '#424242',
+      '#212121',
+    ],
+  },
+  {
+    name: 'Blue Grey',
+    colors: [
+      '#ECEFF1',
+      '#CFD8DC',
+      '#B0BEC5',
+      '#90A4AE',
+      '#78909C',
+      '#607D8B',
+      '#546E7A',
+      '#455A64',
+      '#37474F',
+      '#263238',
+    ],
+  },
 ]
 
 // Watch for color changes to update input values
@@ -1279,6 +1655,20 @@ const selectCommonColor = (color: string) => {
   updateAllColors()
 }
 
+// Modal functions
+const openModal = () => {
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const selectMaterialColor = (color: string) => {
+  selectCommonColor(color)
+  closeModal()
+}
+
 const openImageSelector = () => {
   if (imageInput.value) {
     imageInput.value.click()
@@ -1724,4 +2114,3 @@ const handlePasteEvent = (e: ClipboardEvent) => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 </style>
-</template>

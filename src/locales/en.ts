@@ -23,6 +23,7 @@ export default {
     nonEmpty: 'Non-empty',
     loading: 'Loading...',
     remove: 'Remove',
+    more: 'More',
   },
   toast: {
     success: 'Success',

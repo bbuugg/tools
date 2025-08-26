@@ -23,6 +23,7 @@ export default {
     nonEmpty: '非空',
     loading: '加载中...',
     remove: '移除',
+    more: '更多',
   },
   navigation: {
     tools: '工具',
