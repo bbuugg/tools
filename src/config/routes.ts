@@ -30,6 +30,7 @@ const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
 const TextSteganography = () => import('../tools/TextSteganography.vue')
 const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
+const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 
 // Tool routes configuration - this contains ONLY tool routes
 export const routeConfig: RouteRecordRaw[] = [
@@ -302,6 +303,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Heart Collage',
           icon: '❤️',
+          status: 'active',
+        },
+      },
+      {
+        path: 'color-picker',
+        name: 'colorPicker',
+        component: ColorPickerTool,
+        meta: {
+          title: 'Color Picker',
+          icon: '🎨',
           status: 'active',
         },
       },

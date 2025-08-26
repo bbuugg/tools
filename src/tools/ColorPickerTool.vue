@@ -1,0 +1,1031 @@
+<template>
+  <div class="color-picker-tool">
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $t('tools.colorPicker.title') }}</h2>
+      <p class="text-gray-600 mb-6">{{ $t('tools.colorPicker.description') }}</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Color Picker Section -->
+        <div class="space-y-6">
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              {{ $t('tools.colorPicker.colorPicker') }}
+            </h3>
+
+            <!-- Main Color Picker -->
+            <div class="mb-6">
+              <div
+                class="w-full h-32 rounded-lg mb-4 cursor-pointer border-2 border-gray-300"
+                :style="{ backgroundColor: currentColor.hex }"
+                @click="openColorPicker"
+              ></div>
+              <input
+                ref="colorPickerInput"
+                type="color"
+                v-model="currentColor.hex"
+                class="hidden"
+                @input="onHexChange"
+              />
+            </div>
+
+            <!-- RGBA Sliders -->
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700">R</span>
+                  <span class="text-sm text-gray-500">{{ currentColor.rgb.r }}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="255"
+                  v-model.number="currentColor.rgb.r"
+                  class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer"
+                  @input="onRgbChange"
+                />
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700">G</span>
+                  <span class="text-sm text-gray-500">{{ currentColor.rgb.g }}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="255"
+                  v-model.number="currentColor.rgb.g"
+                  class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer"
+                  @input="onRgbChange"
+                />
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700">B</span>
+                  <span class="text-sm text-gray-500">{{ currentColor.rgb.b }}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="255"
+                  v-model.number="currentColor.rgb.b"
+                  class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                  @input="onRgbChange"
+                />
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700">A</span>
+                  <span class="text-sm text-gray-500">{{
+                    parseFloat(String(currentColor.rgb.a)).toFixed(2)
+                  }}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  v-model.number="currentColor.rgb.a"
+                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  @input="onAlphaChange"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Color Picker -->
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              {{ $t('tools.colorPicker.imagePicker') }}
+            </h3>
+
+            <div
+              class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer mb-4"
+              @drop="handleImageDrop"
+              @dragover.prevent
+              @click="openImageSelector"
+              :class="{ 'border-blue-500 bg-blue-50': isImageDragging }"
+            >
+              <input
+                ref="imageInput"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="handleImageSelect"
+              />
+              <div class="space-y-2">
+                <div class="text-2xl">🎨</div>
+                <p class="text-gray-600">{{ $t('tools.colorPicker.dropImage') }}</p>
+                <button
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                  {{ $t('tools.colorPicker.selectImage') }}
+                </button>
+              </div>
+            </div>
+
+            <div v-if="imagePreview" class="mt-4">
+              <div class="flex justify-between items-center mb-2">
+                <p class="text-sm text-gray-600">{{ $t('tools.colorPicker.imagePreview') }}</p>
+                <button
+                  @click="activateColorPicker"
+                  :class="[
+                    'px-3 py-1 text-sm rounded transition-colors',
+                    isColorPickerActive
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-blue-600 text-white hover:bg-blue-700',
+                  ]"
+                >
+                  {{
+                    isColorPickerActive
+                      ? $t('tools.colorPicker.cancelPick')
+                      : $t('tools.colorPicker.pickColor')
+                  }}
+                </button>
+              </div>
+              <img
+                :src="imagePreview"
+                alt="Preview"
+                class="max-w-full h-auto rounded-lg"
+                :class="{ 'cursor-crosshair': isColorPickerActive }"
+                @click="pickColorFromImage"
+                ref="previewImage"
+              />
+              <p v-if="isColorPickerActive" class="text-sm text-gray-500 mt-2">
+                {{ $t('tools.colorPicker.clickToPick') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Color Information Section -->
+        <div class="space-y-6">
+          <!-- Common Colors -->
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              {{ $t('tools.colorPicker.commonColors') }}
+            </h3>
+            <div class="grid grid-cols-6 gap-2">
+              <div
+                v-for="color in commonColors"
+                :key="color"
+                class="w-8 h-8 rounded cursor-pointer border border-gray-300 hover:scale-110 transition-transform"
+                :style="{ backgroundColor: color }"
+                @click="selectCommonColor(color)"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Color Values -->
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              {{ $t('tools.colorPicker.conversions') }}
+            </h3>
+
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">HEX</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.hex"
+                    type="text"
+                    class="w-40 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onHexInputValueChange"
+                  />
+                  <button
+                    @click="copyToClipboard(currentColor.hex)"
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">RGB</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.rgb"
+                    type="text"
+                    class="w-48 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onRgbInputValueChange"
+                  />
+                  <button
+                    @click="
+                      copyToClipboard(
+                        `rgb(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b})`,
+                      )
+                    "
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">RGBA</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.rgba"
+                    type="text"
+                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onRgbaInputValueChange"
+                  />
+                  <button
+                    @click="
+                      copyToClipboard(
+                        `rgba(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b}, ${parseFloat(String(currentColor.rgb.a)).toFixed(2)})`,
+                      )
+                    "
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">HSL</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.hsl"
+                    type="text"
+                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onHslInputValueChange"
+                  />
+                  <button
+                    @click="
+                      copyToClipboard(
+                        `hsl(${Math.round(currentColor.hsl.h)}, ${Math.round(currentColor.hsl.s)}%, ${Math.round(currentColor.hsl.l)}%)`,
+                      )
+                    "
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">HSV</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.hsv"
+                    type="text"
+                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onHsvInputValueChange"
+                  />
+                  <button
+                    @click="
+                      copyToClipboard(
+                        `hsv(${Math.round(currentColor.hsv.h)}, ${Math.round(currentColor.hsv.s)}%, ${Math.round(currentColor.hsv.v)}%)`,
+                      )
+                    "
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-white rounded border">
+                <span class="font-medium">CMYK</span>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model="inputValues.cmyk"
+                    type="text"
+                    class="w-56 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    @input="onCmykInputValueChange"
+                  />
+                  <button
+                    @click="
+                      copyToClipboard(
+                        `cmyk(${Math.round(currentColor.cmyk.c)}%, ${Math.round(currentColor.cmyk.m)}%, ${Math.round(currentColor.cmyk.y)}%, ${Math.round(currentColor.cmyk.k)}%)`,
+                      )
+                    "
+                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    {{ $t('common.copy') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview Section -->
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              {{ $t('tools.colorPicker.preview') }}
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm text-gray-600 mb-2">{{ $t('tools.colorPicker.onLight') }}</p>
+                <div
+                  class="h-20 rounded border flex items-center justify-center"
+                  style="background-color: white"
+                >
+                  <div
+                    class="w-16 h-16 rounded"
+                    :style="{ backgroundColor: currentColor.hex }"
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600 mb-2">{{ $t('tools.colorPicker.onDark') }}</p>
+                <div
+                  class="h-20 rounded border flex items-center justify-center"
+                  style="background-color: #333"
+                >
+                  <div
+                    class="w-16 h-16 rounded"
+                    :style="{ backgroundColor: currentColor.hex }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">
+        {{ $t('tools.colorPicker.features.title') }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            🎨 {{ $t('tools.colorPicker.features.conversions.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.colorPicker.features.conversions.description') }}
+          </p>
+        </div>
+        <div class="bg-green-50 p-5 rounded-lg border-l-4 border-green-500">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            📸 {{ $t('tools.colorPicker.features.imagePicker.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.colorPicker.features.imagePicker.description') }}
+          </p>
+        </div>
+        <div class="bg-purple-50 p-5 rounded-lg border-l-4 border-purple-500">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            📋 {{ $t('tools.colorPicker.features.commonColors.title') }}
+          </h3>
+          <p class="text-gray-600 text-sm">
+            {{ $t('tools.colorPicker.features.commonColors.description') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
+
+// Types
+interface RGB {
+  r: number
+  g: number
+  b: number
+  a: number
+}
+
+interface HSL {
+  h: number
+  s: number
+  l: number
+}
+
+interface HSV {
+  h: number
+  s: number
+  v: number
+}
+
+interface CMYK {
+  c: number
+  m: number
+  y: number
+  k: number
+}
+
+interface Color {
+  hex: string
+  rgb: RGB
+  hsl: HSL
+  hsv: HSV
+  cmyk: CMYK
+}
+
+interface InputValues {
+  hex: string
+  rgb: string
+  rgba: string
+  hsl: string
+  hsv: string
+  cmyk: string
+}
+
+// Composables
+const { t } = useI18n()
+const { success, error: showError } = useToast()
+
+// Refs
+const colorPickerInput = ref<HTMLInputElement | null>(null)
+const imageInput = ref<HTMLInputElement | null>(null)
+const previewImage = ref<HTMLImageElement | null>(null)
+const imagePreview = ref<string | null>(null)
+const isImageDragging = ref(false)
+const isColorPickerActive = ref(false)
+
+// Reactive state
+const currentColor = reactive<Color>({
+  hex: '#3b82f6',
+  rgb: { r: 59, g: 130, b: 246, a: 1 },
+  hsl: { h: 217, s: 91, l: 60 },
+  hsv: { h: 217, s: 76, v: 96 },
+  cmyk: { c: 76, m: 47, y: 0, k: 4 },
+})
+
+const inputValues = reactive<InputValues>({
+  hex: '#3b82f6',
+  rgb: 'rgb(59, 130, 246)',
+  rgba: 'rgba(59, 130, 246, 1.00)',
+  hsl: 'hsl(217, 91%, 60%)',
+  hsv: 'hsv(217, 76%, 96%)',
+  cmyk: 'cmyk(76%, 47%, 0%, 4%)',
+})
+
+// Common colors
+const commonColors = [
+  '#ef4444',
+  '#f97316',
+  '#eab308',
+  '#22c55e',
+  '#3b82f6',
+  '#6366f1',
+  '#8b5cf6',
+  '#ec4899',
+  '#64748b',
+  '#000000',
+  '#ffffff',
+  '#f4f4f5',
+]
+
+// Watch for color changes to update input values
+watch(currentColor, () => {
+  updateInputValues()
+})
+
+// Helper functions
+const hexToRgb = (hex: string): RGB => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+        a: 1,
+      }
+    : { r: 0, g: 0, b: 0, a: 1 }
+}
+
+const rgbToHex = (r: number, g: number, b: number): string => {
+  return (
+    '#' +
+    [r, g, b]
+      .map((x) => {
+        const hex = x.toString(16)
+        return hex.length === 1 ? '0' + hex : hex
+      })
+      .join('')
+  )
+}
+
+const rgbToHsl = (r: number, g: number, b: number): HSL => {
+  r /= 255
+  g /= 255
+  b /= 255
+
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h = 0
+  const l = (max + min) / 2
+  let s
+
+  if (max === min) {
+    h = s = 0 // achromatic
+  } else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0)
+        break
+      case g:
+        h = (b - r) / d + 2
+        break
+      case b:
+        h = (r - g) / d + 4
+        break
+    }
+
+    h! /= 6
+  }
+
+  return {
+    h: Math.round(h! * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  }
+}
+
+const hslToRgb = (h: number, s: number, l: number): RGB => {
+  h /= 360
+  s /= 100
+  l /= 100
+
+  let r, g, b
+
+  if (s === 0) {
+    r = g = b = l // achromatic
+  } else {
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1
+      if (t > 1) t -= 1
+      if (t < 1 / 6) return p + (q - p) * 6 * t
+      if (t < 1 / 2) return q
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+      return p
+    }
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+    const p = 2 * l - q
+
+    r = hue2rgb(p, q, h + 1 / 3)
+    g = hue2rgb(p, q, h)
+    b = hue2rgb(p, q, h - 1 / 3)
+  }
+
+  return {
+    r: Math.round(r! * 255),
+    g: Math.round(g! * 255),
+    b: Math.round(b! * 255),
+    a: 1,
+  }
+}
+
+const rgbToHsv = (r: number, g: number, b: number): HSV => {
+  r /= 255
+  g /= 255
+  b /= 255
+
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h = 0
+  const v = max
+  const s = max === 0 ? 0 : (max - min) / max
+
+  if (max === min) {
+    h = 0 // achromatic
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / (max - min) + (g < b ? 6 : 0)
+        break
+      case g:
+        h = (b - r) / (max - min) + 2
+        break
+      case b:
+        h = (r - g) / (max - min) + 4
+        break
+    }
+
+    h /= 6
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    v: Math.round(v * 100),
+  }
+}
+
+const hsvToRgb = (h: number, s: number, v: number): RGB => {
+  h /= 360
+  s /= 100
+  v /= 100
+
+  let r = 0,
+    g = 0,
+    b = 0
+
+  const i = Math.floor(h * 6)
+  const f = h * 6 - i
+  const p = v * (1 - s)
+  const q = v * (1 - f * s)
+  const t = v * (1 - (1 - f) * s)
+
+  switch (i % 6) {
+    case 0:
+      r = v
+      g = t
+      b = p
+      break
+    case 1:
+      r = q
+      g = v
+      b = p
+      break
+    case 2:
+      r = p
+      g = v
+      b = t
+      break
+    case 3:
+      r = p
+      g = q
+      b = v
+      break
+    case 4:
+      r = t
+      g = p
+      b = v
+      break
+    case 5:
+      r = v
+      g = p
+      b = q
+      break
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+    a: 1,
+  }
+}
+
+const rgbToCmyk = (r: number, g: number, b: number): CMYK => {
+  // Convert RGB to CMY
+  let c = 1 - r / 255
+  let m = 1 - g / 255
+  let y = 1 - b / 255
+
+  // Find K (black key)
+  const k = Math.min(c, m, y)
+
+  // Convert to CMYK
+  if (k === 1) {
+    return { c: 0, m: 0, y: 0, k: 100 }
+  }
+
+  c = (c - k) / (1 - k)
+  m = (m - k) / (1 - k)
+  y = (y - k) / (1 - k)
+
+  return {
+    c: Math.round(c * 100),
+    m: Math.round(m * 100),
+    y: Math.round(y * 100),
+    k: Math.round(k * 100),
+  }
+}
+
+const cmykToRgb = (c: number, m: number, y: number, k: number): RGB => {
+  c /= 100
+  m /= 100
+  y /= 100
+  k /= 100
+
+  const r = 255 * (1 - c) * (1 - k)
+  const g = 255 * (1 - m) * (1 - k)
+  const b = 255 * (1 - y) * (1 - k)
+
+  return {
+    r: Math.round(r),
+    g: Math.round(g),
+    b: Math.round(b),
+    a: 1,
+  }
+}
+
+// Update all color representations
+const updateAllColors = () => {
+  // Update HSL
+  const hsl = rgbToHsl(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b)
+  currentColor.hsl = hsl
+
+  // Update HSV
+  const hsv = rgbToHsv(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b)
+  currentColor.hsv = hsv
+
+  // Update CMYK
+  const cmyk = rgbToCmyk(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b)
+  currentColor.cmyk = cmyk
+
+  // Update HEX
+  currentColor.hex = rgbToHex(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b)
+
+  // Update input values
+  updateInputValues()
+}
+
+// Update input values for display
+const updateInputValues = () => {
+  inputValues.hex = currentColor.hex
+  inputValues.rgb = `rgb(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b})`
+  inputValues.rgba = `rgba(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b}, ${parseFloat(String(currentColor.rgb.a)).toFixed(2)})`
+  inputValues.hsl = `hsl(${Math.round(currentColor.hsl.h)}, ${Math.round(currentColor.hsl.s)}%, ${Math.round(currentColor.hsl.l)}%)`
+  inputValues.hsv = `hsv(${Math.round(currentColor.hsv.h)}, ${Math.round(currentColor.hsv.s)}%, ${Math.round(currentColor.hsv.v)}%)`
+  inputValues.cmyk = `cmyk(${Math.round(currentColor.cmyk.c)}%, ${Math.round(currentColor.cmyk.m)}%, ${Math.round(currentColor.cmyk.y)}%, ${Math.round(currentColor.cmyk.k)}%)`
+}
+
+// Event handlers
+const openColorPicker = () => {
+  if (colorPickerInput.value) {
+    colorPickerInput.value.click()
+  }
+}
+
+const onHexChange = () => {
+  const rgb = hexToRgb(currentColor.hex)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onRgbChange = () => {
+  updateAllColors()
+}
+
+const onAlphaChange = () => {
+  // Ensure alpha is a number
+  currentColor.rgb.a = parseFloat(String(currentColor.rgb.a)) || 0
+  updateAllColors()
+}
+
+const selectCommonColor = (color: string) => {
+  currentColor.hex = color
+  const rgb = hexToRgb(color)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const openImageSelector = () => {
+  if (imageInput.value) {
+    imageInput.value.click()
+  }
+}
+
+const handleImageSelect = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    const file = input.files[0]
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      imagePreview.value = e.target?.result as string
+      isColorPickerActive.value = false
+    }
+
+    reader.readAsDataURL(file)
+    input.value = '' // Reset input to allow selecting the same file again
+  }
+}
+
+const handleImageDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isImageDragging.value = false
+
+  if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+    const file = event.dataTransfer.files[0]
+    if (file.type.match('image.*')) {
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        imagePreview.value = e.target?.result as string
+        isColorPickerActive.value = false
+      }
+
+      reader.readAsDataURL(file)
+    }
+  }
+}
+
+const activateColorPicker = () => {
+  isColorPickerActive.value = !isColorPickerActive.value
+}
+
+const pickColorFromImage = (event: MouseEvent) => {
+  if (!isColorPickerActive.value || !previewImage.value || !imagePreview.value) return
+
+  const img = previewImage.value
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx) return
+
+  canvas.width = img.width
+  canvas.height = img.height
+  ctx.drawImage(img, 0, 0, img.width, img.height)
+
+  const x = event.offsetX * (img.naturalWidth / img.width)
+  const y = event.offsetY * (img.naturalHeight / img.height)
+
+  try {
+    const pixelData = ctx.getImageData(x, y, 1, 1).data
+    const r = pixelData[0]
+    const g = pixelData[1]
+    const b = pixelData[2]
+
+    // Ensure alpha is a number to prevent toFixed error
+    const alpha = parseFloat(String(currentColor.rgb.a)) || 1
+    currentColor.rgb = { r, g, b, a: alpha }
+    updateAllColors()
+
+    success(t('tools.colorPicker.colorPicked'))
+    isColorPickerActive.value = false
+  } catch {
+    showError(t('tools.colorPicker.colorPickError'))
+  }
+}
+
+// Input value change handlers with validation
+const onHexInputValueChange = () => {
+  const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+  if (!hexRegex.test(inputValues.hex)) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  currentColor.hex = inputValues.hex
+  const rgb = hexToRgb(currentColor.hex)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onRgbInputValueChange = () => {
+  const rgbRegex = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
+  const match = inputValues.rgb.match(rgbRegex)
+
+  if (!match || match.length !== 4) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  const r = parseInt(match[1])
+  const g = parseInt(match[2])
+  const b = parseInt(match[3])
+
+  if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+    // Don't show error, just don't update if values are out of range
+    return
+  }
+
+  currentColor.rgb = { ...currentColor.rgb, r, g, b }
+  updateAllColors()
+}
+
+const onRgbaInputValueChange = () => {
+  const rgbaRegex =
+    /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0|1|0\.\d+|1\.0+)\s*\)$/
+  const match = inputValues.rgba.match(rgbaRegex)
+
+  if (!match || match.length !== 5) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  const r = parseInt(match[1])
+  const g = parseInt(match[2])
+  const b = parseInt(match[3])
+  const a = parseFloat(match[4])
+
+  if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 1) {
+    // Don't show error, just don't update if values are out of range
+    return
+  }
+
+  currentColor.rgb = { r, g, b, a }
+  updateAllColors()
+}
+
+const onHslInputValueChange = () => {
+  const hslRegex = /^hsl\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*\)$/
+  const match = inputValues.hsl.match(hslRegex)
+
+  if (!match || match.length !== 4) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  const h = parseInt(match[1])
+  const s = parseInt(match[2])
+  const l = parseInt(match[3])
+
+  if (h < 0 || h > 360 || s < 0 || s > 100 || l < 0 || l > 100) {
+    // Don't show error, just don't update if values are out of range
+    return
+  }
+
+  const rgb = hslToRgb(h, s, l)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onHsvInputValueChange = () => {
+  const hsvRegex = /^hsv\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*\)$/
+  const match = inputValues.hsv.match(hsvRegex)
+
+  if (!match || match.length !== 4) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  const h = parseInt(match[1])
+  const s = parseInt(match[2])
+  const v = parseInt(match[3])
+
+  if (h < 0 || h > 360 || s < 0 || s > 100 || v < 0 || v > 100) {
+    // Don't show error, just don't update if values are out of range
+    return
+  }
+
+  const rgb = hsvToRgb(h, s, v)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const onCmykInputValueChange = () => {
+  const cmykRegex = /^cmyk\(\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*\)$/
+  const match = inputValues.cmyk.match(cmykRegex)
+
+  if (!match || match.length !== 5) {
+    // Don't show error, just don't update if format is invalid
+    return
+  }
+
+  const c = parseInt(match[1])
+  const m = parseInt(match[2])
+  const y = parseInt(match[3])
+  const k = parseInt(match[4])
+
+  if (c < 0 || c > 100 || m < 0 || m > 100 || y < 0 || y > 100 || k < 0 || k > 100) {
+    // Don't show error, just don't update if values are out of range
+    return
+  }
+
+  const rgb = cmykToRgb(c, m, y, k)
+  currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
+  updateAllColors()
+}
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      success(t('toast.copied'))
+    })
+    .catch(() => {
+      showError(t('toast.copyFailed'))
+    })
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  window.addEventListener('dragover', (e) => {
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'copy'
+    }
+  })
+
+  window.addEventListener('drop', (e) => {
+    e.preventDefault()
+  })
+
+  // Initialize input values
+  updateInputValues()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('dragover', () => {})
+  window.removeEventListener('drop', () => {})
+})
+</script>
+
+<style scoped>
+.cursor-crosshair {
+  cursor: crosshair;
+}
+</style>
