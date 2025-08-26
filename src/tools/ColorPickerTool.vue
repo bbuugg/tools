@@ -91,9 +91,9 @@
                     type="range"
                     min="0"
                     max="255"
-                    v-model.number="currentColor.rgb.r"
+                    :value="currentColor.rgb.r"
+                    @input="onRgbRChange"
                     class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onRgbChange"
                   />
                 </div>
 
@@ -106,9 +106,9 @@
                     type="range"
                     min="0"
                     max="255"
-                    v-model.number="currentColor.rgb.g"
+                    :value="currentColor.rgb.g"
+                    @input="onRgbGChange"
                     class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onRgbChange"
                   />
                 </div>
 
@@ -121,9 +121,9 @@
                     type="range"
                     min="0"
                     max="255"
-                    v-model.number="currentColor.rgb.b"
+                    :value="currentColor.rgb.b"
+                    @input="onRgbBChange"
                     class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onRgbChange"
                   />
                 </div>
 
@@ -139,9 +139,9 @@
                     min="0"
                     max="1"
                     step="0.01"
-                    v-model.number="currentColor.rgb.a"
+                    :value="currentColor.rgb.a"
+                    @input="onAlphaSliderChange"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onAlphaChange"
                   />
                 </div>
               </div>
@@ -157,9 +157,9 @@
                     type="range"
                     min="0"
                     max="360"
-                    v-model.number="currentColor.hsl.h"
+                    :value="currentColor.hsl.h"
+                    @input="onHslHChange"
                     class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHslChange"
                   />
                 </div>
 
@@ -172,9 +172,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.hsl.s"
+                    :value="currentColor.hsl.s"
+                    @input="onHslSChange"
                     class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHslChange"
                   />
                 </div>
 
@@ -187,9 +187,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.hsl.l"
+                    :value="currentColor.hsl.l"
+                    @input="onHslLChange"
                     class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHslChange"
                   />
                 </div>
 
@@ -205,9 +205,9 @@
                     min="0"
                     max="1"
                     step="0.01"
-                    v-model.number="currentColor.rgb.a"
+                    :value="currentColor.rgb.a"
+                    @input="onAlphaSliderChange"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onAlphaChange"
                   />
                 </div>
               </div>
@@ -223,9 +223,9 @@
                     type="range"
                     min="0"
                     max="360"
-                    v-model.number="currentColor.hsv.h"
+                    :value="currentColor.hsv.h"
+                    @input="onHsvHChange"
                     class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHsvChange"
                   />
                 </div>
 
@@ -238,9 +238,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.hsv.s"
+                    :value="currentColor.hsv.s"
+                    @input="onHsvSChange"
                     class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHsvChange"
                   />
                 </div>
 
@@ -253,9 +253,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.hsv.v"
+                    :value="currentColor.hsv.v"
+                    @input="onHsvVChange"
                     class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onHsvChange"
                   />
                 </div>
 
@@ -271,9 +271,9 @@
                     min="0"
                     max="1"
                     step="0.01"
-                    v-model.number="currentColor.rgb.a"
+                    :value="currentColor.rgb.a"
+                    @input="onAlphaSliderChange"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onAlphaChange"
                   />
                 </div>
               </div>
@@ -289,9 +289,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.cmyk.c"
+                    :value="currentColor.cmyk.c"
+                    @input="onCmykCChange"
                     class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onCmykChange"
                   />
                 </div>
 
@@ -304,9 +304,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.cmyk.m"
+                    :value="currentColor.cmyk.m"
+                    @input="onCmykMChange"
                     class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onCmykChange"
                   />
                 </div>
 
@@ -319,9 +319,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.cmyk.y"
+                    :value="currentColor.cmyk.y"
+                    @input="onCmykYChange"
                     class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onCmykChange"
                   />
                 </div>
 
@@ -334,9 +334,9 @@
                     type="range"
                     min="0"
                     max="100"
-                    v-model.number="currentColor.cmyk.k"
+                    :value="currentColor.cmyk.k"
+                    @input="onCmykKChange"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onCmykChange"
                   />
                 </div>
 
@@ -352,9 +352,9 @@
                     min="0"
                     max="1"
                     step="0.01"
-                    v-model.number="currentColor.rgb.a"
+                    :value="currentColor.rgb.a"
+                    @input="onAlphaSliderChange"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
-                    @input="onAlphaChange"
                   />
                 </div>
               </div>
@@ -432,6 +432,8 @@
               />
               <p v-if="isColorPickerActive" class="text-sm text-gray-500 mt-2">
                 {{ $t('tools.colorPicker.clickToPick') }}
+                <br />
+                {{ $t('tools.colorPicker.keepPickingUntilCancel') }}
               </p>
 
               <!-- Re-select image options -->
@@ -1071,20 +1073,114 @@ const onAlphaChange = () => {
   updateAllColors()
 }
 
-// New event handlers for different color modes
+// New event handlers for individual slider changes
+const onRgbRChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  currentColor.rgb.r = parseInt(target.value)
+  onRgbChange()
+}
+
+const onRgbGChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  currentColor.rgb.g = parseInt(target.value)
+  onRgbChange()
+}
+
+const onRgbBChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  currentColor.rgb.b = parseInt(target.value)
+  onRgbChange()
+}
+
+const onAlphaSliderChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  currentColor.rgb.a = parseFloat(target.value)
+  onAlphaChange()
+}
+
 const onHslChange = () => {
+  // Ensure values are within valid ranges
+  currentColor.hsl.h = Math.max(0, Math.min(360, currentColor.hsl.h))
+  currentColor.hsl.s = Math.max(0, Math.min(100, currentColor.hsl.s))
+  currentColor.hsl.l = Math.max(0, Math.min(100, currentColor.hsl.l))
+
   const rgb = hslToRgb(currentColor.hsl.h, currentColor.hsl.s, currentColor.hsl.l)
   currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
   updateAllColors()
 }
 
+const onHslHChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (360) or go below min (0)
+  const newHsl = { ...currentColor.hsl, h: Math.min(360, Math.max(0, value)) }
+  currentColor.hsl = newHsl
+  onHslChange()
+}
+
+const onHslSChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newHsl = { ...currentColor.hsl, s: Math.min(100, Math.max(0, value)) }
+  currentColor.hsl = newHsl
+  onHslChange()
+}
+
+const onHslLChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newHsl = { ...currentColor.hsl, l: Math.min(100, Math.max(0, value)) }
+  currentColor.hsl = newHsl
+  onHslChange()
+}
+
 const onHsvChange = () => {
+  // Ensure values are within valid ranges
+  currentColor.hsv.h = Math.max(0, Math.min(360, currentColor.hsv.h))
+  currentColor.hsv.s = Math.max(0, Math.min(100, currentColor.hsv.s))
+  currentColor.hsv.v = Math.max(0, Math.min(100, currentColor.hsv.v))
+
   const rgb = hsvToRgb(currentColor.hsv.h, currentColor.hsv.s, currentColor.hsv.v)
   currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
   updateAllColors()
 }
 
+const onHsvHChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (360) or go below min (0)
+  const newHsv = { ...currentColor.hsv, h: Math.min(360, Math.max(0, value)) }
+  currentColor.hsv = newHsv
+  onHsvChange()
+}
+
+const onHsvSChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newHsv = { ...currentColor.hsv, s: Math.min(100, Math.max(0, value)) }
+  currentColor.hsv = newHsv
+  onHsvChange()
+}
+
+const onHsvVChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newHsv = { ...currentColor.hsv, v: Math.min(100, Math.max(0, value)) }
+  currentColor.hsv = newHsv
+  onHsvChange()
+}
+
 const onCmykChange = () => {
+  // Ensure values are within valid ranges
+  currentColor.cmyk.c = Math.max(0, Math.min(100, currentColor.cmyk.c))
+  currentColor.cmyk.m = Math.max(0, Math.min(100, currentColor.cmyk.m))
+  currentColor.cmyk.y = Math.max(0, Math.min(100, currentColor.cmyk.y))
+  currentColor.cmyk.k = Math.max(0, Math.min(100, currentColor.cmyk.k))
+
   const rgb = cmykToRgb(
     currentColor.cmyk.c,
     currentColor.cmyk.m,
@@ -1093,6 +1189,42 @@ const onCmykChange = () => {
   )
   currentColor.rgb = { ...rgb, a: currentColor.rgb.a }
   updateAllColors()
+}
+
+const onCmykCChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newCmyk = { ...currentColor.cmyk, c: Math.min(100, Math.max(0, value)) }
+  currentColor.cmyk = newCmyk
+  onCmykChange()
+}
+
+const onCmykMChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newCmyk = { ...currentColor.cmyk, m: Math.min(100, Math.max(0, value)) }
+  currentColor.cmyk = newCmyk
+  onCmykChange()
+}
+
+const onCmykYChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newCmyk = { ...currentColor.cmyk, y: Math.min(100, Math.max(0, value)) }
+  currentColor.cmyk = newCmyk
+  onCmykChange()
+}
+
+const onCmykKChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const value = parseInt(target.value)
+  // Ensure value doesn't exceed max (100) or go below min (0)
+  const newCmyk = { ...currentColor.cmyk, k: Math.min(100, Math.max(0, value)) }
+  currentColor.cmyk = newCmyk
+  onCmykChange()
 }
 
 const selectCommonColor = (color: string) => {
@@ -1186,15 +1318,24 @@ const pickColorFromImage = (event: MouseEvent) => {
 
   if (!ctx) return
 
-  canvas.width = img.width
-  canvas.height = img.height
-  ctx.drawImage(img, 0, 0, img.width, img.height)
+  // Draw the image at its natural size on the canvas
+  canvas.width = img.naturalWidth
+  canvas.height = img.naturalHeight
+  ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
 
-  const x = event.offsetX * (img.naturalWidth / img.width)
-  const y = event.offsetY * (img.naturalHeight / img.height)
+  // Calculate the correct coordinates accounting for image scaling
+  const rect = img.getBoundingClientRect()
+  const xRatio = img.naturalWidth / rect.width
+  const yRatio = img.naturalHeight / rect.height
+  const x = Math.floor((event.clientX - rect.left) * xRatio)
+  const y = Math.floor((event.clientY - rect.top) * yRatio)
+
+  // Ensure coordinates are within bounds
+  const boundedX = Math.max(0, Math.min(img.naturalWidth - 1, x))
+  const boundedY = Math.max(0, Math.min(img.naturalHeight - 1, y))
 
   try {
-    const pixelData = ctx.getImageData(x, y, 1, 1).data
+    const pixelData = ctx.getImageData(boundedX, boundedY, 1, 1).data
     const r = pixelData[0]
     const g = pixelData[1]
     const b = pixelData[2]
@@ -1205,8 +1346,10 @@ const pickColorFromImage = (event: MouseEvent) => {
     updateAllColors()
 
     success(t('tools.colorPicker.colorPicked'))
-    isColorPickerActive.value = false
-  } catch {
+    // Keep the color picker active for repeated picking
+    // isColorPickerActive.value = false
+  } catch (error) {
+    console.error('Color picking error:', error)
     showError(t('tools.colorPicker.colorPickError'))
   }
 }
@@ -1364,6 +1507,9 @@ onMounted(() => {
     e.preventDefault()
   })
 
+  // Add paste event listener for direct image paste
+  window.addEventListener('paste', handlePasteEvent)
+
   // Initialize input values
   updateInputValues()
 })
@@ -1371,73 +1517,83 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('dragover', () => {})
   window.removeEventListener('drop', () => {})
+  window.removeEventListener('paste', handlePasteEvent)
 })
+
+// Handle direct paste event
+const handlePasteEvent = (e: ClipboardEvent) => {
+  // Prevent default paste behavior
+  e.preventDefault()
+
+  // Check for clipboard data
+  if (!e.clipboardData) {
+    return
+  }
+
+  // Check for files in clipboard
+  if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+    const file = e.clipboardData.files[0]
+    if (file.type.match('image.*')) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        imagePreview.value = event.target?.result as string
+        isColorPickerActive.value = false
+      }
+      reader.readAsDataURL(file)
+      return
+    }
+  }
+
+  // Check for image data in clipboard items (for newer browsers)
+  if (e.clipboardData.items) {
+    for (let i = 0; i < e.clipboardData.items.length; i++) {
+      const item = e.clipboardData.items[i]
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile()
+        if (file) {
+          const reader = new FileReader()
+          reader.onload = (event) => {
+            imagePreview.value = event.target?.result as string
+            isColorPickerActive.value = false
+          }
+          reader.readAsDataURL(file)
+          return
+        }
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
-.cursor-crosshair {
-  cursor: crosshair;
-}
-
-/* Fix for slider drag issues */
-.slider-fix {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  outline: none;
-  width: 100%;
-  height: 8px;
-  border-radius: 4px;
-  background: #e5e7eb;
-  cursor: pointer;
-}
-
+/* Custom slider thumb styling to fix drag issues */
 .slider-fix::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
   border: 2px solid #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
 }
 
 .slider-fix::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
   border: 2px solid #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
 }
 
-.slider-fix:active::-webkit-slider-thumb,
-.slider-fix:hover::-webkit-slider-thumb {
-  transform: scale(1.2);
-  background: #2563eb;
+.slider-fix:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
-.slider-fix:active::-moz-range-thumb,
-.slider-fix:hover::-moz-range-thumb {
-  transform: scale(1.2);
-  background: #2563eb;
-}
-
-/* Additional fixes for better slider experience */
-.slider-fix:focus {
-  outline: none;
-}
-
-.slider-fix::-webkit-slider-thumb:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-}
-
-.slider-fix::-moz-range-thumb:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+.slider-fix:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 </style>
