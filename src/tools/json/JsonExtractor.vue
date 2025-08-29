@@ -1,34 +1,34 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <div class="h-full bg-dark-950 text-slate-100 p-6">
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.jsonExtractor.title') }}</h1>
-        <p class="text-gray-600">
+        <h1 class="text-3xl font-bold text-slate-100 mb-2">{{ $t('tools.jsonExtractor.title') }}</h1>
+        <p class="text-slate-400">
           {{ $t('tools.jsonExtractor.description') }}
         </p>
       </div>
 
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🎯</div>
-          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.fieldExtraction.title') }}</h3>
-          <p class="text-gray-600 text-sm">
+        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+          <div class="text-2xl mb-3 group-hover:scale-110 transition-transform duration-200">🎯</div>
+          <h3 class="text-lg font-semibold mb-2 text-slate-100">{{ $t('tools.jsonExtractor.features.fieldExtraction.title') }}</h3>
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.jsonExtractor.features.fieldExtraction.description') }}
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.smartFiltering.title') }}</h3>
-          <p class="text-gray-600 text-sm">
+        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+          <div class="text-2xl mb-3 group-hover:scale-110 transition-transform duration-200">🔍</div>
+          <h3 class="text-lg font-semibold mb-2 text-slate-100">{{ $t('tools.jsonExtractor.features.smartFiltering.title') }}</h3>
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.jsonExtractor.features.smartFiltering.description') }}
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">{{ $t('tools.jsonExtractor.features.exportOptions.title') }}</h3>
-          <p class="text-gray-600 text-sm">
+        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+          <div class="text-2xl mb-3 group-hover:scale-110 transition-transform duration-200">⚙️</div>
+          <h3 class="text-lg font-semibold mb-2 text-slate-100">{{ $t('tools.jsonExtractor.features.exportOptions.title') }}</h3>
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.jsonExtractor.features.exportOptions.description') }}
           </p>
         </div>
@@ -36,19 +36,19 @@
 
       <div class="grid lg:grid-cols-2 gap-6">
         <!-- Input Section -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
+        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">{{ $t('tools.jsonExtractor.inputTitle') }}</h3>
+            <h3 class="text-lg font-semibold text-slate-100">{{ $t('tools.jsonExtractor.inputTitle') }}</h3>
             <div class="flex space-x-2">
               <button
                 @click="loadExample"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:text-white transition-all duration-200 hover-lift"
               >
                 {{ $t('common.loadExample') }}
               </button>
               <button
                 @click="clearInput"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:text-white transition-all duration-200 hover-lift"
               >
                 {{ $t('common.clear') }}
               </button>
@@ -58,35 +58,35 @@
           <textarea
             v-model="inputJson"
             :placeholder="$t('tools.jsonExtractor.inputPlaceholder')"
-            class="w-full h-48 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full h-48 p-4 border border-slate-700/30 rounded-xl font-mono text-sm resize-none bg-slate-800/50 text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
             @input="analyzeFields"
           ></textarea>
 
           <!-- Available Fields -->
           <div v-if="availableFields.length > 0" class="mt-4">
-            <h4 class="font-medium text-gray-900 mb-3">{{ $t('tools.jsonExtractor.availableFields') }}</h4>
-            <div class="max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+            <h4 class="font-medium text-slate-100 mb-3">{{ $t('tools.jsonExtractor.availableFields') }}</h4>
+            <div class="max-h-40 overflow-y-auto border border-slate-700/30 rounded-xl p-3 bg-slate-800/30">
               <div class="grid grid-cols-2 gap-2">
                 <label
                   v-for="field in availableFields"
                   :key="field"
-                  class="flex items-center text-sm"
+                  class="flex items-center text-sm text-slate-300 hover:text-slate-100 transition-colors duration-200"
                 >
                   <input
                     v-model="selectedFields"
                     :value="field"
                     type="checkbox"
-                    class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
                   />
                   {{ field }}
                 </label>
               </div>
             </div>
             <div class="flex justify-between mt-2">
-              <button @click="selectAllFields" class="text-sm text-blue-600 hover:text-blue-800">
+              <button @click="selectAllFields" class="text-sm text-primary-400 hover:text-primary-300 transition-colors duration-200">
                 {{ $t('common.selectAll') }}
               </button>
-              <button @click="clearSelection" class="text-sm text-gray-600 hover:text-gray-800">
+              <button @click="clearSelection" class="text-sm text-slate-400 hover:text-slate-300 transition-colors duration-200">
                 {{ $t('common.clearSelection') }}
               </button>
             </div>
@@ -94,32 +94,32 @@
 
           <!-- Options -->
           <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">{{ $t('common.options') }}</h4>
+            <h4 class="font-medium text-slate-100">{{ $t('common.options') }}</h4>
 
             <div class="grid grid-cols-1 gap-3">
-              <label class="flex items-center">
+              <label class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200">
                 <input
                   v-model="options.preserveStructure"
                   type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
                 />
                 {{ $t('tools.jsonExtractor.options.preserveStructure') }}
               </label>
 
-              <label class="flex items-center">
+              <label class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200">
                 <input
                   v-model="options.removeEmpty"
                   type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
                 />
                 {{ $t('tools.jsonExtractor.options.removeEmpty') }}
               </label>
 
-              <label class="flex items-center">
+              <label class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200">
                 <input
                   v-model="options.flattenNested"
                   type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
                 />
                 {{ $t('tools.jsonExtractor.options.flattenNested') }}
               </label>
@@ -129,28 +129,28 @@
           <button
             @click="extractFields"
             :disabled="!inputJson.trim() || selectedFields.length === 0"
-            class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+            class="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 font-medium hover-lift"
           >
             {{ $t('common.extract') }} {{ $t('common.fields') }}
           </button>
         </div>
 
         <!-- Output Section -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
+        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">{{ $t('tools.jsonExtractor.extractedData') }}</h3>
+            <h3 class="text-lg font-semibold text-slate-100">{{ $t('tools.jsonExtractor.extractedData') }}</h3>
             <div class="flex space-x-2">
               <button
                 v-if="extractedData"
                 @click="copyToClipboard"
-                class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                class="px-3 py-1 text-sm bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500/30 transition-all duration-200 hover-lift"
               >
                 {{ $t('common.copy') }}
               </button>
               <button
                 v-if="extractedData"
                 @click="downloadJson"
-                class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                class="px-3 py-1 text-sm bg-success-500/20 text-success-400 rounded-lg hover:bg-success-500/30 transition-all duration-200 hover-lift"
               >
                 {{ $t('common.download') }}
               </button>
@@ -159,29 +159,29 @@
 
           <div
             v-if="!extractedData && !error"
-            class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg"
+            class="h-80 flex items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/30 rounded-xl"
           >
             <div class="text-center">
-              <div class="text-3xl mb-2">🎯</div>
+              <div class="text-3xl mb-2 animate-bounce-subtle">🎯</div>
               <p>{{ $t('tools.jsonExtractor.noResults') }}</p>
             </div>
           </div>
 
           <div v-if="error" class="h-80 flex items-center justify-center">
-            <div class="text-center text-red-600">
-              <div class="text-3xl mb-2">❌</div>
+            <div class="text-center text-red-400">
+              <div class="text-3xl mb-2 animate-bounce-subtle">❌</div>
               <p class="font-medium">{{ $t('toast.error') }}</p>
               <p class="text-sm">{{ error }}</p>
             </div>
           </div>
 
           <div v-if="extractedData && !error" class="space-y-4">
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="bg-success-500/10 border border-success-500/30 rounded-xl p-4">
               <div class="flex items-center">
-                <div class="text-green-600 text-2xl mr-3">✅</div>
+                <div class="text-success-400 text-2xl mr-3">✅</div>
                 <div>
-                  <p class="font-medium text-green-800">{{ $t('toast.success') }}</p>
-                  <p class="text-sm text-green-600">
+                  <p class="font-medium text-success-400">{{ $t('toast.success') }}</p>
+                  <p class="text-sm text-success-500/80">
                     {{ extractionStats }}
                   </p>
                 </div>
@@ -191,7 +191,7 @@
             <textarea
               :value="extractedData"
               readonly
-              class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full h-64 p-4 border border-slate-700/30 rounded-xl font-mono text-sm resize-none bg-slate-800/50 text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
             ></textarea>
           </div>
         </div>
