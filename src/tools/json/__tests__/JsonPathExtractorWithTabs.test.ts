@@ -73,27 +73,28 @@ describe('JsonPathExtractorWithTabs', () => {
     })
 
     // Check that path tab is active by default
-    expect(wrapper.find('.border-primary-500').text()).toContain('Path Extractor')
+    const firstTab = wrapper.findAll('button')[0]
+    expect(firstTab.classes()).toContain('bg-primary-600')
 
     // Find and click the field extractor tab
     const extractorTab = wrapper.findAll('button')[1]
     await extractorTab.trigger('click')
 
     // Check that field extractor tab is now active
-    expect(wrapper.find('.border-primary-500').text()).toContain('Field Extractor')
+    expect(extractorTab.classes()).toContain('bg-primary-600')
 
     // Find and click the formatter tab
     const formatterTab = wrapper.findAll('button')[2]
     await formatterTab.trigger('click')
 
     // Check that formatter tab is now active
-    expect(wrapper.find('.border-primary-500').text()).toContain('JSON Formatter')
+    expect(formatterTab.classes()).toContain('bg-primary-600')
 
     // Find and click the excel to json tab
     const excelTab = wrapper.findAll('button')[3]
     await excelTab.trigger('click')
 
     // Check that excel to json tab is now active
-    expect(wrapper.find('.border-primary-500').text()).toContain('Excel to JSON')
+    expect(excelTab.classes()).toContain('bg-primary-600')
   })
 })

@@ -1,12 +1,6 @@
 <template>
   <div class="h-full bg-dark-950 text-slate-100 p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-      <!-- Header -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-slate-100 mb-2">{{ $t('tools.jsonMerge.title') }}</h1>
-        <p class="text-slate-400">{{ $t('tools.jsonMerge.description') }}</p>
-      </div>
-
       <!-- Tool Introduction -->
       <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg">
         <h2 class="text-lg font-semibold mb-3">{{ $t('tools.jsonMerge.introduction.title') }}</h2>
@@ -38,7 +32,9 @@
 
           <!-- File Preview -->
           <div v-if="uploadedFiles.length > 0" class="space-y-4">
-            <h4 class="font-medium text-slate-100">{{ $t('tools.jsonMerge.filePreview.title') }}</h4>
+            <h4 class="font-medium text-slate-100">
+              {{ $t('tools.jsonMerge.filePreview.title') }}
+            </h4>
             <div
               v-for="(file, index) in uploadedFiles"
               :key="index"
@@ -74,7 +70,12 @@
                     :title="$t('tools.jsonMerge.filePreview.moveUp')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 15l7-7 7 7"
+                      />
                     </svg>
                   </button>
                   <button
@@ -84,7 +85,12 @@
                     :title="$t('tools.jsonMerge.filePreview.moveDown')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
                   <button
@@ -93,7 +99,12 @@
                     :title="$t('tools.jsonMerge.filePreview.remove')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -101,7 +112,10 @@
             </div>
           </div>
 
-          <div v-else class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-700/30 rounded-xl">
+          <div
+            v-else
+            class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-700/30 rounded-xl"
+          >
             <div class="text-3xl mb-2 animate-bounce-subtle">📄</div>
             <p>{{ $t('tools.jsonMerge.fileUpload.noFiles') }}</p>
           </div>
@@ -191,7 +205,9 @@
 
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+        <div
+          class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200"
+        >
           <h3 class="font-semibold text-lg mb-2 text-slate-100">
             {{ $t('tools.jsonMerge.features.multipleFiles.title') }}
           </h3>
@@ -199,7 +215,9 @@
             {{ $t('tools.jsonMerge.features.multipleFiles.description') }}
           </p>
         </div>
-        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+        <div
+          class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200"
+        >
           <h3 class="font-semibold text-lg mb-2 text-slate-100">
             {{ $t('tools.jsonMerge.features.orderControl.title') }}
           </h3>
@@ -207,7 +225,9 @@
             {{ $t('tools.jsonMerge.features.orderControl.description') }}
           </p>
         </div>
-        <div class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200">
+        <div
+          class="glass border border-slate-700/30 p-6 rounded-xl shadow-dark-lg hover-lift transition-all duration-200"
+        >
           <h3 class="font-semibold text-lg mb-2 text-slate-100">
             {{ $t('tools.jsonMerge.features.preview.title') }}
           </h3>
