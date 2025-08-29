@@ -1,3 +1,12 @@
+process.env.LANG = 'zh_CN.UTF-8'
+process.env.LC_ALL = 'zh_CN.UTF-8'
+
+// Windows 特殊处理
+if (process.platform === 'win32') {
+  process.stdout.setDefaultEncoding('utf8')
+  process.stderr.setDefaultEncoding('utf8')
+}
+
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import net from 'net'

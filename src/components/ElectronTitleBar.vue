@@ -1,82 +1,84 @@
 <template>
-  <div
-    v-if="isElectron"
-    class="electron-titlebar bg-gray-800 text-white flex items-center justify-between h-8 px-2 select-none"
-    style="-webkit-app-region: drag"
-  >
-    <!-- 应用标题 -->
-    <div class="flex items-center space-x-2 text-sm">
-      <span class="text-lg">🔧</span>
-      <span>{{ $t('navigation.tools') }}</span>
-    </div>
+  <div>
+    <div
+      v-if="isElectron"
+      class="electron-titlebar bg-gray-800 text-white flex items-center justify-between h-8 px-2 select-none"
+      style="-webkit-app-region: drag"
+    >
+      <!-- 应用标题 -->
+      <div class="flex items-center space-x-2 text-sm">
+        <span class="text-lg">🔧</span>
+        <span>{{ $t('navigation.tools') }}</span>
+      </div>
 
-    <!-- 窗口控制按钮 -->
-    <div class="flex items-center" style="-webkit-app-region: no-drag">
-      <!-- 最小化按钮 -->
-      <button
-        @click="minimizeWindow"
-        class="window-control-btn hover:bg-gray-600 w-8 h-8 flex items-center justify-center transition-colors"
-        title="最小化"
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect x="2" y="5" width="8" height="2" />
-        </svg>
-      </button>
+      <!-- 窗口控制按钮 -->
+      <div class="flex items-center" style="-webkit-app-region: no-drag">
+        <!-- 最小化按钮 -->
+        <button
+          @click="minimizeWindow"
+          class="window-control-btn hover:bg-gray-600 w-8 h-8 flex items-center justify-center transition-colors"
+          title="最小化"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <rect x="2" y="5" width="8" height="2" />
+          </svg>
+        </button>
 
-      <!-- 最大化/还原按钮 -->
-      <button
-        @click="toggleMaximize"
-        class="window-control-btn hover:bg-gray-600 w-8 h-8 flex items-center justify-center transition-colors"
-        :title="isMaximized ? '还原' : '最大化'"
-      >
-        <svg v-if="!isMaximized" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect
-            x="2"
-            y="2"
-            width="8"
-            height="8"
-            stroke="currentColor"
-            stroke-width="1"
-            fill="none"
-          />
-        </svg>
-        <svg v-else width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect
-            x="2"
-            y="3"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            stroke-width="1"
-            fill="none"
-          />
-          <rect
-            x="4"
-            y="1"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            stroke-width="1"
-            fill="none"
-          />
-        </svg>
-      </button>
+        <!-- 最大化/还原按钮 -->
+        <button
+          @click="toggleMaximize"
+          class="window-control-btn hover:bg-gray-600 w-8 h-8 flex items-center justify-center transition-colors"
+          :title="isMaximized ? '还原' : '最大化'"
+        >
+          <svg v-if="!isMaximized" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <rect
+              x="2"
+              y="2"
+              width="8"
+              height="8"
+              stroke="currentColor"
+              stroke-width="1"
+              fill="none"
+            />
+          </svg>
+          <svg v-else width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <rect
+              x="2"
+              y="3"
+              width="6"
+              height="6"
+              stroke="currentColor"
+              stroke-width="1"
+              fill="none"
+            />
+            <rect
+              x="4"
+              y="1"
+              width="6"
+              height="6"
+              stroke="currentColor"
+              stroke-width="1"
+              fill="none"
+            />
+          </svg>
+        </button>
 
-      <!-- 关闭按钮 -->
-      <button
-        @click="closeWindow"
-        class="window-control-btn hover:bg-red-600 w-8 h-8 flex items-center justify-center transition-colors"
-        title="关闭"
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <path
-            d="M2 2 L10 10 M10 2 L2 10"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-          />
-        </svg>
-      </button>
+        <!-- 关闭按钮 -->
+        <button
+          @click="closeWindow"
+          class="window-control-btn hover:bg-red-600 w-8 h-8 flex items-center justify-center transition-colors"
+          title="关闭"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path
+              d="M2 2 L10 10 M10 2 L2 10"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </template>
