@@ -1,94 +1,94 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-dark-950 text-slate-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50 shadow-dark-lg">
+        <h1 class="text-3xl font-bold text-slate-100 mb-4">
           🖼️ {{ $t('tools.imageListProcessor.title') }}
         </h1>
-        <p class="text-gray-600 text-lg">
+        <p class="text-slate-400 text-lg">
           {{ $t('tools.imageListProcessor.description') }}
         </p>
       </div>
 
       <!-- Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.imageListProcessor.inputTitle') }}
         </h3>
-        <p class="text-sm text-gray-600 mb-4">
+        <p class="text-sm text-slate-400 mb-4">
           {{ $t('tools.imageListProcessor.inputNote') }}
         </p>
         <textarea
           v-model="inputData"
           @input="processImages"
-          class="w-full h-64 p-4 border border-gray-300 rounded-lg resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+          class="w-full h-64 p-4 bg-slate-800/30 border border-slate-600/50 rounded-xl resize-vertical focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm text-slate-100 placeholder-slate-500 transition-all duration-200"
           :placeholder="$t('tools.imageListProcessor.inputPlaceholder')"
         ></textarea>
       </div>
 
       <!-- Actions -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8" v-if="imageList.length > 0">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50" v-if="imageList.length > 0">
         <div class="flex flex-wrap items-center gap-4">
           <button
             @click="clearAll"
-            class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            class="px-6 py-2 bg-slate-700 text-slate-100 rounded-xl hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift"
           >
             🗑️ {{ $t('common.clear') }}
           </button>
           <button
             @click="copyUrls"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift"
           >
             📋 {{ $t('common.copy') }} URLs
           </button>
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-slate-400">
             {{ $t('common.total') }}: {{ imageList.length }} {{ $t('common.items') }}
           </div>
         </div>
       </div>
 
       <!-- Image Gallery -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8" v-if="imageList.length > 0">
-        <h3 class="text-lg font-semibold text-gray-900 mb-6 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50" v-if="imageList.length > 0">
+        <h3 class="text-lg font-semibold text-slate-100 mb-6 border-b border-slate-700/30 pb-2">
           {{ $t('tools.imageListProcessor.imagePreview') }}
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div
             v-for="(image, index) in imageList"
             :key="index"
-            class="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            class="bg-slate-800/30 rounded-xl overflow-hidden border border-slate-700/50 hover:border-slate-600/70 transition-all duration-200 hover-lift group"
           >
-            <div class="aspect-square relative bg-gray-100 border border-gray-200">
+            <div class="aspect-square relative bg-slate-800/50">
               <img
                 referrerpolicy="no-referrer"
                 :src="image.url"
                 :alt="image.alt || `Image ${index + 1}`"
                 @error="handleImageError"
                 @load="handleImageLoad"
-                class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-200 p-2"
+                class="w-full h-full object-contain cursor-pointer group-hover:scale-105 transition-transform duration-200 p-2"
                 @click="showLightbox(index)"
               />
               <div
                 v-if="image.loading"
-                class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center"
+                class="absolute inset-0 bg-slate-700/80 animate-pulse flex items-center justify-center rounded-xl"
               >
-                <div class="text-gray-500 text-sm">{{ $t('common.loading') }}</div>
+                <div class="text-slate-300 text-sm">{{ $t('common.loading') }}</div>
               </div>
               <div
                 v-if="image.error"
-                class="absolute inset-0 bg-red-50 flex items-center justify-center p-4"
+                class="absolute inset-0 bg-red-900/80 flex items-center justify-center p-4 rounded-xl"
               >
-                <div class="text-red-500 text-sm text-center">
+                <div class="text-red-200 text-sm text-center">
                   ❌ {{ $t('tools.imageListProcessor.imageError') }}
                 </div>
               </div>
             </div>
             <div class="p-3">
-              <div class="text-xs text-gray-600 truncate" :title="image.url">
+              <div class="text-xs text-slate-300 truncate" :title="image.url">
                 {{ image.filename || extractFilename(image.url) }}
               </div>
-              <div class="text-xs text-gray-400 mt-1 truncate" :title="image.url">
+              <div class="text-xs text-slate-500 mt-1 truncate" :title="image.url">
                 {{ image.url }}
               </div>
             </div>
@@ -99,27 +99,27 @@
       <!-- No Results -->
       <div
         v-if="imageList.length === 0 && inputData.trim()"
-        class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center"
+        class="bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-6 text-center"
       >
-        <div class="text-yellow-600 text-lg mb-2">⚠️</div>
-        <p class="text-yellow-800">{{ $t('tools.imageListProcessor.noResults') }}</p>
+        <div class="text-yellow-400 text-lg mb-2">⚠️</div>
+        <p class="text-yellow-200">{{ $t('tools.imageListProcessor.noResults') }}</p>
       </div>
 
       <!-- Empty State -->
       <div
         v-if="!inputData.trim()"
-        class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center"
+        class="bg-slate-800/30 border-2 border-dashed border-slate-600/50 rounded-xl p-12 text-center"
       >
-        <div class="text-gray-400 text-6xl mb-4">🖼️</div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">
+        <div class="text-slate-500 text-6xl mb-4">🖼️</div>
+        <h3 class="text-lg font-medium text-slate-100 mb-2">
           {{ $t('tools.imageListProcessor.emptyState.title') }}
         </h3>
-        <p class="text-gray-600 mb-4">
+        <p class="text-slate-400 mb-4">
           {{ $t('tools.imageListProcessor.emptyState.description') }}
         </p>
         <button
           @click="loadExampleUrls"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift"
         >
           {{ $t('common.loadExample') }}
         </button>
@@ -127,29 +127,29 @@
 
       <!-- Features Section -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🔗 {{ $t('tools.imageListProcessor.features.simple.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.imageListProcessor.features.simple.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🖼️ {{ $t('tools.imageListProcessor.features.gallery.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.imageListProcessor.features.gallery.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             ⚡ {{ $t('tools.imageListProcessor.features.fast.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.imageListProcessor.features.fast.description') }}
           </p>
         </div>
