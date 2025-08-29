@@ -706,6 +706,8 @@ export default {
         extractor: '字段提取器',
         formatter: 'JSON 格式化',
         excelTojson: 'Excel 转 JSON',
+        jsonMerge: 'JSON 合并',
+        excelTextToJson: 'Excel 文本转 JSON',
       },
       features: {
         pathExtraction: {
