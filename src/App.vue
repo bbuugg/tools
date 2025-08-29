@@ -45,7 +45,7 @@
       >
         <!-- Category Navigation -->
         <div class="p-4 border-b border-slate-700/30">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between">
             <!-- Category Title - Clickable with arrow when in tool view -->
             <div
               v-if="!showCategoryView"
@@ -95,59 +95,58 @@
               </svg>
             </button>
           </div>
-
-          <!-- Category List (shown in category view) -->
-          <nav v-if="showCategoryView" class="space-y-2">
-            <button
-              v-for="category in menuConfig"
-              :key="category.id"
-              @click="enterCategory(category.id)"
-              class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer hover:bg-slate-800/50 border border-slate-700/30 hover:border-primary-500/50 hover-lift group"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <span
-                    class="text-lg mr-3 group-hover:scale-110 transition-transform duration-200"
-                    >{{ category.icon }}</span
+        </div>
+        <!-- Category List (shown in category view) -->
+        <nav v-if="showCategoryView" class="flex-1 flex flex-col min-h-0 px-4 space-y-3">
+          <button
+            v-for="category in menuConfig"
+            :key="category.id"
+            @click="enterCategory(category.id)"
+            class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer hover:bg-slate-800/50 border border-slate-700/30 hover:border-primary-500/50 hover-lift group"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <span
+                  class="text-lg mr-3 group-hover:scale-110 transition-transform duration-200"
+                  >{{ category.icon }}</span
+                >
+                <div>
+                  <div
+                    class="font-medium text-slate-100 group-hover:text-primary-400 transition-colors duration-200"
                   >
-                  <div>
-                    <div
-                      class="font-medium text-slate-100 group-hover:text-primary-400 transition-colors duration-200"
-                    >
-                      {{ $t(`categories.${category.id}.name`) }}
-                    </div>
-                    <div class="text-xs text-slate-400 mt-1 line-clamp-2">
-                      {{ $t(`categories.${category.id}.description`) }}
-                    </div>
+                    {{ $t(`categories.${category.id}.name`) }}
+                  </div>
+                  <div class="text-xs text-slate-400 mt-1 line-clamp-2">
+                    {{ $t(`categories.${category.id}.description`) }}
                   </div>
                 </div>
-                <div class="flex items-center">
-                  <span
-                    class="text-xs bg-slate-800/50 text-slate-300 px-2 py-1 rounded-full mr-2 group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-all duration-200"
-                  >
-                    {{ category.children?.length || 0 }}
-                  </span>
-                  <svg
-                    class="w-4 h-4 text-slate-400 group-hover:text-primary-400 group-hover:translate-x-1 transition-all duration-200"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
               </div>
-            </button>
-          </nav>
-        </div>
+              <div class="flex items-center">
+                <span
+                  class="text-xs bg-slate-800/50 text-slate-300 px-2 py-1 rounded-full mr-2 group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-all duration-200"
+                >
+                  {{ category.children?.length || 0 }}
+                </span>
+                <svg
+                  class="w-4 h-4 text-slate-400 group-hover:text-primary-400 group-hover:translate-x-1 transition-all duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </button>
+        </nav>
 
         <!-- Tools List (shown in tool view) -->
-        <div v-if="!showCategoryView" class="flex-1 flex flex-col min-h-0">
+        <nav v-if="!showCategoryView" class="flex-1 flex flex-col min-h-0 overflow-y-auto">
           <div class="p-4 border-b border-slate-700/30">
             <!-- Search Box -->
             <div class="relative">
@@ -247,7 +246,7 @@
               </router-link>
             </div>
           </div>
-        </div>
+        </nav>
 
         <!-- Language Switcher at Bottom -->
         <div class="p-4 border-t border-slate-700/30 mt-auto">
