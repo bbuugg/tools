@@ -1,21 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-dark-950 text-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Hero Section -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('tools.htmlExtractor.title') }}</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold text-slate-100 mb-4 text-gradient">
+          {{ $t('tools.htmlExtractor.title') }}
+        </h1>
+        <p class="text-xl text-slate-400 max-w-3xl mx-auto">
           {{ $t('tools.htmlExtractor.description') }}
         </p>
       </div>
 
       <!-- Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h2 class="text-xl font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('common.input') }} HTML Code
         </h2>
         <div class="mb-4">
-          <label for="base-url" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="base-url" class="block text-sm font-medium text-slate-300 mb-2">
             {{ $t('tools.htmlExtractor.baseUrl') }}:
           </label>
           <input
@@ -23,33 +25,33 @@
             type="url"
             v-model="baseUrl"
             placeholder="https://example.com"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 placeholder-slate-400 transition-all duration-200"
           />
         </div>
         <textarea
           v-model="htmlInput"
           @input="extractContent"
           :placeholder="$t('tools.htmlExtractor.inputPlaceholder')"
-          class="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm resize-none"
+          class="w-full h-64 px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm text-slate-100 placeholder-slate-400 resize-none transition-all duration-200"
         ></textarea>
       </div>
 
       <!-- Content Type Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div class="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
-          <h3 class="text-lg font-semibold text-gray-900">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-700/30 pb-2">
+          <h3 class="text-lg font-semibold text-slate-100">
             {{ $t('tools.htmlExtractor.contentTypes') }}
           </h3>
           <div class="flex gap-2">
             <button
               @click="selectAllContentTypes"
-              class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors cursor-pointer"
+              class="px-3 py-1 text-sm bg-primary-500/20 text-primary-400 rounded-md hover:bg-primary-500/30 transition-colors cursor-pointer hover-lift"
             >
               {{ $t('common.selectAll') }}
             </button>
             <button
               @click="deselectAllContentTypes"
-              class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors cursor-pointer"
+              class="px-3 py-1 text-sm bg-slate-700/50 text-slate-300 rounded-md hover:bg-slate-600/50 transition-colors cursor-pointer hover-lift"
             >
               {{ $t('common.clearSelection') }}
             </button>
@@ -57,119 +59,119 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.images"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🖼️ {{ $t('tools.htmlExtractor.types.images') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.videos"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >📹 {{ $t('tools.htmlExtractor.types.videos') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.audios"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🎵 {{ $t('tools.htmlExtractor.types.audio') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.links"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🔗 {{ $t('tools.htmlExtractor.types.links') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.css"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🎨 {{ $t('tools.htmlExtractor.types.css') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.js"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >📜 {{ $t('tools.htmlExtractor.types.javascript') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.iframes"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🖼️ {{ $t('tools.htmlExtractor.types.iframes') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.metadata"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >🔍 {{ $t('tools.htmlExtractor.types.metadata') }}</span
             >
           </label>
           <label
-            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            class="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer hover-lift group border border-slate-700/30"
           >
             <input
               type="checkbox"
               v-model="options.forms"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300 group-hover:text-primary-400 transition-colors duration-200"
               >📝 {{ $t('tools.htmlExtractor.types.forms') }}</span
             >
           </label>
@@ -177,8 +179,8 @@
       </div>
 
       <!-- Options -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('common.options') }}
         </h3>
         <div class="flex flex-wrap items-center gap-6">
@@ -187,9 +189,9 @@
               type="checkbox"
               v-model="options.uniqueOnly"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300"
               >✨ {{ $t('tools.htmlExtractor.options.uniqueOnly') }}</span
             >
           </label>
@@ -198,35 +200,35 @@
               type="checkbox"
               v-model="options.absoluteUrls"
               @change="extractContent"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-slate-600 rounded"
             />
-            <span class="text-sm font-medium text-gray-700"
+            <span class="text-sm font-medium text-slate-300"
               >🔗 {{ $t('tools.htmlExtractor.options.absoluteUrls') }}</span
             >
           </label>
           <div class="flex gap-3 ml-auto">
             <button
               @click="extractContent"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer"
+              class="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors font-medium cursor-pointer hover-lift"
             >
               {{ $t('common.extract') }} {{ $t('common.results') }}
             </button>
             <button
               @click="copyResults"
               :disabled="totalCount === 0"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover-lift"
             >
               {{ $t('common.copy') }} {{ $t('common.results') }}
             </button>
             <button
               @click="loadExample"
-              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium cursor-pointer"
+              class="px-4 py-2 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors font-medium cursor-pointer hover-lift"
             >
               {{ $t('common.loadExample') }}
             </button>
             <button
               @click="clearContent"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer"
+              class="px-4 py-2 bg-danger-600 text-white rounded-xl hover:bg-danger-700 transition-colors font-medium cursor-pointer hover-lift"
             >
               {{ $t('common.clear') }}
             </button>
@@ -235,19 +237,19 @@
       </div>
 
       <!-- Results Section -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 border border-slate-700/50">
+        <h2 class="text-xl font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.htmlExtractor.extractionResults') }}
         </h2>
-        <div class="mb-3 px-3 py-2 bg-blue-50 rounded-md border-l-4 border-blue-400">
-          <span class="text-blue-800 font-medium text-sm"
+        <div class="mb-3 px-3 py-2 bg-primary-500/20 rounded-md border-l-4 border-primary-500">
+          <span class="text-primary-400 font-medium text-sm"
             >{{ totalCount }} {{ $t('common.items') }} {{ $t('common.found') }}</span
           >
         </div>
 
         <div v-if="totalCount === 0" class="text-center py-12">
-          <div class="text-gray-400 text-lg mb-2">📋</div>
-          <p class="text-gray-500">
+          <div class="text-slate-400 text-5xl mb-4 animate-bounce-subtle">📋</div>
+          <p class="text-slate-400">
             {{ $t('tools.htmlExtractor.noResults') }}
           </p>
         </div>
@@ -256,30 +258,30 @@
           <div
             v-for="(items, type) in resultsByType"
             :key="type"
-            class="border border-gray-200 rounded-lg overflow-hidden"
+            class="border border-slate-700/50 rounded-xl overflow-hidden"
           >
-            <h3 class="bg-gray-800 text-white px-3 py-2 font-medium flex items-center text-sm">
+            <h3 class="bg-slate-800 text-slate-100 px-3 py-2 font-medium flex items-center text-sm">
               <span class="mr-2">{{ getTypeEmoji(type) }}</span>
               {{ type.toUpperCase() }} ({{ items.length }})
             </h3>
-            <div class="divide-y divide-gray-200">
-              <div v-for="(item, index) in items" :key="index" class="px-3 py-2 hover:bg-gray-50">
+            <div class="divide-y divide-slate-700/30">
+              <div v-for="(item, index) in items" :key="index" class="px-3 py-2 hover:bg-slate-800/30">
                 <div class="mb-1">
                   <a
                     :href="item.url"
                     target="_blank"
                     rel="noopener"
-                    class="text-blue-600 hover:text-blue-800 hover:underline break-all font-medium text-sm"
+                    class="text-primary-400 hover:text-primary-300 hover:underline break-all font-medium text-sm"
                   >
                     {{ item.url }}
                   </a>
                 </div>
-                <div v-if="item.text" class="text-gray-600 text-xs mb-1">{{ item.text }}</div>
+                <div v-if="item.text" class="text-slate-400 text-xs mb-1">{{ item.text }}</div>
                 <div v-if="item.attributes" class="flex flex-wrap gap-1 mb-2">
                   <span
                     v-for="(value, key) in item.attributes"
                     :key="key"
-                    class="inline-block bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs"
+                    class="inline-block bg-slate-700/50 text-slate-300 px-1.5 py-0.5 rounded text-xs"
                   >
                     {{ key }}: {{ value }}
                   </span>
@@ -288,7 +290,7 @@
                 <!-- Preview for images -->
                 <div
                   v-if="item.type === 'image' || item.type === 'css-background'"
-                  class="mt-2 p-2 bg-gray-50 rounded border border-gray-200"
+                  class="mt-2 p-2 bg-slate-800/30 rounded border border-slate-700/50"
                 >
                   <img
                     referrerpolicy="no-referrer"
@@ -303,7 +305,7 @@
                 <!-- Preview for videos -->
                 <div
                   v-if="item.type === 'video'"
-                  class="mt-2 p-2 bg-gray-50 rounded border border-gray-200"
+                  class="mt-2 p-2 bg-slate-800/30 rounded border border-slate-700/50"
                 >
                   <video
                     :src="item.url"
@@ -323,29 +325,29 @@
 
       <!-- Feature Descriptions -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border-l-4 border-primary-500 border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🖼️ {{ $t('tools.htmlExtractor.features.imageExtraction.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.htmlExtractor.features.imageExtraction.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border-l-4 border-success-500 border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🎬 {{ $t('tools.htmlExtractor.features.mediaProcessing.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.htmlExtractor.features.mediaProcessing.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border-l-4 border-purple-500 border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🔗 {{ $t('tools.htmlExtractor.features.linkAnalysis.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.htmlExtractor.features.linkAnalysis.description') }}
           </p>
         </div>
