@@ -1,16 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-      <!-- Header -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">
-          {{ $t('tools.excelTextToJson.title') }}
-        </h1>
-        <p class="text-gray-600">
-          {{ $t('tools.excelTextToJson.description') }}
-        </p>
-      </div>
-
       <!-- Tool Introduction -->
       <div class="bg-white p-6 rounded-lg shadow-sm border">
         <h2 class="text-lg font-semibold mb-3">
@@ -284,7 +273,6 @@ name	age	score
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
