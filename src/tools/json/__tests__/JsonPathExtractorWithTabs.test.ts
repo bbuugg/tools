@@ -13,7 +13,7 @@ const i18n = createI18n({
 })
 
 describe('JsonPathExtractorWithTabs', () => {
-  it('renders all three tabs properly', () => {
+  it('renders all four tabs properly', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
@@ -21,27 +21,31 @@ describe('JsonPathExtractorWithTabs', () => {
           ToolLayout: {
             template: '<div><slot></slot></div>',
           },
-          PathExtractorTab: {
-            template: '<div>PathExtractorTab</div>',
+          PathExtractor: {
+            template: '<div>PathExtractor</div>',
           },
-          JsonExtractorTab: {
-            template: '<div>JsonExtractorTab</div>',
+          JsonExtractor: {
+            template: '<div>JsonExtractor</div>',
           },
-          JsonFormatterTab: {
-            template: '<div>JsonFormatterTab</div>',
+          JsonFormatter: {
+            template: '<div>JsonFormatter</div>',
+          },
+          ExcelToJson: {
+            template: '<div>ExcelToJson</div>',
           },
         },
       },
     })
 
-    // Check that all three tabs are present
+    // Check that all four tabs are present
     const tabs = wrapper.findAll('button')
-    expect(tabs).toHaveLength(3)
+    expect(tabs).toHaveLength(4)
 
     // Check tab labels
     expect(tabs[0].text()).toContain('Path Extractor')
     expect(tabs[1].text()).toContain('Field Extractor')
     expect(tabs[2].text()).toContain('JSON Formatter')
+    expect(tabs[3].text()).toContain('Excel to JSON')
   })
 
   it('switches between tabs correctly', async () => {
@@ -52,14 +56,17 @@ describe('JsonPathExtractorWithTabs', () => {
           ToolLayout: {
             template: '<div><slot></slot></div>',
           },
-          PathExtractorTab: {
-            template: '<div>PathExtractorTab</div>',
+          PathExtractor: {
+            template: '<div>PathExtractor</div>',
           },
-          JsonExtractorTab: {
-            template: '<div>JsonExtractorTab</div>',
+          JsonExtractor: {
+            template: '<div>JsonExtractor</div>',
           },
-          JsonFormatterTab: {
-            template: '<div>JsonFormatterTab</div>',
+          JsonFormatter: {
+            template: '<div>JsonFormatter</div>',
+          },
+          ExcelToJson: {
+            template: '<div>ExcelToJson</div>',
           },
         },
       },
@@ -81,5 +88,12 @@ describe('JsonPathExtractorWithTabs', () => {
 
     // Check that formatter tab is now active
     expect(wrapper.find('.border-primary-500').text()).toContain('JSON Formatter')
+
+    // Find and click the excel to json tab
+    const excelTab = wrapper.findAll('button')[3]
+    await excelTab.trigger('click')
+
+    // Check that excel to json tab is now active
+    expect(wrapper.find('.border-primary-500').text()).toContain('Excel to JSON')
   })
 })

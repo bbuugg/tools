@@ -705,6 +705,7 @@ export default {
         path: '路径提取器',
         extractor: '字段提取器',
         formatter: 'JSON 格式化',
+        excelTojson: 'Excel 转 JSON',
       },
       features: {
         pathExtraction: {

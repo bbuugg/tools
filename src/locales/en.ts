@@ -615,6 +615,7 @@ export default {
         path: 'Path Extractor',
         extractor: 'Field Extractor',
         formatter: 'JSON Formatter',
+        excelTojson: 'Excel to JSON',
       },
       features: {
         pathExtraction: {
