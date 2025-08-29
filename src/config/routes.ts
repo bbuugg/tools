@@ -30,7 +30,6 @@ const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
 const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const ExcelToJson = () => import('../tools/json/ExcelToJson.vue')
-const JsonFormatter = () => import('../tools/json/JsonFormatter.vue')
 const JsonExtractor = () => import('../tools/json/JsonExtractor.vue')
 const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
@@ -90,16 +89,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'Excel to JSON Converter',
           icon: '📈',
-          status: Status.Active,
-        },
-      },
-      {
-        path: 'json-formatter',
-        name: 'jsonFormatter',
-        component: JsonFormatter,
-        meta: {
-          title: 'JSON Formatter',
-          icon: '🎨',
           status: Status.Active,
         },
       },

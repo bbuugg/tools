@@ -612,7 +612,8 @@ export default {
         'Extract data from JSON using JSONPath expressions with advanced filtering capabilities',
       extractButton: 'Extract Data',
       tabs: {
-        extractor: 'Path Extractor',
+        path: 'Path Extractor',
+        extractor: 'Field Extractor',
         formatter: 'JSON Formatter',
       },
       features: {
