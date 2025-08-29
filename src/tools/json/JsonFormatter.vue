@@ -1,264 +1,194 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-6xl mx-auto space-y-6">
-      <!-- Header -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('tools.jsonFormatter.title') }}</h1>
-        <p class="text-gray-600">
-          {{ $t('tools.jsonFormatter.description') }}
-        </p>
+  <ToolLayout
+    title="JSON 格式化工具"
+    description="美化、验证和格式化 JSON 数据，支持多种格式选项"
+    icon="🎨"
+    :features="['JSON 美化', 'JSON 验证', '自定义缩进', '压缩格式', '语法高亮']"
+    input-title="输入 JSON"
+    output-title="格式化结果"
+  >
+    <template #input-actions>
+      <div class="flex space-x-2">
+        <Button size="sm" variant="ghost" @click="loadExample"> 加载示例 </Button>
+        <Button size="sm" variant="ghost" @click="clearInput"> 清空 </Button>
       </div>
+    </template>
 
-      <!-- Features -->
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">✨</div>
-          <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.jsonFormatter.features.prettyFormat.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.jsonFormatter.features.prettyFormat.description') }}
-          </p>
+    <template #input>
+      <div class="space-y-4">
+        <Textarea
+          v-model="inputJson"
+          placeholder="请输入要格式化的 JSON 数据..."
+          :rows="20"
+          class="font-mono text-sm"
+          @input="validateJson"
+        />
+
+        <!-- Validation Status -->
+        <div
+          v-if="validationError"
+          class="p-4 bg-error-500/10 border border-error-500/30 rounded-xl animate-slide-up"
+        >
+          <div class="flex items-start space-x-3">
+            <div class="text-error-400 text-xl">❌</div>
+            <div>
+              <p class="font-medium text-error-400 mb-1">JSON 格式错误</p>
+              <p class="text-sm text-error-300">{{ validationError }}</p>
+            </div>
+          </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.jsonFormatter.features.validation.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.jsonFormatter.features.validation.description') }}
-          </p>
+
+        <div
+          v-else-if="inputJson.trim() && isValid"
+          class="p-4 bg-success-500/10 border border-success-500/30 rounded-xl animate-slide-up"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="text-success-400 text-xl">✅</div>
+            <p class="font-medium text-success-400">JSON 格式正确</p>
+          </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">⚙️</div>
-          <h3 class="text-lg font-semibold mb-2">
-            {{ $t('tools.jsonFormatter.features.customization.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.jsonFormatter.features.customization.description') }}
-          </p>
-        </div>
+
+        <!-- Format Options -->
+        <Card title="格式选项" icon="⚙️">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-slate-200">缩进大小</label>
+              <select
+                v-model="indentSize"
+                class="w-full bg-slate-800/50 border border-slate-600/50 text-slate-100 rounded-xl px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                @change="formatJson"
+              >
+                <option value="2">2 空格</option>
+                <option value="4">4 空格</option>
+                <option value="tab">Tab</option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-slate-200">输出格式</label>
+              <select
+                v-model="outputFormat"
+                class="w-full bg-slate-800/50 border border-slate-600/50 text-slate-100 rounded-xl px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                @change="formatJson"
+              >
+                <option value="pretty">美化格式</option>
+                <option value="compact">压缩格式</option>
+              </select>
+            </div>
+          </div>
+        </Card>
       </div>
+    </template>
 
-      <div class="grid lg:grid-cols-2 gap-6">
-        <!-- Input Section -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">
-              {{ $t('tools.jsonFormatter.inputTitle') }}
-            </h3>
-            <div class="flex space-x-2">
-              <button
-                @click="loadExample"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-              >
-                {{ $t('common.loadExample') }}
-              </button>
-              <button
-                @click="clearInput"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-              >
-                {{ $t('common.clear') }}
-              </button>
-            </div>
-          </div>
+    <template #output-actions>
+      <div class="flex space-x-2">
+        <Button size="sm" variant="ghost" @click="copyToClipboard" :disabled="!formattedJson">
+          复制
+        </Button>
+        <Button size="sm" variant="ghost" @click="downloadJson" :disabled="!formattedJson">
+          下载
+        </Button>
+      </div>
+    </template>
 
-          <textarea
-            v-model="inputJson"
-            :placeholder="$t('tools.jsonFormatter.inputPlaceholder')"
-            class="w-full h-80 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            @input="validateJson"
-          ></textarea>
-
-          <!-- Validation Status -->
-          <div v-if="validationError" class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div class="flex items-center">
-              <div class="text-red-600 text-lg mr-2">❌</div>
-              <div>
-                <p class="font-medium text-red-800">{{ $t('tools.jsonFormatter.invalidJson') }}</p>
-                <p class="text-sm text-red-600">{{ validationError }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            v-else-if="inputJson.trim() && isValid"
-            class="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg"
-          >
-            <div class="flex items-center">
-              <div class="text-green-600 text-lg mr-2">✅</div>
-              <p class="font-medium text-green-800">{{ $t('tools.jsonFormatter.validJson') }}</p>
-            </div>
-          </div>
-
-          <!-- Format Options -->
-          <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">{{ $t('tools.jsonFormatter.formatOptions') }}</h4>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex items-center space-x-2">
-                <label class="text-sm font-medium text-gray-700"
-                  >{{ $t('tools.jsonFormatter.indent') }}:</label
-                >
-                <select
-                  v-model="options.indent"
-                  class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option :value="2">{{ $t('tools.jsonFormatter.spaces2') }}</option>
-                  <option :value="4">{{ $t('tools.jsonFormatter.spaces4') }}</option>
-                  <option :value="'\t'">{{ $t('tools.jsonFormatter.tab') }}</option>
-                </select>
-              </div>
-
-              <label class="flex items-center">
-                <input
-                  v-model="options.sortKeys"
-                  type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                {{ $t('tools.jsonFormatter.sortKeys') }}
-              </label>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <label class="flex items-center">
-                <input
-                  v-model="options.compact"
-                  type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                {{ $t('tools.jsonFormatter.compactFormat') }}
-              </label>
-
-              <label class="flex items-center">
-                <input
-                  v-model="options.escapeUnicode"
-                  type="checkbox"
-                  class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                {{ $t('tools.jsonFormatter.escapeUnicode') }}
-              </label>
-            </div>
-          </div>
-
-          <!-- Case Options -->
-          <div class="mt-4 space-y-3">
-            <h4 class="font-medium text-gray-900">{{ $t('tools.jsonFormatter.caseOptions') }}</h4>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex flex-col space-y-1">
-                <label class="text-sm font-medium text-gray-700"
-                  >{{ $t('tools.jsonFormatter.keyCase') }}:</label
-                >
-                <select
-                  v-model="options.keyCase"
-                  class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="preserve">{{ $t('tools.jsonFormatter.preserveCase') }}</option>
-                  <option value="upper">{{ $t('tools.jsonFormatter.toUpperCase') }}</option>
-                  <option value="lower">{{ $t('tools.jsonFormatter.toLowerCase') }}</option>
-                </select>
-              </div>
-
-              <div class="flex flex-col space-y-1">
-                <label class="text-sm font-medium text-gray-700"
-                  >{{ $t('tools.jsonFormatter.valueCase') }}:</label
-                >
-                <select
-                  v-model="options.valueCase"
-                  class="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="preserve">{{ $t('tools.jsonFormatter.preserveCase') }}</option>
-                  <option value="upper">{{ $t('tools.jsonFormatter.toUpperCase') }}</option>
-                  <option value="lower">{{ $t('tools.jsonFormatter.toLowerCase') }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <button
-            @click="formatJson"
-            :disabled="!inputJson.trim() || !isValid"
-            class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-          >
-            {{ $t('tools.jsonFormatter.formatJson') }}
-          </button>
+    <template #output>
+      <div class="space-y-4">
+        <div v-if="!formattedJson && !validationError" class="text-center py-16">
+          <div class="text-slate-400 text-6xl mb-4 animate-bounce-subtle">📝</div>
+          <p class="text-slate-400">输入 JSON 数据开始格式化</p>
         </div>
 
-        <!-- Output Section -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">
-              {{ $t('tools.jsonFormatter.outputTitle') }}
-            </h3>
-            <div class="flex space-x-2">
-              <button
-                v-if="formattedJson"
-                @click="copyToClipboard"
-                class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
-              >
-                {{ $t('common.copy') }}
-              </button>
-              <button
-                v-if="formattedJson"
-                @click="downloadJson"
-                class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-              >
-                {{ $t('common.download') }}
-              </button>
-            </div>
+        <Textarea
+          v-else
+          v-model="formattedJson"
+          :rows="20"
+          readonly
+          class="font-mono text-sm"
+          placeholder="格式化后的 JSON 将显示在这里..."
+        />
+
+        <!-- JSON Statistics -->
+        <div v-if="formattedJson" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-slate-800/30 rounded-xl p-3 text-center">
+            <div class="text-lg font-semibold text-primary-400">{{ jsonStats.size }}</div>
+            <div class="text-xs text-slate-400">字符数</div>
           </div>
-
-          <div
-            v-if="!formattedJson"
-            class="h-80 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg"
-          >
-            <div class="text-center">
-              <div class="text-3xl mb-2">✨</div>
-              <p>{{ $t('tools.jsonFormatter.noResults') }}</p>
-            </div>
+          <div class="bg-slate-800/30 rounded-xl p-3 text-center">
+            <div class="text-lg font-semibold text-success-400">{{ jsonStats.lines }}</div>
+            <div class="text-xs text-slate-400">行数</div>
           </div>
-
-          <div v-else class="space-y-4">
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="text-green-600 text-2xl mr-3">✅</div>
-                  <div>
-                    <p class="font-medium text-green-800">
-                      {{ $t('tools.jsonFormatter.formattingComplete') }}
-                    </p>
-                    <p class="text-sm text-green-600">{{ formatInfo }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <textarea
-              :value="formattedJson"
-              readonly
-              class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            ></textarea>
+          <div class="bg-slate-800/30 rounded-xl p-3 text-center">
+            <div class="text-lg font-semibold text-warning-400">{{ jsonStats.keys }}</div>
+            <div class="text-xs text-slate-400">键数量</div>
+          </div>
+          <div class="bg-slate-800/30 rounded-xl p-3 text-center">
+            <div class="text-lg font-semibold text-purple-400">{{ jsonStats.depth }}</div>
+            <div class="text-xs text-slate-400">嵌套深度</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </ToolLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useToast } from '@/composables/useToast'
-
-const { t } = useI18n()
-const { success, error: showError, copySuccess, copyError, downloadSuccess } = useToast()
+import { ref, reactive, computed, watch } from 'vue'
+import ToolLayout from '@/components/ToolLayout.vue'
+import Button from '@/components/ui/Button.vue'
+import Textarea from '@/components/ui/Textarea.vue'
+import Card from '@/components/ui/Card.vue'
 
 const inputJson = ref('')
 const formattedJson = ref('')
 const validationError = ref('')
 const isValid = ref(false)
-const formatInfo = ref('')
+const indentSize = ref('2')
+const outputFormat = ref('pretty')
+
+// JSON Statistics
+const jsonStats = computed(() => {
+  if (!formattedJson.value) {
+    return { size: 0, lines: 0, keys: 0, depth: 0 }
+  }
+
+  const size = formattedJson.value.length
+  const lines = formattedJson.value.split('\n').length
+
+  let keys = 0
+  let depth = 0
+
+  try {
+    const parsed = JSON.parse(inputJson.value)
+    keys = countKeys(parsed)
+    depth = getMaxDepth(parsed)
+  } catch (e) {
+    // ignore
+  }
+
+  return { size, lines, keys, depth }
+})
+
+// Helper functions
+function countKeys(obj: any): number {
+  if (typeof obj !== 'object' || obj === null) return 0
+  if (Array.isArray(obj)) {
+    return obj.reduce((count, item) => count + countKeys(item), 0)
+  }
+  return (
+    Object.keys(obj).length +
+    Object.values(obj).reduce((count, value) => count + countKeys(value), 0)
+  )
+}
+
+function getMaxDepth(obj: any, currentDepth = 0): number {
+  if (typeof obj !== 'object' || obj === null) return currentDepth
+  if (Array.isArray(obj)) {
+    return Math.max(currentDepth, ...obj.map((item) => getMaxDepth(item, currentDepth + 1)))
+  }
+  return Math.max(
+    currentDepth,
+    ...Object.values(obj).map((value) => getMaxDepth(value, currentDepth + 1)),
+  )
+}
 
 const options = reactive({
   indent: 2,
@@ -279,7 +209,6 @@ function clearInput() {
   formattedJson.value = ''
   validationError.value = ''
   isValid.value = false
-  formatInfo.value = ''
 }
 
 function validateJson() {
@@ -369,12 +298,11 @@ function convertCase(obj: unknown): unknown {
 }
 
 function formatJson() {
-  try {
-    if (!inputJson.value.trim()) {
-      showError(t('tools.jsonFormatter.messages.provideData'))
-      return
-    }
+  if (!inputJson.value.trim() || !isValid.value) {
+    return
+  }
 
+  try {
     let data = JSON.parse(inputJson.value)
 
     // Sort keys if enabled
@@ -387,43 +315,28 @@ function formatJson() {
       data = convertCase(data)
     }
 
-    // Calculate original and formatted sizes
-    const originalSize = inputJson.value.length
     let formatted: string
+    const indent = indentSize.value === 'tab' ? '\t' : parseInt(indentSize.value)
 
-    if (options.compact) {
+    if (outputFormat.value === 'compact') {
       formatted = JSON.stringify(data)
     } else {
-      formatted = JSON.stringify(data, null, options.indent)
+      formatted = JSON.stringify(data, null, indent)
     }
 
     // Handle unicode escaping
     if (options.escapeUnicode) {
       formatted = formatted.replace(/[\u0080-\uFFFF]/g, function (match) {
-        return '\\u' + ('0000' + match.charCodeAt(0).toString(16)).substr(-4)
+        return '\\u' + ('0000' + match.charCodeAt(0).toString(16)).slice(-4)
       })
     }
 
     formattedJson.value = formatted
-
-    // Generate format info
-    const formattedSize = formatted.length
-    const reduction =
-      originalSize > formattedSize
-        ? `${Math.round((1 - formattedSize / originalSize) * 100)}% ${t('tools.jsonFormatter.smaller')}`
-        : `${Math.round((formattedSize / originalSize - 1) * 100)}% ${t('tools.jsonFormatter.larger')}`
-
-    formatInfo.value = `${formatted.split('\n').length} ${t('tools.jsonFormatter.lines')}, ${formattedSize} ${t('tools.jsonFormatter.characters')} (${reduction})`
-
-    success(t('tools.jsonFormatter.messages.formatSuccess'))
   } catch (error: unknown) {
     if (error instanceof Error) {
       validationError.value = error.message
-      showError(t('tools.jsonFormatter.messages.formatError') + error.message)
     } else {
-      const errorMessage = String(error)
-      validationError.value = errorMessage
-      showError(t('tools.jsonFormatter.messages.formatError') + errorMessage)
+      validationError.value = String(error)
     }
   }
 }
@@ -431,14 +344,15 @@ function formatJson() {
 function copyToClipboard() {
   if (!formattedJson.value) return
 
-  navigator.clipboard
-    .writeText(formattedJson.value)
-    .then(() => {
-      copySuccess()
-    })
-    .catch(() => {
-      copyError()
-    })
+  navigator.clipboard.writeText(formattedJson.value).catch(() => {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea')
+    textArea.value = formattedJson.value
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+  })
 }
 
 function downloadJson() {
@@ -453,7 +367,16 @@ function downloadJson() {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
-
-  downloadSuccess()
 }
+
+// Auto-format when input changes
+watch(
+  [inputJson, indentSize, outputFormat],
+  () => {
+    if (isValid.value) {
+      formatJson()
+    }
+  },
+  { immediate: true },
+)
 </script>

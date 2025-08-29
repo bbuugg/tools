@@ -1,14 +1,20 @@
 <template>
-  <div class="h-screen flex">
+  <div class="h-screen flex bg-dark-950 text-slate-100">
     <!-- Electron Title Bar -->
     <ElectronTitleBar />
-    <!-- Mobile Menu Button Fixed at Top Left -->
-    <div class="custom-mobile:hidden fixed bottom-4 left-4 z-20">
+
+    <!-- Mobile Menu Button -->
+    <div class="custom-mobile:hidden fixed bottom-6 left-6 z-20">
       <button
         @click="toggleSidebar"
-        class="p-2 rounded-md bg-white shadow-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+        class="p-3 rounded-xl glass hover:glass-light shadow-dark-lg text-slate-300 hover:text-white transition-all duration-300 cursor-pointer hover-lift group"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform duration-200"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -24,31 +30,31 @@
       <div
         v-if="isSidebarOpen && isMobile"
         @click="closeSidebar"
-        class="fixed inset-0 bg-black bg-opacity-50 z-30 custom-mobile:hidden transition-opacity duration-300"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 custom-mobile:hidden transition-all duration-300"
       ></div>
 
       <!-- Sidebar -->
       <aside
         :class="[
-          'bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-40',
+          'glass border-r border-slate-700/50 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-dark-xl',
           'custom-mobile:relative custom-mobile:translate-x-0',
           isMobile
             ? ['fixed inset-y-0 left-0 w-80', isSidebarOpen ? 'translate-x-0' : '-translate-x-full']
-            : 'w-72 xl:w-80', // Wider on large and extra-large screens
+            : 'w-64 xl:w-72', // More compact width
         ]"
       >
         <!-- Category Navigation -->
-        <div class="p-4 border-b border-gray-200">
+        <div class="p-4 border-b border-slate-700/30">
           <div class="flex items-center justify-between mb-4">
             <!-- Category Title - Clickable with arrow when in tool view -->
             <div
               v-if="!showCategoryView"
               @click="backToCategories"
-              class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition-colors"
+              class="flex items-center justify-between cursor-pointer hover:text-primary-400 transition-all duration-200 group"
             >
               <div class="flex items-center">
                 <svg
-                  class="w-4 h-4 mr-2 text-gray-400"
+                  class="w-4 h-4 mr-2 text-slate-400 group-hover:text-primary-400 group-hover:-translate-x-1 transition-all duration-200"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -60,22 +66,24 @@
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                <h2 class="text-lg font-semibold text-gray-900">
+                <h2
+                  class="text-lg font-semibold text-slate-100 group-hover:text-primary-400 transition-colors duration-200"
+                >
                   {{ $t(`categories.${selectedCategory}.name`) }}
                 </h2>
               </div>
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-slate-400 bg-slate-800/50 px-2 py-1 rounded-full">
                 {{ filteredTools.length }}/{{ currentCategoryTools.length }}
               </span>
             </div>
             <!-- Regular title when in category view -->
-            <h2 v-else class="text-lg font-semibold text-gray-900">
+            <h2 v-else class="text-lg font-semibold text-slate-100 text-gradient">
               {{ $t('navigation.tools') }}
             </h2>
             <button
               v-if="isMobile"
               @click="closeSidebar"
-              class="custom-mobile:hidden p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+              class="custom-mobile:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all duration-200 cursor-pointer"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -94,26 +102,33 @@
               v-for="category in menuConfig"
               :key="category.id"
               @click="enterCategory(category.id)"
-              class="w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer hover:bg-gray-100 border border-gray-200 hover:border-gray-300"
+              class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer hover:bg-slate-800/50 border border-slate-700/30 hover:border-primary-500/50 hover-lift group"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                  <span class="text-lg mr-3">{{ category.icon }}</span>
+                  <span
+                    class="text-lg mr-3 group-hover:scale-110 transition-transform duration-200"
+                    >{{ category.icon }}</span
+                  >
                   <div>
-                    <div class="font-medium text-gray-900">
+                    <div
+                      class="font-medium text-slate-100 group-hover:text-primary-400 transition-colors duration-200"
+                    >
                       {{ $t(`categories.${category.id}.name`) }}
                     </div>
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-slate-400 mt-1 line-clamp-2">
                       {{ $t(`categories.${category.id}.description`) }}
                     </div>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full mr-2">
+                  <span
+                    class="text-xs bg-slate-800/50 text-slate-300 px-2 py-1 rounded-full mr-2 group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-all duration-200"
+                  >
                     {{ category.children?.length || 0 }}
                   </span>
                   <svg
-                    class="w-4 h-4 text-gray-400"
+                    class="w-4 h-4 text-slate-400 group-hover:text-primary-400 group-hover:translate-x-1 transition-all duration-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -133,12 +148,12 @@
 
         <!-- Tools List (shown in tool view) -->
         <div v-if="!showCategoryView" class="flex-1 flex flex-col min-h-0">
-          <div class="p-4 border-b border-gray-200">
+          <div class="p-4 border-b border-slate-700/30">
             <!-- Search Box -->
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg
-                  class="h-4 w-4 text-gray-400"
+                  class="h-4 w-4 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -155,15 +170,15 @@
                 v-model="searchQuery"
                 type="text"
                 :placeholder="$t('navigation.search')"
-                class="block w-full pl-10 pr-8 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="block w-full pl-10 pr-10 py-3 text-sm bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
               />
               <button
                 v-if="searchQuery"
                 @click="clearSearch"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer group"
               >
                 <svg
-                  class="h-4 w-4 text-gray-400 hover:text-gray-600"
+                  class="h-4 w-4 text-slate-400 hover:text-slate-200 group-hover:scale-110 transition-all duration-200"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -181,42 +196,47 @@
 
           <!-- Tool Items - Scrollable Area -->
           <div class="flex-1 overflow-y-auto p-4">
-            <div v-if="filteredTools.length === 0" class="text-center py-8">
-              <div class="text-gray-400 text-4xl mb-2">🔍</div>
-              <p class="text-gray-500 text-sm">
+            <div v-if="filteredTools.length === 0" class="text-center py-12">
+              <div class="text-slate-400 text-5xl mb-4 animate-bounce-subtle">🔍</div>
+              <p class="text-slate-400 text-sm">
                 {{ searchQuery ? $t('navigation.noResults') : $t('navigation.noToolsInCategory') }}
               </p>
             </div>
 
-            <div v-else class="space-y-2">
+            <div v-else class="space-y-3">
               <router-link
                 v-for="tool in filteredTools"
                 :key="tool.id"
                 :to="tool.path"
                 @click="onToolClick"
                 :class="[
-                  'block p-3 rounded-lg border transition-all hover:shadow-md cursor-pointer',
+                  'block p-4 rounded-xl border transition-all duration-200 cursor-pointer hover-lift group',
                   $route.path === tool.path
-                    ? 'bg-blue-50 border-blue-200 shadow-sm'
-                    : 'bg-white border-gray-200 hover:border-gray-300',
+                    ? 'bg-primary-500/10 border-primary-500/50 shadow-glow'
+                    : 'bg-slate-800/30 border-slate-700/30 hover:border-slate-600/50 hover:bg-slate-800/50',
                 ]"
               >
                 <div class="flex items-start">
-                  <span class="text-lg mr-3 mt-0.5">{{ tool.icon }}</span>
+                  <span
+                    class="text-lg mr-3 mt-0.5 group-hover:scale-110 transition-transform duration-200"
+                    >{{ tool.icon }}</span
+                  >
                   <div class="flex-1 min-w-0">
-                    <h4 class="text-sm font-medium text-gray-900 truncate">
+                    <h4
+                      class="text-sm font-medium text-slate-100 truncate group-hover:text-primary-400 transition-colors duration-200"
+                    >
                       {{ $t(`tools.${tool.id}.title`) }}
                     </h4>
-                    <p class="text-xs text-gray-500 mt-1 leading-relaxed break-all">
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed line-clamp-2">
                       {{ $t(`tools.${tool.id}.description`) }}
                     </p>
                     <div v-if="tool.status" class="mt-2">
                       <span
                         :class="[
-                          'inline-block px-2 py-1 text-xs rounded-full font-medium',
+                          'inline-block px-2 py-1 text-xs rounded-full font-medium transition-all duration-200',
                           tool.status === 'active'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-yellow-100 text-yellow-700',
+                            ? 'bg-success-500/20 text-success-400 group-hover:bg-success-500/30'
+                            : 'bg-warning-500/20 text-warning-400 group-hover:bg-warning-500/30',
                         ]"
                       >
                         {{ $t(`status.${tool.status}`) }}
@@ -230,15 +250,20 @@
         </div>
 
         <!-- Language Switcher at Bottom -->
-        <div class="p-4 border-t border-gray-200 mt-auto">
-          <div class="relative">
+        <div class="p-4 border-t border-slate-700/30 mt-auto">
+          <div class="relative space-y-2">
             <!-- Home Button -->
             <router-link
               to="/"
               @click="closeSidebar"
-              class="w-full mb-2 bg-gray-100 p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
+              class="w-full bg-slate-800/50 p-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition-all duration-200 flex items-center space-x-3 cursor-pointer hover-lift group"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-5 h-5 group-hover:scale-110 transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -246,16 +271,20 @@
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              <span class="text-sm">{{ $t('navigation.home') }}</span>
+              <span class="text-sm font-medium">{{ $t('navigation.home') }}</span>
             </router-link>
 
             <button
               @click="showLanguageMenu = !showLanguageMenu"
-              class="w-full bg-gray-100 p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
+              class="w-full bg-slate-800/50 p-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition-all duration-200 flex items-center space-x-3 cursor-pointer hover-lift group"
             >
-              <span>🌐</span>
-              <span class="text-sm">{{ currentLanguage.name }}</span>
-              <svg class="w-4 h-4 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+              <span class="group-hover:scale-110 transition-transform duration-200">🌐</span>
+              <span class="text-sm font-medium">{{ currentLanguage.name }}</span>
+              <svg
+                class="w-4 h-4 ml-auto group-hover:rotate-180 transition-transform duration-200"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fill-rule="evenodd"
                   d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -267,21 +296,21 @@
             <!-- Language Dropdown -->
             <div
               v-if="showLanguageMenu"
-              class="absolute bottom-full left-0 mb-2 w-full bg-white rounded-md shadow-lg z-50 border border-gray-200"
+              class="absolute bottom-full left-0 mb-2 w-full glass rounded-xl shadow-dark-xl z-50 border border-slate-600/50 animate-slide-up"
             >
-              <div class="py-1">
+              <div class="py-2">
                 <button
                   v-for="lang in languages"
                   :key="lang.code"
                   @click="changeLanguage(lang.code)"
                   :class="[
-                    'block w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer',
+                    'block w-full text-left px-4 py-3 text-sm transition-all duration-200 cursor-pointer hover-lift',
                     currentLocale === lang.code
-                      ? 'bg-blue-50 text-blue-600 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50',
+                      ? 'bg-primary-500/20 text-primary-400 font-medium'
+                      : 'text-slate-300 hover:bg-slate-800/50 hover:text-white',
                   ]"
                 >
-                  <span class="mr-2">{{ lang.flag }}</span>
+                  <span class="mr-3">{{ lang.flag }}</span>
                   {{ lang.name }}
                 </button>
               </div>
@@ -292,7 +321,7 @@
 
       <!-- Main Content -->
       <main
-        class="flex-1 overflow-auto relative"
+        class="flex-1 overflow-auto relative bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800"
         :class="{
           'pt-8': isElectron,
           'electron-scrollbar': isElectron,
@@ -300,43 +329,52 @@
       >
         <!-- Loading Overlay -->
         <transition
-          enter-active-class="transition-opacity duration-200"
-          leave-active-class="transition-opacity duration-300"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
+          enter-active-class="transition-all duration-300"
+          leave-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
         >
           <div
             v-if="isLoading"
-            class="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50 backdrop-blur-sm"
+            class="absolute inset-0 glass flex items-center justify-center z-50"
           >
             <div class="flex flex-col items-center">
-              <!-- Spinner Animation -->
-              <div
-                class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"
-              ></div>
+              <!-- Modern Spinner Animation -->
+              <div class="relative">
+                <div
+                  class="w-16 h-16 border-4 border-slate-700 border-t-primary-500 rounded-full animate-spin"
+                ></div>
+                <div
+                  class="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-primary-400 rounded-full animate-spin"
+                  style="animation-direction: reverse; animation-duration: 1s"
+                ></div>
+              </div>
               <!-- Loading Text -->
-              <p class="text-gray-600 text-sm font-medium animate-pulse">
-                {{ $t('common.loading') }}
+              <p class="text-slate-300 text-sm font-medium mt-6 animate-pulse">
+                {{ $t('common.loading') }}<span class="loading-dots"></span>
               </p>
             </div>
           </div>
         </transition>
 
-        <!-- Content with Transition -->
+        <!-- Content with Enhanced Transition -->
         <transition
-          enter-active-class="transition-all duration-300 delay-100"
-          leave-active-class="transition-all duration-200"
-          enter-from-class="opacity-0 transform translate-y-2"
-          enter-to-class="opacity-100 transform translate-y-0"
-          leave-from-class="opacity-100 transform translate-y-0"
-          leave-to-class="opacity-0 transform translate-y-1"
+          enter-active-class="transition-all duration-500 ease-out"
+          leave-active-class="transition-all duration-300 ease-in"
+          enter-from-class="opacity-0 transform translate-y-8 scale-95"
+          enter-to-class="opacity-100 transform translate-y-0 scale-100"
+          leave-from-class="opacity-100 transform translate-y-0 scale-100"
+          leave-to-class="opacity-0 transform translate-y-4 scale-98"
           mode="out-in"
         >
           <div
             :key="$route.path"
-            :class="['transition-opacity duration-300', isLoading ? 'opacity-50' : 'opacity-100']"
+            :class="[
+              'transition-all duration-300',
+              isLoading ? 'opacity-30 blur-sm' : 'opacity-100 blur-0',
+            ]"
           >
             <router-view />
           </div>
