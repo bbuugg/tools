@@ -30,11 +30,35 @@
         :title="isMaximized ? '还原' : '最大化'"
       >
         <svg v-if="!isMaximized" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect x="2" y="2" width="8" height="8" stroke="currentColor" stroke-width="1" fill="none" />
+          <rect
+            x="2"
+            y="2"
+            width="8"
+            height="8"
+            stroke="currentColor"
+            stroke-width="1"
+            fill="none"
+          />
         </svg>
         <svg v-else width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect x="2" y="3" width="6" height="6" stroke="currentColor" stroke-width="1" fill="none" />
-          <rect x="4" y="1" width="6" height="6" stroke="currentColor" stroke-width="1" fill="none" />
+          <rect
+            x="2"
+            y="3"
+            width="6"
+            height="6"
+            stroke="currentColor"
+            stroke-width="1"
+            fill="none"
+          />
+          <rect
+            x="4"
+            y="1"
+            width="6"
+            height="6"
+            stroke="currentColor"
+            stroke-width="1"
+            fill="none"
+          />
         </svg>
       </button>
 
@@ -45,7 +69,12 @@
         title="关闭"
       >
         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <path d="M2 2 L10 10 M10 2 L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          <path
+            d="M2 2 L10 10 M10 2 L2 10"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
         </svg>
       </button>
     </div>
@@ -76,8 +105,8 @@ declare global {
 
 onMounted(async () => {
   // 检查是否在Electron环境中
-  isElectron.value = !!(window.electronAPI)
-  
+  isElectron.value = !!window.electronAPI
+
   if (isElectron.value) {
     // 获取初始最大化状态
     try {
