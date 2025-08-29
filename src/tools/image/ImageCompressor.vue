@@ -20,7 +20,9 @@
           @click="openFileSelector"
           :class="[
             'border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200',
-            isDragging ? 'border-primary-500 bg-primary-500/10' : 'border-slate-600/50 hover:border-slate-500/70',
+            isDragging
+              ? 'border-primary-500 bg-primary-500/10'
+              : 'border-slate-600/50 hover:border-slate-500/70',
           ]"
         >
           <input
@@ -188,7 +190,9 @@
               <div class="text-2xl font-bold text-success-400">
                 {{ compressionStats.savedPercentage }}%
               </div>
-              <div class="text-sm text-success-300">{{ $t('tools.imageCompressor.spaceSaved') }}</div>
+              <div class="text-sm text-success-300">
+                {{ $t('tools.imageCompressor.spaceSaved') }}
+              </div>
             </div>
           </div>
         </div>
@@ -303,8 +307,12 @@
         v-if="showPreviewModal"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
       >
-        <div class="relative glass rounded-xl shadow-dark-xl w-full max-w-4xl mx-4 border border-slate-700/50">
-          <div class="flex items-center justify-between p-4 border-b border-slate-700/30 rounded-t-xl">
+        <div
+          class="relative glass rounded-xl shadow-dark-xl w-full max-w-4xl mx-4 border border-slate-700/50"
+        >
+          <div
+            class="flex items-center justify-between p-4 border-b border-slate-700/30 rounded-t-xl"
+          >
             <h3 class="text-xl font-semibold text-slate-100">
               {{ $t('tools.imageCompressor.imagePreview') }}
             </h3>
@@ -412,6 +420,9 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
+// @ts-expect-error No type definitions available for gif.js
+import GIF from 'gif.js'
+import { parseGIF, decompressFrames } from 'gifuct-js'
 
 interface ImageItem {
   name: string
@@ -427,6 +438,8 @@ interface ImageItem {
   progress: number
   savedPercentage?: number
   compressedBlob?: Blob
+  isAnimatedGif?: boolean
+  gifFrames?: any[]
 }
 
 const { t } = useI18n()
@@ -520,6 +533,7 @@ async function addFiles(files: File[]) {
       try {
         const dimensions = await getImageDimensions(file)
         const preview = await createImagePreview(file)
+        const isAnimatedGif = await checkIfAnimatedGif(file)
 
         images.value[existingIndex] = {
           name: file.name,
@@ -529,6 +543,7 @@ async function addFiles(files: File[]) {
           dimensions,
           status: 'pending',
           progress: 0,
+          isAnimatedGif,
         }
       } catch (err) {
         console.error('Error processing file:', file.name, err)
@@ -538,6 +553,7 @@ async function addFiles(files: File[]) {
       try {
         const dimensions = await getImageDimensions(file)
         const preview = await createImagePreview(file)
+        const isAnimatedGif = await checkIfAnimatedGif(file)
 
         const imageItem: ImageItem = {
           name: file.name,
@@ -547,6 +563,7 @@ async function addFiles(files: File[]) {
           dimensions,
           status: 'pending',
           progress: 0,
+          isAnimatedGif,
         }
 
         images.value.push(imageItem)
@@ -578,6 +595,23 @@ function createImagePreview(file: File): Promise<string> {
   })
 }
 
+// Check if a GIF file is animated
+async function checkIfAnimatedGif(file: File): Promise<boolean> {
+  if (file.type !== 'image/gif') {
+    return false
+  }
+
+  try {
+    const arrayBuffer = await file.arrayBuffer()
+    const gif = parseGIF(arrayBuffer)
+    const frames = decompressFrames(gif, true)
+    return frames.length > 1
+  } catch (err) {
+    console.error('Error checking if GIF is animated:', err)
+    return false
+  }
+}
+
 // Compression functions
 async function compressImage(index: number) {
   const image = images.value[index]
@@ -587,6 +621,12 @@ async function compressImage(index: number) {
   image.progress = 0
 
   try {
+    // Special handling for animated GIFs when keeping original format
+    if (image.isAnimatedGif && outputFormat.value === 'original') {
+      await compressAnimatedGif(index)
+      return
+    }
+
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const img = new Image()
@@ -642,6 +682,94 @@ async function compressImage(index: number) {
     image.status = 'completed'
   } catch (err) {
     console.error('Compression error:', err)
+    image.status = 'error'
+    showError(t('tools.imageCompressor.errors.compressionFailed', { filename: image.name }))
+  }
+}
+
+// Special compression function for animated GIFs
+async function compressAnimatedGif(index: number) {
+  const image = images.value[index]
+  if (!image || !image.isAnimatedGif) return
+
+  try {
+    const arrayBuffer = await image.file.arrayBuffer()
+    const gif = parseGIF(arrayBuffer)
+    const frames = decompressFrames(gif, true)
+
+    // Create a canvas to process frames
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+
+    if (!ctx) {
+      throw new Error('Unable to get canvas context')
+    }
+
+    // Set canvas dimensions to match original GIF
+    canvas.width = gif.lsd.width
+    canvas.height = gif.lsd.height
+
+    // Configure GIF quality based on compression quality
+    const quality = Math.max(1, Math.min(30, Math.floor((100 - compressionQuality.value) / 3)))
+
+    // Create new GIF with compression settings
+    const newGif = new GIF({
+      workers: 2,
+      quality: quality,
+      width: canvas.width,
+      height: canvas.height,
+      workerScript: '/gif.worker.js',
+    })
+
+    // Process each frame
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i]
+
+      // Update progress
+      image.progress = Math.round((i / frames.length) * 90)
+
+      // Create ImageData from frame patch
+      const imageData = new ImageData(
+        new Uint8ClampedArray(frame.patch),
+        frame.dims.width,
+        frame.dims.height,
+      )
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      // Draw frame at its position
+      ctx.putImageData(imageData, frame.dims.left, frame.dims.top)
+
+      // Add frame to new GIF
+      newGif.addFrame(ctx, {
+        copy: true,
+        delay: frame.delay,
+      })
+    }
+
+    // Generate the compressed GIF
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      newGif.on('finished', (blob: Blob) => {
+        resolve(blob)
+      })
+
+      newGif.on('error', (error: Error) => {
+        reject(error)
+      })
+
+      newGif.render()
+    })
+
+    image.progress = 100
+    image.compressedBlob = blob
+    image.compressedSize = blob.size
+    image.savedPercentage = Math.round(
+      ((image.originalSize - blob.size) / image.originalSize) * 100,
+    )
+    image.status = 'completed'
+  } catch (err) {
+    console.error('Animated GIF compression error:', err)
     image.status = 'error'
     showError(t('tools.imageCompressor.errors.compressionFailed', { filename: image.name }))
   }
