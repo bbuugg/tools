@@ -10,23 +10,24 @@
     ]"
   >
     <!-- Tab Navigation -->
-    <div class="mb-6">
-      <div class="border-b border-slate-700/30">
-        <nav class="-mb-px flex space-x-8">
-          <button
-            v-for="tab in tabs"
-            :key="tab.id"
-            @click="activeTab = tab.id"
-            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-            :class="{
-              'border-primary-500 text-primary-400': activeTab === tab.id,
-              'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500':
-                activeTab !== tab.id,
-            }"
-          >
-            {{ $t(tab.label) }}
-          </button>
-        </nav>
+    <div class="flex justify-center mb-6">
+      <div class="inline-flex rounded-md shadow-sm" role="group">
+        <button
+          v-for="(tab, index) in tabs"
+          :key="tab.id"
+          @click="activeTab = tab.id"
+          class="px-4 py-2 text-sm font-medium transition-colors"
+          :class="[
+            activeTab === tab.id
+              ? 'text-white bg-primary-600'
+              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+            index === 0 ? 'rounded-l-lg' : '',
+            index === tabs.length - 1 ? 'rounded-r-lg' : '',
+            index !== 0 ? 'border-l border-slate-700' : '',
+          ]"
+        >
+          {{ $t(tab.label) }}
+        </button>
       </div>
     </div>
 
@@ -36,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ToolLayout from '../../components/ToolLayout.vue'
 import JsonExtractor from './components/JsonExtractor.vue'
