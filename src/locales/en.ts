@@ -902,9 +902,15 @@ export default {
       fileSelected: 'File selected successfully',
       options: {
         title: 'Conversion Options',
-        firstRowAsHeaders: 'First Row as Headers',
-        skipEmptyRows: 'Skip Empty Rows',
-        sheetIndex: 'Sheet to Convert',
+        firstRowAsHeaders: 'First row as headers',
+        skipEmptyRows: 'Skip empty rows',
+        sheetIndex: 'Sheet',
+      },
+      errors: {
+        conversionFailed: 'Failed to convert Excel file',
+        noFileSelected: 'Please select an Excel file to convert',
+        xlsxRequired:
+          'XLSX library is required for Excel file parsing. Please install: npm install xlsx',
       },
       features: {
         parsing: {
@@ -922,12 +928,6 @@ export default {
           description:
             'Customize output with header handling, empty row skipping, and sheet selection.',
         },
-      },
-      errors: {
-        noFileSelected: 'Please select an Excel file to convert',
-        xlsxRequired:
-          'XLSX library is required for Excel file parsing. Please install: npm install xlsx',
-        conversionFailed: 'Failed to convert Excel to JSON',
       },
     },
     jsonToSql: {
@@ -2275,30 +2275,6 @@ export default {
       zoom: 'Zoom',
       page: 'Page',
       of: 'of',
-    },
-    excelToJson: {
-      title: 'Excel to JSON Converter',
-      description: 'Convert Excel files to JSON format with flexible parsing options',
-      inputTitle: 'Upload Excel File',
-      outputTitle: 'JSON Output',
-      uploadDescription: 'Select an Excel file to convert to JSON',
-      selectFile: 'Select Excel File',
-      supportedFormats: 'Supports .xlsx, .xls, .csv, and .ods files',
-      noResults: 'No conversion results yet. Please upload an Excel file.',
-      conversionComplete: 'Conversion completed successfully!',
-      recordsCount: '{count} records converted',
-      convert: 'Convert to JSON',
-      options: {
-        title: 'Conversion Options',
-        firstRowAsHeaders: 'First row as headers',
-        skipEmptyRows: 'Skip empty rows',
-        sheetIndex: 'Sheet',
-      },
-      errors: {
-        conversionFailed: 'Failed to convert Excel file',
-        noFileSelected: 'Please select an Excel file to convert',
-      },
-      fileSelected: 'Excel file selected successfully!',
     },
   },
 }

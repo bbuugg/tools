@@ -282,10 +282,15 @@ export default {
       convert: ' 转换为 JSON',
       fileSelected: ' 文件选择成功 ',
       options: {
-        title: ' 转换选项 ',
-        firstRowAsHeaders: ' 首行作为表头 ',
-        skipEmptyRows: ' 跳过空行 ',
-        sheetIndex: ' 待转换工作表 ',
+        title: '转换选项',
+        firstRowAsHeaders: '第一行作为标题',
+        skipEmptyRows: '跳过空行',
+        sheetIndex: '工作表',
+      },
+      errors: {
+        conversionFailed: 'Excel 文件转换失败',
+        noFileSelected: '请选择一个 Excel 文件进行转换',
+        xlsxRequired: 'Excel 文件解析需依赖 XLSX 库。请安装：npm install xlsx',
       },
       features: {
         parsing: {
@@ -300,11 +305,6 @@ export default {
           title: ' 转换选项配置 ',
           description: ' 通过表头处理、空行跳过及工作表选择等功能自定义输出结果。',
         },
-      },
-      errors: {
-        noFileSelected: ' 请选择需转换的 Excel 文件 ',
-        xlsxRequired: 'Excel 文件解析需依赖 XLSX 库。请安装：npm install xlsx',
-        conversionFailed: 'Excel 转 JSON 转换失败 ',
       },
     },
     jsonExtractor: {
@@ -2208,30 +2208,6 @@ export default {
       zoom: '缩放',
       page: '第',
       of: '页，共',
-    },
-    excelToJson: {
-      title: 'Excel 转 JSON 转换器',
-      description: '将 Excel 文件转换为 JSON 格式，支持灵活的解析选项',
-      inputTitle: '上传 Excel 文件',
-      outputTitle: 'JSON 输出',
-      uploadDescription: '选择一个 Excel 文件转换为 JSON',
-      selectFile: '选择 Excel 文件',
-      supportedFormats: '支持 .xlsx、.xls、.csv 和 .ods 文件',
-      noResults: '暂无转换结果。请上传一个 Excel 文件。',
-      conversionComplete: '转换完成！',
-      recordsCount: '已转换 {count} 条记录',
-      convert: '转换为JSON',
-      options: {
-        title: '转换选项',
-        firstRowAsHeaders: '第一行作为标题',
-        skipEmptyRows: '跳过空行',
-        sheetIndex: '工作表',
-      },
-      errors: {
-        conversionFailed: 'Excel 文件转换失败',
-        noFileSelected: '请选择一个 Excel 文件进行转换',
-      },
-      fileSelected: 'Excel 文件选择成功！',
     },
   },
 }
