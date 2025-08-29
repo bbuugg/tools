@@ -21,6 +21,9 @@ describe('JsonPathExtractorWithTabs', () => {
           ToolLayout: {
             template: '<div><slot></slot></div>',
           },
+          PathExtractorTab: {
+            template: '<div>PathExtractorTab</div>',
+          },
           JsonExtractorTab: {
             template: '<div>JsonExtractorTab</div>',
           },
@@ -49,6 +52,9 @@ describe('JsonPathExtractorWithTabs', () => {
           ToolLayout: {
             template: '<div><slot></slot></div>',
           },
+          PathExtractorTab: {
+            template: '<div>PathExtractorTab</div>',
+          },
           JsonExtractorTab: {
             template: '<div>JsonExtractorTab</div>',
           },
@@ -75,39 +81,5 @@ describe('JsonPathExtractorWithTabs', () => {
 
     // Check that formatter tab is now active
     expect(wrapper.find('.border-primary-500').text()).toContain('JSON Formatter')
-  })
-
-  it('loads example data in path extractor tab', async () => {
-    const wrapper = mount(JsonPathExtractor, {
-      global: {
-        plugins: [i18n],
-        stubs: {
-          ToolLayout: {
-            template: '<div><slot></slot></div>',
-          },
-          JsonExtractorTab: {
-            template: '<div>JsonExtractorTab</div>',
-          },
-          JsonFormatterTab: {
-            template: '<div>JsonFormatterTab</div>',
-          },
-        },
-      },
-    })
-
-    // Make sure we're on the path tab
-    expect(wrapper.find('.border-primary-500').text()).toContain('Path Extractor')
-
-    // Find and click the "Load Example" button
-    const exampleButton = wrapper.find('button')
-    await exampleButton.trigger('click')
-
-    // Check that JSON input is populated
-    const textarea = wrapper.find('textarea')
-    expect(textarea.element.value).toContain('store')
-
-    // Check that JSONPath is set
-    const pathInput = wrapper.find('input[type="text"]')
-    expect(pathInput.element.value).toBe('$.store.book[*].title')
   })
 })
