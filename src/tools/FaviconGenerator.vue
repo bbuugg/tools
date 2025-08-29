@@ -18,8 +18,8 @@
 
     <template #default>
       <!-- Upload Section -->
-      <div class="bg-white rounded-2xl shadow-dark-lg p-6 mb-8 glass">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.faviconGenerator.uploadSection') }}
         </h3>
 
@@ -32,8 +32,8 @@
           :class="[
             'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover-lift',
             isDragging
-              ? 'border-primary-500 bg-primary-500/10 shadow-glow'
-              : 'border-gray-300 hover:border-gray-400',
+              ? 'border-primary-500 bg-primary-500/20 shadow-glow'
+              : 'border-slate-600 hover:border-slate-500',
           ]"
         >
           <input
