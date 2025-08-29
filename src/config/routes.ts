@@ -36,7 +36,6 @@ const ExcelTextToJson = () => import('../tools/json/ExcelTextToJson.vue')
 const JsonMerge = () => import('../tools/json/JsonMerge.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
-const JsonNumberToText = () => import('../tools/json/JsonNumberToText.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
@@ -151,16 +150,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Keys Extractor',
           icon: '🔑',
-          status: Status.Active,
-        },
-      },
-      {
-        path: 'json-number-to-text',
-        name: 'jsonNumberToText',
-        component: JsonNumberToText,
-        meta: {
-          title: 'JSON Number to Text',
-          icon: '🔢',
           status: Status.Active,
         },
       },

@@ -611,6 +611,10 @@ export default {
       description:
         'Extract data from JSON using JSONPath expressions with advanced filtering capabilities',
       extractButton: 'Extract Data',
+      tabs: {
+        extractor: 'Path Extractor',
+        formatter: 'JSON Formatter',
+      },
       features: {
         pathExtraction: {
           title: 'Path Extraction',
@@ -691,8 +695,10 @@ export default {
       formattingComplete: 'Formatting Complete',
       formatOptions: 'Format Options',
       indent: 'Indent',
-      sortKeys: 'Sort Keys',
+      outputFormat: 'Output Format',
+      prettyFormat: 'Pretty Format',
       compactFormat: 'Compact Format',
+      sortKeys: 'Sort Keys',
       escapeUnicode: 'Escape Unicode',
       formatJson: 'Format JSON',
       spaces2: '2 spaces',
@@ -700,8 +706,8 @@ export default {
       tab: 'Tab',
       lines: 'lines',
       characters: 'characters',
-      smaller: 'smaller',
-      larger: 'larger',
+      keys: 'keys',
+      depth: 'depth',
       caseOptions: 'Case Options',
       keyCase: 'Key Case',
       valueCase: 'Value Case',

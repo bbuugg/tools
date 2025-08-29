@@ -17,6 +17,11 @@ describe('JsonPathExtractor', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
       },
     })
     expect(wrapper.find('h1').text()).toContain('JSON Path Extractor')
@@ -26,6 +31,11 @@ describe('JsonPathExtractor', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
       },
     })
 
@@ -42,6 +52,11 @@ describe('JsonPathExtractor', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
       },
     })
 
@@ -67,6 +82,11 @@ describe('JsonPathExtractor', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
       },
     })
 
@@ -87,6 +107,11 @@ describe('JsonPathExtractor', () => {
     const wrapper = mount(JsonPathExtractor, {
       global: {
         plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
       },
     })
 
@@ -101,5 +126,57 @@ describe('JsonPathExtractor', () => {
     // Check that path is set to root
     const pathInput = wrapper.find('input[type="text"]')
     expect(pathInput.element.value).toBe('$')
+  })
+
+  it('switches between tabs correctly', async () => {
+    const wrapper = mount(JsonPathExtractor, {
+      global: {
+        plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
+      },
+    })
+
+    // Check that extractor tab is active by default
+    expect(wrapper.find('.border-primary-500').text()).toContain('Path Extractor')
+
+    // Find and click the formatter tab
+    const formatterTab = wrapper.findAll('button')[1]
+    await formatterTab.trigger('click')
+
+    // Check that formatter tab is now active
+    expect(wrapper.find('.border-primary-500').text()).toContain('JSON Formatter')
+  })
+
+  it('formats JSON correctly in formatter tab', async () => {
+    const wrapper = mount(JsonPathExtractor, {
+      global: {
+        plugins: [i18n],
+        stubs: {
+          ToolLayout: {
+            template: '<div><slot></slot></div>',
+          },
+        },
+      },
+    })
+
+    // Switch to formatter tab
+    const formatterTab = wrapper.findAll('button')[1]
+    await formatterTab.trigger('click')
+
+    // Find the formatter textarea and input JSON
+    const formatterTextarea = wrapper.find('textarea')
+    await formatterTextarea.setValue('{"name":"John","age":30}')
+
+    // Wait for formatting to complete
+    await wrapper.vm.$nextTick()
+
+    // Check that formatted JSON is displayed
+    const formattedOutput = wrapper.findAll('textarea')[1]
+    expect(formattedOutput.element.value).toContain('"name": "John"')
+    expect(formattedOutput.element.value).toContain('"age": 30')
   })
 })

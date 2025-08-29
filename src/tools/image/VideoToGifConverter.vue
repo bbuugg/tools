@@ -1,19 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-dark-950 text-slate-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50 shadow-dark-lg">
+        <h1 class="text-3xl font-bold text-slate-100 mb-4">
           🎬 {{ $t('tools.videoToGifConverter.title') }}
         </h1>
-        <p class="text-gray-600 text-lg">
+        <p class="text-slate-400 text-lg">
           {{ $t('tools.videoToGifConverter.description') }}
         </p>
-        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-          <h3 class="font-semibold text-blue-800 mb-2">
+        <div class="mt-4 p-4 bg-primary-900/30 rounded-xl border border-primary-700/50">
+          <h3 class="font-semibold text-primary-300 mb-2">
             {{ $t('tools.videoToGifConverter.howToUse.title') }}
           </h3>
-          <ol class="list-decimal list-inside space-y-1 text-blue-700">
+          <ol class="list-decimal list-inside space-y-1 text-primary-200">
             <li>{{ $t('tools.videoToGifConverter.howToUse.step1') }}</li>
             <li>{{ $t('tools.videoToGifConverter.howToUse.step2') }}</li>
             <li>{{ $t('tools.videoToGifConverter.howToUse.step3') }}</li>
@@ -23,8 +23,8 @@
       </div>
 
       <!-- Upload Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.videoToGifConverter.upload.title') }}
         </h3>
 
@@ -34,12 +34,15 @@
             @drop="handleFileDrop"
             @dragover.prevent
             @dragenter.prevent
-            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
-            :class="{ 'border-blue-400 bg-blue-50': isDragging }"
+            class="border-2 border-dashed rounded-xl p-8 text-center hover:border-primary-500/50 transition-all duration-200 cursor-pointer"
+            :class="{
+              'border-primary-500 bg-primary-500/10': isDragging,
+              'border-slate-600/50': !isDragging,
+            }"
             @click="fileInput!.click()"
           >
-            <div class="text-gray-400 text-4xl mb-4">🎥</div>
-            <p class="text-gray-600 mb-4">
+            <div class="text-slate-500 text-4xl mb-4">🎥</div>
+            <p class="text-slate-400 mb-4">
               {{ $t('tools.videoToGifConverter.upload.dragDrop') }}
             </p>
             <input
@@ -50,11 +53,11 @@
               class="hidden"
             />
             <button
-              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift"
             >
               {{ $t('tools.videoToGifConverter.upload.selectFile') }}
             </button>
-            <p class="text-xs text-gray-500 mt-2">
+            <p class="text-xs text-slate-500 mt-2">
               {{ $t('tools.videoToGifConverter.upload.supportedFormats') }}
             </p>
           </div>
@@ -63,7 +66,7 @@
         <!-- GIF Settings -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.videoToGifConverter.settings.width') }}
             </label>
             <input
@@ -71,16 +74,16 @@
               type="number"
               min="100"
               max="800"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.videoToGifConverter.settings.quality') }}
             </label>
             <select
               v-model="gifSettings.quality"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
             >
               <option value="high">
                 {{ $t('tools.videoToGifConverter.settings.qualityOptions.high') }}
@@ -94,7 +97,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.videoToGifConverter.settings.fps') }}
             </label>
             <input
@@ -102,15 +105,15 @@
               type="number"
               min="5"
               max="30"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
             />
           </div>
         </div>
       </div>
 
       <!-- Video Preview Section -->
-      <div v-if="selectedVideo" class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div v-if="selectedVideo" class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.videoToGifConverter.preview.title') }}
         </h3>
 
@@ -119,13 +122,15 @@
           <div>
             <div
               v-if="videoUrl && !videoDuration"
-              class="flex items-center justify-center w-full h-64 bg-gray-100 rounded-lg"
+              class="flex items-center justify-center w-full h-64 bg-slate-800/50 rounded-xl"
             >
               <div class="text-center">
                 <div
-                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"
+                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"
                 ></div>
-                <p class="mt-2 text-gray-600">{{ $t('tools.videoToGifConverter.loadingVideo') }}</p>
+                <p class="mt-2 text-slate-400">
+                  {{ $t('tools.videoToGifConverter.loadingVideo') }}
+                </p>
               </div>
             </div>
             <video
@@ -135,7 +140,7 @@
               controls
               @loadedmetadata="onVideoLoaded"
               @timeupdate="onTimeUpdate"
-              class="w-full rounded-lg"
+              class="w-full rounded-xl bg-slate-900"
             ></video>
 
             <!-- Video Controls -->
@@ -144,21 +149,21 @@
                 <button
                   @click="startCapture"
                   :disabled="isCapturing || isProcessing"
-                  class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('tools.videoToGifConverter.actions.startCapture') }}
                 </button>
                 <button
                   @click="stopCapture"
                   :disabled="!isCapturing || isProcessing"
-                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-4 py-2 bg-error-600 text-white rounded-xl hover:bg-error-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('tools.videoToGifConverter.actions.stopCapture') }}
                 </button>
                 <button
                   @click="generateGif"
                   :disabled="isProcessing"
-                  class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{
                     isProcessing
@@ -170,12 +175,12 @@
 
               <!-- Time Range Selection -->
               <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">
+                <label class="block text-sm font-medium text-slate-300">
                   {{ $t('tools.videoToGifConverter.timeRange.title') }}
                 </label>
                 <div class="flex gap-4 items-center">
                   <div class="flex items-center gap-2">
-                    <label class="text-sm text-gray-600"
+                    <label class="text-sm text-slate-400"
                       >{{ $t('tools.videoToGifConverter.timeRange.start') }}:</label
                     >
                     <input
@@ -184,12 +189,12 @@
                       min="0"
                       :max="videoDuration"
                       step="0.1"
-                      class="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                      class="w-20 px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-sm text-slate-100"
                     />
-                    <span class="text-sm text-gray-500">s</span>
+                    <span class="text-sm text-slate-500">s</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <label class="text-sm text-gray-600"
+                    <label class="text-sm text-slate-400"
                       >{{ $t('tools.videoToGifConverter.timeRange.end') }}:</label
                     >
                     <input
@@ -198,19 +203,19 @@
                       :min="timeRange.start"
                       :max="videoDuration"
                       step="0.1"
-                      class="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                      class="w-20 px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-sm text-slate-100"
                     />
-                    <span class="text-sm text-gray-500">s</span>
+                    <span class="text-sm text-slate-500">s</span>
                   </div>
                   <button
                     @click="setCurrentTimeAsStart"
-                    class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                    class="px-3 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-500 transition-all duration-200 cursor-pointer"
                   >
                     {{ $t('tools.videoToGifConverter.timeRange.setStart') }}
                   </button>
                   <button
                     @click="setCurrentTimeAsEnd"
-                    class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                    class="px-3 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-500 transition-all duration-200 cursor-pointer"
                   >
                     {{ $t('tools.videoToGifConverter.timeRange.setEnd') }}
                   </button>
@@ -222,12 +227,12 @@
           <!-- Text Overlay Controls -->
           <div>
             <div class="flex justify-between items-center mb-4">
-              <h4 class="text-md font-semibold text-gray-800">
+              <h4 class="text-md font-semibold text-slate-100">
                 {{ $t('tools.videoToGifConverter.textOverlay.title') }}
               </h4>
               <button
                 @click="addTextOverlay"
-                class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+                class="px-3 py-1 bg-success-600 text-white rounded text-sm hover:bg-success-500 transition-all duration-200 cursor-pointer"
               >
                 {{ $t('tools.videoToGifConverter.textOverlay.add') }}
               </button>
@@ -237,15 +242,15 @@
               <div
                 v-for="(text, index) in textOverlays"
                 :key="index"
-                class="border border-gray-200 rounded-lg p-4 space-y-3"
+                class="border border-slate-700/50 rounded-xl p-4 space-y-3"
               >
                 <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-gray-700">
+                  <span class="text-sm font-medium text-slate-300">
                     {{ $t('tools.videoToGifConverter.textOverlay.text') }} {{ index + 1 }}
                   </span>
                   <button
                     @click="removeTextOverlay(index)"
-                    class="text-red-500 hover:text-red-700 text-sm"
+                    class="text-error-500 hover:text-error-400 text-sm transition-colors duration-200 cursor-pointer"
                   >
                     {{ $t('common.remove') }}
                   </button>
@@ -255,12 +260,12 @@
                   v-model="text.content"
                   type="text"
                   :placeholder="$t('tools.videoToGifConverter.textOverlay.placeholder')"
-                  class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                  class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded text-sm text-slate-100 placeholder-slate-500 transition-all duration-200"
                 />
 
                 <div class="grid grid-cols-2 gap-2">
                   <div>
-                    <label class="block text-xs text-gray-600 mb-1">
+                    <label class="block text-xs text-slate-400 mb-1">
                       {{ $t('tools.videoToGifConverter.textOverlay.startTime') }}
                     </label>
                     <input
@@ -269,11 +274,11 @@
                       min="0"
                       :max="videoDuration"
                       step="0.1"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      class="w-full px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-xs text-slate-100"
                     />
                   </div>
                   <div>
-                    <label class="block text-xs text-gray-600 mb-1">
+                    <label class="block text-xs text-slate-400 mb-1">
                       {{ $t('tools.videoToGifConverter.textOverlay.endTime') }}
                     </label>
                     <input
@@ -282,14 +287,14 @@
                       :min="text.startTime"
                       :max="videoDuration"
                       step="0.1"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      class="w-full px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-xs text-slate-100"
                     />
                   </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2">
                   <div>
-                    <label class="block text-xs text-gray-600 mb-1">
+                    <label class="block text-xs text-slate-400 mb-1">
                       {{ $t('tools.videoToGifConverter.textOverlay.fontSize') }}
                     </label>
                     <input
@@ -297,26 +302,26 @@
                       type="number"
                       min="12"
                       max="48"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      class="w-full px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-xs text-slate-100"
                     />
                   </div>
                   <div>
-                    <label class="block text-xs text-gray-600 mb-1">
+                    <label class="block text-xs text-slate-400 mb-1">
                       {{ $t('tools.videoToGifConverter.textOverlay.color') }}
                     </label>
                     <input
                       v-model="text.color"
                       type="color"
-                      class="w-full h-8 border border-gray-300 rounded"
+                      class="w-full h-8 border border-slate-600/50 rounded cursor-pointer"
                     />
                   </div>
                   <div>
-                    <label class="block text-xs text-gray-600 mb-1">
+                    <label class="block text-xs text-slate-400 mb-1">
                       {{ $t('tools.videoToGifConverter.textOverlay.position') }}
                     </label>
                     <select
                       v-model="text.position"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      class="w-full px-2 py-1 bg-slate-800/50 border border-slate-600/50 rounded text-xs text-slate-100"
                     >
                       <option value="top">
                         {{ $t('tools.videoToGifConverter.textOverlay.positions.top') }}
@@ -337,34 +342,34 @@
       </div>
 
       <!-- Processing Status -->
-      <div v-if="isProcessing" class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div v-if="isProcessing" class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
         <div class="text-center">
           <div
-            class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
+            class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"
           ></div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.videoToGifConverter.processing.title') }}
           </h3>
-          <p class="text-gray-600">
+          <p class="text-slate-400">
             {{ $t('tools.videoToGifConverter.processing.description') }}
           </p>
-          <div class="mt-4 bg-gray-200 rounded-full h-2">
+          <div class="mt-4 bg-slate-700 rounded-full h-2">
             <div
-              class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              class="bg-primary-600 h-2 rounded-full transition-all duration-300"
               :style="{ width: processingProgress + '%' }"
             ></div>
           </div>
-          <p class="text-sm text-gray-500 mt-2">{{ processingProgress }}%</p>
+          <p class="text-sm text-slate-500 mt-2">{{ processingProgress }}%</p>
 
           <!-- Preview of generated GIF -->
           <div v-if="generatedGif" class="mt-6">
-            <h4 class="text-md font-medium text-gray-800 mb-2">
+            <h4 class="text-md font-medium text-slate-300 mb-2">
               {{ $t('tools.videoToGifConverter.processing.preview') }}
             </h4>
             <img
               :src="generatedGif"
               alt="GIF Preview"
-              class="max-w-full h-auto mx-auto rounded-lg shadow-lg"
+              class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg"
               style="max-height: 200px"
             />
           </div>
@@ -372,8 +377,8 @@
       </div>
 
       <!-- Result Section -->
-      <div v-if="generatedGif" class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div v-if="generatedGif" class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.videoToGifConverter.result.title') }}
         </h3>
 
@@ -381,19 +386,19 @@
           <img
             :src="generatedGif"
             alt="Generated GIF"
-            class="max-w-full h-auto mx-auto rounded-lg shadow-lg mb-4"
+            class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg mb-4"
           />
 
           <div class="flex justify-center gap-4">
             <button
               @click="downloadGif"
-              class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              class="px-6 py-2 bg-success-600 text-white rounded-xl hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift"
             >
               {{ $t('tools.videoToGifConverter.result.download') }}
             </button>
             <button
               @click="resetTool"
-              class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              class="px-6 py-2 bg-slate-700 text-slate-100 rounded-xl hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift"
             >
               {{ $t('tools.videoToGifConverter.result.createNew') }}
             </button>
@@ -402,11 +407,11 @@
       </div>
 
       <!-- Tips Section -->
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+      <div class="bg-warning-900/30 border-l-4 border-warning-500 p-4 mb-8 rounded-r-xl">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg
-              class="h-5 w-5 text-yellow-400"
+              class="h-5 w-5 text-warning-500"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -419,10 +424,10 @@
             </svg>
           </div>
           <div class="ml-3">
-            <h3 class="text-sm font-medium text-yellow-800">
+            <h3 class="text-sm font-medium text-warning-300">
               {{ $t('tools.videoToGifConverter.tips.title') }}
             </h3>
-            <div class="mt-2 text-sm text-yellow-700">
+            <div class="mt-2 text-sm text-warning-200">
               <ul class="list-disc list-inside space-y-1">
                 <li>{{ $t('tools.videoToGifConverter.tips.tip1') }}</li>
                 <li>{{ $t('tools.videoToGifConverter.tips.tip2') }}</li>
@@ -436,29 +441,29 @@
 
       <!-- Features Section -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🎬 {{ $t('tools.videoToGifConverter.features.conversion.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.videoToGifConverter.features.conversion.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             📝 {{ $t('tools.videoToGifConverter.features.textOverlay.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.videoToGifConverter.features.textOverlay.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-xl border border-slate-700/50">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             ⚡ {{ $t('tools.videoToGifConverter.features.customization.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.videoToGifConverter.features.customization.description') }}
           </p>
         </div>
