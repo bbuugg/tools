@@ -28,7 +28,6 @@ const ImageToGifConverter = () => import('../tools/image/ImageToGifConverter.vue
 const GifEditor = () => import('../tools/image/GifEditor.vue')
 const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
-const JsonToExcel = () => import('../tools/json/JsonToExcel.vue')
 const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonKeysExtractor = () => import('../tools/json/JsonKeysExtractor.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
@@ -65,16 +64,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Path Extractor',
           icon: '🛤️',
-          status: Status.Active,
-        },
-      },
-      {
-        path: 'json-to-excel',
-        name: 'jsonToExcel',
-        component: JsonToExcel,
-        meta: {
-          title: 'JSON to Excel Converter',
-          icon: '📊',
           status: Status.Active,
         },
       },

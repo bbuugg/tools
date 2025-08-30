@@ -46,12 +46,13 @@ import PathExtractor from './components/PathExtractor.vue'
 import ExcelToJson from './components/ExcelToJson.vue'
 import JsonMerge from './components/JsonMerge.vue'
 import ExcelTextToJson from './components/ExcelTextToJson.vue'
+import JsonToExcel from './components/JsonToExcel.vue'
 
 const { t } = useI18n()
 
 // Tab management
 const activeTab = ref<
-  'path' | 'extractor' | 'formatter' | 'excelTojson' | 'jsonMerge' | 'excelTextToJson'
+  'path' | 'extractor' | 'formatter' | 'excelTojson' | 'jsonMerge' | 'excelTextToJson' | 'jsonToExcel'
 >('path')
 
 // Tab configuration object
@@ -85,6 +86,11 @@ const tabs = reactive([
     id: 'excelTextToJson',
     label: 'tools.jsonPathExtractor.tabs.excelTextToJson',
     component: ExcelTextToJson,
+  },
+  {
+    id: 'jsonToExcel',
+    label: 'tools.jsonPathExtractor.tabs.jsonToExcel',
+    component: JsonToExcel,
   },
 ])
 

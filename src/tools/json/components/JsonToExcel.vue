@@ -1,15 +1,5 @@
 <template>
-  <ToolLayout
-    :title="$t('tools.jsonToExcel.title')"
-    :description="$t('tools.jsonToExcel.description')"
-    icon="📊"
-    :features="[
-      $t('tools.jsonToExcel.features.conversion.title'),
-      $t('tools.jsonToExcel.features.formatting.title'),
-      $t('tools.jsonToExcel.features.batch.title'),
-    ]"
-  >
-    <div class="grid lg:grid-cols-2 gap-6">
+ <div class="grid lg:grid-cols-2 gap-6">
       <!-- Input Section -->
       <div class="glass rounded-xl border border-slate-700/30 p-6">
         <div class="flex items-center justify-between mb-4">
@@ -370,7 +360,6 @@
         </div>
       </div>
     </div>
-  </ToolLayout>
 </template>
 
 <script setup lang="ts">

@@ -1,19 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+      <div class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
+        <h1 class="text-3xl font-bold text-slate-100 mb-4 text-gradient">
           🖼️ {{ $t('tools.imageToGifConverter.title') }}
         </h1>
-        <p class="text-gray-600 text-lg">
+        <p class="text-slate-300 text-lg">
           {{ $t('tools.imageToGifConverter.description') }}
         </p>
-        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-          <h3 class="font-semibold text-blue-800 mb-2">
+        <div class="mt-4 p-4 bg-primary-500/10 rounded-xl border border-primary-500/20">
+          <h3 class="font-semibold text-primary-400 mb-2">
             {{ $t('tools.imageToGifConverter.howToUse.title') }}
           </h3>
-          <ol class="list-decimal list-inside space-y-1 text-blue-700">
+          <ol class="list-decimal list-inside space-y-1 text-slate-300">
             <li>{{ $t('tools.imageToGifConverter.howToUse.step1') }}</li>
             <li>{{ $t('tools.imageToGifConverter.howToUse.step2') }}</li>
             <li>{{ $t('tools.imageToGifConverter.howToUse.step3') }}</li>
@@ -23,8 +23,8 @@
       </div>
 
       <!-- Upload Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-3">
           {{ $t('tools.imageToGifConverter.upload.title') }}
         </h3>
 
@@ -34,12 +34,12 @@
             @drop="handleFileDrop"
             @dragover.prevent
             @dragenter.prevent
-            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
-            :class="{ 'border-blue-400 bg-blue-50': isDragging }"
+            class="border-2 border-dashed border-slate-600/50 rounded-2xl p-8 text-center hover:border-primary-500 transition-colors cursor-pointer hover-lift"
+            :class="{ 'border-primary-500 bg-primary-500/10': isDragging }"
             @click="fileInput!.click()"
           >
-            <div class="text-gray-400 text-4xl mb-4">🖼️</div>
-            <p class="text-gray-600 mb-4">
+            <div class="text-slate-400 text-4xl mb-4">🖼️</div>
+            <p class="text-slate-300 mb-4">
               {{ $t('tools.imageToGifConverter.upload.dragDrop') }}
             </p>
             <input
@@ -51,11 +51,11 @@
               class="hidden"
             />
             <button
-              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift"
             >
               {{ $t('tools.imageToGifConverter.upload.selectFile') }}
             </button>
-            <p class="text-xs text-gray-500 mt-2">
+            <p class="text-xs text-slate-400 mt-2">
               {{ $t('tools.imageToGifConverter.upload.supportedFormats') }}
             </p>
           </div>
@@ -64,7 +64,7 @@
         <!-- GIF Settings -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.width') }}
             </label>
             <input
@@ -72,16 +72,16 @@
               type="number"
               min="100"
               max="800"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.quality') }}
             </label>
             <select
               v-model="gifSettings.quality"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
             >
               <option value="high">
                 {{ $t('tools.imageToGifConverter.settings.qualityOptions.high') }}
@@ -95,7 +95,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.fps') }}
             </label>
             <input
@@ -103,7 +103,7 @@
               type="number"
               min="1"
               max="30"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
             />
           </div>
         </div>
@@ -245,34 +245,40 @@
       </div>
 
       <!-- Processing Status -->
-      <div v-if="isProcessing" class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div v-if="isProcessing" class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
         <div class="text-center">
-          <div
-            class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
-          ></div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          <div class="relative mx-auto mb-4">
+            <div
+              class="w-16 h-16 border-4 border-slate-700 border-t-primary-500 rounded-full animate-spin"
+            ></div>
+            <div
+              class="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-primary-400 rounded-full animate-spin"
+              style="animation-direction: reverse; animation-duration: 1s"
+            ></div>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.imageToGifConverter.processing.title') }}
           </h3>
-          <p class="text-gray-600">
+          <p class="text-slate-300">
             {{ $t('tools.imageToGifConverter.processing.description') }}
           </p>
-          <div class="mt-4 bg-gray-200 rounded-full h-2">
+          <div class="mt-4 bg-slate-700/50 rounded-full h-2">
             <div
-              class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              class="bg-primary-600 h-2 rounded-full transition-all duration-300"
               :style="{ width: processingProgress + '%' }"
             ></div>
           </div>
-          <p class="text-sm text-gray-500 mt-2">{{ processingProgress }}%</p>
+          <p class="text-sm text-slate-400 mt-2">{{ processingProgress }}%</p>
 
           <!-- Preview of generated GIF -->
           <div v-if="generatedGif" class="mt-6">
-            <h4 class="text-md font-medium text-gray-800 mb-2">
+            <h4 class="text-md font-medium text-slate-200 mb-2">
               {{ $t('tools.imageToGifConverter.processing.preview') }}
             </h4>
             <img
               :src="generatedGif"
               alt="GIF Preview"
-              class="max-w-full h-auto mx-auto rounded-lg shadow-lg"
+              class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg"
               style="max-height: 200px"
             />
           </div>
@@ -280,8 +286,8 @@
       </div>
 
       <!-- Result Section -->
-      <div v-if="generatedGif" class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div v-if="generatedGif" class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-3">
           {{ $t('tools.imageToGifConverter.result.title') }}
         </h3>
 
@@ -289,19 +295,19 @@
           <img
             :src="generatedGif"
             alt="Generated GIF"
-            class="max-w-full h-auto mx-auto rounded-lg shadow-lg mb-4"
+            class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg mb-4"
           />
 
           <div class="flex justify-center gap-4">
             <button
               @click="downloadGif"
-              class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              class="px-6 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift"
             >
               {{ $t('tools.imageToGifConverter.result.download') }}
             </button>
             <button
               @click="resetTool"
-              class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              class="px-6 py-2 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors hover-lift"
             >
               {{ $t('tools.imageToGifConverter.result.createNew') }}
             </button>
@@ -310,11 +316,11 @@
       </div>
 
       <!-- Tips Section -->
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+      <div class="bg-warning-500/10 border-l-4 border-warning-500 p-4 mb-8 rounded-xl">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg
-              class="h-5 w-5 text-yellow-400"
+              class="h-5 w-5 text-warning-500"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -327,10 +333,10 @@
             </svg>
           </div>
           <div class="ml-3">
-            <h3 class="text-sm font-medium text-yellow-800">
+            <h3 class="text-sm font-medium text-warning-400">
               {{ $t('tools.imageToGifConverter.tips.title') }}
             </h3>
-            <div class="mt-2 text-sm text-yellow-700">
+            <div class="mt-2 text-sm text-slate-300">
               <ul class="list-disc list-inside space-y-1">
                 <li>{{ $t('tools.imageToGifConverter.tips.tip1') }}</li>
                 <li>{{ $t('tools.imageToGifConverter.tips.tip2') }}</li>
@@ -344,29 +350,29 @@
 
       <!-- Features Section -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-2xl shadow-dark-lg border-l-4 border-primary-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🖼️ {{ $t('tools.imageToGifConverter.features.conversion.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.imageToGifConverter.features.conversion.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-2xl shadow-dark-lg border-l-4 border-success-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             ⚙️ {{ $t('tools.imageToGifConverter.features.customization.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.imageToGifConverter.features.customization.description') }}
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+        <div class="glass p-6 rounded-2xl shadow-dark-lg border-l-4 border-purple-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-3">
             🔄 {{ $t('tools.imageToGifConverter.features.animation.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.imageToGifConverter.features.animation.description') }}
           </p>
         </div>
@@ -725,7 +731,7 @@ function resetTool() {
 <style scoped>
 /* Custom styles */
 img {
-  background-color: #f0f0f0;
+  background-color: #1e293b;
 }
 
 /* Loading animation */
@@ -740,5 +746,43 @@ img {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Text gradient effect */
+.text-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Glass effect utilities */
+.glass {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass:hover {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* Shadow utilities */
+.shadow-dark-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
 }
 </style>
