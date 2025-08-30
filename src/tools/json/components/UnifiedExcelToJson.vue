@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-6xl mx-auto space-y-6">
     <!-- Mode Toggle -->
-    <div class="flex justify-center">
+    <div class="flex justify-start">
       <div class="inline-flex rounded-md shadow-sm" role="group">
         <button
           @click="mode = 'file'"
