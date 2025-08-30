@@ -3,6 +3,11 @@
     :icon="'🖼️'"
     :title="$t('tools.faviconGenerator.title')"
     :description="$t('tools.faviconGenerator.description')"
+    :features="[
+      $t('tools.faviconGenerator.features.cropping.title'),
+      $t('tools.faviconGenerator.features.multiSize.title'),
+      $t('tools.faviconGenerator.features.formats.title'),
+    ]"
   >
     <template #header-actions>
       <Button
@@ -44,18 +49,18 @@
             class="hidden"
           />
           <div class="space-y-4">
-            <div class="text-5xl text-gray-400">🖼️</div>
+            <div class="text-5xl text-slate-400">🖼️</div>
             <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">
+              <h3 class="text-lg font-medium text-slate-100 mb-2">
                 {{ $t('tools.faviconGenerator.uploadTitle') }}
               </h3>
-              <p class="text-gray-600">
+              <p class="text-slate-400">
                 {{ $t('tools.faviconGenerator.uploadDescription') }}
               </p>
-              <p class="text-sm text-gray-500 mt-2">
+              <p class="text-sm text-slate-500 mt-2">
                 {{ $t('tools.faviconGenerator.supportedFormats') }}: JPG, PNG, GIF, WebP
               </p>
-              <p class="text-sm text-gray-500 mt-2">
+              <p class="text-sm text-slate-500 mt-2">
                 {{ $t('tools.faviconGenerator.pasteHint') }}
               </p>
             </div>
@@ -68,7 +73,7 @@
         <!-- Image Cropper and Settings -->
         <div v-if="selectedImage" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h4 class="text-md font-medium text-gray-900">
+            <h4 class="text-md font-medium text-slate-100">
               {{ $t('tools.faviconGenerator.cropImage') }}
             </h4>
             <Button @click="resetImage" variant="secondary" size="sm" :icon-left="RefreshIcon">
@@ -80,10 +85,10 @@
           <div class="flex flex-col xl:flex-row gap-6">
             <!-- Vue Advanced Cropper - Responsive -->
             <div class="flex-1 min-w-0">
-              <h5 class="text-sm font-medium text-gray-700 mb-3">
+              <h5 class="text-sm font-medium text-slate-300 mb-3">
                 {{ $t('tools.faviconGenerator.cropPreview') }}
               </h5>
-              <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 glass">
+              <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 glass">
                 <div class="cropper-container w-full" style="height: 500px">
                   <Cropper
                     ref="cropperRef"
@@ -98,11 +103,11 @@
                     }"
                     :default-size="{ width: 200, height: 200 }"
                     @change="onCropChange"
-                    class="rounded-xl border border-gray-300 w-full h-full"
+                    class="rounded-xl border border-slate-700 w-full h-full"
                   />
                 </div>
               </div>
-              <p class="text-sm text-gray-500 mt-2">
+              <p class="text-sm text-slate-500 mt-2">
                 {{ $t('tools.faviconGenerator.cropInstructionAdvanced') }}
               </p>
             </div>
@@ -111,12 +116,12 @@
             <div class="xl:w-80 w-full xl:flex-shrink-0 space-y-6">
               <!-- Format Selection -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-slate-300 mb-2">
                   {{ $t('tools.faviconGenerator.outputFormat') }}
                 </label>
                 <select
                   v-model="outputFormat"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white transition-all duration-200"
+                  class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
                 >
                   <option value="ico">ICO</option>
                   <option value="png">PNG</option>
@@ -126,22 +131,22 @@
 
               <!-- Size Selection -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-slate-300 mb-2">
                   {{ $t('tools.faviconGenerator.sizes') }}
                 </label>
                 <div class="space-y-2">
                   <label
                     v-for="size in availableSizes"
                     :key="size"
-                    class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50 transition-colors duration-200 border border-gray-200"
+                    class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-slate-800/70 transition-colors duration-200 border border-slate-700/50"
                   >
                     <input
                       type="checkbox"
                       v-model="selectedSizes"
                       :value="size"
-                      class="h-5 w-5 text-primary-600 rounded focus:ring-primary-500 border-gray-300"
+                      class="h-5 w-5 text-primary-600 rounded focus:ring-primary-500 border-slate-600 bg-slate-800"
                     />
-                    <span class="text-sm font-medium text-gray-700">{{ size }}×{{ size }} px</span>
+                    <span class="text-sm font-medium text-slate-300">{{ size }}×{{ size }} px</span>
                   </label>
                 </div>
               </div>
@@ -165,10 +170,10 @@
       <!-- Generated Favicons -->
       <div
         v-if="generatedFavicons.length > 0"
-        class="bg-white rounded-2xl shadow-dark-lg p-6 mb-8 glass"
+        class="rounded-2xl p-6 mb-8 glass border border-slate-700/50"
       >
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-semibold text-gray-900">
+          <h3 class="text-lg font-semibold text-slate-100">
             {{ $t('tools.faviconGenerator.generatedFavicons') }} ({{ generatedFavicons.length }})
           </h3>
         </div>
@@ -178,10 +183,10 @@
           <Card
             v-for="favicon in generatedFavicons"
             :key="`${favicon.size}-${favicon.format}`"
-            class="text-center"
+            class="text-center border border-slate-700/50 bg-slate-800/30"
           >
             <template #content>
-              <div class="flex justify-center items-center h-20 mb-4 bg-gray-50 rounded-lg">
+              <div class="flex justify-center items-center h-20 mb-4 bg-slate-800/50 rounded-lg">
                 <img
                   :src="favicon.dataUrl"
                   :alt="`${favicon.size}x${favicon.size} favicon`"
@@ -192,10 +197,10 @@
                   }"
                 />
               </div>
-              <div class="text-sm font-medium text-gray-900 mb-1">
+              <div class="text-sm font-medium text-slate-100 mb-1">
                 {{ favicon.size }}×{{ favicon.size }}
               </div>
-              <div class="text-xs text-gray-500 mb-4">
+              <div class="text-xs text-slate-400 mb-4">
                 {{ favicon.format.toUpperCase() }}
               </div>
               <Button @click="downloadFavicon(favicon)" variant="primary" size="sm" class="w-full">
@@ -207,18 +212,18 @@
       </div>
 
       <!-- Usage Instructions -->
-      <div class="bg-white rounded-2xl shadow-dark-lg p-6 mb-8 glass">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+      <div class="rounded-2xl p-6 mb-8 glass border border-slate-700/50">
+        <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
           {{ $t('tools.faviconGenerator.usageInstructions') }}
         </h3>
-        <div class="prose prose-sm max-w-none text-gray-700">
+        <div class="prose prose-sm max-w-none text-slate-300">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 class="font-medium text-gray-900 mb-2">
+              <h4 class="font-medium text-slate-100 mb-2">
                 {{ $t('tools.faviconGenerator.htmlUsage') }}
               </h4>
               <pre
-                class="bg-gray-800 text-green-400 p-4 rounded-xl text-xs overflow-x-auto"
+                class="bg-slate-800/50 text-green-400 p-4 rounded-xl text-xs overflow-x-auto border border-slate-700/50"
               ><code>&lt;!-- Basic favicon --&gt;
 &lt;link rel="shortcut icon" href="/favicon.ico" /&gt;
 
@@ -228,54 +233,20 @@
 &lt;link rel="icon" sizes="48x48" href="/favicon-48.png" /&gt;</code></pre>
             </div>
             <div>
-              <h4 class="font-medium text-gray-900 mb-2">
+              <h4 class="font-medium text-slate-100 mb-2">
                 {{ $t('tools.faviconGenerator.tips') }}
               </h4>
-              <ul class="text-sm space-y-2 list-disc list-inside bg-blue-50 p-4 rounded-xl">
-                <li>{{ $t('tools.faviconGenerator.tip1') }}</li>
-                <li>{{ $t('tools.faviconGenerator.tip2') }}</li>
-                <li>{{ $t('tools.faviconGenerator.tip3') }}</li>
-                <li>{{ $t('tools.faviconGenerator.tip4') }}</li>
+              <ul
+                class="text-sm space-y-2 list-disc list-inside bg-blue-500/10 p-4 rounded-xl border border-blue-500/30"
+              >
+                <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip1') }}</li>
+                <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip2') }}</li>
+                <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip3') }}</li>
+                <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip4') }}</li>
               </ul>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Feature Descriptions -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card class="border-l-4 border-primary-500">
-          <template #content>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">
-              🎨 {{ $t('tools.faviconGenerator.features.cropping.title') }}
-            </h3>
-            <p class="text-gray-600 text-sm">
-              {{ $t('tools.faviconGenerator.features.cropping.description') }}
-            </p>
-          </template>
-        </Card>
-
-        <Card class="border-l-4 border-success-500">
-          <template #content>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">
-              📐 {{ $t('tools.faviconGenerator.features.multiSize.title') }}
-            </h3>
-            <p class="text-gray-600 text-sm">
-              {{ $t('tools.faviconGenerator.features.multiSize.description') }}
-            </p>
-          </template>
-        </Card>
-
-        <Card class="border-l-4 border-warning-500">
-          <template #content>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">
-              🔄 {{ $t('tools.faviconGenerator.features.formats.title') }}
-            </h3>
-            <p class="text-gray-600 text-sm">
-              {{ $t('tools.faviconGenerator.features.formats.description') }}
-            </p>
-          </template>
-        </Card>
       </div>
     </template>
   </ToolLayout>
@@ -560,9 +531,9 @@ canvas {
 
 /* Add glass effect classes */
 .glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* Custom scrollbar */
@@ -572,17 +543,26 @@ canvas {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0f172a;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
 }
 </style>
