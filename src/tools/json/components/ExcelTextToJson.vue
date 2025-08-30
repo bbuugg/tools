@@ -20,17 +20,15 @@
             <p class="text-xs text-slate-500 mb-1">
               {{ $t('tools.excelTextToJson.example.input') }}
             </p>
-            <pre class="bg-slate-800/50 p-3 rounded-lg text-xs font-mono text-slate-300 border border-slate-700/30">
-name\tage\tscore
-李华\t25\t89
-小明\t22\t85</pre>
+            <pre class="bg-slate-800/50 p-3 rounded-lg text-xs font-mono text-slate-300 border border-slate-700/30">name	age	score
+李华	25	89
+小明	22	85</pre>
           </div>
           <div>
             <p class="text-xs text-slate-500 mb-1">
               {{ $t('tools.excelTextToJson.example.output') }}
             </p>
-            <pre class="bg-slate-800/50 p-3 rounded-lg text-xs font-mono text-slate-300 border border-slate-700/30">
-[
+            <pre class="bg-slate-800/50 p-3 rounded-lg text-xs font-mono text-slate-300 border border-slate-700/30">[
   {"name": "李华", "age": "25", "score": "89"},
   {"name": "小明", "age": "22", "score": "85"}
 ]</pre>
