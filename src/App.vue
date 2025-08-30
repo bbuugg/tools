@@ -97,7 +97,10 @@
           </div>
         </div>
         <!-- Category List (shown in category view) -->
-        <nav v-if="showCategoryView" class="flex-1 flex flex-col min-h-0 px-4 space-y-3">
+        <nav
+          v-if="showCategoryView"
+          class="flex-1 flex flex-col min-h-0 px-4 space-y-3 overflow-y-auto"
+        >
           <button
             v-for="category in menuConfig"
             :key="category.id"
