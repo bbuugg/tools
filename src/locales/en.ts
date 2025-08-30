@@ -1599,15 +1599,20 @@ export default {
       },
     },
     cookieToJson: {
-      title: 'Cookie to JSON',
-      description: 'Convert cookie strings to JSON objects with parsing options',
-      inputTitle: 'Input Cookie String',
-      outputTitle: 'JSON Output',
+      title: 'Cookie ↔ JSON Converter',
+      description:
+        'Convert between cookie strings and JSON objects in real-time with bidirectional support',
+      inputTitle: 'Cookie String',
+      outputTitle: 'JSON Object',
+      format: 'Format',
+      formatButton: 'Format',
+      convertLeft: 'Convert to Cookie',
+      convertRight: 'Convert to JSON',
       inputNote: 'Paste cookie string in the format:',
       inputPlaceholder:
         'Paste your cookie string here, e.g.:\nsessionId=abc123; userId=12345; theme=dark; lang=en-US\n\nSupported formats:\n- Standard cookie format: name1=value1; name2=value2\n- URL-encoded values are automatically decoded\n- Handles cookies without values (flags)',
       parseOptions: 'Parse Options',
-      noResults: 'No conversion results yet. Please input a cookie string to convert.',
+      noResults: 'No conversion results yet. Please input data to convert.',
       error: 'Parse Error',
       success: 'Parsing Successful',
       conversionComplete: 'Conversion Complete',
@@ -1625,9 +1630,9 @@ export default {
             'Automatically parse cookie strings with support for standard HTTP cookie format and URL decoding.',
         },
         conversion: {
-          title: 'JSON Conversion',
+          title: 'Bidirectional Conversion',
           description:
-            'Convert parsed cookies to clean JSON format with customizable output formatting options.',
+            'Convert between cookie strings and JSON objects in both directions with real-time conversion.',
         },
         export: {
           title: 'Export Options',
@@ -1638,9 +1643,13 @@ export default {
       errors: {
         noCookies: 'No valid cookies found in the input string',
         parseError: 'Failed to parse cookie string: {error}',
+        conversionFailed: 'Conversion failed. Please check your input format.',
+        unsupportedFormat: 'Unsupported format selected',
+        invalidJson: 'Invalid JSON format. Please check your input.',
+        formatFailed: 'Format failed. Please check your input format.',
       },
       messages: {
-        copied: 'JSON copied to clipboard successfully!',
+        copied: 'Content copied to clipboard successfully!',
         copyFailed: 'Failed to copy to clipboard',
         downloaded: 'JSON file downloaded successfully!',
         downloadFailed: 'Failed to download file',
