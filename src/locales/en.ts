@@ -5,6 +5,7 @@ export default {
     close: 'Close',
     download: 'Download',
     loadExample: 'Load Example',
+    loadObjectExample: 'Load Object Example',
     selectAll: 'Select All',
     clearSelection: 'Clear Selection',
     extract: 'Extract',
@@ -611,11 +612,17 @@ export default {
       description:
         'Extract data from JSON using JSONPath expressions with advanced filtering capabilities',
       extractButton: 'Extract Data',
+      mode: {
+        path: 'Path Mode',
+        field: 'Field Mode',
+      },
       tabs: {
         path: 'Path Extractor',
-        extractor: 'Field Extractor',
         formatter: 'JSON Formatter',
         excelTojson: 'Excel to JSON',
+        jsonMerge: 'JSON Merge',
+        excelTextToJson: 'Excel Text to JSON',
+        jsonToExcel: 'JSON to Excel',
       },
       features: {
         pathExtraction: {

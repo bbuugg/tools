@@ -40,9 +40,8 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ToolLayout from '../../components/ToolLayout.vue'
-import JsonExtractor from './components/JsonExtractor.vue'
-import JsonFormatter from './components/JsonFormatter.vue'
 import PathExtractor from './components/PathExtractor.vue'
+import JsonFormatter from './components/JsonFormatter.vue'
 import ExcelToJson from './components/ExcelToJson.vue'
 import JsonMerge from './components/JsonMerge.vue'
 import ExcelTextToJson from './components/ExcelTextToJson.vue'
@@ -52,20 +51,15 @@ const { t } = useI18n()
 
 // Tab management
 const activeTab = ref<
-  'path' | 'extractor' | 'formatter' | 'excelTojson' | 'jsonMerge' | 'excelTextToJson' | 'jsonToExcel'
+  'path' | 'formatter' | 'excelTojson' | 'jsonMerge' | 'excelTextToJson' | 'jsonToExcel'
 >('path')
 
-// Tab configuration object
+// Tab configuration object (removed 'extractor' tab)
 const tabs = reactive([
   {
     id: 'path',
     label: 'tools.jsonPathExtractor.tabs.path',
     component: PathExtractor,
-  },
-  {
-    id: 'extractor',
-    label: 'tools.jsonPathExtractor.tabs.extractor',
-    component: JsonExtractor,
   },
   {
     id: 'formatter',

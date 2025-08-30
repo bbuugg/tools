@@ -1,12 +1,13 @@
 export default {
   common: {
-    clear: '清空',
+    clear: '清除',
     copy: '复制',
     close: '关闭',
     download: '下载',
     loadExample: '加载示例',
+    loadObjectExample: '加载对象示例',
     selectAll: '全选',
-    clearSelection: '清空选择',
+    clearSelection: '清除选择',
     extract: '提取',
     results: '结果',
     options: '选项',
@@ -15,10 +16,10 @@ export default {
     statistics: '统计',
     fields: '字段',
     items: '项',
-    found: '已找到',
-    extracted: '已提取',
+    found: '找到',
+    extracted: '提取',
     with: '包含',
-    total: '总数',
+    total: '总计',
     unique: '唯一',
     nonEmpty: '非空',
     loading: '加载中...',
@@ -701,13 +702,17 @@ export default {
       title: 'JSON 路径提取器',
       description: '使用 JSONPath 表达式从 JSON 中提取数据，支持高级过滤功能',
       extractButton: '提取数据',
+      mode: {
+        path: '路径模式',
+        field: '字段模式',
+      },
       tabs: {
         path: '路径提取器',
-        extractor: '字段提取器',
         formatter: 'JSON 格式化',
         excelTojson: 'Excel 转 JSON',
         jsonMerge: 'JSON 合并',
         excelTextToJson: 'Excel 文本转 JSON',
+        jsonToExcel: 'JSON 转 Excel',
       },
       features: {
         pathExtraction: {

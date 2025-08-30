@@ -14,10 +14,46 @@
             {{ $t('common.loadExample') }}
           </button>
           <button
+            @click="loadObjectExample"
+            class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-600/30"
+          >
+            {{ $t('common.loadObjectExample') }}
+          </button>
+          <button
             @click="clearInput"
             class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-600/30"
           >
             {{ $t('common.clear') }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="mb-4">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            @click="mode = 'path'"
+            class="px-4 py-2 text-sm font-medium transition-colors rounded-l-lg"
+            :class="[
+              mode === 'path'
+                ? 'text-white bg-primary-600'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+              'border border-slate-700',
+            ]"
+          >
+            {{ $t('tools.jsonPathExtractor.mode.path') }}
+          </button>
+          <button
+            @click="mode = 'field'"
+            class="px-4 py-2 text-sm font-medium transition-colors rounded-r-lg"
+            :class="[
+              mode === 'field'
+                ? 'text-white bg-primary-600'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+              'border border-slate-700 border-l-0',
+            ]"
+          >
+            {{ $t('tools.jsonPathExtractor.mode.field') }}
           </button>
         </div>
       </div>
@@ -60,60 +96,151 @@
         </div>
       </div>
 
-      <!-- JSONPath Input -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-300 mb-2">
-          {{ $t('tools.jsonPathExtractor.inputSection.jsonPath') }}
-        </label>
-        <div class="relative">
-          <input
-            v-model="jsonPath"
-            type="text"
-            :placeholder="$t('tools.jsonPathExtractor.inputSection.pathPlaceholder')"
-            class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg font-mono text-sm text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-            @input="extractPath"
-          />
-          <button
-            v-if="jsonPath"
-            @click="clearPath"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
+      <!-- Path Mode Content -->
+      <div v-show="mode === 'path'">
+        <!-- JSONPath Input -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-300 mb-2">
+            {{ $t('tools.jsonPathExtractor.inputSection.jsonPath') }}
+          </label>
+          <div class="relative">
+            <input
+              v-model="jsonPath"
+              type="text"
+              :placeholder="$t('tools.jsonPathExtractor.inputSection.pathPlaceholder')"
+              class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg font-mono text-sm text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              @input="extractPath"
+            />
+            <button
+              v-if="jsonPath"
+              @click="clearPath"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Path Buttons -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-300 mb-2">
+            {{ $t('tools.jsonPathExtractor.inputSection.quickPaths') }}
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              v-for="quickPath in quickPaths"
+              :key="quickPath.path"
+              @click="setQuickPath(quickPath.path)"
+              class="px-3 py-2 text-xs bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors font-mono text-left border border-slate-700/30"
+            >
+              <div class="font-medium">{{ quickPath.path }}</div>
+              <div class="text-slate-400 mt-1">
+                {{ $t(`tools.jsonPathExtractor.quickPaths.${quickPath.key}`) }}
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Path Buttons -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-300 mb-2">
-          {{ $t('tools.jsonPathExtractor.inputSection.quickPaths') }}
-        </label>
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            v-for="quickPath in quickPaths"
-            :key="quickPath.path"
-            @click="setQuickPath(quickPath.path)"
-            class="px-3 py-2 text-xs bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors font-mono text-left border border-slate-700/30"
+      <!-- Field Mode Content -->
+      <div v-show="mode === 'field'">
+        <!-- Available Fields -->
+        <div v-if="availableFields.length > 0" class="mb-4">
+          <h4 class="font-medium text-slate-100 mb-3">
+            {{ $t('tools.jsonExtractor.availableFields') }}
+          </h4>
+          <div
+            class="max-h-40 overflow-y-auto border border-slate-700/30 rounded-xl p-3 bg-slate-800/30 mb-3"
           >
-            <div class="font-medium">{{ quickPath.path }}</div>
-            <div class="text-slate-400 mt-1">
-              {{ $t(`tools.jsonPathExtractor.quickPaths.${quickPath.key}`) }}
+            <div class="grid grid-cols-2 gap-2">
+              <label
+                v-for="field in availableFields"
+                :key="field"
+                class="flex items-center text-sm text-slate-300 hover:text-slate-100 transition-colors duration-200"
+              >
+                <input
+                  v-model="selectedFields"
+                  :value="field"
+                  type="checkbox"
+                  class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+                  @change="onFieldSelectionChange"
+                />
+                {{ field }}
+              </label>
             </div>
-          </button>
+          </div>
+          <div class="flex justify-between">
+            <button
+              @click="selectAllFields"
+              class="text-sm text-primary-400 hover:text-primary-300 transition-colors duration-200"
+            >
+              {{ $t('common.selectAll') }}
+            </button>
+            <button
+              @click="clearSelection"
+              class="text-sm text-slate-400 hover:text-slate-300 transition-colors duration-200"
+            >
+              {{ $t('common.clearSelection') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="mb-4 space-y-3">
+          <h4 class="font-medium text-slate-100">{{ $t('common.options') }}</h4>
+
+          <div class="grid grid-cols-1 gap-3">
+            <label
+              class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200"
+            >
+              <input
+                v-model="fieldOptions.preserveStructure"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonExtractor.options.preserveStructure') }}
+            </label>
+
+            <label
+              class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200"
+            >
+              <input
+                v-model="fieldOptions.removeEmpty"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonExtractor.options.removeEmpty') }}
+            </label>
+
+            <label
+              class="flex items-center text-slate-300 hover:text-slate-100 transition-colors duration-200"
+            >
+              <input
+                v-model="fieldOptions.flattenNested"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonExtractor.options.flattenNested') }}
+            </label>
+          </div>
         </div>
       </div>
 
       <!-- Extract Button -->
       <button
-        @click="extractPath"
-        :disabled="!inputJson.trim() || !isValidJson || !jsonPath.trim()"
+        @click="mode === 'path' ? extractPath() : extractFields()"
+        :disabled="
+          !inputJson.trim() ||
+          !isValidJson ||
+          (mode === 'path' ? !jsonPath.trim() : selectedFields.length === 0)
+        "
         class="w-full px-4 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium border border-primary-500/30 hover-lift"
       >
         {{ $t('tools.jsonPathExtractor.extractButton') }}
@@ -156,14 +283,17 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="pathError" class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+      <div
+        v-else-if="pathError || fieldError"
+        class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+      >
         <div class="flex items-center">
           <div class="text-red-400 text-2xl mr-3">⚠️</div>
           <div>
             <p class="font-medium text-red-300">
               {{ $t('tools.jsonPathExtractor.errors.pathError') }}
             </p>
-            <p class="text-sm text-red-400 mt-1">{{ pathError }}</p>
+            <p class="text-sm text-red-400 mt-1">{{ pathError || fieldError }}</p>
           </div>
         </div>
       </div>
@@ -291,23 +421,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import { useToast } from '@/composables/useToast'
 import { useI18n } from 'vue-i18n'
 import { JSONPath } from 'jsonpath-plus'
 
+// Type definitions
+type JsonPrimitive = string | number | boolean | null
+interface JsonObject {
+  [key: string]: JsonValue
+}
+type JsonValue = JsonPrimitive | JsonObject | JsonValue[] | undefined
+
 const { t } = useI18n()
 const { success, error } = useToast()
+
+// Mode state
+const mode = ref<'path' | 'field'>('path')
 
 // State
 const inputJson = ref('')
 const jsonPath = ref('')
-const extractedData = ref<unknown>(null)
+// Using 'any' type because JSON data can have various structures
+const extractedData = ref<any>(null)
 const jsonError = ref('')
 const pathError = ref('')
+const fieldError = ref('')
 const isValidJson = ref(false)
-const parsedJson = ref<Record<string, unknown> | Array<unknown> | null>(null)
+// Using 'any' type because JSON data can have various structures
+const parsedJson = ref<any>(null)
 const showSyntax = ref(false)
+
+// Field extraction state
+const availableFields = ref<string[]>([])
+const selectedFields = ref<string[]>([])
+const fieldOptions = reactive({
+  preserveStructure: true,
+  removeEmpty: false,
+  flattenNested: false,
+})
 
 // Quick path templates
 const quickPaths = ref([
@@ -345,11 +497,21 @@ const resultsInfo = computed(() => {
   }
 })
 
+// Watch mode changes to update path when switching to path mode
+watch(mode, (newMode) => {
+  if (newMode === 'path' && selectedFields.value.length > 0) {
+    // Convert selected fields to JSONPath expression
+    updateJsonPathFromFields()
+  }
+})
+
 // JSON validation function
 function validateJson() {
   jsonError.value = ''
   isValidJson.value = false
   parsedJson.value = null
+  availableFields.value = []
+  selectedFields.value = []
 
   if (!inputJson.value.trim()) {
     return
@@ -359,14 +521,134 @@ function validateJson() {
     parsedJson.value = JSON.parse(inputJson.value)
     isValidJson.value = true
 
-    // Auto-extract if path is already set
-    if (jsonPath.value.trim()) {
+    // Analyze fields for field mode
+    analyzeFields()
+
+    // Auto-extract if path is already set or if in field mode with selections
+    if (mode.value === 'path' && jsonPath.value.trim()) {
       extractPath()
+    } else if (mode.value === 'field' && selectedFields.value.length > 0) {
+      extractFields()
     }
   } catch (err) {
     jsonError.value = err instanceof Error ? err.message : String(err)
     isValidJson.value = false
     extractedData.value = null
+  }
+}
+
+// Field analysis functions (from JsonExtractor)
+// Using 'any' type because JSON data can have various structures
+function getAllKeys(obj: any, prefix = ''): Set<string> {
+  const keys = new Set<string>()
+
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        getAllKeys(item, prefix).forEach((key) => keys.add(key))
+      }
+    })
+  } else if (obj !== null && typeof obj === 'object' && !Array.isArray(obj)) {
+    Object.keys(obj).forEach((key) => {
+      const fullKey = prefix ? `${prefix}.${key}` : key
+      keys.add(fullKey)
+
+      if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+        getAllKeys(obj[key], fullKey).forEach((nestedKey) => keys.add(nestedKey))
+      }
+    })
+  }
+
+  return keys
+}
+
+function analyzeFields() {
+  if (!parsedJson.value) {
+    return
+  }
+
+  try {
+    const data = parsedJson.value
+
+    // Handle any JSON structure, not just arrays
+    const allKeys = new Set<string>()
+
+    if (Array.isArray(data)) {
+      // If it's an array, analyze all items
+      if (data.length === 0) {
+        fieldError.value = t('tools.jsonExtractor.errors.emptyArray')
+        return
+      }
+
+      data.forEach((item) => {
+        if (typeof item === 'object' && item !== null) {
+          getAllKeys(item).forEach((key) => allKeys.add(key))
+        }
+      })
+    } else if (typeof data === 'object' && data !== null) {
+      // If it's an object, analyze the object directly
+      getAllKeys(data).forEach((key) => allKeys.add(key))
+    } else {
+      // For primitive values, no fields to extract
+      availableFields.value = []
+      return
+    }
+
+    availableFields.value = Array.from(allKeys).sort()
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    fieldError.value = t('tools.jsonExtractor.errors.invalidJson') + ' ' + errorMessage
+  }
+}
+
+function selectAllFields() {
+  selectedFields.value = [...availableFields.value]
+  updateJsonPathFromFields()
+}
+
+function clearSelection() {
+  selectedFields.value = []
+  jsonPath.value = ''
+}
+
+function getNestedValue(obj: any, path: string): any {
+  const keys = path.split('.')
+  let current: any = obj
+
+  for (const key of keys) {
+    if (current && typeof current === 'object' && !Array.isArray(current) && key in current) {
+      current = current[key]
+    } else {
+      return undefined
+    }
+  }
+
+  return current
+}
+
+// Field selection change handler
+function onFieldSelectionChange() {
+  updateJsonPathFromFields()
+  if (mode.value === 'field') {
+    extractFields()
+  }
+}
+
+// Update JSONPath based on selected fields
+function updateJsonPathFromFields() {
+  if (selectedFields.value.length === 0) {
+    jsonPath.value = ''
+    return
+  }
+
+  // Convert field selections to JSONPath
+  if (selectedFields.value.length === 1) {
+    // Single field selection
+    jsonPath.value = `$[*].${selectedFields.value[0]}`
+  } else {
+    // Multiple field selection - create an array of values
+    const fields = selectedFields.value.map((field) => `$[*].${field}`).join(', ')
+    jsonPath.value = `[${fields}]`
   }
 }
 
@@ -396,8 +678,95 @@ function extractPath() {
   }
 }
 
+// Field extraction function (from JsonExtractor)
+function extractFields() {
+  try {
+    fieldError.value = ''
+    extractedData.value = null
+
+    if (!parsedJson.value) {
+      throw new Error(t('tools.jsonExtractor.errors.invalidFormat'))
+    }
+
+    if (selectedFields.value.length === 0) {
+      throw new Error(t('tools.jsonExtractor.errors.noFields'))
+    }
+
+    const data = parsedJson.value
+
+    // Handle both array and object JSON structures
+    // Using 'any' type because JSON data can have various structures
+    let dataArray: any[]
+    if (Array.isArray(data)) {
+      dataArray = data
+    } else if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+      // Wrap single object in array
+      dataArray = [data]
+    } else {
+      throw new Error(t('tools.jsonExtractor.errors.invalidFormat'))
+    }
+
+    // Using 'any' type because JSON data can have various structures
+    const result = dataArray.map((item: any) => {
+      if (fieldOptions.preserveStructure) {
+        // Using 'any' type because JSON data can have various structures
+        const extracted: any = {}
+
+        selectedFields.value.forEach((field) => {
+          const value = getNestedValue(item, field)
+
+          if (fieldOptions.removeEmpty && (value === null || value === undefined || value === '')) {
+            return
+          }
+
+          if (fieldOptions.flattenNested) {
+            extracted[field] = value
+          } else {
+            // Rebuild nested structure
+            const keys = field.split('.')
+            // Using 'any' type because JSON data can have various structures
+            let current: any = extracted
+
+            for (let i = 0; i < keys.length - 1; i++) {
+              if (!current[keys[i]]) {
+                current[keys[i]] = {}
+              }
+              current = current[keys[i]]
+            }
+
+            current[keys[keys.length - 1]] = value
+          }
+        })
+
+        return extracted
+      } else {
+        // Return array of values
+        return selectedFields.value.map((field) => getNestedValue(item, field))
+      }
+    })
+
+    // If original data was a single object, return single object result
+    // If original data was an array, return array result
+    if (Array.isArray(data) && data.length > 0) {
+      extractedData.value = result
+    } else if (!Array.isArray(data) && typeof data === 'object' && data !== null) {
+      extractedData.value = result.length > 0 ? result[0] : {}
+    } else {
+      extractedData.value = result
+    }
+
+    // Update JSONPath to reflect the field selection
+    updateJsonPathFromFields()
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    fieldError.value = errorMessage
+    extractedData.value = null
+  }
+}
+
 // Utility functions
 function loadExample() {
+  // Load array format example by default
   inputJson.value = JSON.stringify(
     {
       store: {
@@ -414,13 +783,6 @@ function loadExample() {
             title: 'Sword of Honour',
             price: 12.99,
           },
-          {
-            category: 'fiction',
-            author: 'Herman Melville',
-            title: 'Moby Dick',
-            isbn: '0-553-21311-3',
-            price: 8.99,
-          },
         ],
         bicycle: {
           color: 'red',
@@ -436,14 +798,44 @@ function loadExample() {
   validateJson()
 }
 
+function loadObjectExample() {
+  // Load object format example
+  inputJson.value = JSON.stringify(
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      age: 30,
+      department: 'Engineering',
+      salary: 75000,
+      address: {
+        street: '123 Main St',
+        city: 'New York',
+        zipCode: '10001',
+      },
+      skills: ['JavaScript', 'Vue.js', 'Node.js'],
+      active: true,
+      joinDate: '2023-01-15',
+    },
+    null,
+    2,
+  )
+
+  jsonPath.value = '$.name'
+  validateJson()
+}
+
 function clearInput() {
   inputJson.value = ''
   jsonPath.value = ''
   extractedData.value = null
   jsonError.value = ''
   pathError.value = ''
+  fieldError.value = ''
   isValidJson.value = false
   parsedJson.value = null
+  availableFields.value = []
+  selectedFields.value = []
 }
 
 function clearPath() {
