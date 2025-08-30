@@ -766,35 +766,49 @@ function extractFields() {
 
 // Utility functions
 function loadExample() {
-  // Load array format example by default
+  // Load array format example
   inputJson.value = JSON.stringify(
-    {
-      store: {
-        book: [
-          {
-            category: 'reference',
-            author: 'Nigel Rees',
-            title: 'Sayings of the Century',
-            price: 8.95,
-          },
-          {
-            category: 'fiction',
-            author: 'Evelyn Waugh',
-            title: 'Sword of Honour',
-            price: 12.99,
-          },
-        ],
-        bicycle: {
-          color: 'red',
-          price: 19.95,
+    [
+      {
+        id: 1,
+        name: 'John Doe',
+        email: 'john@example.com',
+        age: 30,
+        department: 'Engineering',
+        salary: 75000,
+        address: {
+          street: '123 Main St',
+          city: 'New York',
+          zipCode: '10001',
         },
+        skills: ['JavaScript', 'Vue.js', 'Node.js'],
+        active: true,
+        joinDate: '2023-01-15',
       },
-    },
+      {
+        id: 2,
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        age: 28,
+        department: 'Marketing',
+        salary: 65000,
+        address: {
+          street: '456 Oak Ave',
+          city: 'San Francisco',
+          zipCode: '94102',
+        },
+        skills: ['Marketing', 'Analytics', 'Social Media'],
+        active: false,
+        joinDate: '2023-03-20',
+      },
+    ],
     null,
     2,
   )
 
-  jsonPath.value = '$.store.book[*].title'
+  // Set default mode to path and provide a default path
+  mode.value = 'path'
+  jsonPath.value = '$[*].name'
   validateJson()
 }
 
@@ -821,6 +835,8 @@ function loadObjectExample() {
     2,
   )
 
+  // Set default mode to path and provide a default path
+  mode.value = 'path'
   jsonPath.value = '$.name'
   validateJson()
 }
