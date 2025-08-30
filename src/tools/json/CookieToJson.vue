@@ -76,11 +76,40 @@
             </div>
           </div>
 
+          <!-- Cookie Options -->
+          <div class="mb-4 p-4 bg-dark-800/30 rounded-lg">
+            <h4 class="text-sm font-medium text-slate-100 mb-2">
+              {{ $t('tools.cookieToJson.parseOptions') }}:
+            </h4>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  v-model="cookieOptions.decodeValues"
+                  class="rounded text-primary-600 focus:ring-primary-500"
+                />
+                <span class="ml-2 text-sm text-slate-300">
+                  {{ $t('tools.cookieToJson.options.decodeValues') }}
+                </span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  v-model="cookieOptions.removeEmpty"
+                  class="rounded text-primary-600 focus:ring-primary-500"
+                />
+                <span class="ml-2 text-sm text-slate-300">
+                  {{ $t('tools.cookieToJson.options.removeEmpty') }}
+                </span>
+              </label>
+            </div>
+          </div>
+
           <textarea
             v-model="leftContent"
             @input="handleCookieInput"
             :placeholder="getCookiePlaceholder()"
-            class="w-full h-64 p-4 bg-dark-800/50 border border-slate-700/50 rounded-lg font-mono text-sm resize-none text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+            class="w-full h-48 p-4 bg-dark-800/50 border border-slate-700/50 rounded-lg font-mono text-sm resize-none text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
           ></textarea>
 
           <!-- Validation Status -->
@@ -197,11 +226,30 @@
             </div>
           </div>
 
+          <!-- JSON Options -->
+          <div class="mb-4 p-4 bg-dark-800/30 rounded-lg">
+            <h4 class="text-sm font-medium text-slate-100 mb-2">
+              {{ $t('tools.cookieToJson.parseOptions') }}:
+            </h4>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  v-model="jsonOptions.formatOutput"
+                  class="rounded text-primary-600 focus:ring-primary-500"
+                />
+                <span class="ml-2 text-sm text-slate-300">
+                  {{ $t('tools.cookieToJson.options.formatOutput') }}
+                </span>
+              </label>
+            </div>
+          </div>
+
           <textarea
             v-model="rightContent"
             @input="handleJsonInput"
             :placeholder="getJsonPlaceholder()"
-            class="w-full h-64 p-4 bg-dark-800/50 border border-slate-700/50 rounded-lg font-mono text-sm resize-none text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+            class="w-full h-48 p-4 bg-dark-800/50 border border-slate-700/50 rounded-lg font-mono text-sm resize-none text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
           ></textarea>
 
           <!-- Validation Status -->
@@ -239,7 +287,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useToast } from '../../composables/useToast'
 import { useI18n } from 'vue-i18n'
 
@@ -251,6 +299,16 @@ const leftContent = ref('') // Cookie content
 const rightContent = ref('') // JSON content
 const leftError = ref('')
 const rightError = ref('')
+
+// Options
+const cookieOptions = reactive({
+  decodeValues: true,
+  removeEmpty: false,
+})
+
+const jsonOptions = reactive({
+  formatOutput: true,
+})
 
 // Types
 interface CookieObject {
@@ -312,7 +370,19 @@ function convertCookieToJson() {
     rightError.value = ''
 
     const cookieData = parseCookieString(leftContent.value)
-    rightContent.value = formatJson(cookieData)
+    let jsonData = cookieData
+
+    // Apply options
+    if (cookieOptions.removeEmpty) {
+      jsonData = removeEmptyValues(cookieData)
+    }
+
+    let jsonString = JSON.stringify(jsonData)
+    if (jsonOptions.formatOutput) {
+      jsonString = formatJson(jsonData)
+    }
+
+    rightContent.value = jsonString
   } catch (err: unknown) {
     rightError.value = (err as Error).message || t('tools.cookieToJson.errors.conversionFailed')
     showError(rightError.value)
@@ -332,11 +402,37 @@ function convertJsonToCookie() {
     rightError.value = ''
 
     const jsonData = parseJson(rightContent.value)
-    leftContent.value = formatCookieString(jsonData)
+    let cookieString = formatCookieString(jsonData)
+
+    // Apply options
+    if (cookieOptions.removeEmpty) {
+      const cookieData = parseCookieString(cookieString)
+      const filteredData = removeEmptyValues(cookieData)
+      cookieString = formatCookieString(filteredData)
+    }
+
+    leftContent.value = cookieString
   } catch (err: unknown) {
     leftError.value = (err as Error).message || t('tools.cookieToJson.errors.conversionFailed')
     showError(leftError.value)
   }
+}
+
+// Remove empty values from cookie object
+function removeEmptyValues(data: CookieObject): CookieObject {
+  const result: CookieObject = {}
+  Object.keys(data).forEach((key) => {
+    const value = data[key]
+    // Remove empty strings, but keep objects and arrays even if they might be considered "empty"
+    if (typeof value === 'object' && value !== null) {
+      // Keep objects and arrays
+      result[key] = value
+    } else if (value !== '') {
+      // Remove only empty strings
+      result[key] = value
+    }
+  })
+  return result
 }
 
 // Format cookie content
@@ -392,11 +488,26 @@ function parseCookieString(content: string): CookieObject {
     // Skip empty names
     if (!name) continue
 
-    // Decode values
+    // Decode values if option is enabled
+    if (cookieOptions.decodeValues) {
+      try {
+        value = decodeURIComponent(value)
+      } catch (_e: unknown) {
+        // If decoding fails, keep original value
+        // _e is intentionally unused
+        // This is needed to satisfy the linter even though we don't use the error
+      }
+    }
+
+    // Try to parse JSON values (objects and arrays)
     try {
-      value = decodeURIComponent(value)
+      const parsedValue = JSON.parse(value)
+      if (typeof parsedValue === 'object') {
+        cookieObject[name] = parsedValue
+        continue
+      }
     } catch (_e: unknown) {
-      // If decoding fails, keep original value
+      // If JSON parsing fails, treat as regular string
       // _e is intentionally unused
     }
 
@@ -407,29 +518,43 @@ function parseCookieString(content: string): CookieObject {
 }
 
 // Parse JSON
-function parseJson(content: string): CookieObject {
+function parseJson(content: string): unknown {
   return JSON.parse(content)
 }
 
 // Format as Cookie String
-function formatCookieString(data: CookieObject): string {
+function formatCookieString(data: unknown): string {
   const cookies: string[] = []
 
-  Object.keys(data).forEach((key) => {
-    const value = data[key]
-    // For cookie format, we only support string values
-    const stringValue = String(value)
-    // Encode the value
-    const encodedValue = encodeURIComponent(stringValue)
-    cookies.push(`${key}=${encodedValue}`)
-  })
+  if (typeof data === 'object' && data !== null) {
+    Object.keys(data).forEach((key) => {
+      const value = (data as CookieObject)[key]
+      // For cookie format, we need to handle objects and arrays by serializing them
+      let stringValue: string
+
+      if (typeof value === 'object' && value !== null) {
+        // If value is an object or array, serialize it as JSON
+        stringValue = JSON.stringify(value)
+      } else {
+        // For other types, convert to string
+        stringValue = String(value)
+      }
+
+      // Encode the value
+      const encodedValue = encodeURIComponent(stringValue)
+      cookies.push(`${key}=${encodedValue}`)
+    })
+  }
 
   return cookies.join('; ')
 }
 
 // Format as JSON
-function formatJson(data: object): string {
-  return JSON.stringify(data, null, 2)
+function formatJson(data: unknown): string {
+  if (jsonOptions.formatOutput) {
+    return JSON.stringify(data, null, 2)
+  }
+  return JSON.stringify(data)
 }
 
 // Clear cookie panel
