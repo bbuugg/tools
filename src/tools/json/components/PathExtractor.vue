@@ -45,7 +45,7 @@
           </button>
           <button
             @click="mode = 'field'"
-            class="px-4 py-2 text-sm font-medium transition-colors rounded-r-lg"
+            class="px-4 py-2 text-sm font-medium transition-colors"
             :class="[
               mode === 'field'
                 ? 'text-white bg-primary-600'
@@ -54,6 +54,20 @@
             ]"
           >
             {{ $t('tools.jsonPathExtractor.mode.field') }}
+          </button>
+          <button
+            @click="mode = 'keys'"
+            class="px-4 py-2 text-sm font-medium transition-colors rounded-r-lg"
+            :class="[
+              mode === 'keys'
+                ? 'text-white bg-primary-600'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+              'border border-slate-700 border-l-0',
+            ]"
+          >
+            {{ $t('tools.jsonKeysExtractor.modeToggle.keys') }}/{{
+              $t('tools.jsonKeysExtractor.modeToggle.values')
+            }}
           </button>
         </div>
       </div>
@@ -375,6 +389,100 @@
           </div>
         </div>
       </div>
+
+      <!-- Keys/Values Mode Content -->
+      <div v-show="mode === 'keys'">
+        <!-- Keys/Values Mode Toggle -->
+        <div class="mb-4">
+          <div class="inline-flex rounded-md shadow-sm" role="group">
+            <button
+              type="button"
+              @click="keysMode = 'keys'"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-l-lg',
+                keysMode === 'keys'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+                'border border-slate-700',
+              ]"
+            >
+              {{ $t('tools.jsonKeysExtractor.modeToggle.keys') }}
+            </button>
+            <button
+              type="button"
+              @click="keysMode = 'values'"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-slate-700',
+                keysMode === 'values'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-slate-600',
+              ]"
+            >
+              {{ $t('tools.jsonKeysExtractor.modeToggle.values') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Keys/Values Options -->
+        <div class="mb-4 space-y-3">
+          <h4 class="font-medium text-slate-100">
+            {{ $t('tools.jsonKeysExtractor.extractionOptions') }}
+          </h4>
+
+          <div class="grid grid-cols-1 gap-3">
+            <label v-if="keysMode === 'keys'" class="flex items-center">
+              <input
+                v-model="keysOptions.includeNested"
+                @change="extractKeysValues"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonKeysExtractor.includeNested') }}
+            </label>
+
+            <label class="flex items-center">
+              <input
+                v-model="keysOptions.sortKeys"
+                @change="extractKeysValues"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonKeysExtractor.sortResults') }}
+            </label>
+
+            <label v-if="keysMode === 'keys'" class="flex items-center">
+              <input
+                v-model="keysOptions.includeArrayIndices"
+                @change="extractKeysValues"
+                type="checkbox"
+                class="mr-2 rounded border-slate-600 bg-slate-700 text-primary-500 focus:ring-primary-500"
+              />
+              {{ $t('tools.jsonKeysExtractor.includeArrayIndices') }}
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <label class="text-sm font-medium text-slate-300">
+              {{ $t('tools.jsonKeysExtractor.outputFormat') }}:
+            </label>
+            <select
+              v-model="keysOptions.outputFormat"
+              @change="extractKeysValues"
+              class="px-3 py-1 border border-slate-700/30 rounded text-sm bg-slate-800/50 text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="array">
+                {{ $t('tools.jsonKeysExtractor.formatOptions.array') }}
+              </option>
+              <option value="list">
+                {{ $t('tools.jsonKeysExtractor.formatOptions.list') }}
+              </option>
+              <option v-if="keysMode === 'keys'" value="tree">
+                {{ $t('tools.jsonKeysExtractor.formatOptions.tree') }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Output Section -->
@@ -414,7 +522,7 @@
 
       <!-- Error State -->
       <div
-        v-else-if="pathError || fieldError"
+        v-else-if="pathError || fieldError || keysError"
         class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
       >
         <div class="flex items-center">
@@ -423,7 +531,7 @@
             <p class="font-medium text-red-300">
               {{ $t('tools.jsonPathExtractor.errors.pathError') }}
             </p>
-            <p class="text-sm text-red-400 mt-1">{{ pathError || fieldError }}</p>
+            <p class="text-sm text-red-400 mt-1">{{ pathError || fieldError || keysError }}</p>
           </div>
         </div>
       </div>
@@ -448,7 +556,13 @@
         <!-- Extracted Data -->
         <div class="bg-slate-800/30 rounded-lg p-4">
           <h4 class="text-sm font-medium text-slate-300 mb-2">
-            {{ $t('tools.jsonPathExtractor.outputSection.extractedData') }}
+            {{
+              mode === 'keys'
+                ? keysMode === 'keys'
+                  ? $t('tools.jsonKeysExtractor.extractedKeys')
+                  : $t('tools.jsonKeysExtractor.extractedValues')
+                : $t('tools.jsonPathExtractor.outputSection.extractedData')
+            }}
           </h4>
           <pre
             class="bg-slate-900/50 border border-slate-700/50 rounded p-4 text-sm overflow-auto max-h-80 font-mono text-slate-100"
@@ -477,7 +591,8 @@ const { t } = useI18n()
 const { success, error } = useToast()
 
 // Mode state
-const mode = ref<'path' | 'field'>('path')
+const mode = ref<'path' | 'field' | 'keys'>('path')
+const keysMode = ref<'keys' | 'values'>('keys')
 
 // State
 const inputJson = ref('')
@@ -487,6 +602,7 @@ const extractedData = ref<any>(null)
 const jsonError = ref('')
 const pathError = ref('')
 const fieldError = ref('')
+const keysError = ref('')
 const isValidJson = ref(false)
 // Using 'any' type because JSON data can have various structures
 const parsedJson = ref<any>(null)
@@ -499,6 +615,14 @@ const fieldOptions = reactive({
   preserveStructure: true,
   removeEmpty: false,
   flattenNested: false,
+})
+
+// Keys/Values extraction state
+const keysOptions = reactive({
+  includeNested: true,
+  sortKeys: true,
+  includeArrayIndices: false,
+  outputFormat: 'array',
 })
 
 // Quick path templates
@@ -546,6 +670,16 @@ watch(mode, (newMode) => {
   if (newMode === 'path' && selectedFields.value.length > 0) {
     // Convert selected fields to JSONPath expression
     updateJsonPathFromFields()
+  } else if (newMode === 'keys' && parsedJson.value) {
+    // Extract keys/values when switching to keys mode
+    extractKeysValues()
+  }
+})
+
+// Watch keysMode changes to re-extract data
+watch(keysMode, () => {
+  if (mode.value === 'keys' && parsedJson.value) {
+    extractKeysValues()
   }
 })
 
@@ -573,6 +707,8 @@ function validateJson() {
       extractPath()
     } else if (mode.value === 'field' && selectedFields.value.length > 0) {
       extractFields()
+    } else if (mode.value === 'keys') {
+      extractKeysValues()
     }
   } catch (err) {
     jsonError.value = err instanceof Error ? err.message : String(err)
@@ -808,6 +944,154 @@ function extractFields() {
   }
 }
 
+// Keys/Values extraction functions (from JsonKeysExtractor)
+function getAllKeysForExtraction(obj: any, path = '', keys: Set<string> = new Set()): Set<string> {
+  if (Array.isArray(obj)) {
+    obj.forEach((item, index) => {
+      const arrayPath = keysOptions.includeArrayIndices ? `${path}[${index}]` : path
+      if (typeof item === 'object' && item !== null) {
+        getAllKeysForExtraction(item, arrayPath, keys)
+      }
+    })
+  } else if (obj !== null && typeof obj === 'object') {
+    Object.keys(obj).forEach((key) => {
+      const fullPath = path ? `${path}.${key}` : key
+
+      if (keysOptions.includeNested) {
+        keys.add(fullPath)
+      } else {
+        keys.add(key)
+      }
+
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        getAllKeysForExtraction(obj[key], fullPath, keys)
+      }
+    })
+  }
+
+  return keys
+}
+
+function getAllValuesForExtraction(obj: any, values: any[] = []): any[] {
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        getAllValuesForExtraction(item, values)
+      } else {
+        values.push(item)
+      }
+    })
+  } else if (obj !== null && typeof obj === 'object') {
+    Object.keys(obj).forEach((key) => {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        getAllValuesForExtraction(obj[key], values)
+      } else {
+        values.push(obj[key])
+      }
+    })
+  }
+
+  return values
+}
+
+function createTreeStructure(keys: string[]): any {
+  const tree: any = {}
+
+  keys.forEach((key) => {
+    const parts = key.split('.')
+    let current = tree
+
+    parts.forEach((part, index) => {
+      if (!current[part]) {
+        current[part] = index === parts.length - 1 ? null : {}
+      }
+      if (current[part] !== null) {
+        current = current[part]
+      }
+    })
+  })
+
+  return tree
+}
+
+function extractKeysValues() {
+  keysError.value = ''
+  extractedData.value = null
+
+  if (!parsedJson.value) {
+    return
+  }
+
+  try {
+    const data = parsedJson.value
+    let output: any = ''
+    let stats = ''
+
+    if (keysMode.value === 'keys') {
+      // Extract keys
+      const keysSet = getAllKeysForExtraction(data)
+      const keys = Array.from(keysSet)
+
+      if (keysOptions.sortKeys) {
+        keys.sort()
+      }
+
+      // Generate output based on format
+      switch (keysOptions.outputFormat) {
+        case 'array':
+          output = keys
+          break
+        case 'list':
+          output = keys.join('\n')
+          break
+        case 'tree':
+          const tree = createTreeStructure(keys)
+          output = tree
+          break
+      }
+
+      // Generate stats
+      const uniqueKeys = keys.length
+      const topLevelKeys = keys.filter((key) => !key.includes('.')).length
+      const nestedKeys = keys.filter((key) => key.includes('.')).length
+      stats = `${uniqueKeys} total keys (${topLevelKeys} top-level, ${nestedKeys} nested)`
+    } else {
+      // Extract values
+      const valuesArray = getAllValuesForExtraction(data)
+      const uniqueValues = [...new Set(valuesArray)] // Remove duplicates
+
+      if (keysOptions.sortKeys) {
+        uniqueValues.sort()
+      }
+
+      // Generate output based on format
+      switch (keysOptions.outputFormat) {
+        case 'array':
+          output = uniqueValues
+          break
+        case 'list':
+          output = uniqueValues.join('\n')
+          break
+        case 'tree':
+          // Tree format only available for keys, fallback to array
+          output = uniqueValues
+          break
+      }
+
+      // Generate stats
+      const totalValues = valuesArray.length
+      const uniqueCount = uniqueValues.length
+      stats = `${totalValues} total values (${uniqueCount} unique)`
+    }
+
+    extractedData.value = output
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    keysError.value = t('tools.jsonKeysExtractor.errors.invalidJson') + ' ' + errorMessage
+    extractedData.value = null
+  }
+}
+
 // Utility functions
 function loadExample() {
   // Load array format example
@@ -892,6 +1176,7 @@ function clearInput() {
   jsonError.value = ''
   pathError.value = ''
   fieldError.value = ''
+  keysError.value = ''
   isValidJson.value = false
   parsedJson.value = null
   availableFields.value = []
