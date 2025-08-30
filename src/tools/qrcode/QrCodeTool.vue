@@ -1,27 +1,27 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 text-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Hero Section -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        <h1 class="text-4xl font-bold text-slate-100 mb-4 text-gradient">
           {{ $t('tools.qrCodeTool.title') }}
         </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p class="text-xl text-slate-300 max-w-3xl mx-auto">
           {{ $t('tools.qrCodeTool.description') }}
         </p>
       </div>
 
       <!-- Toggle Switch -->
-      <div class="flex justify-center mb-6">
-        <div class="inline-flex rounded-md shadow-sm" role="group">
+      <div class="flex justify-center mb-8">
+        <div class="inline-flex rounded-xl shadow-dark-lg" role="group">
           <button
             type="button"
             @click="activeTab = 'generate'"
             :class="[
-              'px-4 py-2 text-sm font-medium rounded-l-lg',
+              'px-6 py-3 text-sm font-medium rounded-l-xl transition-all duration-200 cursor-pointer hover-lift',
               activeTab === 'generate'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100',
+                ? 'bg-primary-600 text-white shadow-glow'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border-r border-slate-600/50',
             ]"
           >
             {{ $t('tools.qrCodeTool.tabs.generate') }}
@@ -30,10 +30,10 @@
             type="button"
             @click="activeTab = 'recognize'"
             :class="[
-              'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
+              'px-6 py-3 text-sm font-medium rounded-r-xl transition-all duration-200 cursor-pointer hover-lift',
               activeTab === 'recognize'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100',
+                ? 'bg-primary-600 text-white shadow-glow'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50',
             ]"
           >
             {{ $t('tools.qrCodeTool.tabs.recognize') }}
@@ -43,30 +43,30 @@
 
       <!-- Features -->
       <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔄</div>
-          <h3 class="text-lg font-semibold mb-2">
+        <div class="glass p-6 rounded-xl border border-slate-700/30 hover-lift transition-all duration-300">
+          <div class="text-2xl mb-3 animate-bounce-subtle">🔄</div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.qrCodeTool.features.batch.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.qrCodeTool.features.batch.description') }}
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">📱</div>
-          <h3 class="text-lg font-semibold mb-2">
+        <div class="glass p-6 rounded-xl border border-slate-700/30 hover-lift transition-all duration-300">
+          <div class="text-2xl mb-3 animate-bounce-subtle">📱</div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.qrCodeTool.features.generate.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.qrCodeTool.features.generate.description') }}
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
-          <div class="text-2xl mb-3">🔍</div>
-          <h3 class="text-lg font-semibold mb-2">
+        <div class="glass p-6 rounded-xl border border-slate-700/30 hover-lift transition-all duration-300">
+          <div class="text-2xl mb-3 animate-bounce-subtle">🔍</div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.qrCodeTool.features.recognize.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-300 text-sm">
             {{ $t('tools.qrCodeTool.features.recognize.description') }}
           </p>
         </div>
@@ -75,47 +75,51 @@
       <!-- Generate Tab -->
       <div v-show="activeTab === 'generate'" class="space-y-8">
         <!-- Text Input Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        <div class="glass rounded-xl border border-slate-700/30 p-6">
+          <h3 class="text-lg font-semibold text-slate-100 mb-4">
             {{ $t('tools.qrCodeTool.generate.inputTitle') }}
           </h3>
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.qrCodeTool.generate.textInputLabel') }}
             </label>
             <textarea
               v-model="generateText"
               :placeholder="$t('tools.qrCodeTool.generate.textInputPlaceholder')"
-              class="w-full h-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full h-40 px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
             ></textarea>
           </div>
 
           <!-- Mode Toggle -->
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.qrCodeTool.generate.modeLabel') }}
             </label>
-            <div class="flex items-center">
-              <label class="inline-flex items-center">
+            <div class="flex items-center space-x-6">
+              <label class="inline-flex items-center cursor-pointer group">
                 <input
                   type="radio"
                   v-model="generateMode"
                   value="single"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer"
                 />
-                <span class="ml-2">{{ $t('tools.qrCodeTool.generate.singleMode') }}</span>
+                <span class="ml-2 text-slate-300 group-hover:text-slate-100 transition-colors duration-200">
+                  {{ $t('tools.qrCodeTool.generate.singleMode') }}
+                </span>
               </label>
-              <label class="inline-flex items-center ml-6">
+              <label class="inline-flex items-center cursor-pointer group">
                 <input
                   type="radio"
                   v-model="generateMode"
                   value="batch"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer"
                 />
-                <span class="ml-2">{{ $t('tools.qrCodeTool.generate.batchMode') }}</span>
+                <span class="ml-2 text-slate-300 group-hover:text-slate-100 transition-colors duration-200">
+                  {{ $t('tools.qrCodeTool.generate.batchMode') }}
+                </span>
               </label>
             </div>
-            <p class="mt-2 text-sm text-gray-500">
+            <p class="mt-2 text-sm text-slate-400">
               {{
                 generateMode === 'single'
                   ? $t('tools.qrCodeTool.generate.singleModeHint')
@@ -128,7 +132,7 @@
             <button
               @click="generateQR"
               :disabled="!generateText.trim()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{
                 generateMode === 'single'
@@ -138,7 +142,7 @@
             </button>
             <button
               @click="clearGenerated"
-              class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              class="px-6 py-3 bg-slate-700 text-slate-200 rounded-xl hover:bg-slate-600 hover:text-white transition-all duration-200 cursor-pointer hover-lift"
             >
               {{ $t('common.clear') }}
             </button>
@@ -146,9 +150,9 @@
         </div>
 
         <!-- Generated QR Codes -->
-        <div v-if="generatedQRCodes.length > 0" class="bg-white rounded-lg shadow-md p-6">
+        <div v-if="generatedQRCodes.length > 0" class="glass rounded-xl border border-slate-700/30 p-6">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">
+            <h3 class="text-lg font-semibold text-slate-100">
               {{
                 generateMode === 'single'
                   ? $t('tools.qrCodeTool.generate.singleGeneratedTitle')
@@ -159,7 +163,7 @@
             </h3>
             <button
               @click="downloadAllGenerated"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              class="px-6 py-3 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-all duration-200 cursor-pointer hover-lift"
             >
               {{ $t('tools.qrCodeTool.generate.downloadAll') }}
             </button>
@@ -168,22 +172,22 @@
             <div
               v-for="(qr, index) in generatedQRCodes"
               :key="index"
-              class="border border-gray-200 rounded-lg p-4 text-center"
+              class="glass border border-slate-700/30 rounded-xl p-4 text-center hover-lift transition-all duration-300"
             >
               <div class="mb-3">
-                <img :src="qr.dataUrl" :alt="qr.text" class="w-full h-auto mx-auto" />
+                <img :src="qr.dataUrl" :alt="qr.text" class="w-full h-auto mx-auto rounded-lg" />
               </div>
-              <p class="text-sm text-gray-600 truncate mb-3">{{ qr.text }}</p>
+              <p class="text-sm text-slate-300 truncate mb-3">{{ qr.text }}</p>
               <div class="flex flex-wrap justify-center gap-2">
                 <button
                   @click="downloadQR(index)"
-                  class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  class="px-3 py-2 text-xs bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 cursor-pointer hover-lift"
                 >
                   {{ $t('common.download') }}
                 </button>
                 <button
                   @click="copyQR(index)"
-                  class="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                  class="px-3 py-2 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 hover:text-white transition-all duration-200 cursor-pointer hover-lift"
                 >
                   {{ $t('common.copy') }}
                 </button>
@@ -196,8 +200,8 @@
       <!-- Recognize Tab -->
       <div v-show="activeTab === 'recognize'" class="space-y-8">
         <!-- File Upload Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        <div class="glass rounded-xl border border-slate-700/30 p-6">
+          <h3 class="text-lg font-semibold text-slate-100 mb-4">
             {{ $t('tools.qrCodeTool.recognize.uploadTitle') }}
           </h3>
           <div
@@ -206,8 +210,8 @@
             @dragenter.prevent
             @click="openFileSelector"
             :class="[
-              'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-              isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
+              'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover-lift',
+              isDragging ? 'border-primary-500 bg-primary-500/10' : 'border-slate-600/50 hover:border-slate-500/50',
             ]"
           >
             <input
@@ -219,20 +223,20 @@
               class="hidden"
             />
             <div class="space-y-4">
-              <div class="text-4xl text-gray-400">📷</div>
+              <div class="text-4xl text-slate-400 animate-bounce-subtle">📷</div>
               <div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">
+                <h3 class="text-lg font-medium text-slate-100 mb-2">
                   {{ $t('tools.qrCodeTool.recognize.uploadInstruction') }}
                 </h3>
-                <p class="text-gray-600">
+                <p class="text-slate-300">
                   {{ $t('tools.qrCodeTool.recognize.uploadDescription') }}
                 </p>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm text-slate-400 mt-2">
                   {{ $t('tools.qrCodeTool.recognize.pasteHint') }}
                 </p>
               </div>
               <button
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all duration-200 cursor-pointer hover-lift"
               >
                 {{ $t('tools.qrCodeTool.recognize.selectFiles') }}
               </button>
@@ -241,21 +245,21 @@
         </div>
 
         <!-- Recognized Results -->
-        <div v-if="recognizedResults.length > 0" class="bg-white rounded-lg shadow-md p-6">
+        <div v-if="recognizedResults.length > 0" class="glass rounded-xl border border-slate-700/30 p-6">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">
+            <h3 class="text-lg font-semibold text-slate-100">
               {{ $t('tools.qrCodeTool.recognize.resultsTitle') }} ({{ recognizedResults.length }})
             </h3>
             <div class="flex flex-wrap gap-3">
               <button
                 @click="copyAllResults"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all duration-200 cursor-pointer hover-lift"
               >
                 {{ $t('tools.qrCodeTool.recognize.copyAll') }}
               </button>
               <button
                 @click="clearRecognized"
-                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                class="px-6 py-3 bg-slate-700 text-slate-200 rounded-xl hover:bg-slate-600 hover:text-white transition-all duration-200 cursor-pointer hover-lift"
               >
                 {{ $t('common.clear') }}
               </button>
@@ -265,23 +269,23 @@
             <div
               v-for="(result, index) in recognizedResults"
               :key="index"
-              class="border border-gray-200 rounded-lg p-4"
+              class="glass border border-slate-700/30 rounded-xl p-4 transition-all duration-300 hover-lift"
             >
               <div class="flex items-start space-x-4">
                 <div v-if="result.preview" class="flex-shrink-0">
                   <img
                     :src="result.preview"
                     :alt="result.fileName"
-                    class="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                    class="w-16 h-16 object-cover rounded-lg border border-slate-600/50"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <h4 class="text-sm font-medium text-gray-900 truncate">{{ result.fileName }}</h4>
+                  <h4 class="text-sm font-medium text-slate-100 truncate">{{ result.fileName }}</h4>
                   <div class="mt-2">
-                    <p v-if="result.status === 'success'" class="text-sm text-gray-600 break-all">
+                    <p v-if="result.status === 'success'" class="text-sm text-slate-300 break-all">
                       {{ result.data }}
                     </p>
-                    <p v-else class="text-sm text-red-600">
+                    <p v-else class="text-sm text-red-400">
                       {{ result.error || $t('tools.qrCodeTool.recognize.recognitionFailed') }}
                     </p>
                   </div>
@@ -289,8 +293,8 @@
                 <div class="flex-shrink-0">
                   <div
                     :class="[
-                      'w-3 h-3 rounded-full',
-                      result.status === 'success' ? 'bg-green-400' : 'bg-red-400',
+                      'w-3 h-3 rounded-full transition-all duration-200',
+                      result.status === 'success' ? 'bg-success-400 shadow-success-glow' : 'bg-red-400 shadow-red-glow',
                     ]"
                   ></div>
                 </div>
@@ -649,5 +653,130 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Add any component-specific styles here */
+/* Glass effect utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Shadow utilities */
+.shadow-dark-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.shadow-dark-xl {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.shadow-success-glow {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+}
+
+.shadow-red-glow {
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Animations */
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite;
+}
+
+@keyframes bounce-subtle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading dots animation */
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
+  }
+}
+
+/* Custom scrollbar for electron */
+.electron-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.electron-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.electron-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.electron-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>
