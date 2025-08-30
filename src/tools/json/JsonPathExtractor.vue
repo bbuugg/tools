@@ -38,51 +38,42 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useI18n } from 'vue-i18n'
 import ToolLayout from '../../components/ToolLayout.vue'
 import PathExtractor from './components/PathExtractor.vue'
 import JsonFormatter from './components/JsonFormatter.vue'
-import ExcelToJson from './components/ExcelToJson.vue'
 import JsonMerge from './components/JsonMerge.vue'
-import ExcelTextToJson from './components/ExcelTextToJson.vue'
 import JsonToExcel from './components/JsonToExcel.vue'
+import UnifiedExcelToJson from './components/UnifiedExcelToJson.vue'
 
-const { t } = useI18n()
+type TabId = 'path' | 'formatter' | 'unifiedExcelToJson' | 'jsonMerge' | 'jsonToExcel'
 
 // Tab management
-const activeTab = ref<
-  'path' | 'formatter' | 'excelTojson' | 'jsonMerge' | 'excelTextToJson' | 'jsonToExcel'
->('path')
+const activeTab = ref<TabId>('path')
 
-// Tab configuration object (removed 'extractor' tab)
+// Tab configuration object (removed separate Excel tabs, added unified one)
 const tabs = reactive([
   {
-    id: 'path',
+    id: 'path' as TabId,
     label: 'tools.jsonPathExtractor.tabs.path',
     component: PathExtractor,
   },
   {
-    id: 'formatter',
+    id: 'formatter' as TabId,
     label: 'tools.jsonPathExtractor.tabs.formatter',
     component: JsonFormatter,
   },
   {
-    id: 'excelTojson',
-    label: 'tools.jsonPathExtractor.tabs.excelTojson',
-    component: ExcelToJson,
+    id: 'unifiedExcelToJson' as TabId,
+    label: 'tools.jsonPathExtractor.tabs.unifiedExcelToJson',
+    component: UnifiedExcelToJson,
   },
   {
-    id: 'jsonMerge',
+    id: 'jsonMerge' as TabId,
     label: 'tools.jsonPathExtractor.tabs.jsonMerge',
     component: JsonMerge,
   },
   {
-    id: 'excelTextToJson',
-    label: 'tools.jsonPathExtractor.tabs.excelTextToJson',
-    component: ExcelTextToJson,
-  },
-  {
-    id: 'jsonToExcel',
+    id: 'jsonToExcel' as TabId,
     label: 'tools.jsonPathExtractor.tabs.jsonToExcel',
     component: JsonToExcel,
   },

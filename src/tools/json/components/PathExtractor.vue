@@ -147,6 +147,149 @@
             </button>
           </div>
         </div>
+
+        <!-- Syntax Guide (Collapsible) -->
+        <div class="glass rounded-xl border border-slate-700/30 p-6 mt-6">
+          <div
+            class="flex items-center justify-between cursor-pointer"
+            @click="showSyntax = !showSyntax"
+          >
+            <h3 class="text-lg font-semibold text-slate-100">
+              {{ $t('tools.jsonPathExtractor.syntaxGuide.title') }}
+            </h3>
+            <svg
+              class="w-5 h-5 text-slate-400 transition-transform duration-200"
+              :class="{ 'rotate-180': showSyntax }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </div>
+
+          <div v-show="showSyntax" class="mt-4 pt-4 border-t border-slate-700/30">
+            <div class="">
+              <div>
+                <h4 class="font-medium text-slate-200 mb-3">
+                  {{ $t('tools.jsonPathExtractor.syntaxGuide.basicSyntax') }}
+                </h4>
+                <div class="space-y-2 text-sm">
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >$</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.rootSymbol')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >@</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.currentSymbol')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >. or []</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.childOperator')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >..</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.recursiveMatch')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >*</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.wildcard')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >[]</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.subscriptOperator')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >[,]</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.unionOperator')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >[start:end:step]</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.arraySlice')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >?()</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.filterExpression')
+                    }}</span>
+                  </div>
+                  <div class="flex items-start">
+                    <code
+                      class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
+                      >()</code
+                    >
+                    <span class="text-slate-300">{{
+                      $t('tools.jsonPathExtractor.syntaxGuide.scriptExpression')
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                <h4 class="font-medium text-blue-200 mb-2">
+                  {{ $t('tools.jsonPathExtractor.syntaxGuide.tutorialTitle') }}
+                </h4>
+                <p class="text-sm text-blue-300 mb-3">
+                  {{ $t('tools.jsonPathExtractor.syntaxGuide.tutorialDesc') }}
+                </p>
+                <a
+                  href="https://goessner.net/articles/JsonPath/"
+                  target="_blank"
+                  class="text-blue-400 hover:text-blue-300 text-sm underline transition-colors"
+                >
+                  https://goessner.net/articles/JsonPath/
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Field Mode Content -->
@@ -232,19 +375,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Extract Button -->
-      <button
-        @click="mode === 'path' ? extractPath() : extractFields()"
-        :disabled="
-          !inputJson.trim() ||
-          !isValidJson ||
-          (mode === 'path' ? !jsonPath.trim() : selectedFields.length === 0)
-        "
-        class="w-full px-4 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium border border-primary-500/30 hover-lift"
-      >
-        {{ $t('tools.jsonPathExtractor.extractButton') }}
-      </button>
     </div>
 
     <!-- Output Section -->
@@ -328,96 +458,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Syntax Guide (Collapsible) -->
-  <div class="glass rounded-xl border border-slate-700/30 p-6 mt-6">
-    <div class="flex items-center justify-between cursor-pointer" @click="showSyntax = !showSyntax">
-      <h3 class="text-lg font-semibold text-slate-100">
-        {{ $t('tools.jsonPathExtractor.syntaxGuide.title') }}
-      </h3>
-      <svg
-        class="w-5 h-5 text-slate-400 transition-transform duration-200"
-        :class="{ 'rotate-180': showSyntax }"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
-        ></path>
-      </svg>
-    </div>
-
-    <div v-show="showSyntax" class="mt-4 pt-4 border-t border-slate-700/30">
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <h4 class="font-medium text-slate-200 mb-3">
-            {{ $t('tools.jsonPathExtractor.syntaxGuide.basicSyntax') }}
-          </h4>
-          <div class="space-y-2 text-sm">
-            <div class="flex items-start">
-              <code
-                class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
-                >$</code
-              >
-              <span class="text-slate-300">{{
-                $t('tools.jsonPathExtractor.syntaxGuide.rootSymbol')
-              }}</span>
-            </div>
-            <div class="flex items-start">
-              <code
-                class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
-                >.</code
-              >
-              <span class="text-slate-300">{{
-                $t('tools.jsonPathExtractor.syntaxGuide.dotNotation')
-              }}</span>
-            </div>
-            <div class="flex items-start">
-              <code
-                class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
-                >[]</code
-              >
-              <span class="text-slate-300">{{
-                $t('tools.jsonPathExtractor.syntaxGuide.bracketNotation')
-              }}</span>
-            </div>
-            <div class="flex items-start">
-              <code
-                class="bg-slate-800/50 px-2 py-1 rounded text-slate-200 font-mono mr-3 flex-shrink-0 border border-slate-700/30"
-                >*</code
-              >
-              <span class="text-slate-300">{{
-                $t('tools.jsonPathExtractor.syntaxGuide.wildcard')
-              }}</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h4 class="font-medium text-slate-200 mb-3">
-            {{ $t('tools.jsonPathExtractor.syntaxGuide.examples') }}
-          </h4>
-          <div class="space-y-2 text-sm">
-            <div class="bg-slate-800/50 p-2 rounded border border-slate-700/30">
-              <code class="text-slate-200 font-mono">$.store.book[0].title</code>
-              <p class="text-slate-400 mt-1">
-                {{ $t('tools.jsonPathExtractor.syntaxGuide.exampleDesc1') }}
-              </p>
-            </div>
-            <div class="bg-slate-800/50 p-2 rounded border border-slate-700/30">
-              <code class="text-slate-200 font-mono">$.store.book[*].author</code>
-              <p class="text-slate-400 mt-1">
-                {{ $t('tools.jsonPathExtractor.syntaxGuide.exampleDesc2') }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -469,6 +509,10 @@ const quickPaths = ref([
   { key: 'allArrayItems', path: '$[*]' },
   { key: 'lastArrayItem', path: '$[-1]' },
   { key: 'arraySlice', path: '$[0:3]' },
+  { key: 'recursiveMatch', path: '$..author' },
+  { key: 'filterExpression', path: '$.store.book[?(@.price < 10)]' },
+  { key: 'unionOperator', path: '$.store.book[0,1].title' },
+  { key: 'scriptExpression', path: '$.store.book[(@.length-1)]' },
 ])
 
 // Computed properties
