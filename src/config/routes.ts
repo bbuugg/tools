@@ -28,7 +28,6 @@ const ImageToGifConverter = () => import('../tools/image/ImageToGifConverter.vue
 const GifEditor = () => import('../tools/image/GifEditor.vue')
 const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
-const CookieToJson = () => import('../tools/json/CookieToJson.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
@@ -63,16 +62,6 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'JSON Path Extractor',
           icon: '🛤️',
-          status: Status.Active,
-        },
-      },
-      {
-        path: 'cookie-to-json',
-        name: 'cookieToJson',
-        component: CookieToJson,
-        meta: {
-          title: 'Cookie to JSON',
-          icon: '🍪',
           status: Status.Active,
         },
       },

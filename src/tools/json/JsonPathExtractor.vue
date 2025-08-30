@@ -44,8 +44,15 @@ import JsonFormatter from './components/JsonFormatter.vue'
 import JsonMerge from './components/JsonMerge.vue'
 import JsonToExcel from './components/JsonToExcel.vue'
 import UnifiedExcelToJson from './components/UnifiedExcelToJson.vue'
+import CookieToJson from './CookieToJson.vue'
 
-type TabId = 'path' | 'formatter' | 'unifiedExcelToJson' | 'jsonMerge' | 'jsonToExcel'
+type TabId =
+  | 'path'
+  | 'formatter'
+  | 'unifiedExcelToJson'
+  | 'jsonMerge'
+  | 'jsonToExcel'
+  | 'cookieToJson'
 
 // Tab management
 const activeTab = ref<TabId>('path')
@@ -76,6 +83,11 @@ const tabs = reactive([
     id: 'jsonToExcel' as TabId,
     label: 'tools.jsonPathExtractor.tabs.jsonToExcel',
     component: JsonToExcel,
+  },
+  {
+    id: 'cookieToJson' as TabId,
+    label: 'tools.jsonPathExtractor.tabs.cookieToJson',
+    component: CookieToJson,
   },
 ])
 
