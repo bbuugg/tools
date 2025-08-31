@@ -1,171 +1,134 @@
 <template>
-  <div class="p-4 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold mb-6">{{ $t('tools.webRtcFileTransfer.title') }}</h1>
+  <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <!-- Room Entry Modal -->
+    <div
+      v-if="!inRoom"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 max-w-md mx-4">
+        <h1 class="text-2xl font-bold mb-6 text-center">{{ $t('tools.webRtcChatRoom.title') }}</h1>
 
-    <!-- Room Creation/Joining Section -->
-    <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block mb-2 font-medium">{{
-            $t('tools.webRtcFileTransfer.room.create')
-          }}</label>
+        <!-- Connection Status -->
+        <div class="mb-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+          <div class="flex items-center space-x-2">
+            <div
+              :class="[
+                'w-3 h-3 rounded-full',
+                signalServerConnected ? 'bg-green-500' : 'bg-red-500',
+              ]"
+            ></div>
+            <span class="text-sm">
+              {{
+                signalServerConnected
+                  ? $t('tools.webRtcChatRoom.status.connected')
+                  : $t('tools.webRtcChatRoom.status.connecting')
+              }}
+            </span>
+          </div>
+        </div>
+
+        <!-- User Name Input -->
+        <div class="mb-4">
+          <label class="block mb-2 font-medium">{{ $t('tools.webRtcChatRoom.userName') }}</label>
+          <input
+            v-model="userName"
+            :placeholder="$t('tools.webRtcChatRoom.userNamePlaceholder')"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            maxlength="20"
+          />
+        </div>
+
+        <!-- Room Actions -->
+        <div class="space-y-3">
           <button
             @click="createRoom"
-            :disabled="!signalServerConnected || inRoom"
-            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+            :disabled="!signalServerConnected || !userName.trim()"
+            class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {{ $t('tools.webRtcFileTransfer.room.createButton') }}
+            {{ $t('tools.webRtcChatRoom.room.createRoom') }}
           </button>
-        </div>
-        <div>
-          <label class="block mb-2 font-medium">{{
-            $t('tools.webRtcFileTransfer.room.join')
-          }}</label>
-          <div class="flex">
+
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white dark:bg-gray-800 text-gray-500">{{
+                $t('tools.webRtcChatRoom.or')
+              }}</span>
+            </div>
+          </div>
+
+          <div class="flex space-x-2">
             <input
               v-model="roomInput"
-              :placeholder="$t('tools.webRtcFileTransfer.room.roomIdPlaceholder')"
-              class="flex-1 p-2 border rounded-l"
-              :disabled="!signalServerConnected || inRoom"
+              :placeholder="$t('tools.webRtcChatRoom.room.roomIdPlaceholder')"
+              class="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :disabled="!signalServerConnected"
+              @keyup.enter="joinRoom"
             />
             <button
               @click="joinRoom"
-              :disabled="!roomInput || !signalServerConnected || inRoom"
-              class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:opacity-50"
+              :disabled="!roomInput.trim() || !signalServerConnected || !userName.trim()"
+              class="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {{ $t('tools.webRtcFileTransfer.room.joinButton') }}
+              {{ $t('tools.webRtcChatRoom.room.joinRoom') }}
             </button>
           </div>
         </div>
       </div>
-
-      <!-- Room Status -->
-      <div v-if="inRoom" class="mt-4 p-3 bg-green-100 dark:bg-green-800 rounded">
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="font-medium">{{ $t('tools.webRtcFileTransfer.room.inRoom') }}:</span>
-            <span class="ml-2 font-mono">{{ currentRoomId }}</span>
-          </div>
-          <button
-            @click="leaveRoom"
-            class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-          >
-            {{ $t('tools.webRtcFileTransfer.room.leave') }}
-          </button>
-        </div>
-        <div class="mt-2 text-sm">
-          <span
-            >{{ $t('tools.webRtcFileTransfer.room.participants') }}: {{ participants.length }}</span
-          >
-          <ul class="mt-1 ml-4 list-disc">
-            <li v-for="participant in participants" :key="participant.id">
-              {{ participant.name || participant.id }}
-              <span v-if="participant.id === localDeviceId" class="text-xs italic"
-                >({{ $t('tools.webRtcFileTransfer.room.you') }})</span
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
     </div>
 
-    <!-- Status indicators -->
-    <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900">
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center">
-          <div
-            :class="[
-              'w-3 h-3 rounded-full mr-2',
-              connectionStatus === 'connected'
-                ? 'bg-green-500'
-                : connectionStatus === 'connecting'
-                  ? 'bg-yellow-500'
-                  : 'bg-red-500',
-            ]"
-          ></div>
-          <span>{{ $t(`tools.webRtcFileTransfer.status.${connectionStatus}`) }}</span>
-        </div>
-        <div v-if="localDeviceId" class="text-sm text-gray-600 dark:text-gray-300">
-          {{ $t('tools.webRtcFileTransfer.deviceId') }}: {{ localDeviceId }}
-        </div>
-      </div>
-    </div>
-
-    <!-- Audio/Video Section -->
-    <div v-if="inRoom" class="mb-6 p-4 border rounded-lg">
-      <h2 class="text-xl font-semibold mb-4">{{ $t('tools.webRtcFileTransfer.av.title') }}</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Local Video -->
-        <div>
-          <div class="font-medium mb-2">{{ $t('tools.webRtcFileTransfer.av.localVideo') }}</div>
-          <div class="relative bg-black rounded overflow-hidden">
-            <video
-              ref="localVideo"
-              autoplay
-              playsinline
-              muted
-              class="w-full h-48 object-contain"
-            ></video>
-            <div
-              class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded"
+    <!-- Main Chat Room Layout -->
+    <div v-if="inRoom" class="flex flex-1 h-full">
+      <!-- Sidebar - Participants and Controls -->
+      <div
+        class="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"
+      >
+        <!-- Room Header -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="font-semibold text-lg">{{ $t('tools.webRtcChatRoom.room.title') }}</h2>
+              <p class="text-sm text-gray-500 font-mono">{{ currentRoomId }}</p>
+            </div>
+            <button
+              @click="leaveRoom"
+              class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
             >
-              {{ $t('tools.webRtcFileTransfer.room.you') }}
+              {{ $t('tools.webRtcChatRoom.room.leave') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <!-- Local Video -->
+          <div class="mb-4">
+            <div class="font-medium mb-2 text-sm">
+              {{ $t('tools.webRtcChatRoom.video.localVideo') }}
+            </div>
+            <div class="relative bg-black rounded overflow-hidden">
+              <video
+                ref="localVideo"
+                autoplay
+                playsinline
+                muted
+                class="w-full h-32 object-cover"
+              ></video>
+              <div
+                class="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded"
+              >
+                {{ userName || $t('tools.webRtcChatRoom.room.you') }}
+              </div>
             </div>
           </div>
-          <div class="mt-2 flex flex-wrap gap-2">
-            <button
-              @click="toggleCamera"
-              :class="[
-                'px-3 py-1 text-sm rounded',
-                cameraEnabled
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-green-500 hover:bg-green-600 text-white',
-              ]"
-            >
-              {{
-                cameraEnabled
-                  ? $t('tools.webRtcFileTransfer.av.disableCamera')
-                  : $t('tools.webRtcFileTransfer.av.enableCamera')
-              }}
-            </button>
-            <button
-              @click="toggleMicrophone"
-              :class="[
-                'px-3 py-1 text-sm rounded',
-                microphoneEnabled
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-green-500 hover:bg-green-600 text-white',
-              ]"
-            >
-              {{
-                microphoneEnabled
-                  ? $t('tools.webRtcFileTransfer.av.disableMic')
-                  : $t('tools.webRtcFileTransfer.av.enableMic')
-              }}
-            </button>
-            <button
-              @click="toggleScreenShare"
-              :class="[
-                'px-3 py-1 text-sm rounded',
-                screenSharingEnabled
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-purple-500 hover:bg-purple-600 text-white',
-              ]"
-            >
-              {{
-                screenSharingEnabled
-                  ? $t('tools.webRtcFileTransfer.av.stopScreenShare')
-                  : $t('tools.webRtcFileTransfer.av.startScreenShare')
-              }}
-            </button>
-          </div>
-        </div>
 
-        <!-- Remote Videos -->
-        <div>
-          <div class="font-medium mb-2">{{ $t('tools.webRtcFileTransfer.av.remoteVideos') }}</div>
-          <div v-if="remoteStreams.length > 0" class="space-y-4">
+          <!-- Remote Videos -->
+          <div v-if="remoteStreams.length > 0" class="space-y-2">
+            <div class="font-medium text-sm">
+              {{ $t('tools.webRtcChatRoom.video.remoteVideos') }}
+            </div>
             <div
               v-for="stream in remoteStreams"
               :key="stream.id"
@@ -175,203 +138,290 @@
                 :ref="(el) => setRemoteVideoRef(el, stream.id)"
                 autoplay
                 playsinline
-                class="w-full h-48 object-contain"
+                class="w-full h-32 object-cover"
               ></video>
               <div
-                class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded"
+                class="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded"
               >
                 {{ getParticipantName(stream.id) }}
               </div>
             </div>
           </div>
-          <div v-else class="text-gray-500 italic h-48 flex items-center justify-center">
-            {{ $t('tools.webRtcFileTransfer.av.noRemoteVideo') }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Danmaku Section -->
-    <div v-if="inRoom" class="mb-6 p-4 border rounded-lg">
-      <h2 class="text-xl font-semibold mb-4">{{ $t('tools.webRtcFileTransfer.danmaku.title') }}</h2>
-
-      <div class="relative bg-gray-800 rounded-lg overflow-hidden" style="height: 300px">
-        <!-- Danmaku Display Area -->
-        <div ref="danmakuContainer" class="absolute inset-0 w-full h-full overflow-hidden">
-          <!-- Danmaku items will be dynamically added here -->
         </div>
 
-        <!-- Danmaku Input -->
-        <div class="absolute bottom-0 left-0 right-0 p-3 bg-black bg-opacity-50">
-          <div class="flex">
-            <input
-              v-model="danmakuInput"
-              @keyup.enter="sendDanmaku"
-              :placeholder="$t('tools.webRtcFileTransfer.danmaku.placeholder')"
-              class="flex-1 p-2 rounded-l"
-            />
+        <!-- Media Controls -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="grid grid-cols-2 gap-2">
             <button
-              @click="sendDanmaku"
-              :disabled="!danmakuInput"
-              class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:opacity-50"
+              @click="toggleCamera"
+              :class="[
+                'px-3 py-2 text-sm rounded flex items-center justify-center',
+                cameraEnabled
+                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                  : 'bg-gray-500 hover:bg-gray-600 text-white',
+              ]"
             >
-              {{ $t('tools.webRtcFileTransfer.danmaku.send') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Device Discovery Section -->
-      <div class="border rounded-lg p-4">
-        <h2 class="text-xl font-semibold mb-4">
-          {{ $t('tools.webRtcFileTransfer.discovery.title') }}
-        </h2>
-
-        <div class="mb-4">
-          <button
-            @click="startDiscovery"
-            :disabled="isDiscovering || !signalServerConnected"
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-          >
-            {{
-              isDiscovering
-                ? $t('tools.webRtcFileTransfer.discovery.searching')
-                : $t('tools.webRtcFileTransfer.discovery.search')
-            }}
-          </button>
-          <div
-            class="mt-2 text-sm"
-            :class="signalServerConnected ? 'text-green-600' : 'text-red-600'"
-          >
-            {{
-              signalServerConnected
-                ? $t('tools.webRtcFileTransfer.discovery.connected')
-                : $t('tools.webRtcFileTransfer.discovery.disconnected')
-            }}
-          </div>
-        </div>
-
-        <div v-if="discoveredDevices.length > 0" class="mt-4">
-          <h3 class="font-medium mb-2">
-            {{ $t('tools.webRtcFileTransfer.discovery.foundDevices') }}:
-          </h3>
-          <ul class="space-y-2">
-            <li
-              v-for="device in discoveredDevices"
-              :key="device.id"
-              class="flex justify-between items-center p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-800"
-            >
-              <div>
-                <div class="font-medium">
-                  {{ device.name || $t('tools.webRtcFileTransfer.discovery.unknownDevice') }}
-                </div>
-                <div class="text-sm text-gray-500">{{ device.id }}</div>
-              </div>
-              <button
-                @click="connectToDevice(device.id)"
-                :disabled="connectionStatus === 'connecting'"
-                class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 disabled:opacity-50"
-              >
-                {{ $t('tools.webRtcFileTransfer.discovery.connect') }}
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div v-else class="text-gray-500 italic">
-          {{ $t('tools.webRtcFileTransfer.discovery.noDevices') }}
-        </div>
-      </div>
-
-      <!-- File Transfer Section -->
-      <div class="border rounded-lg p-4">
-        <h2 class="text-xl font-semibold mb-4">
-          {{ $t('tools.webRtcFileTransfer.transfer.title') }}
-        </h2>
-
-        <div v-if="connectionStatus === 'connected'" class="space-y-4">
-          <!-- File Selection -->
-          <div>
-            <label class="block mb-2 font-medium">{{
-              $t('tools.webRtcFileTransfer.transfer.selectFile')
-            }}</label>
-            <input
-              type="file"
-              @change="handleFileSelect"
-              ref="fileInput"
-              class="w-full p-2 border rounded"
-              :disabled="isSending"
-            />
-          </div>
-
-          <!-- Send Button -->
-          <div>
-            <button
-              @click="sendFile"
-              :disabled="!selectedFile || isSending"
-              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-            >
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  v-if="cameraEnabled"
+                  d="M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+                <path
+                  v-else
+                  d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A2 2 0 0018 14V8a2 2 0 00-2-2h-3l-1-1H9.414l-3.707-3.707zM2 6a2 2 0 012-2h.586l2 2H4v8a2 2 0 002 2h8v-.586l2 2H4a2 2 0 01-2-2V6z"
+                />
+              </svg>
               {{
-                isSending
-                  ? $t('tools.webRtcFileTransfer.transfer.sending')
-                  : $t('tools.webRtcFileTransfer.transfer.send')
+                cameraEnabled
+                  ? $t('tools.webRtcChatRoom.controls.camera')
+                  : $t('tools.webRtcChatRoom.controls.cameraOff')
+              }}
+            </button>
+
+            <button
+              @click="toggleMicrophone"
+              :class="[
+                'px-3 py-2 text-sm rounded flex items-center justify-center',
+                microphoneEnabled
+                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                  : 'bg-gray-500 hover:bg-gray-600 text-white',
+              ]"
+            >
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path v-if="microphoneEnabled" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z" />
+                <path
+                  v-if="microphoneEnabled"
+                  d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5H10.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z"
+                />
+                <path
+                  v-else
+                  d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 101.06-1.06L3.28 2.22zM7.5 6.69V4a2.5 2.5 0 015 0v2.5L7.5 6.69z"
+                />
+              </svg>
+              {{
+                microphoneEnabled
+                  ? $t('tools.webRtcChatRoom.controls.mic')
+                  : $t('tools.webRtcChatRoom.controls.micOff')
+              }}
+            </button>
+
+            <button
+              @click="toggleScreenShare"
+              :class="[
+                'px-3 py-2 text-sm rounded flex items-center justify-center col-span-2',
+                screenSharingEnabled
+                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                  : 'bg-gray-500 hover:bg-gray-600 text-white',
+              ]"
+            >
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M2 3a1 1 0 011-1h14a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 2v7h12V5H4z"
+                />
+              </svg>
+              {{
+                screenSharingEnabled
+                  ? $t('tools.webRtcChatRoom.controls.stopScreen')
+                  : $t('tools.webRtcChatRoom.controls.shareScreen')
               }}
             </button>
           </div>
+        </div>
 
-          <!-- Progress -->
-          <div v-if="transferProgress > 0" class="mt-4">
-            <div class="flex justify-between mb-1">
-              <span>{{ $t('tools.webRtcFileTransfer.transfer.progress') }}</span>
-              <span>{{ transferProgress }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                class="bg-blue-600 h-2.5 rounded-full"
-                :style="{ width: transferProgress + '%' }"
-              ></div>
+        <!-- Participants List -->
+        <div class="flex-1 p-4 overflow-y-auto">
+          <div class="font-medium mb-3 text-sm">
+            {{ $t('tools.webRtcChatRoom.participants.title') }} ({{ participants.length }})
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="participant in participants"
+              :key="participant.id"
+              class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              <div class="flex items-center space-x-2">
+                <div
+                  :class="[
+                    'w-2 h-2 rounded-full',
+                    participant.id === localDeviceId ? 'bg-blue-500' : 'bg-green-500',
+                  ]"
+                ></div>
+                <span class="text-sm">
+                  {{ participant.name || participant.id }}
+                  <span v-if="participant.id === localDeviceId" class="text-xs text-gray-500">
+                    ({{ $t('tools.webRtcChatRoom.room.you') }})
+                  </span>
+                  <span v-if="participant.role === 'host'" class="text-xs text-yellow-500 ml-1">
+                    👑
+                  </span>
+                </span>
+              </div>
+
+              <!-- Participant Controls (only for host) -->
+              <div v-if="isHost && participant.id !== localDeviceId" class="flex space-x-1">
+                <button
+                  @click="muteParticipant(participant.id)"
+                  class="p-1 text-gray-400 hover:text-red-500"
+                  :title="$t('tools.webRtcChatRoom.controls.mute')"
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.828 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.828l3.555-3.793z"
+                    />
+                    <path
+                      d="M15.293 7.293a1 1 0 011.414 0L18 8.586l1.293-1.293a1 1 0 111.414 1.414L19.414 10l1.293 1.293a1 1 0 01-1.414 1.414L18 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L16.586 10l-1.293-1.293a1 1 0 010-1.414z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  @click="kickParticipant(participant.id)"
+                  class="p-1 text-gray-400 hover:text-red-500"
+                  :title="$t('tools.webRtcChatRoom.controls.kick')"
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 6.707 6.293a1 1 0 00-1.414 1.414L8.586 11l-3.293 3.293a1 1 0 001.414 1.414L10 12.414l3.293 3.293a1 1 0 001.414-1.414L11.414 11l3.293-3.293z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Received Files -->
-          <div v-if="receivedFiles.length > 0" class="mt-4">
-            <h3 class="font-medium mb-2">
-              {{ $t('tools.webRtcFileTransfer.transfer.receivedFiles') }}:
-            </h3>
-            <ul class="space-y-2">
-              <li
-                v-for="(file, index) in receivedFiles"
-                :key="index"
-                class="flex justify-between items-center p-2 border rounded"
+      <!-- Main Chat Area -->
+      <div class="flex-1 flex flex-col">
+        <!-- Chat Messages -->
+        <div class="flex-1 p-4 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          <div class="space-y-3">
+            <div
+              v-for="message in chatMessages"
+              :key="message.id"
+              :class="[
+                'flex',
+                message.senderId === localDeviceId ? 'justify-end' : 'justify-start',
+              ]"
+            >
+              <div
+                :class="[
+                  'max-w-xs lg:max-w-md px-4 py-2 rounded-lg',
+                  message.senderId === localDeviceId
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                ]"
               >
-                <div>
-                  <div class="font-medium">{{ file.name }}</div>
-                  <div class="text-sm text-gray-500">{{ formatFileSize(file.size) }}</div>
-                </div>
-                <a
-                  :href="file.url"
-                  :download="file.name"
-                  class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                <!-- Message Header -->
+                <div
+                  v-if="message.senderId !== localDeviceId"
+                  class="text-xs text-gray-500 dark:text-gray-400 mb-1"
                 >
-                  {{ $t('tools.webRtcFileTransfer.transfer.download') }}
-                </a>
-              </li>
-            </ul>
+                  {{ getParticipantName(message.senderId) }}
+                </div>
+
+                <!-- Message Content -->
+                <div v-if="message.type === 'text'" class="break-words">
+                  {{ message.content }}
+                </div>
+
+                <!-- File Message -->
+                <div v-else-if="message.type === 'file'" class="space-y-2">
+                  <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                      />
+                    </svg>
+                    <span class="text-sm">{{ message.fileName }}</span>
+                  </div>
+                  <div class="text-xs opacity-75">{{ formatFileSize(message.fileSize || 0) }}</div>
+                  <button
+                    v-if="message.fileUrl"
+                    @click="downloadFile(message.fileUrl, message.fileName)"
+                    class="text-xs underline hover:no-underline"
+                  >
+                    {{ $t('tools.webRtcChatRoom.chat.download') }}
+                  </button>
+                </div>
+
+                <!-- System Message -->
+                <div v-else-if="message.type === 'system'" class="text-sm italic">
+                  {{ message.content }}
+                </div>
+
+                <!-- Message Timestamp -->
+                <div class="text-xs opacity-75 mt-1">
+                  {{ formatTime(message.timestamp) }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div v-else class="text-gray-500 italic">
-          {{ $t('tools.webRtcFileTransfer.transfer.connectFirst') }}
+        <!-- Chat Input Area -->
+        <div class="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex space-x-2">
+            <!-- File Upload Button -->
+            <button
+              @click="triggerFileUpload"
+              class="px-3 py-2 text-gray-500 hover:text-blue-500 border border-gray-300 rounded-lg hover:border-blue-500"
+              :title="$t('tools.webRtcChatRoom.chat.sendFile')"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
+                <path
+                  d="M3 5a2 2 0 012-2 3 3 0 003 3h6a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L12.586 15H17v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2v2h-2v-2z"
+                />
+              </svg>
+            </button>
+
+            <!-- Message Input -->
+            <input
+              v-model="messageInput"
+              @keyup.enter="sendMessage"
+              :placeholder="$t('tools.webRtcChatRoom.chat.placeholder')"
+              class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              maxlength="500"
+            />
+
+            <!-- Send Button -->
+            <button
+              @click="sendMessage"
+              :disabled="!messageInput.trim()"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ $t('tools.webRtcChatRoom.chat.send') }}
+            </button>
+          </div>
+
+          <!-- File Input (Hidden) -->
+          <input ref="fileInput" type="file" @change="handleFileSelect" class="hidden" />
         </div>
       </div>
     </div>
 
-    <!-- Logs Section -->
-    <div class="mt-6 border rounded-lg p-4">
-      <h2 class="text-xl font-semibold mb-4">{{ $t('tools.webRtcFileTransfer.logs.title') }}</h2>
-      <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded h-40 overflow-y-auto font-mono text-sm">
+    <!-- Debug Logs (Collapsible) -->
+    <div
+      v-if="inRoom && showLogs"
+      class="fixed bottom-4 right-4 w-96 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-40"
+    >
+      <div
+        class="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between"
+      >
+        <h3 class="font-medium text-sm">{{ $t('tools.webRtcChatRoom.logs.title') }}</h3>
+        <button @click="showLogs = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="p-3 h-40 overflow-y-auto font-mono text-xs">
         <div
           v-for="(log, index) in logs"
           :key="index"
@@ -386,6 +436,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Debug Toggle Button -->
+    <button
+      v-if="inRoom && !showLogs"
+      @click="showLogs = true"
+      class="fixed bottom-4 right-4 p-2 bg-gray-600 text-white rounded-full shadow-lg hover:bg-gray-700 z-40"
+      :title="$t('tools.webRtcChatRoom.logs.showLogs')"
+    >
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+        />
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -398,24 +462,40 @@ const { t } = useI18n()
 
 // Reactive references
 const connectionStatus = ref<'disconnected' | 'connecting' | 'connected'>('disconnected')
-const isDiscovering = ref(false)
 const signalServerConnected = ref(false)
 const localDeviceId = ref('')
-const discoveredDevices = ref<{ id: string; name?: string }[]>([])
 const selectedFile = ref<File | null>(null)
 const isSending = ref(false)
 const transferProgress = ref(0)
-const receivedFiles = ref<{ name: string; size: number; url: string }[]>([])
 const logs = ref<
   { timestamp: string; message: string; type: 'info' | 'success' | 'warning' | 'error' }[]
 >([])
 const fileInput = ref<HTMLInputElement | null>(null)
+const showLogs = ref(false)
 
-// Room functionality
+// User and Room functionality
+const userName = ref('')
 const roomInput = ref('')
 const currentRoomId = ref('')
 const inRoom = ref(false)
-const participants = ref<{ id: string; name?: string }[]>([])
+const isHost = ref(false)
+const participants = ref<{ id: string; name?: string; role?: 'host' | 'member' }[]>([])
+
+// Chat functionality
+const messageInput = ref('')
+const chatMessages = ref<
+  {
+    id: string
+    type: 'text' | 'file' | 'system'
+    content: string
+    senderId: string
+    senderName: string
+    timestamp: number
+    fileName?: string
+    fileSize?: number
+    fileUrl?: string
+  }[]
+>([])
 
 // Audio/Video functionality
 const localVideo = ref<HTMLVideoElement | null>(null)
@@ -426,10 +506,8 @@ const cameraEnabled = ref(false)
 const microphoneEnabled = ref(false)
 const screenSharingEnabled = ref(false)
 const screenStream = ref<MediaStream | null>(null)
-
-// Danmaku functionality
-const danmakuInput = ref('')
-const danmakuContainer = ref<HTMLDivElement | null>(null)
+const isRecording = ref(false)
+const mediaRecorder = ref<MediaRecorder | null>(null)
 
 // WebRTC related
 const peerConnections = new Map<string, RTCPeerConnection>() // Map of participant ID to RTCPeerConnection
@@ -487,7 +565,6 @@ const connectToSignalingServer = () => {
       signalServer.onopen = () => {
         signalServerConnected.value = true
         addLog(t('tools.webRtcFileTransfer.logs.signalServerConnected'), 'success')
-        startDiscovery()
       }
 
       signalServer.onmessage = (event) => {
@@ -541,33 +618,7 @@ const handleMessageFromServer = (data: string) => {
         addLog(t('tools.webRtcFileTransfer.logs.receivedDeviceId', { id: message.id }), 'info')
         break
 
-      case 'devices':
-        discoveredDevices.value = message.devices
-        isDiscovering.value = false
-        addLog(
-          t('tools.webRtcFileTransfer.logs.devicesFound', { count: message.devices.length }),
-          'success',
-        )
-        break
-
-      case 'device-discovered':
-        // Add newly discovered device
-        if (!discoveredDevices.value.some((device) => device.id === message.id)) {
-          discoveredDevices.value.push({
-            id: message.id,
-            name: message.name,
-          })
-          addLog(t('tools.webRtcFileTransfer.logs.deviceDiscovered', { id: message.id }), 'info')
-        }
-        break
-
-      case 'device-disconnected':
-        // Remove disconnected device
-        discoveredDevices.value = discoveredDevices.value.filter(
-          (device) => device.id !== message.id,
-        )
-        addLog(t('tools.webRtcFileTransfer.logs.deviceDisconnected', { id: message.id }), 'info')
-        break
+      // Remove device discovery related cases as they are no longer needed
 
       case 'offer':
         handleOffer(message.source, message.sdp)
@@ -599,8 +650,24 @@ const handleMessageFromServer = (data: string) => {
       case 'room-created':
         currentRoomId.value = message.roomId
         inRoom.value = true
-        participants.value = [{ id: localDeviceId.value, name: 'You' }]
-        addLog(t('tools.webRtcFileTransfer.room.created', { roomId: message.roomId }), 'success')
+        isHost.value = true
+        participants.value = [
+          {
+            id: localDeviceId.value,
+            name: userName.value || 'You',
+            role: 'host',
+          },
+        ]
+        addLog(t('tools.webRtcChatRoom.room.created', { roomId: message.roomId }), 'success')
+        // Add system message
+        chatMessages.value.push({
+          id: Date.now().toString(),
+          type: 'system',
+          content: t('tools.webRtcChatRoom.chat.roomCreated', { roomId: message.roomId }),
+          senderId: 'system',
+          senderName: 'System',
+          timestamp: Date.now(),
+        })
         // Initialize connections with all participants
         initRoomConnections()
         break
@@ -608,8 +675,18 @@ const handleMessageFromServer = (data: string) => {
       case 'room-joined':
         currentRoomId.value = message.roomId
         inRoom.value = true
+        isHost.value = message.isHost || false
         participants.value = message.participants
-        addLog(t('tools.webRtcFileTransfer.room.joined', { roomId: message.roomId }), 'success')
+        addLog(t('tools.webRtcChatRoom.room.joined', { roomId: message.roomId }), 'success')
+        // Add system message
+        chatMessages.value.push({
+          id: Date.now().toString(),
+          type: 'system',
+          content: t('tools.webRtcChatRoom.chat.roomJoined', { roomId: message.roomId }),
+          senderId: 'system',
+          senderName: 'System',
+          timestamp: Date.now(),
+        })
         // Initialize connections with all participants
         initRoomConnections()
         break
@@ -619,9 +696,27 @@ const handleMessageFromServer = (data: string) => {
         break
 
       case 'participant-joined':
-        participants.value.push({ id: message.participantId, name: message.name })
+        const existingParticipant = participants.value.find((p) => p.id === message.participantId)
+        if (!existingParticipant) {
+          participants.value.push({
+            id: message.participantId,
+            name: message.name,
+            role: message.role || 'member',
+          })
+
+          // Add system message
+          chatMessages.value.push({
+            id: Date.now().toString(),
+            type: 'system',
+            content: t('tools.webRtcChatRoom.chat.participantJoined', { name: message.name }),
+            senderId: 'system',
+            senderName: 'System',
+            timestamp: Date.now(),
+          })
+        }
+
         addLog(
-          t('tools.webRtcFileTransfer.room.participantJoined', { id: message.participantId }),
+          t('tools.webRtcChatRoom.room.participantJoined', { id: message.participantId }),
           'info',
         )
         // Initialize connection with new participant
@@ -631,9 +726,23 @@ const handleMessageFromServer = (data: string) => {
         break
 
       case 'participant-left':
+        const leftParticipant = participants.value.find((p) => p.id === message.participantId)
         participants.value = participants.value.filter((p) => p.id !== message.participantId)
+
+        if (leftParticipant) {
+          // Add system message
+          chatMessages.value.push({
+            id: Date.now().toString(),
+            type: 'system',
+            content: t('tools.webRtcChatRoom.chat.participantLeft', { name: leftParticipant.name }),
+            senderId: 'system',
+            senderName: 'System',
+            timestamp: Date.now(),
+          })
+        }
+
         addLog(
-          t('tools.webRtcFileTransfer.room.participantLeft', { id: message.participantId }),
+          t('tools.webRtcChatRoom.room.participantLeft', { id: message.participantId }),
           'info',
         )
         // Clean up connection with participant
@@ -641,8 +750,9 @@ const handleMessageFromServer = (data: string) => {
         break
 
       case 'room-message':
-        if (message.messageType === 'danmaku') {
-          displayDanmaku(message.content, message.sender)
+        if (message.messageType === 'chat') {
+          // Add received chat message
+          chatMessages.value.push(message.message)
         }
         break
     }
@@ -1022,9 +1132,9 @@ const handleReceivedMessage = (data: unknown) => {
       if (message.type === 'file-metadata') {
         // Handle file metadata
         handleFileMetadata(message)
-      } else if (message.type === 'danmaku') {
-        // Handle danmaku message
-        displayDanmaku(message.content, message.sender)
+      } else if (message.type === 'chat') {
+        // Handle chat message via data channel
+        chatMessages.value.push(message)
       }
     }
   } catch (_error) {
@@ -1042,10 +1152,30 @@ let currentFileMetadata: { name: string; size: number; mimeType: string } | null
 let receivedChunks: ArrayBuffer[] = []
 let receivedSize = 0
 
-const handleFileMetadata = (metadata: { name: string; size: number; mimeType: string }) => {
+const handleFileMetadata = (metadata: {
+  name: string
+  size: number
+  mimeType: string
+  senderId?: string
+  senderName?: string
+}) => {
   currentFileMetadata = metadata
   receivedChunks = []
   receivedSize = 0
+
+  // Add file message to chat
+  const fileMessage = {
+    id: Date.now().toString(),
+    type: 'file' as const,
+    content: `Receiving file: ${metadata.name}`,
+    senderId: metadata.senderId || 'unknown',
+    senderName: metadata.senderName || 'Unknown',
+    timestamp: Date.now(),
+    fileName: metadata.name,
+    fileSize: metadata.size,
+  }
+  chatMessages.value.push(fileMessage)
+
   addLog(
     t('tools.webRtcFileTransfer.logs.receivingFile', {
       name: metadata.name,
@@ -1075,14 +1205,22 @@ const handleFileDataChunk = (chunk: ArrayBuffer) => {
     const blob = new Blob(receivedChunks, { type: currentFileMetadata.mimeType })
     const url = URL.createObjectURL(blob)
 
-    // Add to received files
-    receivedFiles.value.push({
-      name: currentFileMetadata.name,
-      size: currentFileMetadata.size,
-      url: url,
-    })
+    // Add file message to chat
+    const fileMessage = {
+      id: Date.now().toString(),
+      type: 'file' as const,
+      content: `File received: ${currentFileMetadata.name}`,
+      senderId: 'system',
+      senderName: 'System',
+      timestamp: Date.now(),
+      fileName: currentFileMetadata.name,
+      fileSize: currentFileMetadata.size,
+      fileUrl: url,
+    }
+    chatMessages.value.push(fileMessage)
 
     // Reset for next file
+    const fileName = currentFileMetadata.name
     currentFileMetadata = null
     receivedChunks = []
     receivedSize = 0
@@ -1090,37 +1228,58 @@ const handleFileDataChunk = (chunk: ArrayBuffer) => {
 
     addLog(
       t('tools.webRtcFileTransfer.logs.fileReceived', {
-        name: currentFileMetadata ? currentFileMetadata.name : 'unknown',
+        name: fileName,
       }),
       'success',
     )
   }
 }
 
-// Start discovery process
-const startDiscovery = async () => {
-  if (!signalServerConnected.value || !signalServer) {
-    addLog(t('tools.webRtcFileTransfer.logs.notConnectedToSignalServer'), 'error')
-    return
+// Chat functionality
+const sendMessage = () => {
+  if (!messageInput.value.trim() || !inRoom.value || !signalServer) return
+
+  const message = {
+    id: Date.now().toString(),
+    type: 'text' as const,
+    content: messageInput.value.trim(),
+    senderId: localDeviceId.value,
+    senderName: userName.value || localDeviceId.value,
+    timestamp: Date.now(),
   }
 
-  isDiscovering.value = true
-  discoveredDevices.value = [] // Clear previous devices
-  addLog(t('tools.webRtcFileTransfer.logs.startDiscovery'), 'info')
+  // Add to local chat
+  chatMessages.value.push(message)
 
-  // Send discovery request to signaling server
+  // Send to other participants via signaling server
   signalServer.send(
     JSON.stringify({
-      type: 'discover',
+      type: 'room-message',
+      roomId: currentRoomId.value,
+      messageType: 'chat',
+      message: message,
     }),
   )
+
+  // Clear input
+  messageInput.value = ''
 }
 
-// Connect to a device
-const connectToDevice = async (deviceId: string) => {
-  // This is for direct peer-to-peer connection, not room-based
-  // We'll keep this for backward compatibility
-  addLog(t('tools.webRtcFileTransfer.logs.connectingToDevice', { deviceId }), 'info')
+const triggerFileUpload = () => {
+  fileInput.value?.click()
+}
+
+const downloadFile = (url: string, fileName?: string) => {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName || 'download'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+const formatTime = (timestamp: number) => {
+  return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 // Handle file selection
@@ -1149,6 +1308,19 @@ const sendFile = async () => {
   transferProgress.value = 0
   addLog(t('tools.webRtcFileTransfer.logs.sendingFile', { name: selectedFile.value.name }), 'info')
 
+  // Add file message to chat immediately
+  const fileMessage = {
+    id: Date.now().toString(),
+    type: 'file' as const,
+    content: `Sending file: ${selectedFile.value.name}`,
+    senderId: localDeviceId.value,
+    senderName: userName.value || localDeviceId.value,
+    timestamp: Date.now(),
+    fileName: selectedFile.value.name,
+    fileSize: selectedFile.value.size,
+  }
+  chatMessages.value.push(fileMessage)
+
   try {
     // Send file to all participants with open data channels
     for (const [_participantId, dataChannel] of dataChannels.entries()) {
@@ -1159,6 +1331,8 @@ const sendFile = async () => {
           name: selectedFile.value.name,
           size: selectedFile.value.size,
           mimeType: selectedFile.value.type,
+          senderId: localDeviceId.value,
+          senderName: userName.value || localDeviceId.value,
         }
 
         dataChannel.send(JSON.stringify(fileMetadata))
@@ -1227,24 +1401,26 @@ const sendFile = async () => {
 
 // Room functionality
 const createRoom = () => {
-  if (!signalServer) return
+  if (!signalServer || !userName.value.trim()) return
 
   signalServer.send(
     JSON.stringify({
       type: 'create-room',
       deviceId: localDeviceId.value,
+      userName: userName.value.trim(),
     }),
   )
 }
 
 const joinRoom = () => {
-  if (!signalServer || !roomInput.value) return
+  if (!signalServer || !roomInput.value || !userName.value.trim()) return
 
   signalServer.send(
     JSON.stringify({
       type: 'join-room',
       roomId: roomInput.value,
       deviceId: localDeviceId.value,
+      userName: userName.value.trim(),
     }),
   )
 }
@@ -1475,8 +1651,8 @@ const stopScreenShare = () => {
   addLog(t('tools.webRtcFileTransfer.av.screenShareStopped'), 'info')
 }
 
-const setRemoteVideoRef = (el: HTMLVideoElement | null, streamId: string) => {
-  if (el) {
+const setRemoteVideoRef = (el: any, streamId: string) => {
+  if (el && el instanceof HTMLVideoElement) {
     remoteVideoRefs.value[streamId] = el
 
     // Find the stream and attach it
@@ -1492,61 +1668,82 @@ const getParticipantName = (participantId: string) => {
   return participant ? participant.name || participant.id : participantId
 }
 
-// Danmaku functionality
-const sendDanmaku = () => {
-  if (!danmakuInput.value || !inRoom.value || !signalServer) return
+// Room management functionality
+const muteParticipant = (participantId: string) => {
+  if (!isHost.value || !signalServer) return
 
-  const danmakuMessage = {
-    type: 'room-message',
-    roomId: currentRoomId.value,
-    messageType: 'danmaku',
-    content: danmakuInput.value,
-    sender: localDeviceId.value,
-  }
+  signalServer.send(
+    JSON.stringify({
+      type: 'room-action',
+      roomId: currentRoomId.value,
+      action: 'mute',
+      targetId: participantId,
+    }),
+  )
 
-  signalServer.send(JSON.stringify(danmakuMessage))
-
-  // Display locally as well
-  displayDanmaku(danmakuInput.value, localDeviceId.value)
-
-  // Clear input
-  danmakuInput.value = ''
+  addLog(`Muted participant: ${participantId}`, 'info')
 }
 
-const displayDanmaku = (content: string, _senderId: string) => {
-  if (!danmakuContainer.value) return
+const kickParticipant = (participantId: string) => {
+  if (!isHost.value || !signalServer) return
 
-  const danmakuElement = document.createElement('div')
-  danmakuElement.className = 'absolute text-white text-sm font-bold whitespace-nowrap'
-  danmakuElement.textContent = content
-  danmakuElement.style.left = '100%'
-  danmakuElement.style.top = `${Math.random() * 80 + 10}%`
-  danmakuElement.style.color = `hsl(${Math.random() * 360}, 100%, 80%)`
+  signalServer.send(
+    JSON.stringify({
+      type: 'room-action',
+      roomId: currentRoomId.value,
+      action: 'kick',
+      targetId: participantId,
+    }),
+  )
 
-  danmakuContainer.value.appendChild(danmakuElement)
+  addLog(`Kicked participant: ${participantId}`, 'info')
+}
 
-  // Animate danmaku
-  const animate = () => {
-    const rect = danmakuElement.getBoundingClientRect()
-    const containerRect = danmakuContainer.value!.getBoundingClientRect()
+// Recording functionality
+const startRecording = async () => {
+  if (!localStream.value) return
 
-    if (rect.right < containerRect.left) {
-      danmakuElement.remove()
-      return
+  try {
+    const options = { mimeType: 'video/webm; codecs=vp9' }
+    mediaRecorder.value = new MediaRecorder(localStream.value, options)
+
+    const chunks: Blob[] = []
+    mediaRecorder.value.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        chunks.push(event.data)
+      }
     }
 
-    const currentLeft = parseFloat(danmakuElement.style.left || '100%')
-    danmakuElement.style.left = `${currentLeft - 0.5}%`
+    mediaRecorder.value.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `recording-${Date.now()}.webm`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
 
-    requestAnimationFrame(animate)
+    mediaRecorder.value.start()
+    isRecording.value = true
+    addLog('Recording started', 'success')
+  } catch (error) {
+    addLog(`Recording failed: ${error}`, 'error')
   }
+}
 
-  requestAnimationFrame(animate)
+const stopRecording = () => {
+  if (mediaRecorder.value && isRecording.value) {
+    mediaRecorder.value.stop()
+    isRecording.value = false
+    addLog('Recording stopped', 'info')
+  }
 }
 
 // Expose functions to template
 defineExpose({
-  connectToDevice,
   handleFileSelect,
   sendFile,
   createRoom,
@@ -1557,7 +1754,12 @@ defineExpose({
   toggleScreenShare,
   setRemoteVideoRef,
   getParticipantName,
-  sendDanmaku,
+  sendMessage,
+  triggerFileUpload,
+  muteParticipant,
+  kickParticipant,
+  startRecording,
+  stopRecording,
 })
 
 // Initialize

@@ -195,9 +195,24 @@ wss.on('connection', (ws) => {
         // Room-related messages
         case 'create-room':
           const roomId = generateRoomId()
+          const userName = data.userName || client.name
+
+          // Update client name if provided
+          if (data.userName) {
+            client.name = data.userName
+          }
+
           const room = {
             id: roomId,
-            participants: [{ id: clientId, name: client.name }],
+            host: clientId,
+            participants: [
+              {
+                id: clientId,
+                name: userName,
+                role: 'host',
+              },
+            ],
+            createdAt: Date.now(),
           }
           rooms.set(roomId, room)
 
@@ -211,6 +226,8 @@ wss.on('connection', (ws) => {
               roomId: roomId,
             }),
           )
+
+          console.log(`Room ${roomId} created by ${userName} (${clientId})`)
           break
 
         case 'join-room':
