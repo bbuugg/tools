@@ -430,13 +430,11 @@ const screenStream = ref<MediaStream | null>(null)
 // Danmaku functionality
 const danmakuInput = ref('')
 const danmakuContainer = ref<HTMLDivElement | null>(null)
-const danmakuId = 0
 
 // WebRTC related
-let peerConnection: RTCPeerConnection | null = null
-let dataChannel: RTCDataChannel | null = null
+const peerConnections = new Map<string, RTCPeerConnection>() // Map of participant ID to RTCPeerConnection
+const dataChannels = new Map<string, RTCDataChannel>() // Map of participant ID to RTCDataChannel
 let signalServer: WebSocket | null = null
-let targetDeviceId = ''
 let connectionTimeout: number | null = null
 
 // Connection request handling
@@ -507,7 +505,7 @@ const connectToSignalingServer = () => {
         signalServerConnected.value = false
         addLog(
           t('tools.webRtcFileTransfer.logs.signalServerError', {
-            error: error.type || error.toString(),
+            error: (error as any).type || error.toString(),
           }),
           'error',
         )
@@ -519,7 +517,7 @@ const connectToSignalingServer = () => {
       signalServerConnected.value = false
       addLog(
         t('tools.webRtcFileTransfer.logs.signalServerConnectionFailed', {
-          error: error.toString(),
+          error: (error as Error).toString(),
         }),
         'error',
       )
@@ -576,11 +574,11 @@ const handleMessageFromServer = (data: string) => {
         break
 
       case 'answer':
-        handleAnswer(message.sdp)
+        handleAnswer(message.source, message.sdp)
         break
 
       case 'ice-candidate':
-        handleIceCandidate(message.candidate)
+        handleIceCandidate(message.source, message.candidate)
         break
 
       case 'connection-request':
@@ -603,6 +601,8 @@ const handleMessageFromServer = (data: string) => {
         inRoom.value = true
         participants.value = [{ id: localDeviceId.value, name: 'You' }]
         addLog(t('tools.webRtcFileTransfer.room.created', { roomId: message.roomId }), 'success')
+        // Initialize connections with all participants
+        initRoomConnections()
         break
 
       case 'room-joined':
@@ -610,6 +610,8 @@ const handleMessageFromServer = (data: string) => {
         inRoom.value = true
         participants.value = message.participants
         addLog(t('tools.webRtcFileTransfer.room.joined', { roomId: message.roomId }), 'success')
+        // Initialize connections with all participants
+        initRoomConnections()
         break
 
       case 'room-error':
@@ -622,6 +624,10 @@ const handleMessageFromServer = (data: string) => {
           t('tools.webRtcFileTransfer.room.participantJoined', { id: message.participantId }),
           'info',
         )
+        // Initialize connection with new participant
+        if (inRoom.value && message.participantId !== localDeviceId.value) {
+          initConnectionWithParticipant(message.participantId)
+        }
         break
 
       case 'participant-left':
@@ -630,6 +636,8 @@ const handleMessageFromServer = (data: string) => {
           t('tools.webRtcFileTransfer.room.participantLeft', { id: message.participantId }),
           'info',
         )
+        // Clean up connection with participant
+        cleanupConnectionWithParticipant(message.participantId)
         break
 
       case 'room-message':
@@ -640,38 +648,276 @@ const handleMessageFromServer = (data: string) => {
     }
   } catch (error) {
     addLog(
-      t('tools.webRtcFileTransfer.logs.messageParseError', { error: error.toString() }),
+      t('tools.webRtcFileTransfer.logs.messageParseError', { error: (error as Error).toString() }),
       'error',
     )
   }
 }
 
+// Initialize connections with all participants in the room
+const initRoomConnections = async () => {
+  // Initialize connections with all participants except ourselves
+  for (const participant of participants.value) {
+    if (participant.id !== localDeviceId.value) {
+      await initConnectionWithParticipant(participant.id)
+    }
+  }
+}
+
+// Initialize connection with a specific participant
+const initConnectionWithParticipant = async (participantId: string) => {
+  try {
+    // Don't create a connection to ourselves
+    if (participantId === localDeviceId.value) {
+      return
+    }
+
+    // Create RTCPeerConnection if it doesn't exist
+    let peerConnection = peerConnections.get(participantId)
+    if (!peerConnection) {
+      peerConnection = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: ['turn:turn.codeemo.cn'],
+            username: 'codeemo',
+            credential: 'codeemo',
+          },
+        ],
+      })
+
+      // Store the peer connection
+      peerConnections.set(participantId, peerConnection)
+
+      // Add local stream to peer connection if available
+      if (localStream.value) {
+        localStream.value.getTracks().forEach((track) => {
+          try {
+            peerConnection!.addTrack(track, localStream.value!)
+          } catch (_e) {
+            // Track might already be added
+          }
+        })
+      }
+
+      // Add screen stream to peer connection if available and screen sharing is enabled
+      if (screenStream.value && screenSharingEnabled.value) {
+        screenStream.value.getTracks().forEach((track) => {
+          try {
+            peerConnection!.addTrack(track, screenStream.value!)
+          } catch (_e) {
+            // Track might already be added
+          }
+        })
+      }
+
+      // Create data channel for file transfer
+      const dataChannel = peerConnection.createDataChannel('fileTransfer', {
+        ordered: true,
+        maxRetransmits: 5,
+      })
+
+      // Store the data channel
+      dataChannels.set(participantId, dataChannel)
+      setupDataChannelHandlers(participantId, dataChannel)
+
+      // Setup peer connection event handlers
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && signalServer) {
+          // Send ICE candidate to signaling server
+          signalServer.send(
+            JSON.stringify({
+              type: 'room-ice-candidate',
+              roomId: currentRoomId.value,
+              candidate: event.candidate,
+            }),
+          )
+          addLog(t('tools.webRtcFileTransfer.logs.iceCandidateSent'), 'info')
+        }
+      }
+
+      peerConnection.onconnectionstatechange = () => {
+        addLog(
+          t('tools.webRtcFileTransfer.logs.connectionStateChange', {
+            state: peerConnection!.connectionState,
+          }),
+          'info',
+        )
+      }
+
+      // Handle remote stream
+      peerConnection.ontrack = (event) => {
+        const stream = event.streams[0]
+        const streamId = stream.id
+
+        // Check if we already have this stream
+        const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
+        if (existingStreamIndex !== -1) {
+          // Update existing stream
+          remoteStreams.value[existingStreamIndex].stream = stream
+        } else {
+          // Add new stream
+          remoteStreams.value.push({ id: streamId, stream })
+        }
+
+        // Attach stream to video element after next tick
+        nextTick(() => {
+          const videoElement = remoteVideoRefs.value[streamId]
+          if (videoElement) {
+            videoElement.srcObject = stream
+          }
+        })
+
+        addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
+      }
+
+      // Create and send offer
+      const offer = await peerConnection.createOffer()
+      await peerConnection.setLocalDescription(offer)
+
+      signalServer?.send(
+        JSON.stringify({
+          type: 'room-offer',
+          roomId: currentRoomId.value,
+          sdp: offer,
+        }),
+      )
+
+      addLog(t('tools.webRtcFileTransfer.logs.webRTCInitialized'), 'success')
+    }
+  } catch (error) {
+    addLog(
+      t('tools.webRtcFileTransfer.logs.webRTCInitFailed', { error: (error as Error).toString() }),
+      'error',
+    )
+  }
+}
+
+// Cleanup connection with a specific participant
+const cleanupConnectionWithParticipant = (participantId: string) => {
+  // Close peer connection
+  const peerConnection = peerConnections.get(participantId)
+  if (peerConnection) {
+    peerConnection.close()
+    peerConnections.delete(participantId)
+  }
+
+  // Close data channel
+  const dataChannel = dataChannels.get(participantId)
+  if (dataChannel) {
+    dataChannel.close()
+    dataChannels.delete(participantId)
+  }
+}
+
 // Handle offer from another device
 const handleOffer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => {
-  // Check if we have a pending connection request from this device
-  const requestIndex = connectionRequests.value.findIndex((req) => req.id === sourceId)
-  if (requestIndex === -1) {
-    addLog(t('tools.webRtcFileTransfer.logs.unexpectedOffer', { id: sourceId }), 'warning')
-    return
-  }
-
-  // Remove the request from the list
-  connectionRequests.value.splice(requestIndex, 1)
-
-  if (!peerConnection) {
-    await initWebRTC(false) // Initialize as answerer
-  }
+  // For room-based connections, we don't need to check connection requests
+  // as participants are already in the same room
 
   try {
-    await peerConnection?.setRemoteDescription(new RTCSessionDescription(sdp))
-    const answer = await peerConnection?.createAnswer()
-    await peerConnection?.setLocalDescription(answer)
+    // Create RTCPeerConnection if it doesn't exist
+    let peerConnection = peerConnections.get(sourceId)
+    if (!peerConnection) {
+      peerConnection = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: ['turn:turn.codeemo.cn'],
+            username: 'codeemo',
+            credential: 'codeemo',
+          },
+        ],
+      })
+      peerConnections.set(sourceId, peerConnection)
+
+      // Add local stream to peer connection if available
+      if (localStream.value) {
+        localStream.value.getTracks().forEach((track) => {
+          try {
+            peerConnection!.addTrack(track, localStream.value!)
+          } catch (_e) {
+            // Track might already be added
+          }
+        })
+      }
+
+      // Add screen stream to peer connection if available and screen sharing is enabled
+      if (screenStream.value && screenSharingEnabled.value) {
+        screenStream.value.getTracks().forEach((track) => {
+          try {
+            peerConnection!.addTrack(track, screenStream.value!)
+          } catch (_e) {
+            // Track might already be added
+          }
+        })
+      }
+
+      // Setup peer connection event handlers
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && signalServer) {
+          // Send ICE candidate to signaling server
+          signalServer.send(
+            JSON.stringify({
+              type: 'room-ice-candidate',
+              roomId: currentRoomId.value,
+              candidate: event.candidate,
+            }),
+          )
+          addLog(t('tools.webRtcFileTransfer.logs.iceCandidateSent'), 'info')
+        }
+      }
+
+      peerConnection.onconnectionstatechange = () => {
+        addLog(
+          t('tools.webRtcFileTransfer.logs.connectionStateChange', {
+            state: peerConnection!.connectionState,
+          }),
+          'info',
+        )
+      }
+
+      // Handle remote stream
+      peerConnection.ontrack = (event) => {
+        const stream = event.streams[0]
+        const streamId = stream.id
+
+        // Check if we already have this stream
+        const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
+        if (existingStreamIndex !== -1) {
+          // Update existing stream
+          remoteStreams.value[existingStreamIndex].stream = stream
+        } else {
+          // Add new stream
+          remoteStreams.value.push({ id: streamId, stream })
+        }
+
+        // Attach stream to video element after next tick
+        nextTick(() => {
+          const videoElement = remoteVideoRefs.value[streamId]
+          if (videoElement) {
+            videoElement.srcObject = stream
+          }
+        })
+
+        addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
+      }
+
+      peerConnection.ondatachannel = (event) => {
+        // Get the data channel from the event
+        const dataChannel = event.channel
+        dataChannels.set(sourceId, dataChannel)
+        setupDataChannelHandlers(sourceId, dataChannel)
+      }
+    }
+
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp))
+    const answer = await peerConnection.createAnswer()
+    await peerConnection.setLocalDescription(answer)
 
     // Send answer back through signaling server
     signalServer?.send(
       JSON.stringify({
-        type: 'answer',
-        target: sourceId,
+        type: 'room-answer',
+        roomId: currentRoomId.value,
         sdp: answer,
       }),
     )
@@ -679,222 +925,63 @@ const handleOffer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => 
     addLog(t('tools.webRtcFileTransfer.logs.answerSent'), 'info')
   } catch (error) {
     addLog(
-      t('tools.webRtcFileTransfer.logs.offerHandlingFailed', { error: error.toString() }),
+      t('tools.webRtcFileTransfer.logs.offerHandlingFailed', {
+        error: (error as Error).toString(),
+      }),
       'error',
     )
   }
 }
 
 // Handle answer from another device
-const handleAnswer = async (sdp: RTCSessionDescriptionInit) => {
+const handleAnswer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => {
   try {
-    await peerConnection?.setRemoteDescription(new RTCSessionDescription(sdp))
-    addLog(t('tools.webRtcFileTransfer.logs.connectionEstablished'), 'success')
-
-    // Clear connection timeout since we've established connection
-    if (connectionTimeout) {
-      clearTimeout(connectionTimeout)
-      connectionTimeout = null
+    const peerConnection = peerConnections.get(sourceId)
+    if (peerConnection) {
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp))
+      addLog(t('tools.webRtcFileTransfer.logs.connectionEstablished'), 'success')
     }
   } catch (error) {
     addLog(
-      t('tools.webRtcFileTransfer.logs.answerHandlingFailed', { error: error.toString() }),
+      t('tools.webRtcFileTransfer.logs.answerHandlingFailed', {
+        error: (error as Error).toString(),
+      }),
       'error',
     )
-    // Reset connection status on error
-    resetConnection()
   }
 }
 
 // Handle ICE candidate
-const handleIceCandidate = async (candidate: RTCIceCandidateInit) => {
+const handleIceCandidate = async (sourceId: string, candidate: RTCIceCandidateInit) => {
   try {
-    await peerConnection?.addIceCandidate(new RTCIceCandidate(candidate))
-    addLog(t('tools.webRtcFileTransfer.logs.iceCandidateAdded'), 'info')
-  } catch (error) {
-    addLog(
-      t('tools.webRtcFileTransfer.logs.iceCandidateFailed', { error: error.toString() }),
-      'error',
-    )
-  }
-}
-
-// Initialize WebRTC
-const initWebRTC = async (isOfferer: boolean = true) => {
-  try {
-    // Create RTCPeerConnection
-    peerConnection = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: [
-            'turn:turn.codeemo.cn',
-            // 'stun:stun.l.google.com:19302',
-            // 'stun:stun1.l.google.com:19302',
-            // 'stun:stun2.l.google.com:19302',
-            // 'stun:stun3.l.google.com:19302',
-            // 'stun:stun4.l.google.com:19302',
-          ],
-          username: 'codeemo',
-          credential: 'codeemo',
-        },
-      ],
-    })
-
-    // Add local stream to peer connection if available
-    if (localStream.value) {
-      localStream.value.getTracks().forEach((track) => {
-        peerConnection?.addTrack(track, localStream.value!)
-      })
-    }
-
-    // Add screen stream to peer connection if available
-    if (screenStream.value) {
-      screenStream.value.getTracks().forEach((track) => {
-        peerConnection?.addTrack(track, screenStream.value!)
-      })
-    }
-
-    // Create data channel for file transfer (only for offerer)
-    if (isOfferer) {
-      dataChannel = peerConnection.createDataChannel('fileTransfer', {
-        ordered: true,
-        maxRetransmits: 5,
-      })
-
-      setupDataChannelHandlers()
-    }
-
-    // Setup peer connection event handlers
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate && signalServer) {
-        // Send ICE candidate to signaling server
-        signalServer.send(
-          JSON.stringify({
-            type: 'ice-candidate',
-            target: targetDeviceId,
-            candidate: event.candidate,
-          }),
-        )
-        addLog(t('tools.webRtcFileTransfer.logs.iceCandidateSent'), 'info')
-      }
-    }
-
-    peerConnection.onconnectionstatechange = () => {
-      addLog(
-        t('tools.webRtcFileTransfer.logs.connectionStateChange', {
-          state: peerConnection?.connectionState,
-        }),
-        'info',
-      )
-
-      if (peerConnection?.connectionState === 'connected') {
-        connectionStatus.value = 'connected'
-        // Clear connection timeout since we've established connection
-        if (connectionTimeout) {
-          clearTimeout(connectionTimeout)
-          connectionTimeout = null
-        }
-      } else if (
-        peerConnection?.connectionState === 'disconnected' ||
-        peerConnection?.connectionState === 'failed'
-      ) {
-        connectionStatus.value = 'disconnected'
-        // Reset connection on failure
-        resetConnection()
-      }
-    }
-
-    peerConnection.ondatachannel = (event) => {
-      // For answerer, get the data channel from the event
-      dataChannel = event.channel
-      setupDataChannelHandlers()
-    }
-
-    // Handle remote stream
-    peerConnection.ontrack = (event) => {
-      const stream = event.streams[0]
-      const streamId = stream.id
-
-      // Check if we already have this stream
-      const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
-      if (existingStreamIndex !== -1) {
-        // Update existing stream
-        remoteStreams.value[existingStreamIndex].stream = stream
-      } else {
-        // Add new stream
-        remoteStreams.value.push({ id: streamId, stream })
-      }
-
-      // Attach stream to video element after next tick
-      nextTick(() => {
-        const videoElement = remoteVideoRefs.value[streamId]
-        if (videoElement) {
-          videoElement.srcObject = stream
-        }
-      })
-
-      addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
-    }
-
-    addLog(t('tools.webRtcFileTransfer.logs.webRTCInitialized'), 'success')
-
-    // If we're the offerer, create and send offer
-    if (isOfferer && peerConnection && signalServer) {
-      const offer = await peerConnection.createOffer()
-      await peerConnection.setLocalDescription(offer)
-
-      signalServer.send(
-        JSON.stringify({
-          type: 'offer',
-          target: targetDeviceId,
-          sdp: offer,
-        }),
-      )
-
-      // Set connection timeout
-      connectionTimeout = window.setTimeout(() => {
-        addLog(t('tools.webRtcFileTransfer.logs.connectionTimeout'), 'warning')
-        resetConnection()
-      }, 30000) // 30 seconds timeout
-
-      addLog(t('tools.webRtcFileTransfer.logs.offerSent'), 'info')
+    const peerConnection = peerConnections.get(sourceId)
+    if (peerConnection) {
+      await peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+      addLog(t('tools.webRtcFileTransfer.logs.iceCandidateAdded'), 'info')
     }
   } catch (error) {
     addLog(
-      t('tools.webRtcFileTransfer.logs.webRTCInitFailed', { error: error.toString() }),
+      t('tools.webRtcFileTransfer.logs.iceCandidateFailed', { error: (error as Error).toString() }),
       'error',
     )
-    // Reset connection on error
-    resetConnection()
   }
 }
 
 // Setup data channel event handlers
-const setupDataChannelHandlers = () => {
-  if (!dataChannel) return
-
+const setupDataChannelHandlers = (participantId: string, dataChannel: RTCDataChannel) => {
   dataChannel.onopen = () => {
-    connectionStatus.value = 'connected'
     addLog(t('tools.webRtcFileTransfer.logs.dataChannelOpened'), 'success')
-    // Clear connection timeout since we've established connection
-    if (connectionTimeout) {
-      clearTimeout(connectionTimeout)
-      connectionTimeout = null
-    }
   }
 
   dataChannel.onclose = () => {
-    connectionStatus.value = 'disconnected'
     addLog(t('tools.webRtcFileTransfer.logs.dataChannelClosed'), 'info')
   }
 
-  dataChannel.onerror = (error) => {
+  dataChannel.onerror = (error: Event) => {
     addLog(
       t('tools.webRtcFileTransfer.logs.dataChannelError', { error: error.toString() }),
       'error',
     )
-    // Reset connection on error
-    resetConnection()
   }
 
   dataChannel.onmessage = (event) => {
@@ -905,7 +992,6 @@ const setupDataChannelHandlers = () => {
 // Reset connection to initial state
 const resetConnection = () => {
   connectionStatus.value = 'disconnected'
-  targetDeviceId = ''
 
   // Clear connection timeout if exists
   if (connectionTimeout) {
@@ -913,30 +999,26 @@ const resetConnection = () => {
     connectionTimeout = null
   }
 
-  // Close peer connection
-  if (peerConnection) {
-    peerConnection.close()
-    peerConnection = null
-  }
+  // Close all peer connections
+  peerConnections.forEach((pc) => pc.close())
+  peerConnections.clear()
 
-  // Close data channel
-  if (dataChannel) {
-    dataChannel.close()
-    dataChannel = null
-  }
+  // Close all data channels
+  dataChannels.forEach((dc) => dc.close())
+  dataChannels.clear()
 
   addLog(t('tools.webRtcFileTransfer.logs.connectionReset'), 'info')
 }
 
 // Handle received message
-const handleReceivedMessage = (data: any) => {
+const handleReceivedMessage = (data: unknown) => {
   try {
     if (data instanceof ArrayBuffer) {
       // Handle file data chunks
       handleFileDataChunk(data)
     } else {
       // Handle JSON messages
-      const message = JSON.parse(data)
+      const message = JSON.parse(data as string)
       if (message.type === 'file-metadata') {
         // Handle file metadata
         handleFileMetadata(message)
@@ -945,7 +1027,7 @@ const handleReceivedMessage = (data: any) => {
         displayDanmaku(message.content, message.sender)
       }
     }
-  } catch (error) {
+  } catch (_error) {
     // If it's not JSON, it might be a file chunk
     if (data instanceof ArrayBuffer) {
       handleFileDataChunk(data)
@@ -1008,7 +1090,7 @@ const handleFileDataChunk = (chunk: ArrayBuffer) => {
 
     addLog(
       t('tools.webRtcFileTransfer.logs.fileReceived', {
-        name: currentFileMetadata?.name || 'unknown',
+        name: currentFileMetadata ? currentFileMetadata.name : 'unknown',
       }),
       'success',
     )
@@ -1036,47 +1118,9 @@ const startDiscovery = async () => {
 
 // Connect to a device
 const connectToDevice = async (deviceId: string) => {
-  targetDeviceId = deviceId
-  connectionStatus.value = 'connecting'
+  // This is for direct peer-to-peer connection, not room-based
+  // We'll keep this for backward compatibility
   addLog(t('tools.webRtcFileTransfer.logs.connectingToDevice', { deviceId }), 'info')
-
-  // Send connection request to the target device
-  signalServer?.send(
-    JSON.stringify({
-      type: 'connection-request',
-      target: deviceId,
-      source: localDeviceId.value,
-      name: 'Device ' + localDeviceId.value, // Simple name for now
-    }),
-  )
-
-  // Initialize WebRTC as offerer
-  await initWebRTC(true)
-}
-
-// Accept connection request
-const acceptConnectionRequest = async (deviceId: string) => {
-  // Remove the request from the list
-  connectionRequests.value = connectionRequests.value.filter((req) => req.id !== deviceId)
-
-  targetDeviceId = deviceId
-  connectionStatus.value = 'connecting'
-  addLog(t('tools.webRtcFileTransfer.logs.acceptingConnection', { deviceId }), 'info')
-
-  // Initialize WebRTC as answerer
-  await initWebRTC(false)
-}
-
-// Reject connection request
-const rejectConnectionRequest = (deviceId: string) => {
-  // Remove the request from the list
-  connectionRequests.value = connectionRequests.value.filter((req) => req.id !== deviceId)
-  addLog(
-    t('tools.webRtcFileTransfer.logs.connectionRequestRejected', {
-      deviceId,
-    }),
-    'info',
-  )
 }
 
 // Handle file selection
@@ -1094,9 +1138,9 @@ const handleFileSelect = (event: Event) => {
   }
 }
 
-// Send file
+// Send file to all participants
 const sendFile = async () => {
-  if (!selectedFile.value || !dataChannel || dataChannel.readyState !== 'open') {
+  if (!selectedFile.value) {
     addLog(t('tools.webRtcFileTransfer.logs.channelNotReady'), 'error')
     return
   }
@@ -1106,67 +1150,78 @@ const sendFile = async () => {
   addLog(t('tools.webRtcFileTransfer.logs.sendingFile', { name: selectedFile.value.name }), 'info')
 
   try {
-    // Send file metadata first
-    const fileMetadata = {
-      type: 'file-metadata',
-      name: selectedFile.value.name,
-      size: selectedFile.value.size,
-      mimeType: selectedFile.value.type,
-    }
-
-    dataChannel.send(JSON.stringify(fileMetadata))
-
-    // Read file as ArrayBuffer and send in chunks
-    const reader = new FileReader()
-    const chunkSize = 16384 // 16KB chunks
-    let offset = 0
-
-    const sendChunk = () => {
-      if (offset >= selectedFile.value!.size) {
-        // File transfer complete
-        isSending.value = false
-        addLog(
-          t('tools.webRtcFileTransfer.logs.fileSent', { name: selectedFile.value!.name }),
-          'success',
-        )
-
-        // Reset file input
-        if (fileInput.value) {
-          fileInput.value.value = ''
+    // Send file to all participants with open data channels
+    for (const [_participantId, dataChannel] of dataChannels.entries()) {
+      if (dataChannel.readyState === 'open') {
+        // Send file metadata first
+        const fileMetadata = {
+          type: 'file-metadata',
+          name: selectedFile.value.name,
+          size: selectedFile.value.size,
+          mimeType: selectedFile.value.type,
         }
-        selectedFile.value = null
-        return
+
+        dataChannel.send(JSON.stringify(fileMetadata))
+
+        // Read file as ArrayBuffer and send in chunks
+        const reader = new FileReader()
+        const chunkSize = 16384 // 16KB chunks
+        let offset = 0
+
+        const sendChunk = () => {
+          if (offset >= selectedFile.value!.size) {
+            // File transfer complete for this participant
+            addLog(
+              t('tools.webRtcFileTransfer.logs.fileSent', { name: selectedFile.value!.name }),
+              'success',
+            )
+            return
+          }
+
+          const slice = selectedFile.value!.slice(offset, offset + chunkSize)
+          reader.readAsArrayBuffer(slice)
+        }
+
+        reader.onload = (e) => {
+          // Send chunk data
+          if (dataChannel.readyState === 'open') {
+            dataChannel.send(e.target!.result as ArrayBuffer)
+          } else {
+            throw new Error('Data channel is not open')
+          }
+
+          // Update progress
+          offset += chunkSize
+          transferProgress.value = Math.min(
+            100,
+            Math.floor((offset / selectedFile.value!.size) * 100),
+          )
+
+          // Send next chunk
+          setTimeout(sendChunk, 0)
+        }
+
+        reader.onerror = (error) => {
+          throw error
+        }
+
+        // Start sending
+        sendChunk()
       }
-
-      const slice = selectedFile.value!.slice(offset, offset + chunkSize)
-      reader.readAsArrayBuffer(slice)
     }
 
-    reader.onload = (e) => {
-      // Send chunk data
-      if (dataChannel && dataChannel.readyState === 'open') {
-        dataChannel.send(e.target!.result as ArrayBuffer)
-      } else {
-        throw new Error('Data channel is not open')
-      }
-
-      // Update progress
-      offset += chunkSize
-      transferProgress.value = Math.min(100, Math.floor((offset / selectedFile.value!.size) * 100))
-
-      // Send next chunk
-      setTimeout(sendChunk, 0)
+    // Reset file input
+    if (fileInput.value) {
+      fileInput.value.value = ''
     }
-
-    reader.onerror = (error) => {
-      throw error
-    }
-
-    // Start sending
-    sendChunk()
+    selectedFile.value = null
+    isSending.value = false
   } catch (error) {
     isSending.value = false
-    addLog(t('tools.webRtcFileTransfer.logs.sendFileFailed', { error: error.toString() }), 'error')
+    addLog(
+      t('tools.webRtcFileTransfer.logs.sendFileFailed', { error: (error as Error).toString() }),
+      'error',
+    )
   }
 }
 
@@ -1226,6 +1281,9 @@ const leaveRoom = () => {
   remoteStreams.value = []
   remoteVideoRefs.value = {}
 
+  // Reset connections
+  resetConnection()
+
   addLog(t('tools.webRtcFileTransfer.room.left'), 'info')
 }
 
@@ -1244,9 +1302,44 @@ const startLocalStream = async () => {
     cameraEnabled.value = true
     microphoneEnabled.value = true
 
+    // If we're in a room, add the new tracks to all peer connections
+    if (inRoom.value) {
+      // Create new peer connections for any participants we don't already have connections with
+      for (const participant of participants.value) {
+        if (participant.id !== localDeviceId.value && !peerConnections.has(participant.id)) {
+          await initConnectionWithParticipant(participant.id)
+        }
+      }
+
+      // Add tracks to existing peer connections
+      for (const [participantId, peerConnection] of peerConnections.entries()) {
+        if (participantId !== localDeviceId.value) {
+          // Remove existing tracks first to avoid duplicates
+          const senders = peerConnection.getSenders()
+          senders.forEach((sender) => {
+            if (sender.track) {
+              peerConnection.removeTrack(sender)
+            }
+          })
+
+          // Add all tracks from the local stream
+          localStream.value.getTracks().forEach((track) => {
+            try {
+              peerConnection.addTrack(track, localStream.value!)
+            } catch (_e) {
+              // Track might already be added
+            }
+          })
+        }
+      }
+    }
+
     addLog(t('tools.webRtcFileTransfer.av.localStreamStarted'), 'success')
   } catch (error) {
-    addLog(t('tools.webRtcFileTransfer.av.localStreamError', { error: error.toString() }), 'error')
+    addLog(
+      t('tools.webRtcFileTransfer.av.localStreamError', { error: (error as Error).toString() }),
+      'error',
+    )
   }
 }
 
@@ -1301,28 +1394,47 @@ const toggleScreenShare = async () => {
 
 const startScreenShare = async () => {
   try {
-    // @ts-ignore - getDisplayMedia might not be available in all browsers
+    // getDisplayMedia might not be available in all browsers
     screenStream.value = await navigator.mediaDevices.getDisplayMedia({
       video: true,
       audio: true,
     })
 
-    // Replace the video track in the peer connection
-    if (peerConnection && screenStream.value) {
-      const videoTrack = screenStream.value.getVideoTracks()[0]
-      const sender = peerConnection.getSenders().find((s) => s.track?.kind === 'video')
-      if (sender) {
-        sender.replaceTrack(videoTrack)
-      } else {
-        screenStream.value.getTracks().forEach((track) => {
-          peerConnection.addTrack(track, screenStream.value!)
-        })
-      }
-    }
-
     // Display the screen stream in the local video element
     if (localVideo.value && screenStream.value) {
       localVideo.value.srcObject = screenStream.value
+    }
+
+    // If we're in a room, add the screen tracks to all peer connections
+    if (inRoom.value) {
+      // Create new peer connections for any participants we don't already have connections with
+      for (const participant of participants.value) {
+        if (participant.id !== localDeviceId.value && !peerConnections.has(participant.id)) {
+          await initConnectionWithParticipant(participant.id)
+        }
+      }
+
+      // Add tracks to existing peer connections
+      for (const [participantId, peerConnection] of peerConnections.entries()) {
+        if (participantId !== localDeviceId.value) {
+          // Remove existing tracks first to avoid duplicates
+          const senders = peerConnection.getSenders()
+          senders.forEach((sender) => {
+            if (sender.track) {
+              peerConnection.removeTrack(sender)
+            }
+          })
+
+          // Add all tracks from the screen stream
+          screenStream.value.getTracks().forEach((track) => {
+            try {
+              peerConnection.addTrack(track, screenStream.value!)
+            } catch (_e) {
+              // Track might already be added
+            }
+          })
+        }
+      }
     }
 
     screenSharingEnabled.value = true
@@ -1336,7 +1448,10 @@ const startScreenShare = async () => {
 
     addLog(t('tools.webRtcFileTransfer.av.screenShareStarted'), 'success')
   } catch (error) {
-    addLog(t('tools.webRtcFileTransfer.av.screenShareError', { error: error.toString() }), 'error')
+    addLog(
+      t('tools.webRtcFileTransfer.av.screenShareError', { error: (error as Error).toString() }),
+      'error',
+    )
   }
 }
 
@@ -1349,6 +1464,11 @@ const stopScreenShare = () => {
   // Restore camera stream if available
   if (localStream.value && localVideo.value) {
     localVideo.value.srcObject = localStream.value
+
+    // If we're in a room, we might need to renegotiate
+    if (inRoom.value) {
+      addLog(t('tools.webRtcFileTransfer.av.screenShareStoppedNote'), 'info')
+    }
   }
 
   screenSharingEnabled.value = false
@@ -1393,7 +1513,7 @@ const sendDanmaku = () => {
   danmakuInput.value = ''
 }
 
-const displayDanmaku = (content: string, senderId: string) => {
+const displayDanmaku = (content: string, _senderId: string) => {
   if (!danmakuContainer.value) return
 
   const danmakuElement = document.createElement('div')
@@ -1424,6 +1544,22 @@ const displayDanmaku = (content: string, senderId: string) => {
   requestAnimationFrame(animate)
 }
 
+// Expose functions to template
+defineExpose({
+  connectToDevice,
+  handleFileSelect,
+  sendFile,
+  createRoom,
+  joinRoom,
+  leaveRoom,
+  toggleCamera,
+  toggleMicrophone,
+  toggleScreenShare,
+  setRemoteVideoRef,
+  getParticipantName,
+  sendDanmaku,
+})
+
 // Initialize
 onMounted(() => {
   connectToSignalingServer()
@@ -1432,21 +1568,26 @@ onMounted(() => {
 
 // Cleanup
 onUnmounted(() => {
-  if (peerConnection) {
-    peerConnection.close()
-  }
+  // Close all peer connections
+  peerConnections.forEach((pc) => pc.close())
+  peerConnections.clear()
+
+  // Close all data channels
+  dataChannels.forEach((dc) => dc.close())
+  dataChannels.clear()
+
   if (signalServer) {
     signalServer.close()
   }
-  if (dataChannel) {
-    dataChannel.close()
-  }
+
   if (connectionTimeout) {
     clearTimeout(connectionTimeout)
   }
+
   if (localStream.value) {
     localStream.value.getTracks().forEach((track) => track.stop())
   }
+
   if (screenStream.value) {
     screenStream.value.getTracks().forEach((track) => track.stop())
   }

@@ -1812,6 +1812,7 @@ export default {
         microphoneDisabled: 'Microphone disabled',
         screenShareStarted: 'Screen sharing started',
         screenShareStopped: 'Screen sharing stopped',
+        screenShareStoppedNote: 'Note: You may need to renegotiate connection for camera stream',
         screenShareError: 'Failed to start screen sharing: {error}',
       },
       danmaku: {

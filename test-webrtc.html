@@ -1,0 +1,680 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebRTC Room Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .video-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0;
+      }
+      video {
+        width: 300px;
+        height: 200px;
+        background: #000;
+        border: 1px solid #ccc;
+      }
+      .controls {
+        margin: 20px 0;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        background: #007cba;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #005a87;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      input {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .log {
+        background: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebRTC Room Test</h1>
+
+    <div class="controls">
+      <input type="text" id="roomId" placeholder="Enter Room ID" />
+      <button id="createRoom">Create Room</button>
+      <button id="joinRoom">Join Room</button>
+      <button id="leaveRoom" disabled>Leave Room</button>
+    </div>
+
+    <div class="controls">
+      <button id="startCamera" disabled>Start Camera</button>
+      <button id="stopCamera" disabled>Stop Camera</button>
+      <button id="shareScreen" disabled>Share Screen</button>
+      <button id="stopScreenShare" disabled>Stop Screen Share</button>
+    </div>
+
+    <div class="video-container">
+      <div>
+        <h3>Local Stream</h3>
+        <video id="localVideo" autoplay muted></video>
+      </div>
+      <div>
+        <h3>Remote Streams</h3>
+        <div id="remoteVideos"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="messageInput" placeholder="Enter message" />
+      <button id="sendMessage" disabled>Send Message</button>
+    </div>
+
+    <div>
+      <h3>Logs</h3>
+      <div id="log" class="log"></div>
+    </div>
+
+    <script>
+      // DOM elements
+      const roomIdInput = document.getElementById('roomId')
+      const createRoomBtn = document.getElementById('createRoom')
+      const joinRoomBtn = document.getElementById('joinRoom')
+      const leaveRoomBtn = document.getElementById('leaveRoom')
+      const startCameraBtn = document.getElementById('startCamera')
+      const stopCameraBtn = document.getElementById('stopCamera')
+      const shareScreenBtn = document.getElementById('shareScreen')
+      const stopScreenShareBtn = document.getElementById('stopScreenShare')
+      const messageInput = document.getElementById('messageInput')
+      const sendMessageBtn = document.getElementById('sendMessage')
+      const localVideo = document.getElementById('localVideo')
+      const remoteVideos = document.getElementById('remoteVideos')
+      const logDiv = document.getElementById('log')
+
+      // WebRTC variables
+      let localStream = null
+      let screenStream = null
+      let peerConnections = new Map()
+      let dataChannels = new Map()
+      let signalServer = null
+      let localDeviceId = ''
+      let currentRoomId = ''
+      let participants = []
+
+      // Logging function
+      function addLog(message) {
+        const timestamp = new Date().toLocaleTimeString()
+        logDiv.innerHTML += `[${timestamp}] ${message}\n`
+        logDiv.scrollTop = logDiv.scrollHeight
+      }
+
+      // Connect to signaling server
+      function connectToSignalingServer() {
+        signalServer = new WebSocket('ws://localhost:3000')
+
+        signalServer.onopen = () => {
+          addLog('Connected to signaling server')
+        }
+
+        signalServer.onmessage = (event) => {
+          handleMessageFromServer(event.data)
+        }
+
+        signalServer.onclose = () => {
+          addLog('Disconnected from signaling server')
+        }
+
+        signalServer.onerror = (error) => {
+          addLog('Signaling server error: ' + error)
+        }
+      }
+
+      // Handle messages from signaling server
+      function handleMessageFromServer(data) {
+        try {
+          const message = JSON.parse(data)
+
+          switch (message.type) {
+            case 'id':
+              localDeviceId = message.id
+              addLog('Received device ID: ' + localDeviceId)
+              break
+
+            case 'room-created':
+              currentRoomId = message.roomId
+              participants = [{ id: localDeviceId, name: 'You' }]
+              updateUI(true)
+              addLog('Room created with ID: ' + currentRoomId)
+              break
+
+            case 'room-joined':
+              currentRoomId = message.roomId
+              participants = message.participants
+              updateUI(true)
+              addLog('Joined room: ' + currentRoomId)
+              // Initialize connections with all participants
+              initRoomConnections()
+              break
+
+            case 'participant-joined':
+              participants.push({ id: message.participantId, name: message.name })
+              addLog('Participant joined: ' + message.participantId)
+              // Initialize connection with new participant
+              if (message.participantId !== localDeviceId) {
+                initConnectionWithParticipant(message.participantId)
+              }
+              break
+
+            case 'participant-left':
+              participants = participants.filter((p) => p.id !== message.participantId)
+              addLog('Participant left: ' + message.participantId)
+              // Clean up connection with participant
+              cleanupConnectionWithParticipant(message.participantId)
+              break
+
+            case 'offer':
+              handleOffer(message.source, message.sdp)
+              break
+
+            case 'answer':
+              handleAnswer(message.source, message.sdp)
+              break
+
+            case 'ice-candidate':
+              handleIceCandidate(message.source, message.candidate)
+              break
+
+            case 'room-message':
+              addLog('Message from ' + message.sender + ': ' + message.content)
+              break
+          }
+        } catch (error) {
+          addLog('Error parsing message: ' + error)
+        }
+      }
+
+      // Update UI based on room state
+      function updateUI(inRoom) {
+        roomIdInput.disabled = inRoom
+        createRoomBtn.disabled = inRoom
+        joinRoomBtn.disabled = inRoom
+        leaveRoomBtn.disabled = !inRoom
+        startCameraBtn.disabled = !inRoom
+        shareScreenBtn.disabled = !inRoom
+        sendMessageBtn.disabled = !inRoom
+      }
+
+      // Create room
+      function createRoom() {
+        if (!signalServer) return
+
+        signalServer.send(
+          JSON.stringify({
+            type: 'create-room',
+          }),
+        )
+      }
+
+      // Join room
+      function joinRoom() {
+        if (!signalServer || !roomIdInput.value) return
+
+        signalServer.send(
+          JSON.stringify({
+            type: 'join-room',
+            roomId: roomIdInput.value,
+          }),
+        )
+      }
+
+      // Leave room
+      function leaveRoom() {
+        if (!signalServer || !currentRoomId) return
+
+        signalServer.send(
+          JSON.stringify({
+            type: 'leave-room',
+            roomId: currentRoomId,
+          }),
+        )
+
+        // Reset room state
+        currentRoomId = ''
+        participants = []
+        updateUI(false)
+
+        // Stop local stream
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop())
+          localStream = null
+          localVideo.srcObject = null
+        }
+
+        // Stop screen stream
+        if (screenStream) {
+          screenStream.getTracks().forEach((track) => track.stop())
+          screenStream = null
+        }
+
+        // Clean up connections
+        peerConnections.forEach((pc) => pc.close())
+        peerConnections.clear()
+        dataChannels.clear()
+
+        // Clear remote videos
+        remoteVideos.innerHTML = ''
+
+        addLog('Left room')
+      }
+
+      // Initialize connections with all participants
+      async function initRoomConnections() {
+        // Initialize connections with all participants except ourselves
+        for (const participant of participants) {
+          if (participant.id !== localDeviceId) {
+            await initConnectionWithParticipant(participant.id)
+          }
+        }
+      }
+
+      // Initialize connection with a specific participant
+      async function initConnectionWithParticipant(participantId) {
+        try {
+          // Don't create a connection to ourselves
+          if (participantId === localDeviceId) {
+            return
+          }
+
+          // Create RTCPeerConnection if it doesn't exist
+          let peerConnection = peerConnections.get(participantId)
+          if (!peerConnection) {
+            peerConnection = new RTCPeerConnection({
+              iceServers: [
+                {
+                  urls: ['turn:turn.codeemo.cn'],
+                  username: 'codeemo',
+                  credential: 'codeemo',
+                },
+              ],
+            })
+
+            // Store the peer connection
+            peerConnections.set(participantId, peerConnection)
+
+            // Add local stream to peer connection if available
+            if (localStream) {
+              localStream.getTracks().forEach((track) => {
+                try {
+                  peerConnection.addTrack(track, localStream)
+                } catch (e) {
+                  // Track might already be added
+                }
+              })
+            }
+
+            // Add screen stream to peer connection if available
+            if (screenStream) {
+              screenStream.getTracks().forEach((track) => {
+                try {
+                  peerConnection.addTrack(track, screenStream)
+                } catch (e) {
+                  // Track might already be added
+                }
+              })
+            }
+
+            // Create data channel for messaging
+            const dataChannel = peerConnection.createDataChannel('messaging')
+            dataChannels.set(participantId, dataChannel)
+            dataChannel.onmessage = (event) => {
+              addLog('Message from ' + participantId + ': ' + event.data)
+            }
+
+            // Setup peer connection event handlers
+            peerConnection.onicecandidate = (event) => {
+              if (event.candidate && signalServer) {
+                signalServer.send(
+                  JSON.stringify({
+                    type: 'room-ice-candidate',
+                    roomId: currentRoomId,
+                    candidate: event.candidate,
+                  }),
+                )
+              }
+            }
+
+            peerConnection.ontrack = (event) => {
+              const stream = event.streams[0]
+              addRemoteStream(stream, participantId)
+            }
+
+            // Create and send offer
+            const offer = await peerConnection.createOffer()
+            await peerConnection.setLocalDescription(offer)
+
+            signalServer.send(
+              JSON.stringify({
+                type: 'room-offer',
+                roomId: currentRoomId,
+                sdp: offer,
+              }),
+            )
+
+            addLog('Initialized connection with ' + participantId)
+          }
+        } catch (error) {
+          addLog('Error initializing connection with ' + participantId + ': ' + error)
+        }
+      }
+
+      // Cleanup connection with a specific participant
+      function cleanupConnectionWithParticipant(participantId) {
+        const peerConnection = peerConnections.get(participantId)
+        if (peerConnection) {
+          peerConnection.close()
+          peerConnections.delete(participantId)
+        }
+
+        const dataChannel = dataChannels.get(participantId)
+        if (dataChannel) {
+          dataChannel.close()
+          dataChannels.delete(participantId)
+        }
+
+        // Remove remote video element
+        const videoElement = document.getElementById('remote-' + participantId)
+        if (videoElement) {
+          videoElement.remove()
+        }
+      }
+
+      // Handle offer from another device
+      async function handleOffer(sourceId, sdp) {
+        try {
+          let peerConnection = peerConnections.get(sourceId)
+          if (!peerConnection) {
+            peerConnection = new RTCPeerConnection({
+              iceServers: [
+                {
+                  urls: ['turn:turn.codeemo.cn'],
+                  username: 'codeemo',
+                  credential: 'codeemo',
+                },
+              ],
+            })
+            peerConnections.set(sourceId, peerConnection)
+
+            // Add local stream to peer connection if available
+            if (localStream) {
+              localStream.getTracks().forEach((track) => {
+                try {
+                  peerConnection.addTrack(track, localStream)
+                } catch (e) {
+                  // Track might already be added
+                }
+              })
+            }
+
+            // Add screen stream to peer connection if available
+            if (screenStream) {
+              screenStream.getTracks().forEach((track) => {
+                try {
+                  peerConnection.addTrack(track, screenStream)
+                } catch (e) {
+                  // Track might already be added
+                }
+              })
+            }
+
+            peerConnection.onicecandidate = (event) => {
+              if (event.candidate && signalServer) {
+                signalServer.send(
+                  JSON.stringify({
+                    type: 'room-ice-candidate',
+                    roomId: currentRoomId,
+                    candidate: event.candidate,
+                  }),
+                )
+              }
+            }
+
+            peerConnection.ontrack = (event) => {
+              const stream = event.streams[0]
+              addRemoteStream(stream, sourceId)
+            }
+
+            peerConnection.ondatachannel = (event) => {
+              const dataChannel = event.channel
+              dataChannels.set(sourceId, dataChannel)
+              dataChannel.onmessage = (event) => {
+                addLog('Message from ' + sourceId + ': ' + event.data)
+              }
+            }
+          }
+
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp))
+          const answer = await peerConnection.createAnswer()
+          await peerConnection.setLocalDescription(answer)
+
+          signalServer.send(
+            JSON.stringify({
+              type: 'room-answer',
+              roomId: currentRoomId,
+              sdp: answer,
+            }),
+          )
+
+          addLog('Handled offer from ' + sourceId)
+        } catch (error) {
+          addLog('Error handling offer from ' + sourceId + ': ' + error)
+        }
+      }
+
+      // Handle answer from another device
+      async function handleAnswer(sourceId, sdp) {
+        try {
+          const peerConnection = peerConnections.get(sourceId)
+          if (peerConnection) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp))
+            addLog('Handled answer from ' + sourceId)
+          }
+        } catch (error) {
+          addLog('Error handling answer from ' + sourceId + ': ' + error)
+        }
+      }
+
+      // Handle ICE candidate
+      async function handleIceCandidate(sourceId, candidate) {
+        try {
+          const peerConnection = peerConnections.get(sourceId)
+          if (peerConnection) {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+            addLog('Added ICE candidate from ' + sourceId)
+          }
+        } catch (error) {
+          addLog('Error adding ICE candidate from ' + sourceId + ': ' + error)
+        }
+      }
+
+      // Add remote stream to UI
+      function addRemoteStream(stream, participantId) {
+        // Check if we already have a video element for this participant
+        let videoElement = document.getElementById('remote-' + participantId)
+        if (!videoElement) {
+          // Create new video element
+          videoElement = document.createElement('video')
+          videoElement.id = 'remote-' + participantId
+          videoElement.autoplay = true
+          remoteVideos.appendChild(videoElement)
+          addLog('Added video element for ' + participantId)
+        }
+
+        videoElement.srcObject = stream
+        addLog('Added remote stream from ' + participantId)
+      }
+
+      // Start local camera stream
+      async function startLocalStream() {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          })
+
+          localVideo.srcObject = localStream
+
+          // If we're in a room, add the new tracks to all peer connections
+          if (currentRoomId) {
+            // Create new peer connections for any participants we don't already have connections with
+            for (const participant of participants) {
+              if (participant.id !== localDeviceId && !peerConnections.has(participant.id)) {
+                await initConnectionWithParticipant(participant.id)
+              }
+            }
+
+            // Add tracks to existing peer connections
+            for (const [participantId, peerConnection] of peerConnections.entries()) {
+              if (participantId !== localDeviceId) {
+                localStream.getTracks().forEach((track) => {
+                  try {
+                    peerConnection.addTrack(track, localStream)
+                  } catch (e) {
+                    // Track might already be added
+                  }
+                })
+              }
+            }
+          }
+
+          stopCameraBtn.disabled = false
+          addLog('Started local camera stream')
+        } catch (error) {
+          addLog('Error starting local stream: ' + error)
+        }
+      }
+
+      // Stop local camera stream
+      function stopLocalStream() {
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop())
+          localStream = null
+          localVideo.srcObject = null
+          stopCameraBtn.disabled = true
+          addLog('Stopped local camera stream')
+        }
+      }
+
+      // Start screen sharing
+      async function startScreenShare() {
+        try {
+          screenStream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: true,
+          })
+
+          localVideo.srcObject = screenStream
+
+          // If we're in a room, add the screen tracks to all peer connections
+          if (currentRoomId) {
+            // Create new peer connections for any participants we don't already have connections with
+            for (const participant of participants) {
+              if (participant.id !== localDeviceId && !peerConnections.has(participant.id)) {
+                await initConnectionWithParticipant(participant.id)
+              }
+            }
+
+            // Add tracks to existing peer connections
+            for (const [participantId, peerConnection] of peerConnections.entries()) {
+              if (participantId !== localDeviceId) {
+                screenStream.getTracks().forEach((track) => {
+                  try {
+                    peerConnection.addTrack(track, screenStream)
+                  } catch (e) {
+                    // Track might already be added
+                  }
+                })
+              }
+            }
+          }
+
+          stopScreenShareBtn.disabled = false
+          addLog('Started screen sharing')
+
+          // Handle when screen sharing stops
+          screenStream.getVideoTracks()[0].onended = () => {
+            stopScreenShare()
+          }
+        } catch (error) {
+          addLog('Error starting screen sharing: ' + error)
+        }
+      }
+
+      // Stop screen sharing
+      function stopScreenShare() {
+        if (screenStream) {
+          screenStream.getTracks().forEach((track) => track.stop())
+          screenStream = null
+
+          // Restore camera stream if available
+          if (localStream) {
+            localVideo.srcObject = localStream
+          } else {
+            localVideo.srcObject = null
+          }
+
+          stopScreenShareBtn.disabled = true
+          addLog('Stopped screen sharing')
+        }
+      }
+
+      // Send message to all participants
+      function sendMessage() {
+        if (!messageInput.value) return
+
+        // Send message through all data channels
+        for (const [participantId, dataChannel] of dataChannels.entries()) {
+          if (dataChannel.readyState === 'open') {
+            dataChannel.send(messageInput.value)
+          }
+        }
+
+        addLog('Sent message: ' + messageInput.value)
+        messageInput.value = ''
+      }
+
+      // Event listeners
+      createRoomBtn.addEventListener('click', createRoom)
+      joinRoomBtn.addEventListener('click', joinRoom)
+      leaveRoomBtn.addEventListener('click', leaveRoom)
+      startCameraBtn.addEventListener('click', startLocalStream)
+      stopCameraBtn.addEventListener('click', stopLocalStream)
+      shareScreenBtn.addEventListener('click', startScreenShare)
+      stopScreenShareBtn.addEventListener('click', stopScreenShare)
+      sendMessageBtn.addEventListener('click', sendMessage)
+
+      // Initialize
+      connectToSignalingServer()
+      addLog('WebRTC test initialized')
+    </script>
+  </body>
+</html>

@@ -78,6 +78,64 @@ wss.on('connection', (ws) => {
           )
           break
 
+        // Room-based WebRTC signaling
+        case 'room-offer':
+          if (client.roomId && rooms.has(client.roomId)) {
+            const room = rooms.get(client.roomId)
+            // Broadcast offer to all other participants in the room
+            room.participants.forEach((participant) => {
+              if (participant.id !== clientId && clients.has(participant.id)) {
+                const participantClient = clients.get(participant.id)
+                participantClient.ws.send(
+                  JSON.stringify({
+                    type: 'offer',
+                    source: clientId,
+                    sdp: data.sdp,
+                  }),
+                )
+              }
+            })
+          }
+          break
+
+        case 'room-answer':
+          if (client.roomId && rooms.has(client.roomId)) {
+            const room = rooms.get(client.roomId)
+            // Broadcast answer to all other participants in the room
+            room.participants.forEach((participant) => {
+              if (participant.id !== clientId && clients.has(participant.id)) {
+                const participantClient = clients.get(participant.id)
+                participantClient.ws.send(
+                  JSON.stringify({
+                    type: 'answer',
+                    source: clientId,
+                    sdp: data.sdp,
+                  }),
+                )
+              }
+            })
+          }
+          break
+
+        case 'room-ice-candidate':
+          if (client.roomId && rooms.has(client.roomId)) {
+            const room = rooms.get(client.roomId)
+            // Broadcast ICE candidate to all other participants in the room
+            room.participants.forEach((participant) => {
+              if (participant.id !== clientId && clients.has(participant.id)) {
+                const participantClient = clients.get(participant.id)
+                participantClient.ws.send(
+                  JSON.stringify({
+                    type: 'ice-candidate',
+                    source: clientId,
+                    candidate: data.candidate,
+                  }),
+                )
+              }
+            })
+          }
+          break
+
         case 'connection-request':
           // Forward connection request to target device
           if (clients.has(data.target)) {
@@ -184,6 +242,17 @@ wss.on('connection', (ws) => {
                   name: client.name,
                 }),
               )
+
+              // If this is NOT the new participant, notify them about the existing participants
+              if (participant.id !== clientId) {
+                participantClient.ws.send(
+                  JSON.stringify({
+                    type: 'participant-joined',
+                    participantId: participant.id,
+                    name: participant.name,
+                  }),
+                )
+              }
             }
           })
 

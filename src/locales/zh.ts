@@ -1490,6 +1490,7 @@ export default {
         microphoneDisabled: '麦克风已禁用',
         screenShareStarted: '屏幕共享已启动',
         screenShareStopped: '屏幕共享已停止',
+        screenShareStoppedNote: '注意：您可能需要重新协商连接以恢复摄像头流',
         screenShareError: '启动屏幕共享失败: {error}',
       },
       danmaku: {
