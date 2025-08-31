@@ -6,7 +6,7 @@
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
       <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 max-w-md mx-4">
-        <h1 class="text-2xl font-bold mb-6 text-center">{{ $t('tools.webRtcChatRoom.title') }}</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center">{{ $t('tools.webRtcMeeting.title') }}</h1>
 
         <!-- Connection Status -->
         <div class="mb-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">

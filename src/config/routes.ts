@@ -39,6 +39,7 @@ const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 const HeartCollage = () => import('../tools/image/HeartCollage.vue')
+const WebRtcMeeting = () => import('../tools/WebRtcMeeting.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -318,6 +319,17 @@ export const routeConfig: RouteRecordRaw[] = [
           title: 'WebRTC File Transfer',
           icon: '📡',
           status: Status.Active,
+        },
+      },
+      {
+        path: 'web-rtc-meeting',
+        name: 'webRtcMeeting',
+        component: WebRtcMeeting,
+        meta: {
+          title: 'WebRTC Meeting',
+          icon: '🎥',
+          status: Status.Active,
+          description: 'Professional video conferencing with real-time collaboration',
         },
       },
       {

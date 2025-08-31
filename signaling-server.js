@@ -192,7 +192,46 @@ wss.on('connection', (ws) => {
           }
           break
 
-        // Room-related messages
+        // Meeting-related messages
+        case 'create-meeting':
+          const meetingId = generateRoomId()
+          const displayName = data.displayName || client.name
+
+          // Update client name if provided
+          if (data.displayName) {
+            client.name = data.displayName
+          }
+
+          const meeting = {
+            id: meetingId,
+            host: clientId,
+            participants: [
+              {
+                id: clientId,
+                name: displayName,
+                role: 'host',
+              },
+            ],
+            createdAt: Date.now(),
+            locked: false,
+          }
+          rooms.set(meetingId, meeting)
+
+          // Update client info
+          client.roomId = meetingId
+
+          // Send meeting created message
+          ws.send(
+            JSON.stringify({
+              type: 'meeting-created',
+              meetingId: meetingId,
+            }),
+          )
+
+          console.log(`Meeting ${meetingId} created by ${displayName} (${clientId})`)
+          break
+
+        // Legacy room support (for backward compatibility)
         case 'create-room':
           const roomId = generateRoomId()
           const userName = data.userName || client.name
@@ -228,6 +267,72 @@ wss.on('connection', (ws) => {
           )
 
           console.log(`Room ${roomId} created by ${userName} (${clientId})`)
+          break
+
+        case 'join-meeting':
+          const targetMeeting = rooms.get(data.meetingId)
+          if (!targetMeeting) {
+            ws.send(
+              JSON.stringify({
+                type: 'meeting-error',
+                error: 'Meeting not found',
+              }),
+            )
+            break
+          }
+
+          // Check if meeting is locked
+          if (targetMeeting.locked) {
+            ws.send(
+              JSON.stringify({
+                type: 'meeting-error',
+                error: 'Meeting is locked',
+              }),
+            )
+            break
+          }
+
+          // Update client name if provided
+          if (data.displayName) {
+            client.name = data.displayName
+          }
+
+          // Add participant to meeting
+          targetMeeting.participants.push({
+            id: clientId,
+            name: client.name,
+            role: 'member',
+          })
+
+          // Update client info
+          client.roomId = data.meetingId
+
+          // Notify all meeting participants about the new participant
+          targetMeeting.participants.forEach((participant) => {
+            if (clients.has(participant.id)) {
+              const participantClient = clients.get(participant.id)
+              participantClient.ws.send(
+                JSON.stringify({
+                  type: 'participant-joined',
+                  participantId: clientId,
+                  name: client.name,
+                  role: 'member',
+                }),
+              )
+            }
+          })
+
+          // Send meeting joined message with participant list
+          ws.send(
+            JSON.stringify({
+              type: 'meeting-joined',
+              meetingId: data.meetingId,
+              participants: targetMeeting.participants,
+              isHost: false,
+            }),
+          )
+
+          console.log(`${client.name} (${clientId}) joined meeting ${data.meetingId}`)
           break
 
         case 'join-room':
@@ -316,6 +421,82 @@ wss.on('connection', (ws) => {
           }
           break
 
+        case 'meeting-message':
+          if (client.roomId) {
+            const meeting = rooms.get(client.roomId)
+            if (meeting) {
+              // Broadcast message to all meeting participants except sender
+              meeting.participants.forEach((participant) => {
+                if (participant.id !== clientId && clients.has(participant.id)) {
+                  const participantClient = clients.get(participant.id)
+                  participantClient.ws.send(
+                    JSON.stringify({
+                      type: 'meeting-message',
+                      messageType: data.messageType,
+                      message: data.message,
+                      content: data.content,
+                      sender: clientId,
+                      senderName: client.name,
+                    }),
+                  )
+                }
+              })
+            }
+          }
+          break
+
+        case 'meeting-action':
+          if (client.roomId) {
+            const meeting = rooms.get(client.roomId)
+            if (meeting && meeting.host === clientId) {
+              // Only host can perform actions
+              switch (data.action) {
+                case 'kick':
+                  const targetClient = clients.get(data.targetId)
+                  if (targetClient) {
+                    targetClient.ws.send(
+                      JSON.stringify({
+                        type: 'kicked',
+                        reason: 'Removed from meeting by host',
+                      }),
+                    )
+                    // Force disconnect the target client
+                    targetClient.ws.close()
+                  }
+                  break
+
+                case 'mute':
+                  // Send mute command to target participant
+                  const muteTargetClient = clients.get(data.targetId)
+                  if (muteTargetClient) {
+                    muteTargetClient.ws.send(
+                      JSON.stringify({
+                        type: 'force-mute',
+                        reason: 'Muted by host',
+                      }),
+                    )
+                  }
+                  break
+
+                case 'mute-all':
+                  // Send mute command to all participants except host
+                  meeting.participants.forEach((participant) => {
+                    if (participant.id !== clientId && clients.has(participant.id)) {
+                      const participantClient = clients.get(participant.id)
+                      participantClient.ws.send(
+                        JSON.stringify({
+                          type: 'force-mute',
+                          reason: 'Muted by host (mute all)',
+                        }),
+                      )
+                    }
+                  })
+                  break
+              }
+            }
+          }
+          break
+
         case 'room-message':
           if (client.roomId) {
             const room = rooms.get(client.roomId)
@@ -341,20 +522,24 @@ wss.on('connection', (ws) => {
           break
 
         case 'room-action':
-          if (client.roomId && room.host === clientId) {
+          if (client.roomId) {
             const room = rooms.get(client.roomId)
-            if (room && data.action === 'kick') {
-              // Handle kick action
-              const targetClient = clients.get(data.targetId)
-              if (targetClient) {
-                targetClient.ws.send(
-                  JSON.stringify({
-                    type: 'kicked',
-                    reason: 'Kicked by host',
-                  }),
-                )
-                // Force disconnect the target client
-                targetClient.ws.close()
+            if (room && room.host === clientId) {
+              // Only host can perform actions
+              switch (data.action) {
+                case 'kick':
+                  const targetClient = clients.get(data.targetId)
+                  if (targetClient) {
+                    targetClient.ws.send(
+                      JSON.stringify({
+                        type: 'kicked',
+                        reason: 'Kicked by host',
+                      }),
+                    )
+                    // Force disconnect the target client
+                    targetClient.ws.close()
+                  }
+                  break
               }
             }
           }
