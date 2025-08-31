@@ -2,6 +2,73 @@
   <div class="p-4 max-w-4xl mx-auto">
     <h1 class="text-2xl font-bold mb-6">{{ $t('tools.webRtcFileTransfer.title') }}</h1>
 
+    <!-- Room Creation/Joining Section -->
+    <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2 font-medium">{{
+            $t('tools.webRtcFileTransfer.room.create')
+          }}</label>
+          <button
+            @click="createRoom"
+            :disabled="!signalServerConnected || inRoom"
+            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+          >
+            {{ $t('tools.webRtcFileTransfer.room.createButton') }}
+          </button>
+        </div>
+        <div>
+          <label class="block mb-2 font-medium">{{
+            $t('tools.webRtcFileTransfer.room.join')
+          }}</label>
+          <div class="flex">
+            <input
+              v-model="roomInput"
+              :placeholder="$t('tools.webRtcFileTransfer.room.roomIdPlaceholder')"
+              class="flex-1 p-2 border rounded-l"
+              :disabled="!signalServerConnected || inRoom"
+            />
+            <button
+              @click="joinRoom"
+              :disabled="!roomInput || !signalServerConnected || inRoom"
+              class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:opacity-50"
+            >
+              {{ $t('tools.webRtcFileTransfer.room.joinButton') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Status -->
+      <div v-if="inRoom" class="mt-4 p-3 bg-green-100 dark:bg-green-800 rounded">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="font-medium">{{ $t('tools.webRtcFileTransfer.room.inRoom') }}:</span>
+            <span class="ml-2 font-mono">{{ currentRoomId }}</span>
+          </div>
+          <button
+            @click="leaveRoom"
+            class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+          >
+            {{ $t('tools.webRtcFileTransfer.room.leave') }}
+          </button>
+        </div>
+        <div class="mt-2 text-sm">
+          <span
+            >{{ $t('tools.webRtcFileTransfer.room.participants') }}: {{ participants.length }}</span
+          >
+          <ul class="mt-1 ml-4 list-disc">
+            <li v-for="participant in participants" :key="participant.id">
+              {{ participant.name || participant.id }}
+              <span v-if="participant.id === localDeviceId" class="text-xs italic"
+                >({{ $t('tools.webRtcFileTransfer.room.you') }})</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- Status indicators -->
     <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900">
       <div class="flex items-center space-x-4">
@@ -20,6 +87,137 @@
         </div>
         <div v-if="localDeviceId" class="text-sm text-gray-600 dark:text-gray-300">
           {{ $t('tools.webRtcFileTransfer.deviceId') }}: {{ localDeviceId }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio/Video Section -->
+    <div v-if="inRoom" class="mb-6 p-4 border rounded-lg">
+      <h2 class="text-xl font-semibold mb-4">{{ $t('tools.webRtcFileTransfer.av.title') }}</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Local Video -->
+        <div>
+          <div class="font-medium mb-2">{{ $t('tools.webRtcFileTransfer.av.localVideo') }}</div>
+          <div class="relative bg-black rounded overflow-hidden">
+            <video
+              ref="localVideo"
+              autoplay
+              playsinline
+              muted
+              class="w-full h-48 object-contain"
+            ></video>
+            <div
+              class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded"
+            >
+              {{ $t('tools.webRtcFileTransfer.room.you') }}
+            </div>
+          </div>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button
+              @click="toggleCamera"
+              :class="[
+                'px-3 py-1 text-sm rounded',
+                cameraEnabled
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
+                  : 'bg-green-500 hover:bg-green-600 text-white',
+              ]"
+            >
+              {{
+                cameraEnabled
+                  ? $t('tools.webRtcFileTransfer.av.disableCamera')
+                  : $t('tools.webRtcFileTransfer.av.enableCamera')
+              }}
+            </button>
+            <button
+              @click="toggleMicrophone"
+              :class="[
+                'px-3 py-1 text-sm rounded',
+                microphoneEnabled
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
+                  : 'bg-green-500 hover:bg-green-600 text-white',
+              ]"
+            >
+              {{
+                microphoneEnabled
+                  ? $t('tools.webRtcFileTransfer.av.disableMic')
+                  : $t('tools.webRtcFileTransfer.av.enableMic')
+              }}
+            </button>
+            <button
+              @click="toggleScreenShare"
+              :class="[
+                'px-3 py-1 text-sm rounded',
+                screenSharingEnabled
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
+                  : 'bg-purple-500 hover:bg-purple-600 text-white',
+              ]"
+            >
+              {{
+                screenSharingEnabled
+                  ? $t('tools.webRtcFileTransfer.av.stopScreenShare')
+                  : $t('tools.webRtcFileTransfer.av.startScreenShare')
+              }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Remote Videos -->
+        <div>
+          <div class="font-medium mb-2">{{ $t('tools.webRtcFileTransfer.av.remoteVideos') }}</div>
+          <div v-if="remoteStreams.length > 0" class="space-y-4">
+            <div
+              v-for="stream in remoteStreams"
+              :key="stream.id"
+              class="relative bg-black rounded overflow-hidden"
+            >
+              <video
+                :ref="(el) => setRemoteVideoRef(el, stream.id)"
+                autoplay
+                playsinline
+                class="w-full h-48 object-contain"
+              ></video>
+              <div
+                class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded"
+              >
+                {{ getParticipantName(stream.id) }}
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-gray-500 italic h-48 flex items-center justify-center">
+            {{ $t('tools.webRtcFileTransfer.av.noRemoteVideo') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danmaku Section -->
+    <div v-if="inRoom" class="mb-6 p-4 border rounded-lg">
+      <h2 class="text-xl font-semibold mb-4">{{ $t('tools.webRtcFileTransfer.danmaku.title') }}</h2>
+
+      <div class="relative bg-gray-800 rounded-lg overflow-hidden" style="height: 300px">
+        <!-- Danmaku Display Area -->
+        <div ref="danmakuContainer" class="absolute inset-0 w-full h-full overflow-hidden">
+          <!-- Danmaku items will be dynamically added here -->
+        </div>
+
+        <!-- Danmaku Input -->
+        <div class="absolute bottom-0 left-0 right-0 p-3 bg-black bg-opacity-50">
+          <div class="flex">
+            <input
+              v-model="danmakuInput"
+              @keyup.enter="sendDanmaku"
+              :placeholder="$t('tools.webRtcFileTransfer.danmaku.placeholder')"
+              class="flex-1 p-2 rounded-l"
+            />
+            <button
+              @click="sendDanmaku"
+              :disabled="!danmakuInput"
+              class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:opacity-50"
+            >
+              {{ $t('tools.webRtcFileTransfer.danmaku.send') }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -192,7 +390,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // i18n
@@ -212,6 +410,27 @@ const logs = ref<
   { timestamp: string; message: string; type: 'info' | 'success' | 'warning' | 'error' }[]
 >([])
 const fileInput = ref<HTMLInputElement | null>(null)
+
+// Room functionality
+const roomInput = ref('')
+const currentRoomId = ref('')
+const inRoom = ref(false)
+const participants = ref<{ id: string; name?: string }[]>([])
+
+// Audio/Video functionality
+const localVideo = ref<HTMLVideoElement | null>(null)
+const remoteVideoRefs = ref<Record<string, HTMLVideoElement | null>>({})
+const localStream = ref<MediaStream | null>(null)
+const remoteStreams = ref<{ id: string; stream: MediaStream }[]>([])
+const cameraEnabled = ref(false)
+const microphoneEnabled = ref(false)
+const screenSharingEnabled = ref(false)
+const screenStream = ref<MediaStream | null>(null)
+
+// Danmaku functionality
+const danmakuInput = ref('')
+const danmakuContainer = ref<HTMLDivElement | null>(null)
+const danmakuId = 0
 
 // WebRTC related
 let peerConnection: RTCPeerConnection | null = null
@@ -265,7 +484,7 @@ const connectToSignalingServer = () => {
 
     try {
       // Connect to the signaling server
-      signalServer = new WebSocket(`wss://tools.codeemo.cn/webrtc:${port}`)
+      signalServer = new WebSocket(`ws://localhost:${port}`)
 
       signalServer.onopen = () => {
         signalServerConnected.value = true
@@ -377,6 +596,47 @@ const handleMessageFromServer = (data: string) => {
           'info',
         )
         break
+
+      // Room-related messages
+      case 'room-created':
+        currentRoomId.value = message.roomId
+        inRoom.value = true
+        participants.value = [{ id: localDeviceId.value, name: 'You' }]
+        addLog(t('tools.webRtcFileTransfer.room.created', { roomId: message.roomId }), 'success')
+        break
+
+      case 'room-joined':
+        currentRoomId.value = message.roomId
+        inRoom.value = true
+        participants.value = message.participants
+        addLog(t('tools.webRtcFileTransfer.room.joined', { roomId: message.roomId }), 'success')
+        break
+
+      case 'room-error':
+        addLog(t('tools.webRtcFileTransfer.room.error', { error: message.error }), 'error')
+        break
+
+      case 'participant-joined':
+        participants.value.push({ id: message.participantId, name: message.name })
+        addLog(
+          t('tools.webRtcFileTransfer.room.participantJoined', { id: message.participantId }),
+          'info',
+        )
+        break
+
+      case 'participant-left':
+        participants.value = participants.value.filter((p) => p.id !== message.participantId)
+        addLog(
+          t('tools.webRtcFileTransfer.room.participantLeft', { id: message.participantId }),
+          'info',
+        )
+        break
+
+      case 'room-message':
+        if (message.messageType === 'danmaku') {
+          displayDanmaku(message.content, message.sender)
+        }
+        break
     }
   } catch (error) {
     addLog(
@@ -480,6 +740,20 @@ const initWebRTC = async (isOfferer: boolean = true) => {
       ],
     })
 
+    // Add local stream to peer connection if available
+    if (localStream.value) {
+      localStream.value.getTracks().forEach((track) => {
+        peerConnection?.addTrack(track, localStream.value!)
+      })
+    }
+
+    // Add screen stream to peer connection if available
+    if (screenStream.value) {
+      screenStream.value.getTracks().forEach((track) => {
+        peerConnection?.addTrack(track, screenStream.value!)
+      })
+    }
+
     // Create data channel for file transfer (only for offerer)
     if (isOfferer) {
       dataChannel = peerConnection.createDataChannel('fileTransfer', {
@@ -534,6 +808,32 @@ const initWebRTC = async (isOfferer: boolean = true) => {
       // For answerer, get the data channel from the event
       dataChannel = event.channel
       setupDataChannelHandlers()
+    }
+
+    // Handle remote stream
+    peerConnection.ontrack = (event) => {
+      const stream = event.streams[0]
+      const streamId = stream.id
+
+      // Check if we already have this stream
+      const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
+      if (existingStreamIndex !== -1) {
+        // Update existing stream
+        remoteStreams.value[existingStreamIndex].stream = stream
+      } else {
+        // Add new stream
+        remoteStreams.value.push({ id: streamId, stream })
+      }
+
+      // Attach stream to video element after next tick
+      nextTick(() => {
+        const videoElement = remoteVideoRefs.value[streamId]
+        if (videoElement) {
+          videoElement.srcObject = stream
+        }
+      })
+
+      addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
     }
 
     addLog(t('tools.webRtcFileTransfer.logs.webRTCInitialized'), 'success')
@@ -640,6 +940,9 @@ const handleReceivedMessage = (data: any) => {
       if (message.type === 'file-metadata') {
         // Handle file metadata
         handleFileMetadata(message)
+      } else if (message.type === 'danmaku') {
+        // Handle danmaku message
+        displayDanmaku(message.content, message.sender)
       }
     }
   } catch (error) {
@@ -867,6 +1170,260 @@ const sendFile = async () => {
   }
 }
 
+// Room functionality
+const createRoom = () => {
+  if (!signalServer) return
+
+  signalServer.send(
+    JSON.stringify({
+      type: 'create-room',
+      deviceId: localDeviceId.value,
+    }),
+  )
+}
+
+const joinRoom = () => {
+  if (!signalServer || !roomInput.value) return
+
+  signalServer.send(
+    JSON.stringify({
+      type: 'join-room',
+      roomId: roomInput.value,
+      deviceId: localDeviceId.value,
+    }),
+  )
+}
+
+const leaveRoom = () => {
+  if (!signalServer || !currentRoomId.value) return
+
+  signalServer.send(
+    JSON.stringify({
+      type: 'leave-room',
+      roomId: currentRoomId.value,
+      deviceId: localDeviceId.value,
+    }),
+  )
+
+  // Reset room state
+  currentRoomId.value = ''
+  inRoom.value = false
+  participants.value = []
+
+  // Stop local stream
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+    localStream.value = null
+  }
+
+  // Stop screen stream
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
+  // Clear remote streams
+  remoteStreams.value = []
+  remoteVideoRefs.value = {}
+
+  addLog(t('tools.webRtcFileTransfer.room.left'), 'info')
+}
+
+// Audio/Video functionality
+const startLocalStream = async () => {
+  try {
+    localStream.value = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+
+    if (localVideo.value) {
+      localVideo.value.srcObject = localStream.value
+    }
+
+    cameraEnabled.value = true
+    microphoneEnabled.value = true
+
+    addLog(t('tools.webRtcFileTransfer.av.localStreamStarted'), 'success')
+  } catch (error) {
+    addLog(t('tools.webRtcFileTransfer.av.localStreamError', { error: error.toString() }), 'error')
+  }
+}
+
+const toggleCamera = async () => {
+  if (!localStream.value) {
+    await startLocalStream()
+    return
+  }
+
+  const videoTrack = localStream.value.getVideoTracks()[0]
+  if (videoTrack) {
+    videoTrack.enabled = !videoTrack.enabled
+    cameraEnabled.value = videoTrack.enabled
+    addLog(
+      videoTrack.enabled
+        ? t('tools.webRtcFileTransfer.av.cameraEnabled')
+        : t('tools.webRtcFileTransfer.av.cameraDisabled'),
+      'info',
+    )
+  }
+}
+
+const toggleMicrophone = async () => {
+  if (!localStream.value) {
+    await startLocalStream()
+    return
+  }
+
+  const audioTrack = localStream.value.getAudioTracks()[0]
+  if (audioTrack) {
+    audioTrack.enabled = !audioTrack.enabled
+    microphoneEnabled.value = audioTrack.enabled
+    addLog(
+      audioTrack.enabled
+        ? t('tools.webRtcFileTransfer.av.microphoneEnabled')
+        : t('tools.webRtcFileTransfer.av.microphoneDisabled'),
+      'info',
+    )
+  }
+}
+
+// Screen sharing functionality
+const toggleScreenShare = async () => {
+  if (screenSharingEnabled.value) {
+    // Stop screen sharing
+    stopScreenShare()
+  } else {
+    // Start screen sharing
+    startScreenShare()
+  }
+}
+
+const startScreenShare = async () => {
+  try {
+    // @ts-ignore - getDisplayMedia might not be available in all browsers
+    screenStream.value = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: true,
+    })
+
+    // Replace the video track in the peer connection
+    if (peerConnection && screenStream.value) {
+      const videoTrack = screenStream.value.getVideoTracks()[0]
+      const sender = peerConnection.getSenders().find((s) => s.track?.kind === 'video')
+      if (sender) {
+        sender.replaceTrack(videoTrack)
+      } else {
+        screenStream.value.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, screenStream.value!)
+        })
+      }
+    }
+
+    // Display the screen stream in the local video element
+    if (localVideo.value && screenStream.value) {
+      localVideo.value.srcObject = screenStream.value
+    }
+
+    screenSharingEnabled.value = true
+
+    // Handle when screen sharing stops
+    if (screenStream.value) {
+      screenStream.value.getVideoTracks()[0].onended = () => {
+        stopScreenShare()
+      }
+    }
+
+    addLog(t('tools.webRtcFileTransfer.av.screenShareStarted'), 'success')
+  } catch (error) {
+    addLog(t('tools.webRtcFileTransfer.av.screenShareError', { error: error.toString() }), 'error')
+  }
+}
+
+const stopScreenShare = () => {
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
+  // Restore camera stream if available
+  if (localStream.value && localVideo.value) {
+    localVideo.value.srcObject = localStream.value
+  }
+
+  screenSharingEnabled.value = false
+  addLog(t('tools.webRtcFileTransfer.av.screenShareStopped'), 'info')
+}
+
+const setRemoteVideoRef = (el: HTMLVideoElement | null, streamId: string) => {
+  if (el) {
+    remoteVideoRefs.value[streamId] = el
+
+    // Find the stream and attach it
+    const streamEntry = remoteStreams.value.find((s) => s.id === streamId)
+    if (streamEntry) {
+      el.srcObject = streamEntry.stream
+    }
+  }
+}
+
+const getParticipantName = (participantId: string) => {
+  const participant = participants.value.find((p) => p.id === participantId)
+  return participant ? participant.name || participant.id : participantId
+}
+
+// Danmaku functionality
+const sendDanmaku = () => {
+  if (!danmakuInput.value || !inRoom.value || !signalServer) return
+
+  const danmakuMessage = {
+    type: 'room-message',
+    roomId: currentRoomId.value,
+    messageType: 'danmaku',
+    content: danmakuInput.value,
+    sender: localDeviceId.value,
+  }
+
+  signalServer.send(JSON.stringify(danmakuMessage))
+
+  // Display locally as well
+  displayDanmaku(danmakuInput.value, localDeviceId.value)
+
+  // Clear input
+  danmakuInput.value = ''
+}
+
+const displayDanmaku = (content: string, senderId: string) => {
+  if (!danmakuContainer.value) return
+
+  const danmakuElement = document.createElement('div')
+  danmakuElement.className = 'absolute text-white text-sm font-bold whitespace-nowrap'
+  danmakuElement.textContent = content
+  danmakuElement.style.left = '100%'
+  danmakuElement.style.top = `${Math.random() * 80 + 10}%`
+  danmakuElement.style.color = `hsl(${Math.random() * 360}, 100%, 80%)`
+
+  danmakuContainer.value.appendChild(danmakuElement)
+
+  // Animate danmaku
+  const animate = () => {
+    const rect = danmakuElement.getBoundingClientRect()
+    const containerRect = danmakuContainer.value!.getBoundingClientRect()
+
+    if (rect.right < containerRect.left) {
+      danmakuElement.remove()
+      return
+    }
+
+    const currentLeft = parseFloat(danmakuElement.style.left || '100%')
+    danmakuElement.style.left = `${currentLeft - 0.5}%`
+
+    requestAnimationFrame(animate)
+  }
+
+  requestAnimationFrame(animate)
+}
+
 // Initialize
 onMounted(() => {
   connectToSignalingServer()
@@ -886,6 +1443,12 @@ onUnmounted(() => {
   }
   if (connectionTimeout) {
     clearTimeout(connectionTimeout)
+  }
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+  }
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
   }
 })
 </script>

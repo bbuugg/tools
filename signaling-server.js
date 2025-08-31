@@ -1,4 +1,4 @@
-// Simple WebRTC signaling server for local network file transfer
+// Simple WebRTC signaling server for local network file transfer with room support
 import { createServer } from 'http'
 import { WebSocketServer } from 'ws'
 
@@ -6,15 +6,30 @@ import { WebSocketServer } from 'ws'
 const server = createServer()
 const wss = new WebSocketServer({ server })
 
-// Store connected clients
+// Store connected clients and rooms
 const clients = new Map()
+const rooms = new Map()
+
+// Generate a random room ID
+function generateRoomId() {
+  return 'room_' + Math.random().toString(36).substr(2, 9)
+}
+
+// Generate a random client ID
+function generateClientId() {
+  return 'client_' + Math.random().toString(36).substr(2, 9)
+}
 
 wss.on('connection', (ws) => {
   console.log('New client connected')
 
   // Assign a temporary ID to the client
   const clientId = generateClientId()
-  clients.set(clientId, ws)
+  clients.set(clientId, {
+    ws: ws,
+    roomId: null,
+    name: `Device ${clientId.substring(0, 6)}`,
+  })
 
   // Send client their ID
   ws.send(
@@ -24,8 +39,8 @@ wss.on('connection', (ws) => {
     }),
   )
 
-  // Notify all clients about the new device
-  broadcast(
+  // Notify all clients about the new device (only those not in rooms)
+  broadcastToLobby(
     {
       type: 'device-discovered',
       id: clientId,
@@ -38,15 +53,19 @@ wss.on('connection', (ws) => {
     try {
       const data = JSON.parse(message)
 
+      // Get client info
+      const client = clients.get(clientId)
+      if (!client) return
+
       switch (data.type) {
         case 'discover':
-          // Send list of all connected devices
+          // Send list of all connected devices (only those not in rooms)
           const devices = []
-          clients.forEach((client, id) => {
-            if (id !== clientId) {
+          clients.forEach((clientInfo, id) => {
+            if (id !== clientId && !clientInfo.roomId) {
               devices.push({
                 id: id,
-                name: `Device ${id.substring(0, 6)}`,
+                name: clientInfo.name,
               })
             }
           })
@@ -63,11 +82,11 @@ wss.on('connection', (ws) => {
           // Forward connection request to target device
           if (clients.has(data.target)) {
             const targetClient = clients.get(data.target)
-            targetClient.send(
+            targetClient.ws.send(
               JSON.stringify({
                 type: 'connection-request',
                 source: clientId,
-                name: data.name || `Device ${clientId.substring(0, 6)}`,
+                name: data.name || client.name,
               }),
             )
           }
@@ -77,7 +96,7 @@ wss.on('connection', (ws) => {
           // Forward offer to target device
           if (clients.has(data.target)) {
             const targetClient = clients.get(data.target)
-            targetClient.send(
+            targetClient.ws.send(
               JSON.stringify({
                 type: 'offer',
                 source: clientId,
@@ -91,7 +110,7 @@ wss.on('connection', (ws) => {
           // Forward answer to source device
           if (clients.has(data.target)) {
             const targetClient = clients.get(data.target)
-            targetClient.send(
+            targetClient.ws.send(
               JSON.stringify({
                 type: 'answer',
                 source: clientId,
@@ -105,13 +124,129 @@ wss.on('connection', (ws) => {
           // Forward ICE candidate to target device
           if (clients.has(data.target)) {
             const targetClient = clients.get(data.target)
-            targetClient.send(
+            targetClient.ws.send(
               JSON.stringify({
                 type: 'ice-candidate',
                 source: clientId,
                 candidate: data.candidate,
               }),
             )
+          }
+          break
+
+        // Room-related messages
+        case 'create-room':
+          const roomId = generateRoomId()
+          const room = {
+            id: roomId,
+            participants: [{ id: clientId, name: client.name }],
+          }
+          rooms.set(roomId, room)
+
+          // Update client info
+          client.roomId = roomId
+
+          // Send room created message
+          ws.send(
+            JSON.stringify({
+              type: 'room-created',
+              roomId: roomId,
+            }),
+          )
+          break
+
+        case 'join-room':
+          const targetRoom = rooms.get(data.roomId)
+          if (!targetRoom) {
+            ws.send(
+              JSON.stringify({
+                type: 'room-error',
+                error: 'Room not found',
+              }),
+            )
+            break
+          }
+
+          // Add participant to room
+          targetRoom.participants.push({ id: clientId, name: client.name })
+
+          // Update client info
+          client.roomId = data.roomId
+
+          // Notify all room participants about the new participant
+          targetRoom.participants.forEach((participant) => {
+            if (clients.has(participant.id)) {
+              const participantClient = clients.get(participant.id)
+              participantClient.ws.send(
+                JSON.stringify({
+                  type: 'participant-joined',
+                  participantId: clientId,
+                  name: client.name,
+                }),
+              )
+            }
+          })
+
+          // Send room joined message with participant list
+          ws.send(
+            JSON.stringify({
+              type: 'room-joined',
+              roomId: data.roomId,
+              participants: targetRoom.participants,
+            }),
+          )
+          break
+
+        case 'leave-room':
+          if (client.roomId) {
+            const room = rooms.get(client.roomId)
+            if (room) {
+              // Remove participant from room
+              room.participants = room.participants.filter((p) => p.id !== clientId)
+
+              // Notify remaining participants
+              room.participants.forEach((participant) => {
+                if (clients.has(participant.id)) {
+                  const participantClient = clients.get(participant.id)
+                  participantClient.ws.send(
+                    JSON.stringify({
+                      type: 'participant-left',
+                      participantId: clientId,
+                    }),
+                  )
+                }
+              })
+
+              // If room is empty, delete it
+              if (room.participants.length === 0) {
+                rooms.delete(client.roomId)
+              }
+            }
+
+            // Update client info
+            client.roomId = null
+          }
+          break
+
+        case 'room-message':
+          if (client.roomId) {
+            const room = rooms.get(client.roomId)
+            if (room) {
+              // Broadcast message to all room participants except sender
+              room.participants.forEach((participant) => {
+                if (participant.id !== clientId && clients.has(participant.id)) {
+                  const participantClient = clients.get(participant.id)
+                  participantClient.ws.send(
+                    JSON.stringify({
+                      type: 'room-message',
+                      messageType: data.messageType,
+                      content: data.content,
+                      sender: clientId,
+                    }),
+                  )
+                }
+              })
+            }
           }
           break
 
@@ -125,10 +260,43 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected:', clientId)
+
+    // Get client info before deleting
+    const client = clients.get(clientId)
+    if (!client) return
+
+    // Handle room cleanup if client was in a room
+    if (client.roomId) {
+      const room = rooms.get(client.roomId)
+      if (room) {
+        // Remove participant from room
+        room.participants = room.participants.filter((p) => p.id !== clientId)
+
+        // Notify remaining participants
+        room.participants.forEach((participant) => {
+          if (clients.has(participant.id)) {
+            const participantClient = clients.get(participant.id)
+            participantClient.ws.send(
+              JSON.stringify({
+                type: 'participant-left',
+                participantId: clientId,
+              }),
+            )
+          }
+        })
+
+        // If room is empty, delete it
+        if (room.participants.length === 0) {
+          rooms.delete(client.roomId)
+        }
+      }
+    }
+
+    // Remove client
     clients.delete(clientId)
 
-    // Notify all clients about the disconnected device
-    broadcast(
+    // Notify all clients about the disconnected device (only those not in rooms)
+    broadcastToLobby(
       {
         type: 'device-disconnected',
         id: clientId,
@@ -138,18 +306,13 @@ wss.on('connection', (ws) => {
   })
 })
 
-// Broadcast message to all clients except sender
-function broadcast(message, senderId) {
-  clients.forEach((client, id) => {
-    if (id !== senderId && client.readyState === 1) {
-      client.send(JSON.stringify(message))
+// Broadcast message to all clients except sender (only those not in rooms)
+function broadcastToLobby(message, senderId) {
+  clients.forEach((clientInfo, id) => {
+    if (id !== senderId && !clientInfo.roomId && clientInfo.ws.readyState === 1) {
+      clientInfo.ws.send(JSON.stringify(message))
     }
   })
-}
-
-// Generate a random client ID
-function generateClientId() {
-  return 'client_' + Math.random().toString(36).substr(2, 9)
 }
 
 // Start server on port 3000, or next available port
