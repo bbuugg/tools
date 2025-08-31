@@ -619,10 +619,10 @@ export default {
       tabs: {
         path: 'Path Extractor',
         formatter: 'JSON Formatter',
-        excelTojson: 'Excel to JSON',
+        unifiedExcelToJson: 'Excel to JSON',
         jsonMerge: 'JSON Merge',
-        excelTextToJson: 'Excel Text to JSON',
         jsonToExcel: 'JSON to Excel',
+        cookieToJson: 'Cookie to JSON',
       },
       features: {
         pathExtraction: {

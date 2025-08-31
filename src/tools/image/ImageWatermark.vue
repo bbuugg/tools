@@ -1,669 +1,639 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Hero Section -->
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          {{ $t('tools.imageWatermark.title') }}
-        </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          {{ $t('tools.imageWatermark.description') }}
-        </p>
-      </div>
-
-      <!-- Main Content - Drawer Layout -->
-      <div class="flex flex-col lg:flex-row gap-6">
-        <!-- Left Panel - Operations -->
-        <div :class="images.length > 0 ? 'lg:w-1/2' : 'w-full'">
-          <!-- Upload Area -->
-          <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div
-              @drop="handleDrop"
-              @dragover.prevent
-              @dragenter.prevent
-              @click="openFileSelector"
-              :class="[
-                'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
-                isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
-              ]"
-            >
-              <input
-                ref="fileInput"
-                type="file"
-                multiple
-                accept="image/*"
-                @change="handleFileSelect"
-                class="hidden"
-              />
-              <div class="space-y-4">
-                <div class="text-6xl text-gray-400">💧</div>
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900 mb-2">
-                    {{ $t('tools.imageWatermark.uploadTitle') }}
-                  </h3>
-                  <p class="text-gray-600">
-                    {{ $t('tools.imageWatermark.uploadDescription') }}
-                  </p>
-                  <p class="text-sm text-gray-500 mt-2">
-                    {{ $t('tools.imageWatermark.supportedFormats') }}: JPG, PNG, WebP, GIF
-                  </p>
-                </div>
-                <button
-                  class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {{ $t('tools.imageWatermark.selectFiles') }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Watermark Settings Panel -->
-          <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-              {{ $t('tools.imageWatermark.settings') }}
-            </h3>
-
-            <!-- Watermark Type Selection -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                {{ $t('tools.imageWatermark.watermarkType') }}
-              </label>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button
-                  @click="watermarkType = 'text'"
-                  :class="[
-                    'px-4 py-3 rounded-lg border transition-colors text-center',
-                    watermarkType === 'text'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400',
-                  ]"
-                >
-                  <div class="font-medium">{{ $t('tools.imageWatermark.textWatermark') }}</div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    {{ $t('tools.imageWatermark.textWatermarkDesc') }}
-                  </div>
-                </button>
-                <button
-                  @click="watermarkType = 'image'"
-                  :class="[
-                    'px-4 py-3 rounded-lg border transition-colors text-center',
-                    watermarkType === 'image'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400',
-                  ]"
-                >
-                  <div class="font-medium">{{ $t('tools.imageWatermark.imageWatermark') }}</div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    {{ $t('tools.imageWatermark.imageWatermarkDesc') }}
-                  </div>
-                </button>
-                <button
-                  @click="watermarkType = 'combined'"
-                  :class="[
-                    'px-4 py-3 rounded-lg border transition-colors text-center',
-                    watermarkType === 'combined'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400',
-                  ]"
-                >
-                  <div class="font-medium">{{ $t('tools.imageWatermark.combinedWatermark') }}</div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    {{ $t('tools.imageWatermark.combinedWatermarkDesc') }}
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <!-- Text Watermark Settings -->
-            <div
-              v-if="watermarkType === 'text' || watermarkType === 'combined'"
-              class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200"
-            >
-              <h4 class="text-md font-medium text-gray-900 mb-3">
-                {{ $t('tools.imageWatermark.textSettings') }}
-              </h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.watermarkText') }}
-                  </label>
-                  <input
-                    v-model="textOptions.text"
-                    type="text"
-                    :placeholder="$t('tools.imageWatermark.textPlaceholder')"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.fontSize') }}: {{ textOptions.fontSize }}px
-                  </label>
-                  <input
-                    v-model="textOptions.fontSize"
-                    type="range"
-                    min="12"
-                    max="100"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.fontColor') }}
-                  </label>
-                  <input
-                    v-model="textOptions.color"
-                    type="color"
-                    class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.fontFamily') }}
-                  </label>
-                  <select
-                    v-model="textOptions.fontFamily"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Arial">Arial</option>
-                    <option value="Verdana">Verdana</option>
-                    <option value="Helvetica">Helvetica</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                    <option value="Courier New">Courier New</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Image Watermark Settings -->
-            <div
-              v-if="watermarkType === 'image' || watermarkType === 'combined'"
-              class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200"
-            >
-              <h4 class="text-md font-medium text-gray-900 mb-3">
-                {{ $t('tools.imageWatermark.imageSettings') }}
-              </h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.watermarkImage') }}
-                  </label>
-                  <div
-                    @drop="handleWatermarkDrop"
-                    @dragover.prevent
-                    @dragenter.prevent
-                    @click="openWatermarkSelector"
-                    :class="[
-                      'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
-                      isWatermarkDragging
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-gray-400',
-                    ]"
-                  >
-                    <input
-                      ref="watermarkInput"
-                      type="file"
-                      accept="image/*"
-                      @change="handleWatermarkSelect"
-                      class="hidden"
-                    />
-                    <div v-if="watermarkImage.preview" class="flex flex-col items-center">
-                      <img
-                        :src="watermarkImage.preview"
-                        :alt="$t('tools.imageWatermark.watermarkPreview')"
-                        class="max-h-24 max-w-full mb-2"
-                      />
-                      <button
-                        @click.stop="removeWatermark"
-                        class="text-sm text-red-600 hover:text-red-800"
-                      >
-                        {{ $t('tools.imageWatermark.removeWatermark') }}
-                      </button>
-                    </div>
-                    <div v-else>
-                      <div class="text-4xl text-gray-400 mb-2">🖼️</div>
-                      <p class="text-gray-600">{{ $t('tools.imageWatermark.uploadWatermark') }}</p>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                      {{ $t('tools.imageWatermark.imageWidth') }}: {{ imageOptions.width }}px
-                    </label>
-                    <input
-                      v-model="imageOptions.width"
-                      type="range"
-                      min="20"
-                      :max="imageOptions.maxWidth"
-                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                      {{ $t('tools.imageWatermark.imageOpacity') }}: {{ imageOptions.opacity }}%
-                    </label>
-                    <input
-                      v-model="imageOptions.opacity"
-                      type="range"
-                      min="0"
-                      max="100"
-                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Position Settings -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <h4 class="text-md font-medium text-gray-900 mb-3">
-                {{ $t('tools.imageWatermark.positionSettings') }}
-              </h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.position') }}
-                  </label>
-                  <select
-                    v-model="positionOptions.position"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="top-left">{{ $t('tools.imageWatermark.topLeft') }}</option>
-                    <option value="top-center">{{ $t('tools.imageWatermark.topCenter') }}</option>
-                    <option value="top-right">{{ $t('tools.imageWatermark.topRight') }}</option>
-                    <option value="center-left">{{ $t('tools.imageWatermark.centerLeft') }}</option>
-                    <option value="center">{{ $t('tools.imageWatermark.center') }}</option>
-                    <option value="center-right">
-                      {{ $t('tools.imageWatermark.centerRight') }}
-                    </option>
-                    <option value="bottom-left">{{ $t('tools.imageWatermark.bottomLeft') }}</option>
-                    <option value="bottom-center">
-                      {{ $t('tools.imageWatermark.bottomCenter') }}
-                    </option>
-                    <option value="bottom-right">
-                      {{ $t('tools.imageWatermark.bottomRight') }}
-                    </option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.margin') }}: {{ positionOptions.margin }}px
-                  </label>
-                  <input
-                    v-model="positionOptions.margin"
-                    type="range"
-                    min="0"
-                    max="100"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Advanced Settings -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <h4 class="text-md font-medium text-gray-900 mb-3">
-                {{ $t('tools.imageWatermark.advancedSettings') }}
-              </h4>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.opacity') }}: {{ advancedOptions.opacity }}%
-                  </label>
-                  <input
-                    v-model="advancedOptions.opacity"
-                    type="range"
-                    min="0"
-                    max="100"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.rotation') }}: {{ advancedOptions.rotation }}°
-                  </label>
-                  <input
-                    v-model="advancedOptions.rotation"
-                    type="range"
-                    min="0"
-                    max="360"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    {{ $t('tools.imageWatermark.scale') }}: {{ advancedOptions.scale }}%
-                  </label>
-                  <input
-                    v-model="advancedOptions.scale"
-                    type="range"
-                    min="10"
-                    max="200"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Panel - Image Gallery (Drawer) -->
-        <div v-if="images.length > 0" class="lg:w-1/2">
-          <div class="bg-white rounded-lg shadow-md p-6 mb-8 h-full flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-              <h3 class="text-lg font-semibold text-gray-900">
-                {{ $t('tools.imageWatermark.imageList') }} ({{ images.length }})
-              </h3>
-              <div class="flex gap-3">
-                <button
-                  @click="processAll"
-                  :disabled="isProcessing"
-                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span v-if="isProcessing" class="flex items-center">
-                    <svg
-                      class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    {{ $t('tools.imageWatermark.processing') }}
-                  </span>
-                  <span v-else>{{ $t('tools.imageWatermark.processAll') }}</span>
-                </button>
-                <button
-                  @click="downloadAll"
-                  :disabled="!hasProcessedImages"
-                  class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {{ $t('tools.imageWatermark.downloadAll') }}
-                </button>
-                <button
-                  @click="clearAll"
-                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  {{ $t('common.clear') }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Statistics -->
-            <div
-              v-if="processingStats.totalOriginalSize > 0"
-              class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div>
-                  <div class="text-2xl font-bold text-green-700">
-                    {{ formatFileSize(processingStats.totalOriginalSize) }}
-                  </div>
-                  <div class="text-sm text-green-600">
-                    {{ $t('tools.imageWatermark.originalSize') }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-green-700">
-                    {{ formatFileSize(processingStats.totalProcessedSize) }}
-                  </div>
-                  <div class="text-sm text-green-600">
-                    {{ $t('tools.imageWatermark.processedSize') }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-green-700">
-                    {{ processingStats.processedCount }}/{{ images.length }}
-                  </div>
-                  <div class="text-sm text-green-600">
-                    {{ $t('tools.imageWatermark.processed') }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Image Gallery -->
-            <div class="flex-1 overflow-y-auto">
-              <div class="grid grid-cols-1 gap-4">
-                <div
-                  v-for="(image, index) in images"
-                  :key="index"
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-4"
-                >
-                  <div class="flex items-start space-x-4">
-                    <!-- Thumbnail -->
-                    <div class="flex-shrink-0">
-                      <img
-                        :src="image.preview"
-                        :alt="image.name"
-                        class="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                      />
-                    </div>
-
-                    <!-- Info and Actions -->
-                    <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <!-- Info Section -->
-                      <div class="md:col-span-2">
-                        <h4 class="text-sm font-medium text-gray-900 truncate">{{ image.name }}</h4>
-                        <p class="text-sm text-gray-500">
-                          {{ image.dimensions.width }} × {{ image.dimensions.height }} px
-                        </p>
-                        <!-- GIF Warning -->
-                        <div
-                          v-if="image.isGif"
-                          class="mt-2 p-2 bg-blue-100 rounded text-blue-800 text-xs"
-                        >
-                          ℹ️ {{ $t('tools.imageWatermark.gifWarning') }}
-                        </div>
-                        <div class="flex flex-wrap gap-4 mt-2">
-                          <div class="text-sm text-gray-600">
-                            {{ $t('tools.imageWatermark.original') }}:
-                            {{ formatFileSize(image.originalSize) }}
-                          </div>
-                          <div v-if="image.processedSize" class="text-sm text-green-600">
-                            {{ $t('tools.imageWatermark.processed') }}:
-                            {{ formatFileSize(image.processedSize) }}
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Status & Actions Section -->
-                      <div class="flex flex-col items-end space-y-2">
-                        <!-- Status -->
-                        <div class="flex items-center space-x-2">
-                          <div
-                            :class="[
-                              'w-3 h-3 rounded-full',
-                              image.status === 'pending'
-                                ? 'bg-gray-400'
-                                : image.status === 'processing'
-                                  ? 'bg-yellow-400'
-                                  : image.status === 'completed'
-                                    ? 'bg-green-400'
-                                    : 'bg-red-400',
-                            ]"
-                          ></div>
-                          <span class="text-xs text-gray-600">
-                            {{ $t(`tools.imageWatermark.status.${image.status}`) }}
-                          </span>
-                        </div>
-
-                        <!-- Progress -->
-                        <div v-if="image.status === 'processing'" class="w-full max-w-[100px]">
-                          <div class="bg-gray-200 rounded-full h-2">
-                            <div
-                              class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                              :style="{ width: `${image.progress}%` }"
-                            ></div>
-                          </div>
-                          <div class="text-xs text-gray-500 text-center mt-1">
-                            {{ image.progress }}%
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Actions -->
-                  <div class="flex justify-end gap-2">
-                    <button
-                      v-if="image.status === 'completed' && image.processedBlob"
-                      @click="previewImage(index)"
-                      class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-                    >
-                      {{ $t('common.preview') }}
-                    </button>
-                    <button
-                      v-if="image.status === 'completed' && image.processedBlob"
-                      @click="downloadImage(index)"
-                      class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                    >
-                      {{ $t('common.download') }}
-                    </button>
-                    <button
-                      @click="processImage(index)"
-                      :disabled="isProcessing"
-                      class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
-                    >
-                      {{ $t('tools.imageWatermark.process') }}
-                    </button>
-                    <button
-                      @click="removeImage(index)"
-                      class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                    >
-                      {{ $t('tools.imageWatermark.remove') }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Preview Modal -->
-      <div
-        v-if="showPreviewModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      >
-        <div class="relative bg-white rounded-lg shadow-lg w-full max-w-4xl mx-4">
-          <div class="flex items-center justify-between p-4 border-b border-gray-200 rounded-t">
-            <h3 class="text-xl font-semibold text-gray-800">
-              {{ $t('tools.imageWatermark.imagePreview') }}
-            </h3>
-            <button
-              @click="showPreviewModal = false"
-              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
-          <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <ToolLayout
+    :title="$t('tools.imageWatermark.title')"
+    :description="$t('tools.imageWatermark.description')"
+    icon="💧"
+    :features="[
+      $t('tools.imageWatermark.features.watermark.title'),
+      $t('tools.imageWatermark.features.batch.title'),
+      $t('tools.imageWatermark.features.customization.title'),
+    ]"
+  >
+    <!-- Main Content - Drawer Layout -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Left Panel - Operations -->
+      <div :class="images.length > 0 ? 'lg:w-1/2' : 'w-full'">
+        <!-- Upload Area -->
+        <div class="glass rounded-xl border border-slate-700/30 p-6 mb-6">
+          <div
+            @drop="handleDrop"
+            @dragover.prevent
+            @dragenter.prevent
+            @click="openFileSelector"
+            :class="[
+              'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
+              isDragging
+                ? 'border-primary-500/50 bg-primary-500/10'
+                : 'border-slate-600/50 hover:border-slate-500/50',
+            ]"
+          >
+            <input
+              ref="fileInput"
+              type="file"
+              multiple
+              accept="image/*"
+              @change="handleFileSelect"
+              class="hidden"
+            />
+            <div class="space-y-4">
+              <div class="text-6xl text-slate-400">💧</div>
               <div>
-                <h4 class="text-lg font-medium text-gray-900 mb-2">
-                  {{ $t('tools.imageWatermark.originalImage') }}
-                </h4>
-                <div class="border border-gray-200 rounded-lg p-2">
-                  <img
-                    :src="previewImageItem?.preview"
-                    :alt="previewImageItem?.name"
-                    class="w-full h-auto max-h-96 object-contain"
-                  />
+                <h3 class="text-lg font-medium text-slate-100 mb-2">
+                  {{ $t('tools.imageWatermark.title') }}
+                </h3>
+                <p class="text-slate-400">
+                  {{ $t('tools.imageWatermark.uploadDescription') }}
+                </p>
+                <p class="text-sm text-slate-500 mt-2">
+                  {{ $t('tools.imageWatermark.supportedFormats') }}: JPG, PNG, WebP, GIF
+                </p>
+              </div>
+              <button
+                class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                {{ $t('tools.imageWatermark.selectFiles') }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Watermark Settings Panel -->
+        <div class="glass rounded-xl border border-slate-700/30 p-6 mb-6">
+          <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-2">
+            {{ $t('tools.imageWatermark.settings') }}
+          </h3>
+
+          <!-- Watermark Type Selection -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-slate-300 mb-2">
+              {{ $t('tools.imageWatermark.watermarkType') }}
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                @click="watermarkType = 'text'"
+                :class="[
+                  'px-4 py-3 rounded-lg border transition-colors text-center',
+                  watermarkType === 'text'
+                    ? 'border-primary-500/50 bg-primary-500/10 text-primary-400'
+                    : 'border-slate-700/50 hover:border-slate-600/50 bg-slate-800/50',
+                ]"
+              >
+                <div class="font-medium">{{ $t('tools.imageWatermark.textWatermark') }}</div>
+                <div class="text-sm text-slate-400 mt-1">
+                  {{ $t('tools.imageWatermark.textWatermarkDesc') }}
                 </div>
-                <div class="mt-2 text-sm text-gray-600">
-                  {{ previewImageItem?.name }}<br />
-                  {{ $t('tools.imageWatermark.size') }}:
-                  {{ formatFileSize(previewImageItem?.originalSize || 0) }}<br />
-                  {{ $t('tools.imageWatermark.dimensions') }}:
-                  {{ previewImageItem?.dimensions.width }} ×
-                  {{ previewImageItem?.dimensions.height }} px
+              </button>
+              <button
+                @click="watermarkType = 'image'"
+                :class="[
+                  'px-4 py-3 rounded-lg border transition-colors text-center',
+                  watermarkType === 'image'
+                    ? 'border-primary-500/50 bg-primary-500/10 text-primary-400'
+                    : 'border-slate-700/50 hover:border-slate-600/50 bg-slate-800/50',
+                ]"
+              >
+                <div class="font-medium">{{ $t('tools.imageWatermark.imageWatermark') }}</div>
+                <div class="text-sm text-slate-400 mt-1">
+                  {{ $t('tools.imageWatermark.imageWatermarkDesc') }}
+                </div>
+              </button>
+              <button
+                @click="watermarkType = 'combined'"
+                :class="[
+                  'px-4 py-3 rounded-lg border transition-colors text-center',
+                  watermarkType === 'combined'
+                    ? 'border-primary-500/50 bg-primary-500/10 text-primary-400'
+                    : 'border-slate-700/50 hover:border-slate-600/50 bg-slate-800/50',
+                ]"
+              >
+                <div class="font-medium">{{ $t('tools.imageWatermark.combinedWatermark') }}</div>
+                <div class="text-sm text-slate-400 mt-1">
+                  {{ $t('tools.imageWatermark.combinedWatermarkDesc') }}
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Text Watermark Settings -->
+          <div
+            v-if="watermarkType === 'text' || watermarkType === 'combined'"
+            class="mb-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50"
+          >
+            <h4 class="text-md font-medium text-slate-200 mb-3">
+              {{ $t('tools.imageWatermark.textSettings') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.watermarkText') }}
+                </label>
+                <input
+                  v-model="textOptions.text"
+                  type="text"
+                  :placeholder="$t('tools.imageWatermark.textPlaceholder')"
+                  class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.fontSize') }}: {{ textOptions.fontSize }}px
+                </label>
+                <input
+                  v-model="textOptions.fontSize"
+                  type="range"
+                  min="12"
+                  max="100"
+                  class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.fontColor') }}
+                </label>
+                <input
+                  v-model="textOptions.color"
+                  type="color"
+                  class="w-full h-10 border border-slate-700 rounded cursor-pointer bg-slate-800"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.fontFamily') }}
+                </label>
+                <select
+                  v-model="textOptions.fontFamily"
+                  class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Watermark Settings -->
+          <div
+            v-if="watermarkType === 'image' || watermarkType === 'combined'"
+            class="mb-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50"
+          >
+            <h4 class="text-md font-medium text-slate-200 mb-3">
+              {{ $t('tools.imageWatermark.imageSettings') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.watermarkImage') }}
+                </label>
+                <div
+                  @drop="handleWatermarkDrop"
+                  @dragover.prevent
+                  @dragenter.prevent
+                  @click="openWatermarkSelector"
+                  :class="[
+                    'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
+                    isWatermarkDragging
+                      ? 'border-primary-500/50 bg-primary-500/10'
+                      : 'border-slate-700/50 hover:border-slate-600/50',
+                  ]"
+                >
+                  <input
+                    ref="watermarkInput"
+                    type="file"
+                    accept="image/*"
+                    @change="handleWatermarkSelect"
+                    class="hidden"
+                  />
+                  <div v-if="watermarkImage.preview" class="flex flex-col items-center">
+                    <img
+                      :src="watermarkImage.preview"
+                      :alt="$t('tools.imageWatermark.watermarkPreview')"
+                      class="max-h-24 max-w-full mb-2"
+                    />
+                    <button
+                      @click.stop="removeWatermark"
+                      class="text-sm text-red-500 hover:text-red-400"
+                    >
+                      {{ $t('tools.imageWatermark.removeWatermark') }}
+                    </button>
+                  </div>
+                  <div v-else>
+                    <div class="text-4xl text-slate-400 mb-2">🖼️</div>
+                    <p class="text-slate-400">{{ $t('tools.imageWatermark.uploadWatermark') }}</p>
+                  </div>
                 </div>
               </div>
-              <div v-if="previewImageItem?.processedBlob">
-                <h4 class="text-lg font-medium text-gray-900 mb-2">
-                  {{ $t('tools.imageWatermark.processedImage') }}
-                </h4>
-                <div class="border border-gray-200 rounded-lg p-2">
-                  <img
-                    :src="previewImageItem?.processedPreviewUrl"
-                    :alt="previewImageItem?.name"
-                    class="w-full h-auto max-h-96 object-contain"
+              <div>
+                <div class="mb-3">
+                  <label class="block text-sm font-medium text-slate-300 mb-1">
+                    {{ $t('tools.imageWatermark.imageWidth') }}: {{ imageOptions.width }}px
+                  </label>
+                  <input
+                    v-model="imageOptions.width"
+                    type="range"
+                    min="20"
+                    :max="imageOptions.maxWidth"
+                    class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
-                <div class="mt-2 text-sm text-gray-600">
-                  {{ previewImageItem?.name }}<br />
-                  {{ $t('tools.imageWatermark.size') }}:
-                  {{ formatFileSize(previewImageItem?.processedSize || 0) }}
+                <div class="mb-3">
+                  <label class="block text-sm font-medium text-slate-300 mb-1">
+                    {{ $t('tools.imageWatermark.imageOpacity') }}: {{ imageOptions.opacity }}%
+                  </label>
+                  <input
+                    v-model="imageOptions.opacity"
+                    type="range"
+                    min="0"
+                    max="100"
+                    class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div class="flex items-center justify-end p-6 border-t border-gray-200 rounded-b">
-            <button
-              @click="showPreviewModal = false"
-              class="text-gray-600 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
-            >
-              {{ $t('common.close') }}
-            </button>
+
+          <!-- Position Settings -->
+          <div class="mb-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50">
+            <h4 class="text-md font-medium text-slate-200 mb-3">
+              {{ $t('tools.imageWatermark.positionSettings') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.position') }}
+                </label>
+                <select
+                  v-model="positionOptions.position"
+                  class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="top-left">{{ $t('tools.imageWatermark.topLeft') }}</option>
+                  <option value="top-center">{{ $t('tools.imageWatermark.topCenter') }}</option>
+                  <option value="top-right">{{ $t('tools.imageWatermark.topRight') }}</option>
+                  <option value="center-left">{{ $t('tools.imageWatermark.centerLeft') }}</option>
+                  <option value="center">{{ $t('tools.imageWatermark.center') }}</option>
+                  <option value="center-right">
+                    {{ $t('tools.imageWatermark.centerRight') }}
+                  </option>
+                  <option value="bottom-left">{{ $t('tools.imageWatermark.bottomLeft') }}</option>
+                  <option value="bottom-center">
+                    {{ $t('tools.imageWatermark.bottomCenter') }}
+                  </option>
+                  <option value="bottom-right">
+                    {{ $t('tools.imageWatermark.bottomRight') }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.margin') }}: {{ positionOptions.margin }}px
+                </label>
+                <input
+                  v-model="positionOptions.margin"
+                  type="range"
+                  min="0"
+                  max="100"
+                  class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced Settings -->
+          <div class="mb-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50">
+            <h4 class="text-md font-medium text-slate-200 mb-3">
+              {{ $t('tools.imageWatermark.advancedSettings') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.opacity') }}: {{ advancedOptions.opacity }}%
+                </label>
+                <input
+                  v-model="advancedOptions.opacity"
+                  type="range"
+                  min="0"
+                  max="100"
+                  class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.rotation') }}: {{ advancedOptions.rotation }}°
+                </label>
+                <input
+                  v-model="advancedOptions.rotation"
+                  type="range"
+                  min="0"
+                  max="360"
+                  class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">
+                  {{ $t('tools.imageWatermark.scale') }}: {{ advancedOptions.scale }}%
+                </label>
+                <input
+                  v-model="advancedOptions.scale"
+                  type="range"
+                  min="10"
+                  max="200"
+                  class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Feature Descriptions -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            💧 {{ $t('tools.imageWatermark.features.watermark.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageWatermark.features.watermark.description') }}
-          </p>
-        </div>
+      <!-- Right Panel - Image Gallery (Drawer) -->
+      <div v-if="images.length > 0" class="lg:w-1/2">
+        <div class="glass rounded-xl border border-slate-700/30 p-6 mb-6 h-full flex flex-col">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-slate-100">
+              {{ $t('tools.imageWatermark.imageList') }} ({{ images.length }})
+            </h3>
+            <div class="flex gap-3">
+              <button
+                @click="processAll"
+                :disabled="isProcessing"
+                class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span v-if="isProcessing" class="flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  {{ $t('tools.imageWatermark.processing') }}
+                </span>
+                <span v-else>{{ $t('tools.imageWatermark.processAll') }}</span>
+              </button>
+              <button
+                @click="downloadAll"
+                :disabled="!hasProcessedImages"
+                class="px-4 py-2 bg-green-600/10 text-green-300 rounded-lg hover:bg-green-600/20 border border-green-600/30 hover:border-green-600/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ $t('tools.imageWatermark.downloadAll') }}
+              </button>
+              <button
+                @click="clearAll"
+                class="px-4 py-2 bg-red-600/10 text-red-300 rounded-lg hover:bg-red-600/20 border border-red-600/30 hover:border-red-600/50 transition-colors"
+              >
+                {{ $t('common.clear') }}
+              </button>
+            </div>
+          </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            🖼️ {{ $t('tools.imageWatermark.features.batch.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageWatermark.features.batch.description') }}
-          </p>
-        </div>
+          <!-- Statistics -->
+          <div
+            v-if="processingStats.totalOriginalSize > 0"
+            class="mb-6 p-4 bg-green-500/10 rounded-lg border border-green-500/30"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div>
+                <div class="text-2xl font-bold text-green-300">
+                  {{ formatFileSize(processingStats.totalOriginalSize) }}
+                </div>
+                <div class="text-sm text-green-400">
+                  {{ $t('tools.imageWatermark.originalSize') }}
+                </div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-green-300">
+                  {{ formatFileSize(processingStats.totalProcessedSize) }}
+                </div>
+                <div class="text-sm text-green-400">
+                  {{ $t('tools.imageWatermark.processedSize') }}
+                </div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-green-300">
+                  {{ processingStats.processedCount }}/{{ images.length }}
+                </div>
+                <div class="text-sm text-green-400">
+                  {{ $t('tools.imageWatermark.processed') }}
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            ⚙️ {{ $t('tools.imageWatermark.features.customization.title') }}
-          </h3>
-          <p class="text-gray-600 text-sm">
-            {{ $t('tools.imageWatermark.features.customization.description') }}
-          </p>
+          <!-- Image Gallery -->
+          <div class="flex-1 overflow-y-auto">
+            <div class="grid grid-cols-1 gap-4">
+              <div
+                v-for="(image, index) in images"
+                :key="index"
+                class="border border-slate-700/50 rounded-lg p-4 hover:shadow-md transition-shadow flex flex-col gap-4 bg-slate-800/30"
+              >
+                <div class="flex items-start space-x-4">
+                  <!-- Thumbnail -->
+                  <div class="flex-shrink-0">
+                    <img
+                      :src="image.preview"
+                      :alt="image.name"
+                      class="w-24 h-24 object-cover rounded-lg border border-slate-700/50"
+                    />
+                  </div>
+
+                  <!-- Info and Actions -->
+                  <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Info Section -->
+                    <div class="md:col-span-2">
+                      <h4 class="text-sm font-medium text-slate-100 truncate">{{ image.name }}</h4>
+                      <p class="text-sm text-slate-400">
+                        {{ image.dimensions.width }} × {{ image.dimensions.height }} px
+                      </p>
+                      <!-- GIF Warning -->
+                      <div
+                        v-if="image.isGif"
+                        class="mt-2 p-2 bg-blue-500/10 rounded text-blue-300 text-xs border border-blue-500/30"
+                      >
+                        ℹ️ {{ $t('tools.imageWatermark.gifWarning') }}
+                      </div>
+                      <div class="flex flex-wrap gap-4 mt-2">
+                        <div class="text-sm text-slate-400">
+                          {{ $t('tools.imageWatermark.original') }}:
+                          {{ formatFileSize(image.originalSize) }}
+                        </div>
+                        <div v-if="image.processedSize" class="text-sm text-green-400">
+                          {{ $t('tools.imageWatermark.processed') }}:
+                          {{ formatFileSize(image.processedSize) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Status & Actions Section -->
+                    <div class="flex flex-col items-end space-y-2">
+                      <!-- Status -->
+                      <div class="flex items-center space-x-2">
+                        <div
+                          :class="[
+                            'w-3 h-3 rounded-full',
+                            image.status === 'pending'
+                              ? 'bg-slate-500'
+                              : image.status === 'processing'
+                                ? 'bg-yellow-500'
+                                : image.status === 'completed'
+                                  ? 'bg-green-500'
+                                  : 'bg-red-500',
+                          ]"
+                        ></div>
+                        <span class="text-xs text-slate-400">
+                          {{ $t(`tools.imageWatermark.status.${image.status}`) }}
+                        </span>
+                      </div>
+
+                      <!-- Progress -->
+                      <div v-if="image.status === 'processing'" class="w-full max-w-[100px]">
+                        <div class="bg-slate-700 rounded-full h-2">
+                          <div
+                            class="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                            :style="{ width: `${image.progress}%` }"
+                          ></div>
+                        </div>
+                        <div class="text-xs text-slate-400 text-center mt-1">
+                          {{ image.progress }}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex justify-end gap-2">
+                  <button
+                    v-if="image.status === 'completed' && image.processedBlob"
+                    @click="previewImage(index)"
+                    class="px-3 py-1 text-sm bg-purple-600/10 text-purple-300 rounded hover:bg-purple-600/20 border border-purple-600/30 hover:border-purple-600/50 transition-colors"
+                  >
+                    {{ $t('common.preview') }}
+                  </button>
+                  <button
+                    v-if="image.status === 'completed' && image.processedBlob"
+                    @click="downloadImage(index)"
+                    class="px-3 py-1 text-sm bg-green-600/10 text-green-300 rounded hover:bg-green-600/20 border border-green-600/30 hover:border-green-600/50 transition-colors"
+                  >
+                    {{ $t('common.download') }}
+                  </button>
+                  <button
+                    @click="processImage(index)"
+                    :disabled="isProcessing"
+                    class="px-3 py-1 text-sm bg-primary-600/10 text-primary-300 rounded hover:bg-primary-600/20 border border-primary-600/30 hover:border-primary-600/50 transition-colors disabled:opacity-50"
+                  >
+                    {{ $t('tools.imageWatermark.process') }}
+                  </button>
+                  <button
+                    @click="removeImage(index)"
+                    class="px-3 py-1 text-sm bg-red-600/10 text-red-300 rounded hover:bg-red-600/20 border border-red-600/30 hover:border-red-600/50 transition-colors"
+                  >
+                    {{ $t('tools.imageWatermark.remove') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- Preview Modal -->
+    <div
+      v-if="showPreviewModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="relative glass rounded-xl border border-slate-700/30 w-full max-w-4xl mx-4">
+        <div class="flex items-center justify-between p-4 border-b border-slate-700/30 rounded-t">
+          <h3 class="text-xl font-semibold text-slate-100">
+            {{ $t('tools.imageWatermark.imagePreview') }}
+          </h3>
+          <button
+            @click="showPreviewModal = false"
+            class="text-slate-400 bg-transparent hover:bg-slate-800/50 hover:text-slate-200 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="text-lg font-medium text-slate-200 mb-2">
+                {{ $t('tools.imageWatermark.originalImage') }}
+              </h4>
+              <div class="border border-slate-700/50 rounded-lg p-2 bg-slate-800/50">
+                <img
+                  :src="previewImageItem?.preview"
+                  :alt="previewImageItem?.name"
+                  class="w-full h-auto max-h-96 object-contain"
+                />
+              </div>
+              <div class="mt-2 text-sm text-slate-400">
+                {{ previewImageItem?.name }}<br />
+                {{ $t('tools.imageWatermark.size') }}:
+                {{ formatFileSize(previewImageItem?.originalSize || 0) }}<br />
+                {{ $t('tools.imageWatermark.dimensions') }}:
+                {{ previewImageItem?.dimensions.width }} ×
+                {{ previewImageItem?.dimensions.height }} px
+              </div>
+            </div>
+            <div v-if="previewImageItem?.processedBlob">
+              <h4 class="text-lg font-medium text-slate-200 mb-2">
+                {{ $t('tools.imageWatermark.processedImage') }}
+              </h4>
+              <div class="border border-slate-700/50 rounded-lg p-2 bg-slate-800/50">
+                <img
+                  :src="previewImageItem?.processedPreviewUrl"
+                  :alt="previewImageItem?.name"
+                  class="w-full h-auto max-h-96 object-contain"
+                />
+              </div>
+              <div class="mt-2 text-sm text-slate-400">
+                {{ previewImageItem?.name }}<br />
+                {{ $t('tools.imageWatermark.size') }}:
+                {{ formatFileSize(previewImageItem?.processedSize || 0) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-end p-6 border-t border-slate-700/30 rounded-b">
+          <button
+            @click="showPreviewModal = false"
+            class="text-slate-300 bg-slate-800/50 hover:bg-slate-700/50 focus:ring-4 focus:ring-slate-800/50 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors border border-slate-700/50"
+          >
+            {{ $t('common.close') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ToolLayout>
 </template>
 
 <script setup lang="ts">
 import { useToast } from '@/composables/useToast'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ToolLayout from '@/components/ToolLayout.vue'
 // @ts-expect-error No type definitions available for gif.js
 import GIF from 'gif.js'
 import { decompressFrames, parseGIF } from 'gifuct-js'
@@ -765,6 +735,11 @@ interface AdvancedOptions {
 const { t } = useI18n()
 const { success, error: showError } = useToast()
 
+// Use showError when displaying error messages
+function showErrorToast(message: string) {
+  showError(message)
+}
+
 // Refs
 const fileInput = ref<HTMLInputElement>()
 const watermarkInput = ref<HTMLInputElement>()
@@ -852,7 +827,7 @@ async function addFiles(files: File[]) {
   const imageFiles = files.filter((file) => file.type.startsWith('image/'))
 
   if (imageFiles.length === 0) {
-    showError(t('tools.imageWatermark.errors.noValidImages'))
+    showErrorToast(t('tools.imageWatermark.errors.noValidImages'))
     return
   }
 
@@ -937,7 +912,7 @@ function handleWatermarkDrop(event: DragEvent) {
 
 async function setWatermarkImage(file: File) {
   if (!file.type.startsWith('image/')) {
-    showError(t('tools.imageWatermark.errors.invalidWatermark'))
+    showErrorToast(t('tools.imageWatermark.errors.invalidWatermark'))
     return
   }
 
@@ -963,7 +938,7 @@ async function setWatermarkImage(file: File) {
     imageOptions.value.width = Math.min(imageOptions.value.width, imageOptions.value.maxWidth)
   } catch (err) {
     console.error('Error processing watermark image:', err)
-    showError(t('tools.imageWatermark.errors.watermarkProcessingFailed'))
+    showErrorToast(t('tools.imageWatermark.errors.watermarkProcessingFailed'))
   }
 }
 
@@ -1008,7 +983,7 @@ async function processImage(index: number) {
     (watermarkType.value === 'image' || watermarkType.value === 'combined') &&
     !watermarkImage.value.file
   ) {
-    showError(t('tools.imageWatermark.errors.noWatermarkImage'))
+    showErrorToast(t('tools.imageWatermark.errors.noWatermarkImage'))
     return
   }
 
@@ -1016,7 +991,7 @@ async function processImage(index: number) {
     (watermarkType.value === 'text' || watermarkType.value === 'combined') &&
     !textOptions.value.text.trim()
   ) {
-    showError(t('tools.imageWatermark.errors.noWatermarkText'))
+    showErrorToast(t('tools.imageWatermark.errors.noWatermarkText'))
     return
   }
 
@@ -1033,7 +1008,7 @@ async function processImage(index: number) {
   } catch (err) {
     console.error('Processing error:', err)
     images.value[index].status = 'error'
-    showError(t('tools.imageWatermark.errors.processingFailed', { filename: image.name }))
+    showErrorToast(t('tools.imageWatermark.errors.processingFailed', { filename: image.name }))
   }
 }
 
@@ -1398,6 +1373,7 @@ async function processAll() {
 
   // Process in batches of 3 to avoid overwhelming the browser
   const batchSize = 3
+
   for (let i = 0; i < pendingImages.length; i += batchSize) {
     const batch = pendingImages.slice(i, i + batchSize)
     await Promise.all(batch.map(({ index }) => processImage(index)))
@@ -1555,7 +1531,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.slider::-webkit-slider-thumb {
+.slider-fix::-webkit-slider-thumb {
   appearance: none;
   height: 20px;
   width: 20px;
@@ -1564,7 +1540,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-.slider::-moz-range-thumb {
+.slider-fix::-moz-range-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;

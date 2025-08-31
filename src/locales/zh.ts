@@ -709,10 +709,10 @@ export default {
       tabs: {
         path: '路径提取器',
         formatter: 'JSON 格式化',
-        excelTojson: 'Excel 转 JSON',
+        unifiedExcelToJson: 'Excel 转 JSON',
         jsonMerge: 'JSON 合并',
-        excelTextToJson: 'Excel 文本转 JSON',
         jsonToExcel: 'JSON 转 Excel',
+        cookieToJson: 'Cookie 转 JSON',
       },
       features: {
         pathExtraction: {
