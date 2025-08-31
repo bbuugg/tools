@@ -242,8 +242,17 @@ wss.on('connection', (ws) => {
             break
           }
 
+          // Update client name if provided
+          if (data.userName) {
+            client.name = data.userName
+          }
+
           // Add participant to room
-          targetRoom.participants.push({ id: clientId, name: client.name })
+          targetRoom.participants.push({
+            id: clientId,
+            name: client.name,
+            role: 'member',
+          })
 
           // Update client info
           client.roomId = data.roomId
@@ -257,19 +266,9 @@ wss.on('connection', (ws) => {
                   type: 'participant-joined',
                   participantId: clientId,
                   name: client.name,
+                  role: 'member',
                 }),
               )
-
-              // If this is NOT the new participant, notify them about the existing participants
-              if (participant.id !== clientId) {
-                participantClient.ws.send(
-                  JSON.stringify({
-                    type: 'participant-joined',
-                    participantId: participant.id,
-                    name: participant.name,
-                  }),
-                )
-              }
             }
           })
 
@@ -279,8 +278,11 @@ wss.on('connection', (ws) => {
               type: 'room-joined',
               roomId: data.roomId,
               participants: targetRoom.participants,
+              isHost: false,
             }),
           )
+
+          console.log(`${client.name} (${clientId}) joined room ${data.roomId}`)
           break
 
         case 'leave-room':
@@ -326,12 +328,34 @@ wss.on('connection', (ws) => {
                     JSON.stringify({
                       type: 'room-message',
                       messageType: data.messageType,
+                      message: data.message,
                       content: data.content,
                       sender: clientId,
+                      senderName: client.name,
                     }),
                   )
                 }
               })
+            }
+          }
+          break
+
+        case 'room-action':
+          if (client.roomId && room.host === clientId) {
+            const room = rooms.get(client.roomId)
+            if (room && data.action === 'kick') {
+              // Handle kick action
+              const targetClient = clients.get(data.targetId)
+              if (targetClient) {
+                targetClient.ws.send(
+                  JSON.stringify({
+                    type: 'kicked',
+                    reason: 'Kicked by host',
+                  }),
+                )
+                // Force disconnect the target client
+                targetClient.ws.close()
+              }
             }
           }
           break

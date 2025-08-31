@@ -298,7 +298,7 @@
         <div class="flex-1 p-4 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           <div class="space-y-3">
             <div
-              v-for="message in chatMessages"
+              v-for="message in chatMessages.filter((m) => m && m.id)"
               :key="message.id"
               :class="[
                 'flex',
@@ -670,6 +670,8 @@ const handleMessageFromServer = (data: string) => {
         })
         // Initialize connections with all participants
         initRoomConnections()
+        // Start local stream automatically when room is created
+        startLocalStream()
         break
 
       case 'room-joined':
@@ -689,6 +691,8 @@ const handleMessageFromServer = (data: string) => {
         })
         // Initialize connections with all participants
         initRoomConnections()
+        // Start local stream automatically when joining room
+        startLocalStream()
         break
 
       case 'room-error':
@@ -750,7 +754,7 @@ const handleMessageFromServer = (data: string) => {
         break
 
       case 'room-message':
-        if (message.messageType === 'chat') {
+        if (message.messageType === 'chat' && message.message) {
           // Add received chat message
           chatMessages.value.push(message.message)
         }
@@ -857,7 +861,9 @@ const initConnectionWithParticipant = async (participantId: string) => {
       // Handle remote stream
       peerConnection.ontrack = (event) => {
         const stream = event.streams[0]
-        const streamId = stream.id
+        const streamId = `${participantId}-${stream.id}`
+
+        addLog(`Received remote stream from ${participantId}`, 'info')
 
         // Check if we already have this stream
         const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
@@ -874,10 +880,13 @@ const initConnectionWithParticipant = async (participantId: string) => {
           const videoElement = remoteVideoRefs.value[streamId]
           if (videoElement) {
             videoElement.srcObject = stream
+            addLog(`Attached stream to video element for ${participantId}`, 'success')
+          } else {
+            addLog(`Video element not found for stream ${streamId}`, 'warning')
           }
         })
 
-        addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
+        addLog('Remote stream added successfully', 'success')
       }
 
       // Create and send offer
@@ -988,7 +997,9 @@ const handleOffer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => 
       // Handle remote stream
       peerConnection.ontrack = (event) => {
         const stream = event.streams[0]
-        const streamId = stream.id
+        const streamId = `${sourceId}-${stream.id}`
+
+        addLog(`Received remote stream from ${sourceId}`, 'info')
 
         // Check if we already have this stream
         const existingStreamIndex = remoteStreams.value.findIndex((s) => s.id === streamId)
@@ -1005,10 +1016,13 @@ const handleOffer = async (sourceId: string, sdp: RTCSessionDescriptionInit) => 
           const videoElement = remoteVideoRefs.value[streamId]
           if (videoElement) {
             videoElement.srcObject = stream
+            addLog(`Attached stream to video element for ${sourceId}`, 'success')
+          } else {
+            addLog(`Video element not found for stream ${streamId}`, 'warning')
           }
         })
 
-        addLog(t('tools.webRtcFileTransfer.av.remoteStreamAdded'), 'info')
+        addLog('Remote stream added successfully', 'success')
       }
 
       peerConnection.ondatachannel = (event) => {
@@ -1282,6 +1296,21 @@ const formatTime = (timestamp: number) => {
   return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const broadcastMediaStateChange = (mediaType: string, enabled: boolean) => {
+  if (!signalServer || !inRoom.value) return
+
+  signalServer.send(
+    JSON.stringify({
+      type: 'room-message',
+      roomId: currentRoomId.value,
+      messageType: 'media-state',
+      mediaType,
+      enabled,
+      senderId: localDeviceId.value,
+    }),
+  )
+}
+
 // Handle file selection
 const handleFileSelect = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -1529,12 +1558,10 @@ const toggleCamera = async () => {
   if (videoTrack) {
     videoTrack.enabled = !videoTrack.enabled
     cameraEnabled.value = videoTrack.enabled
-    addLog(
-      videoTrack.enabled
-        ? t('tools.webRtcFileTransfer.av.cameraEnabled')
-        : t('tools.webRtcFileTransfer.av.cameraDisabled'),
-      'info',
-    )
+    addLog(videoTrack.enabled ? 'Camera enabled' : 'Camera disabled', 'info')
+
+    // Notify other participants about camera state change
+    broadcastMediaStateChange('camera', videoTrack.enabled)
   }
 }
 
@@ -1548,12 +1575,10 @@ const toggleMicrophone = async () => {
   if (audioTrack) {
     audioTrack.enabled = !audioTrack.enabled
     microphoneEnabled.value = audioTrack.enabled
-    addLog(
-      audioTrack.enabled
-        ? t('tools.webRtcFileTransfer.av.microphoneEnabled')
-        : t('tools.webRtcFileTransfer.av.microphoneDisabled'),
-      'info',
-    )
+    addLog(audioTrack.enabled ? 'Microphone enabled' : 'Microphone disabled', 'info')
+
+    // Notify other participants about microphone state change
+    broadcastMediaStateChange('microphone', audioTrack.enabled)
   }
 }
 
@@ -1581,34 +1606,27 @@ const startScreenShare = async () => {
       localVideo.value.srcObject = screenStream.value
     }
 
-    // If we're in a room, add the screen tracks to all peer connections
+    // If we're in a room, replace tracks in all peer connections
     if (inRoom.value) {
-      // Create new peer connections for any participants we don't already have connections with
-      for (const participant of participants.value) {
-        if (participant.id !== localDeviceId.value && !peerConnections.has(participant.id)) {
-          await initConnectionWithParticipant(participant.id)
-        }
-      }
-
-      // Add tracks to existing peer connections
       for (const [participantId, peerConnection] of peerConnections.entries()) {
         if (participantId !== localDeviceId.value) {
-          // Remove existing tracks first to avoid duplicates
+          // Replace video tracks with screen share tracks
           const senders = peerConnection.getSenders()
-          senders.forEach((sender) => {
-            if (sender.track) {
-              peerConnection.removeTrack(sender)
-            }
-          })
+          const videoSender = senders.find(
+            (sender) => sender.track && sender.track.kind === 'video',
+          )
 
-          // Add all tracks from the screen stream
-          screenStream.value.getTracks().forEach((track) => {
-            try {
-              peerConnection.addTrack(track, screenStream.value!)
-            } catch (_e) {
-              // Track might already be added
+          if (videoSender && screenStream.value) {
+            const screenVideoTrack = screenStream.value.getVideoTracks()[0]
+            if (screenVideoTrack) {
+              try {
+                await videoSender.replaceTrack(screenVideoTrack)
+                addLog(`Screen share track replaced for ${participantId}`, 'success')
+              } catch (error) {
+                addLog(`Failed to replace track for ${participantId}: ${error}`, 'error')
+              }
             }
-          })
+          }
         }
       }
     }
@@ -1622,16 +1640,13 @@ const startScreenShare = async () => {
       }
     }
 
-    addLog(t('tools.webRtcFileTransfer.av.screenShareStarted'), 'success')
+    addLog('Screen sharing started', 'success')
   } catch (error) {
-    addLog(
-      t('tools.webRtcFileTransfer.av.screenShareError', { error: (error as Error).toString() }),
-      'error',
-    )
+    addLog(`Screen share error: ${error}`, 'error')
   }
 }
 
-const stopScreenShare = () => {
+const stopScreenShare = async () => {
   if (screenStream.value) {
     screenStream.value.getTracks().forEach((track) => track.stop())
     screenStream.value = null
@@ -1641,14 +1656,33 @@ const stopScreenShare = () => {
   if (localStream.value && localVideo.value) {
     localVideo.value.srcObject = localStream.value
 
-    // If we're in a room, we might need to renegotiate
+    // If we're in a room, replace screen share tracks back to camera tracks
     if (inRoom.value) {
-      addLog(t('tools.webRtcFileTransfer.av.screenShareStoppedNote'), 'info')
+      for (const [participantId, peerConnection] of peerConnections.entries()) {
+        if (participantId !== localDeviceId.value) {
+          const senders = peerConnection.getSenders()
+          const videoSender = senders.find(
+            (sender) => sender.track && sender.track.kind === 'video',
+          )
+
+          if (videoSender && localStream.value) {
+            const cameraVideoTrack = localStream.value.getVideoTracks()[0]
+            if (cameraVideoTrack) {
+              try {
+                await videoSender.replaceTrack(cameraVideoTrack)
+                addLog(`Camera track restored for ${participantId}`, 'success')
+              } catch (error) {
+                addLog(`Failed to restore camera track for ${participantId}: ${error}`, 'error')
+              }
+            }
+          }
+        }
+      }
     }
   }
 
   screenSharingEnabled.value = false
-  addLog(t('tools.webRtcFileTransfer.av.screenShareStopped'), 'info')
+  addLog('Screen sharing stopped', 'info')
 }
 
 const setRemoteVideoRef = (el: any, streamId: string) => {
