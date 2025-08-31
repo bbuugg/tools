@@ -33,13 +33,11 @@ const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
 const JsonArrayDeduplicator = () => import('../tools/json/JsonArrayDeduplicator.vue')
 const QrCodeTool = () => import('../tools/qrcode/QrCodeTool.vue')
-const WebRtcFileTransfer = () => import('../tools/WebRtcFileTransfer.vue')
 const TextSteganography = () => import('../tools/TextSteganography.vue')
 const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 const HeartCollage = () => import('../tools/image/HeartCollage.vue')
-const WebRtcMeeting = () => import('../tools/WebRtcMeeting.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -311,27 +309,6 @@ export const routeConfig: RouteRecordRaw[] = [
       icon: '📊',
     },
     children: [
-      {
-        path: 'web-rtc-file-transfer',
-        name: 'webRtcFileTransfer',
-        component: WebRtcFileTransfer,
-        meta: {
-          title: 'WebRTC File Transfer',
-          icon: '📡',
-          status: Status.Active,
-        },
-      },
-      {
-        path: 'web-rtc-meeting',
-        name: 'webRtcMeeting',
-        component: WebRtcMeeting,
-        meta: {
-          title: 'WebRTC Meeting',
-          icon: '🎥',
-          status: Status.Active,
-          description: 'Professional video conferencing with real-time collaboration',
-        },
-      },
       {
         path: 'text-steganography',
         name: 'textSteganography',
