@@ -1,21 +1,21 @@
 <template>
   <div class="color-picker-tool">
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $t('tools.colorPicker.title') }}</h2>
-      <p class="text-gray-600 mb-6">{{ $t('tools.colorPicker.description') }}</p>
+    <div class="glass rounded-xl shadow-dark-xl p-6 mb-8 border border-slate-700/30">
+      <h2 class="text-2xl font-bold text-slate-100 mb-2">{{ $t('tools.colorPicker.title') }}</h2>
+      <p class="text-slate-400 mb-6">{{ $t('tools.colorPicker.description') }}</p>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Color Picker Section -->
         <div class="space-y-6">
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          <div class="glass p-6 rounded-xl border border-slate-700/30">
+            <h3 class="text-lg font-semibold text-slate-100 mb-4">
               {{ $t('tools.colorPicker.colorPicker') }}
             </h3>
 
             <!-- Main Color Picker -->
             <div class="mb-6">
               <div
-                class="w-full h-32 rounded-lg mb-4 cursor-pointer border-2 border-gray-300"
+                class="w-full h-32 rounded-lg mb-4 cursor-pointer border-2 border-slate-600 hover:border-slate-400 transition-colors"
                 :style="{ backgroundColor: currentColor.hex }"
                 @click="openColorPicker"
               ></div>
@@ -30,14 +30,14 @@
 
             <!-- Slider Mode Selector -->
             <div class="mb-4">
-              <div class="flex space-x-2 mb-2">
+              <div class="flex flex-wrap gap-2 mb-2">
                 <button
                   @click="sliderMode = 'rgba'"
                   :class="[
-                    'px-3 py-1 text-sm rounded transition-colors',
+                    'px-3 py-1.5 text-sm rounded-lg transition-all duration-200',
                     sliderMode === 'rgba'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-slate-100',
                   ]"
                 >
                   RGBA
@@ -45,10 +45,10 @@
                 <button
                   @click="sliderMode = 'hsl'"
                   :class="[
-                    'px-3 py-1 text-sm rounded transition-colors',
+                    'px-3 py-1.5 text-sm rounded-lg transition-all duration-200',
                     sliderMode === 'hsl'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-slate-100',
                   ]"
                 >
                   HSL
@@ -56,10 +56,10 @@
                 <button
                   @click="sliderMode = 'hsv'"
                   :class="[
-                    'px-3 py-1 text-sm rounded transition-colors',
+                    'px-3 py-1.5 text-sm rounded-lg transition-all duration-200',
                     sliderMode === 'hsv'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-slate-100',
                   ]"
                 >
                   HSV
@@ -67,10 +67,10 @@
                 <button
                   @click="sliderMode = 'cmyk'"
                   :class="[
-                    'px-3 py-1 text-sm rounded transition-colors',
+                    'px-3 py-1.5 text-sm rounded-lg transition-all duration-200',
                     sliderMode === 'cmyk'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      ? 'bg-primary-500 text-white shadow-glow'
+                      : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-slate-100',
                   ]"
                 >
                   CMYK
@@ -84,8 +84,8 @@
               <div v-if="sliderMode === 'rgba'">
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">R</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.rgb.r }}</span>
+                    <span class="text-sm font-medium text-slate-300">R</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.rgb.r }}</span>
                   </div>
                   <input
                     type="range"
@@ -93,14 +93,14 @@
                     max="255"
                     :value="currentColor.rgb.r"
                     @input="onRgbRChange"
-                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-red-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-red-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">G</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.rgb.g }}</span>
+                    <span class="text-sm font-medium text-slate-300">G</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.rgb.g }}</span>
                   </div>
                   <input
                     type="range"
@@ -108,14 +108,14 @@
                     max="255"
                     :value="currentColor.rgb.g"
                     @input="onRgbGChange"
-                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-green-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-green-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">B</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.rgb.b }}</span>
+                    <span class="text-sm font-medium text-slate-300">B</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.rgb.b }}</span>
                   </div>
                   <input
                     type="range"
@@ -123,14 +123,14 @@
                     max="255"
                     :value="currentColor.rgb.b"
                     @input="onRgbBChange"
-                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-blue-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-blue-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">A</span>
-                    <span class="text-sm text-gray-500">{{
+                    <span class="text-sm font-medium text-slate-300">A</span>
+                    <span class="text-sm text-slate-400">{{
                       parseFloat(String(currentColor.rgb.a)).toFixed(2)
                     }}</span>
                   </div>
@@ -141,7 +141,7 @@
                     step="0.01"
                     :value="currentColor.rgb.a"
                     @input="onAlphaSliderChange"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-slate-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-slate-500"
                   />
                 </div>
               </div>
@@ -150,8 +150,8 @@
               <div v-else-if="sliderMode === 'hsl'">
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">H</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsl.h }}</span>
+                    <span class="text-sm font-medium text-slate-300">H</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsl.h }}</span>
                   </div>
                   <input
                     type="range"
@@ -159,14 +159,14 @@
                     max="360"
                     :value="currentColor.hsl.h"
                     @input="onHslHChange"
-                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-red-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-red-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">S</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsl.s }}</span>
+                    <span class="text-sm font-medium text-slate-300">S</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsl.s }}</span>
                   </div>
                   <input
                     type="range"
@@ -174,14 +174,14 @@
                     max="100"
                     :value="currentColor.hsl.s"
                     @input="onHslSChange"
-                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-green-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-green-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">L</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsl.l }}</span>
+                    <span class="text-sm font-medium text-slate-300">L</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsl.l }}</span>
                   </div>
                   <input
                     type="range"
@@ -189,14 +189,14 @@
                     max="100"
                     :value="currentColor.hsl.l"
                     @input="onHslLChange"
-                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-blue-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-blue-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">A</span>
-                    <span class="text-sm text-gray-500">{{
+                    <span class="text-sm font-medium text-slate-300">A</span>
+                    <span class="text-sm text-slate-400">{{
                       parseFloat(String(currentColor.rgb.a)).toFixed(2)
                     }}</span>
                   </div>
@@ -207,7 +207,7 @@
                     step="0.01"
                     :value="currentColor.rgb.a"
                     @input="onAlphaSliderChange"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-slate-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-slate-500"
                   />
                 </div>
               </div>
@@ -216,8 +216,8 @@
               <div v-else-if="sliderMode === 'hsv'">
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">H</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsv.h }}</span>
+                    <span class="text-sm font-medium text-slate-300">H</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsv.h }}</span>
                   </div>
                   <input
                     type="range"
@@ -225,14 +225,14 @@
                     max="360"
                     :value="currentColor.hsv.h"
                     @input="onHsvHChange"
-                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-red-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-red-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">S</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsv.s }}</span>
+                    <span class="text-sm font-medium text-slate-300">S</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsv.s }}</span>
                   </div>
                   <input
                     type="range"
@@ -240,14 +240,14 @@
                     max="100"
                     :value="currentColor.hsv.s"
                     @input="onHsvSChange"
-                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-green-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-green-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">V</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.hsv.v }}</span>
+                    <span class="text-sm font-medium text-slate-300">V</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.hsv.v }}</span>
                   </div>
                   <input
                     type="range"
@@ -255,14 +255,14 @@
                     max="100"
                     :value="currentColor.hsv.v"
                     @input="onHsvVChange"
-                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-blue-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-blue-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">A</span>
-                    <span class="text-sm text-gray-500">{{
+                    <span class="text-sm font-medium text-slate-300">A</span>
+                    <span class="text-sm text-slate-400">{{
                       parseFloat(String(currentColor.rgb.a)).toFixed(2)
                     }}</span>
                   </div>
@@ -273,7 +273,7 @@
                     step="0.01"
                     :value="currentColor.rgb.a"
                     @input="onAlphaSliderChange"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-slate-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-slate-500"
                   />
                 </div>
               </div>
@@ -282,8 +282,8 @@
               <div v-else-if="sliderMode === 'cmyk'">
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">C</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.c }}</span>
+                    <span class="text-sm font-medium text-slate-300">C</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.cmyk.c }}</span>
                   </div>
                   <input
                     type="range"
@@ -291,14 +291,14 @@
                     max="100"
                     :value="currentColor.cmyk.c"
                     @input="onCmykCChange"
-                    class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-red-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-red-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">M</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.m }}</span>
+                    <span class="text-sm font-medium text-slate-300">M</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.cmyk.m }}</span>
                   </div>
                   <input
                     type="range"
@@ -306,14 +306,14 @@
                     max="100"
                     :value="currentColor.cmyk.m"
                     @input="onCmykMChange"
-                    class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-green-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-green-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">Y</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.y }}</span>
+                    <span class="text-sm font-medium text-slate-300">Y</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.cmyk.y }}</span>
                   </div>
                   <input
                     type="range"
@@ -321,14 +321,14 @@
                     max="100"
                     :value="currentColor.cmyk.y"
                     @input="onCmykYChange"
-                    class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-blue-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-blue-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">K</span>
-                    <span class="text-sm text-gray-500">{{ currentColor.cmyk.k }}</span>
+                    <span class="text-sm font-medium text-slate-300">K</span>
+                    <span class="text-sm text-slate-400">{{ currentColor.cmyk.k }}</span>
                   </div>
                   <input
                     type="range"
@@ -336,14 +336,14 @@
                     max="100"
                     :value="currentColor.cmyk.k"
                     @input="onCmykKChange"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-slate-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-slate-500"
                   />
                 </div>
 
                 <div>
                   <div class="flex justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700">A</span>
-                    <span class="text-sm text-gray-500">{{
+                    <span class="text-sm font-medium text-slate-300">A</span>
+                    <span class="text-sm text-slate-400">{{
                       parseFloat(String(currentColor.rgb.a)).toFixed(2)
                     }}</span>
                   </div>
@@ -354,7 +354,7 @@
                     step="0.01"
                     :value="currentColor.rgb.a"
                     @input="onAlphaSliderChange"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-fix"
+                    class="w-full h-2 bg-slate-500/20 rounded-lg appearance-none cursor-pointer slider-fix accent-slate-500"
                   />
                 </div>
               </div>
@@ -362,19 +362,19 @@
           </div>
 
           <!-- Image Color Picker -->
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          <div class="glass p-6 rounded-xl border border-slate-700/30">
+            <h3 class="text-lg font-semibold text-slate-100 mb-4">
               {{ $t('tools.colorPicker.imagePicker') }}
             </h3>
 
             <!-- Image input area (hidden when image is loaded) -->
             <div
               v-if="!imagePreview"
-              class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer mb-4"
+              class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center cursor-pointer mb-4 hover:border-slate-400 transition-colors"
               @drop="handleImageDrop"
               @dragover.prevent
               @click="openImageSelector"
-              :class="{ 'border-blue-500 bg-blue-50': isImageDragging }"
+              :class="{ 'border-primary-500 bg-primary-500/10': isImageDragging }"
             >
               <input
                 ref="imageInput"
@@ -385,9 +385,9 @@
               />
               <div class="space-y-2">
                 <div class="text-2xl">🎨</div>
-                <p class="text-gray-600">{{ $t('tools.colorPicker.dropImage') }}</p>
+                <p class="text-slate-400">{{ $t('tools.colorPicker.dropImage') }}</p>
                 <button
-                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors shadow-glow"
                 >
                   {{ $t('tools.colorPicker.selectImage') }}
                 </button>
@@ -396,16 +396,16 @@
 
             <!-- Image preview and color picker (shown when image is loaded) -->
             <div v-else>
-              <div class="flex justify-between items-center mb-2">
-                <p class="text-sm text-gray-600">{{ $t('tools.colorPicker.imagePreview') }}</p>
-                <div class="flex space-x-2">
+              <div class="flex flex-wrap justify-between items-center mb-2 gap-2">
+                <p class="text-sm text-slate-400">{{ $t('tools.colorPicker.imagePreview') }}</p>
+                <div class="flex flex-wrap gap-2">
                   <button
                     @click="activateColorPicker"
                     :class="[
-                      'px-3 py-1 text-sm rounded transition-colors',
+                      'px-3 py-1.5 text-sm rounded-lg transition-all duration-200',
                       isColorPickerActive
-                        ? 'bg-red-600 text-white hover:bg-red-700'
-                        : 'bg-blue-600 text-white hover:bg-blue-700',
+                        ? 'bg-red-500 text-white hover:bg-red-600'
+                        : 'bg-primary-500 text-white hover:bg-primary-600 shadow-glow',
                     ]"
                   >
                     {{
@@ -416,7 +416,7 @@
                   </button>
                   <button
                     @click="clearImage"
-                    class="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                    class="px-3 py-1.5 text-sm bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.clear') }}
                   </button>
@@ -457,23 +457,23 @@
                   }"
                 ></div>
               </div>
-              <p v-if="isColorPickerActive" class="text-sm text-gray-500 mt-2">
+              <p v-if="isColorPickerActive" class="text-sm text-slate-400 mt-2">
                 {{ $t('tools.colorPicker.clickToPick') }}
                 <br />
                 {{ $t('tools.colorPicker.keepPickingUntilCancel') }}
               </p>
 
               <!-- Re-select image options -->
-              <div class="mt-4 flex space-x-2">
+              <div class="mt-4 flex flex-wrap gap-2">
                 <button
                   @click="openImageSelector"
-                  class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                  class="px-3 py-1.5 text-sm bg-slate-700/50 text-slate-200 rounded-lg hover:bg-slate-700 transition-colors"
                 >
                   {{ $t('tools.colorPicker.selectImage') }}
                 </button>
                 <button
                   @click="pasteFromClipboard"
-                  class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                  class="px-3 py-1.5 text-sm bg-slate-700/50 text-slate-200 rounded-lg hover:bg-slate-700 transition-colors"
                 >
                   {{ $t('common.paste') }}
                 </button>
@@ -485,14 +485,14 @@
         <!-- Color Information Section -->
         <div class="space-y-6">
           <!-- Common Colors -->
-          <div class="bg-gray-50 p-6 rounded-lg">
+          <div class="glass p-6 rounded-xl border border-slate-700/30">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-gray-800">
+              <h3 class="text-lg font-semibold text-slate-100">
                 {{ $t('tools.colorPicker.commonColors') }}
               </h3>
               <button
                 @click="openModal"
-                class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                class="px-3 py-1.5 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors shadow-glow"
               >
                 {{ $t('common.more') }}
               </button>
@@ -501,7 +501,7 @@
               <div
                 v-for="color in commonColors"
                 :key="color"
-                class="w-8 h-8 rounded cursor-pointer border border-gray-300 hover:scale-110 transition-transform"
+                class="w-8 h-8 rounded-lg cursor-pointer border border-slate-600 hover:scale-110 transition-transform hover:border-slate-400"
                 :style="{ backgroundColor: color }"
                 @click="selectCommonColor(color)"
               ></div>
@@ -511,24 +511,24 @@
           <!-- Common Colors Modal -->
           <div
             v-if="showModal"
-            class="fixed inset-0 bg-slate-950/50 flex justify-center items-center z-[9999]"
+            class="fixed inset-0 bg-slate-950/70 flex justify-center items-center z-[9999] backdrop-blur-sm"
             @click="closeModal"
             data-testid="color-modal"
           >
             <div
-              class="bg-white rounded-xl shadow-2xl shadow-slate-950/5 border border-slate-200 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto"
+              class="glass rounded-xl shadow-2xl border border-slate-700/50 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto"
               @click.stop
             >
               <div
-                class="p-4 pb-2 flex justify-between items-center sticky top-0 bg-white border-b"
+                class="p-4 pb-2 flex justify-between items-center sticky top-0 bg-slate-900/80 border-b border-slate-700/30 backdrop-blur-sm"
               >
-                <h1 class="text-lg text-slate-800 font-semibold">
+                <h1 class="text-lg text-slate-100 font-semibold">
                   {{ $t('tools.colorPicker.commonColors') }}
                 </h1>
                 <button
                   type="button"
                   @click="closeModal"
-                  class="inline-grid place-items-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none data-[shape=circular]:rounded-full text-sm min-w-[34px] min-h-[34px] rounded-md bg-transparent border-transparent text-slate-200-foreground hover:bg-slate-200/10 hover:border-slate-200/10 shadow-none hover:shadow-none outline-none absolute right-2 top-2"
+                  class="inline-grid place-items-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none data-[shape=circular]:rounded-full text-sm min-w-[34px] min-h-[34px] rounded-md bg-transparent border-transparent text-slate-400 hover:bg-slate-800/50 hover:border-slate-700/50 shadow-none hover:shadow-none outline-none"
                   aria-label="Close"
                 >
                   <svg
@@ -558,12 +558,12 @@
                     class="space-y-2"
                     data-testid="color-group"
                   >
-                    <h2 class="text-md font-medium text-slate-800">{{ colorGroup.name }}</h2>
+                    <h2 class="text-md font-medium text-slate-100">{{ colorGroup.name }}</h2>
                     <div class="grid grid-cols-10 gap-2">
                       <div
                         v-for="color in colorGroup.colors"
                         :key="color"
-                        class="w-8 h-8 rounded cursor-pointer border border-gray-300 hover:scale-110 transition-transform"
+                        class="w-8 h-8 rounded-lg cursor-pointer border border-slate-600 hover:scale-110 transition-transform hover:border-slate-400"
                         :style="{ backgroundColor: color }"
                         @click="selectMaterialColor(color)"
                         :title="color"
@@ -572,11 +572,13 @@
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex justify-end gap-2 sticky bottom-0 bg-white border-t">
+              <div
+                class="p-4 flex justify-end gap-2 sticky bottom-0 bg-slate-900/80 border-t border-slate-700/30 backdrop-blur-sm"
+              >
                 <button
                   type="button"
                   @click="closeModal"
-                  class="inline-flex items-center justify-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed data-[shape=pill]:rounded-full data-[width=full]:w-full focus:shadow-none text-sm rounded-md py-2 px-4 bg-transparent border-transparent text-red-500 hover:bg-red-500/10 hover:border-red-500/10 shadow-none hover:shadow-none outline-none"
+                  class="inline-flex items-center justify-center border align-middle select-none font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed data-[shape=pill]:rounded-full data-[width=full]:w-full focus:shadow-none text-sm rounded-lg py-2 px-4 bg-transparent border-transparent text-red-400 hover:bg-red-500/10 hover:border-red-500/10 shadow-none hover:shadow-none outline-none"
                 >
                   {{ $t('common.close') }}
                 </button>
@@ -585,37 +587,41 @@
           </div>
 
           <!-- Color Values -->
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          <div class="glass p-6 rounded-xl border border-slate-700/30">
+            <h3 class="text-lg font-semibold text-slate-100 mb-4">
               {{ $t('tools.colorPicker.conversions') }}
             </h3>
 
             <div class="space-y-4">
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">HEX</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">HEX</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.hex"
                     type="text"
-                    class="w-40 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-40 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onHexInputValueChange"
                   />
                   <button
                     @click="copyToClipboard(currentColor.hex)"
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">RGB</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">RGB</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.rgb"
                     type="text"
-                    class="w-48 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-48 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onRgbInputValueChange"
                   />
                   <button
@@ -624,20 +630,22 @@
                         `rgb(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b})`,
                       )
                     "
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">RGBA</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">RGBA</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.rgba"
                     type="text"
-                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-52 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onRgbaInputValueChange"
                   />
                   <button
@@ -646,20 +654,22 @@
                         `rgba(${currentColor.rgb.r}, ${currentColor.rgb.g}, ${currentColor.rgb.b}, ${parseFloat(String(currentColor.rgb.a)).toFixed(2)})`,
                       )
                     "
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">HSL</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">HSL</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.hsl"
                     type="text"
-                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-52 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onHslInputValueChange"
                   />
                   <button
@@ -668,20 +678,22 @@
                         `hsl(${Math.round(currentColor.hsl.h)}, ${Math.round(currentColor.hsl.s)}%, ${Math.round(currentColor.hsl.l)}%)`,
                       )
                     "
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">HSV</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">HSV</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.hsv"
                     type="text"
-                    class="w-52 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-52 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onHsvInputValueChange"
                   />
                   <button
@@ -690,20 +702,22 @@
                         `hsv(${Math.round(currentColor.hsv.h)}, ${Math.round(currentColor.hsv.s)}%, ${Math.round(currentColor.hsv.v)}%)`,
                       )
                     "
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between p-3 bg-white rounded border">
-                <span class="font-medium">CMYK</span>
+              <div
+                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30"
+              >
+                <span class="font-medium text-slate-200">CMYK</span>
                 <div class="flex items-center space-x-2">
                   <input
                     v-model="inputValues.cmyk"
                     type="text"
-                    class="w-56 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    class="w-56 px-3 py-1.5 text-sm bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-slate-100"
                     @input="onCmykInputValueChange"
                   />
                   <button
@@ -712,7 +726,7 @@
                         `cmyk(${Math.round(currentColor.cmyk.c)}%, ${Math.round(currentColor.cmyk.m)}%, ${Math.round(currentColor.cmyk.y)}%, ${Math.round(currentColor.cmyk.k)}%)`,
                       )
                     "
-                    class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                    class="px-3 py-1.5 text-xs bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 transition-colors"
                   >
                     {{ $t('common.copy') }}
                   </button>
@@ -722,31 +736,31 @@
           </div>
 
           <!-- Preview Section -->
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          <div class="glass p-6 rounded-xl border border-slate-700/30">
+            <h3 class="text-lg font-semibold text-slate-100 mb-4">
               {{ $t('tools.colorPicker.preview') }}
             </h3>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <p class="text-sm text-gray-600 mb-2">{{ $t('tools.colorPicker.onLight') }}</p>
+                <p class="text-sm text-slate-400 mb-2">{{ $t('tools.colorPicker.onLight') }}</p>
                 <div
-                  class="h-20 rounded border flex items-center justify-center"
-                  style="background-color: white"
+                  class="h-20 rounded-lg border flex items-center justify-center border-slate-600"
+                  style="background-color: #f1f5f9"
                 >
                   <div
-                    class="w-16 h-16 rounded"
+                    class="w-16 h-16 rounded-lg"
                     :style="{ backgroundColor: currentColor.hex }"
                   ></div>
                 </div>
               </div>
               <div>
-                <p class="text-sm text-gray-600 mb-2">{{ $t('tools.colorPicker.onDark') }}</p>
+                <p class="text-sm text-slate-400 mb-2">{{ $t('tools.colorPicker.onDark') }}</p>
                 <div
-                  class="h-20 rounded border flex items-center justify-center"
-                  style="background-color: #333"
+                  class="h-20 rounded-lg border flex items-center justify-center border-slate-600"
+                  style="background-color: #1e293b"
                 >
                   <div
-                    class="w-16 h-16 rounded"
+                    class="w-16 h-16 rounded-lg"
                     :style="{ backgroundColor: currentColor.hex }"
                   ></div>
                 </div>
@@ -758,32 +772,32 @@
     </div>
 
     <!-- Features Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">
+    <div class="glass rounded-xl shadow-dark-xl p-6 border border-slate-700/30">
+      <h2 class="text-xl font-bold text-slate-100 mb-4">
         {{ $t('tools.colorPicker.features.title') }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        <div class="bg-primary-500/10 p-5 rounded-xl border-l-4 border-primary-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             🎨 {{ $t('tools.colorPicker.features.conversions.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.colorPicker.features.conversions.description') }}
           </p>
         </div>
-        <div class="bg-green-50 p-5 rounded-lg border-l-4 border-green-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        <div class="bg-green-500/10 p-5 rounded-xl border-l-4 border-green-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             📸 {{ $t('tools.colorPicker.features.imagePicker.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.colorPicker.features.imagePicker.description') }}
           </p>
         </div>
-        <div class="bg-purple-50 p-5 rounded-lg border-l-4 border-purple-500">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        <div class="bg-purple-500/10 p-5 rounded-xl border-l-4 border-purple-500">
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">
             📋 {{ $t('tools.colorPicker.features.commonColors.title') }}
           </h3>
-          <p class="text-gray-600 text-sm">
+          <p class="text-slate-400 text-sm">
             {{ $t('tools.colorPicker.features.commonColors.description') }}
           </p>
         </div>
