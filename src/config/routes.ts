@@ -38,6 +38,7 @@ const ImageSteganography = () => import('../tools/ImageSteganography.vue')
 const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 const HeartCollage = () => import('../tools/image/HeartCollage.vue')
+const WsTool = () => import('../tools/WsTool.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -112,6 +113,16 @@ export const routeConfig: RouteRecordRaw[] = [
         meta: {
           title: 'HTML Content Extractor',
           icon: '🖼️',
+          status: Status.Active,
+        },
+      },
+      {
+        path: 'ws-tool',
+        name: 'wsTool',
+        component: WsTool,
+        meta: {
+          title: 'WebSocket Tool',
+          icon: '📡',
           status: Status.Active,
         },
       },
