@@ -49,7 +49,7 @@
             <h2 class="text-3xl font-bold text-slate-100 mb-2">
               {{ $t('homepage.recommendedTools') }}
             </h2>
-            <p class="text-slate-400">精选最受欢迎的工具，助力您的工作效率</p>
+            <p class="text-slate-400">{{ $t('homepage.recommendedToolsDesc') }}</p>
           </div>
           <span class="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full">
             {{ recommendedTools.length }} {{ $t('common.items') }}
@@ -85,7 +85,7 @@
                   <span
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 group-hover:bg-primary-500/30 transition-all duration-200"
                   >
-                    {{ $t(`categories.${tool.pid}.name`) }}
+                    {{ $t(`categories.${tool.categoryId}.name`) }}
                   </span>
                 </div>
               </div>
@@ -106,16 +106,16 @@
             <h2 class="text-3xl font-bold text-slate-100 mb-2">
               {{ $t('homepage.exploreCategories') }}
             </h2>
-            <p class="text-slate-400">探索所有工具分类，找到您需要的功能</p>
+            <p class="text-slate-400">{{ $t('homepage.exploreCategoriesDesc') }}</p>
           </div>
           <span class="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full">
-            {{ categories.length }} {{ $t('navigation.categories') }}
+            {{ menuConfig.length }} {{ $t('navigation.categories') }}
           </span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
-            v-for="(category, index) in categories"
+            v-for="(category, index) in menuConfig"
             :key="category.id"
             @click="navigateToCategory(category.id)"
             class="glass rounded-2xl border border-slate-700/30 hover:border-primary-500/50 hover:shadow-glow transition-all duration-300 p-6 cursor-pointer group hover-lift animate-slide-up"
@@ -130,7 +130,7 @@
               <span
                 class="text-xs bg-slate-800/50 text-slate-300 px-3 py-1.5 rounded-full group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-all duration-200"
               >
-                {{ category.tools.length }}
+                {{ category.children?.length || 0 }}
               </span>
             </div>
             <h3
@@ -180,8 +180,8 @@
 
         <div class="relative">
           <div class="text-center mb-8">
-            <h3 class="text-2xl font-bold text-slate-100 mb-2">平台统计</h3>
-            <p class="text-slate-400">实时数据展示</p>
+            <h3 class="text-2xl font-bold text-slate-100 mb-2">{{ $t('homepage.stats.title') }}</h3>
+            <p class="text-slate-400">{{ $t('homepage.stats.description') }}</p>
           </div>
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
@@ -224,7 +224,7 @@
                 <div
                   class="text-4xl font-bold text-purple-400 mb-2 group-hover:scale-110 transition-transform duration-300"
                 >
-                  {{ categories.length }}
+                  {{ menuConfig.length }}
                 </div>
                 <div
                   class="text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-200"
@@ -263,167 +263,46 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { menuConfig } from '@/config/routes'
 
 interface Tool {
   id: string
-  pid?: string
+  categoryId: string
   name: string
   icon: string
   path: string
   status?: 'active' | 'coming-soon'
 }
 
-interface Category {
-  id: string
-  name: string
-  icon: string
-  tools: Tool[]
-}
-
 const router = useRouter()
 const { t } = useI18n()
 
-// Tool categories configuration (same as Home.vue)
-const categories: Category[] = [
-  {
-    id: 'webTools',
-    name: 'Web Tools',
-    icon: '🌐',
-    tools: [
-      {
-        id: 'htmlExtractor',
-        pid: 'webTools',
-        name: 'HTML Content Extractor',
-        icon: '🖼️',
-        path: '/web-tools/html-extractor',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'jsonTools',
-    name: 'JSON Tools',
-    icon: '📋',
-    tools: [
-      {
-        id: 'jsonToExcel',
-        pid: 'jsonTools',
-        name: 'JSON to Excel Converter',
-        icon: '📊',
-        path: '/json-tools/json-to-excel',
-        status: 'active',
-      },
-      {
-        id: 'excelToJson',
-        pid: 'jsonTools',
-        name: 'Excel to JSON Converter',
-        icon: '📈',
-        path: '/json-tools/excel-to-json',
-        status: 'active',
-      },
-      {
-        id: 'jsonFormatter',
-        pid: 'jsonTools',
-        name: 'JSON Formatter',
-        icon: '🎨',
-        path: '/json-tools/json-formatter',
-        status: 'active',
-      },
-      {
-        id: 'jsonExtractor',
-        pid: 'jsonTools',
-        name: 'JSON Extractor',
-        icon: '🔍',
-        path: '/json-tools/json-extractor',
-        status: 'active',
-      },
-      {
-        id: 'jsonPathExtractor',
-        pid: 'jsonTools',
-        name: 'JSON Path Extractor',
-        icon: '🛤️',
-        path: '/json-tools/json-path-extractor',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'imageTools',
-    name: 'Image Tools',
-    icon: '🖼️',
-    tools: [
-      {
-        id: 'imageListProcessor',
-        pid: 'imageTools',
-        name: 'Image List Processor',
-        icon: '🖼️',
-        path: '/image-tools/image-list-processor',
-        status: 'active',
-      },
-      {
-        id: 'imageCompressor',
-        pid: 'imageTools',
-        name: 'Image Compressor',
-        icon: '🗂',
-        path: '/image-tools/image-compressor',
-        status: 'active',
-      },
-      {
-        id: 'apngGenerator',
-        pid: 'imageTools',
-        name: 'APNG Generator',
-        icon: '🎬',
-        path: '/image-tools/apng-generator',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'converters',
-    name: 'Converters',
-    icon: '🔄',
-    tools: [
-      {
-        id: 'fileRenamer',
-        pid: 'converters',
-        name: 'File Renamer',
-        icon: '📝',
-        path: '/converters/file-renamer',
-        status: 'active',
-      },
-    ],
-  },
-  {
-    id: 'generators',
-    name: 'Generators',
-    icon: '⚡',
-    tools: [
-      {
-        id: 'faviconGenerator',
-        pid: 'generators',
-        name: 'Favicon Generator',
-        icon: '🎯',
-        path: '/generators/favicon-generator',
-        status: 'active',
-      },
-    ],
-  },
-]
-
 // Recommended tools - select the most popular/useful ones
-const recommendedTools = computed(() => {
-  const allTools = categories.flatMap((cat) => cat.tools.filter((tool) => tool.status === 'active'))
+const recommendedTools = computed<Tool[]>(() => {
+  // Flatten all tools from menuConfig
+  const allTools = menuConfig
+    .flatMap((category) =>
+      (category.children || []).map((tool) => ({
+        id: tool.id,
+        categoryId: category.id,
+        name: tool.name || '',
+        icon: tool.icon || '🔧',
+        path: tool.path,
+        status: tool.status,
+      })),
+    )
+    .filter((tool) => tool.status === 'active')
 
   // Select specific recommended tools
   const recommendedIds = [
-    'jsonToExcel',
+    'jsonPathExtractor',
     'htmlExtractor',
     'imageListProcessor',
-    'jsonFormatter',
+    'universalConverter',
     'faviconGenerator',
     'fileRenamer',
-    'jsonExtractor',
-    'imageCompressor',
+    'qrCodeTool',
+    'wsTool',
   ]
 
   return allTools.filter((tool) => recommendedIds.includes(tool.id))
@@ -431,30 +310,23 @@ const recommendedTools = computed(() => {
 
 // Computed stats
 const totalTools = computed(() => {
-  return categories.reduce((total, cat) => total + cat.tools.length, 0)
+  return menuConfig.reduce((total, category) => total + (category.children?.length || 0), 0)
 })
 
 const activeTools = computed(() => {
-  return categories.reduce((total, cat) => {
-    return total + cat.tools.filter((tool) => tool.status === 'active').length
+  return menuConfig.reduce((total, category) => {
+    return total + (category.children?.filter((tool) => tool.status === 'active').length || 0)
   }, 0)
 })
 
 const comingSoonTools = computed(() => {
-  return categories.reduce((total, cat) => {
-    return total + cat.tools.filter((tool) => tool.status === 'coming-soon').length
+  return menuConfig.reduce((total, category) => {
+    return total + (category.children?.filter((tool) => tool.status === 'coming-soon').length || 0)
   }, 0)
 })
 
 // Methods
 function navigateToCategory(categoryId: string) {
-  // Find the first tool in the category to navigate to
-  const category = categories.find((cat) => cat.id === categoryId)
-  if (category && category.tools.length > 0) {
-    const firstActiveTool = category.tools.find((tool) => tool.status === 'active')
-    if (firstActiveTool) {
-      router.push(firstActiveTool.path)
-    }
-  }
+  router.push(`/categories/${categoryId}`)
 }
 </script>

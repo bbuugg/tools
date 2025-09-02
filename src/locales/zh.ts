@@ -42,8 +42,12 @@ export default {
     title: '开发者工具集合',
     subtitle: '为开发者、设计师和内容创作者提供强大的在线工具。提升您的工作效率。',
     recommendedTools: '推荐工具',
+    recommendedToolsDesc: '精选最受欢迎的工具，助力您的工作效率',
     exploreCategories: '浏览分类',
+    exploreCategoriesDesc: '探索所有工具分类，找到您需要的功能',
     stats: {
+      title: '平台统计',
+      description: '实时数据展示',
       totalTools: '工具总数',
       activeTools: '可用工具',
       categories: '分类数量',

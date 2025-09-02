@@ -92,8 +92,12 @@ export default {
     subtitle:
       'Powerful online tools for developers, designers, and content creators. Everything you need to boost your productivity.',
     recommendedTools: 'Recommended Tools',
+    recommendedToolsDesc: 'Handpicked most popular tools to boost your productivity',
     exploreCategories: 'Explore Categories',
+    exploreCategoriesDesc: 'Explore all tool categories to find the functionality you need',
     stats: {
+      title: 'Platform Statistics',
+      description: 'Real-time data display',
       totalTools: 'Total Tools',
       activeTools: 'Active Tools',
       categories: 'Categories',
