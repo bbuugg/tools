@@ -181,6 +181,8 @@ export default {
         processing: '正在生成视频...',
         generatedVideo: '生成的视频',
         download: '下载视频',
+        processingNote: '注意：视频生成可能需要一些时间，具体取决于图片数量和所选设置。',
+        workingNote: '注意：我们正在修复 ffmpeg.js 集成问题。该功能可能暂时无法正常工作。',
       },
       messages: {
         videoLoaded: '视频加载成功！',

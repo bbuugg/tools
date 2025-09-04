@@ -184,6 +184,10 @@ export default {
         processing: 'Generating video...',
         generatedVideo: 'Generated Video',
         download: 'Download Video',
+        processingNote:
+          'Note: Video generation may take some time depending on the number of images and selected settings.',
+        workingNote:
+          "Note: We're currently working on fixing the ffmpeg.js integration. The feature may not work correctly yet.",
       },
       messages: {
         videoLoaded: 'Video loaded successfully!',

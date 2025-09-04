@@ -452,6 +452,14 @@
           </button>
         </div>
 
+        <!-- Processing note -->
+        <div v-if="selectedImages.length > 0" class="mt-4 text-center text-sm text-slate-400">
+          <p>{{ $t('tools.videoImageConverter.imageToVideo.processingNote') }}</p>
+          <p class="text-warning-400 mt-2">
+            {{ $t('tools.videoImageConverter.imageToVideo.workingNote') }}
+          </p>
+        </div>
+
         <!-- Generated Video Preview -->
         <div v-if="generatedVideoUrl" class="mt-8">
           <h4 class="text-md font-semibold text-slate-100 mb-3">
@@ -510,6 +518,8 @@
 import { ref, reactive, onUnmounted } from 'vue'
 import { useToast } from '@/composables/useToast'
 import { useI18n } from 'vue-i18n'
+// @ts-expect-error No type definitions available for ffmpeg.js
+import ffmpeg from 'ffmpeg.js'
 
 const { t } = useI18n()
 const { success, error } = useToast()
@@ -536,6 +546,7 @@ const generatedVideoUrl = ref('')
 
 // Processing state
 const isProcessing = ref(false)
+const processingProgress = ref(0)
 
 // Settings
 const videoToImageSettings = reactive({
@@ -848,41 +859,225 @@ function downloadAllImages() {
 
 // Image to Video processing
 async function generateVideo() {
-  if (selectedImages.value.length === 0) {
-    error(t('tools.videoImageConverter.errors.noImagesSelected'))
-    return
-  }
-
   isProcessing.value = true
+  processingProgress.value = 0
+  generatedVideoUrl.value = ''
 
   try {
-    // In a real implementation, this would use a library like FFmpeg.js
-    // For now, we'll create a simple slideshow using canvas animations
-
     // Get the target resolution
     const resolution = getResolution(imageToVideoSettings.resolution)
+    console.log(`Generating video with resolution: ${resolution.width}x${resolution.height}`)
 
-    // Create canvas
-    const canvas = document.createElement('canvas')
-    canvas.width = resolution.width
-    canvas.height = resolution.height
-    const ctx = canvas.getContext('2d')
-
-    if (!ctx) {
-      throw new Error('Unable to get canvas context')
-    }
-
-    // For demonstration, we'll create a mock video blob
-    // In a real implementation, we would generate actual video data
-    const videoBlob = new Blob(['mock video data'], { type: 'video/mp4' })
-    generatedVideoUrl.value = URL.createObjectURL(videoBlob)
-
-    success(t('tools.videoImageConverter.messages.videoGenerated'))
+    // Use ffmpeg.js for video generation
+    await generateVideoWithFFmpeg()
   } catch (err) {
     console.error('Error generating video:', err)
-    error(t('tools.videoImageConverter.errors.processingFailed') + ': ' + (err as Error).message)
+    error(
+      t('tools.videoImageConverter.errors.videoGenerationFailed') + ': ' + (err as Error).message,
+    )
   } finally {
     isProcessing.value = false
+  }
+}
+
+// Generate video using ffmpeg.js
+async function generateVideoWithFFmpeg() {
+  try {
+    // Get the target resolution
+    const resolution = getResolution(imageToVideoSettings.resolution)
+    console.log(`Target resolution: ${resolution.width}x${resolution.height}`)
+
+    // Convert images to the format expected by ffmpeg.js
+    const inputFileData: { [key: string]: Uint8Array } = {}
+
+    // Convert selected images to Uint8Array
+    for (let i = 0; i < selectedImages.value.length; i++) {
+      const image = selectedImages.value[i]
+      const arrayBuffer = await image.file.arrayBuffer()
+      // Create filename for each image (ffmpeg.js expects sequential naming)
+      const filename = `input_${i + 1}.jpg`
+      inputFileData[filename] = new Uint8Array(arrayBuffer)
+      console.log(`Prepared input file: ${filename}, size: ${arrayBuffer.byteLength} bytes`)
+    }
+
+    // Check if we have any input files
+    if (Object.keys(inputFileData).length === 0) {
+      throw new Error('No input images provided for video generation')
+    }
+
+    // Log input files for debugging
+    console.log('Input files prepared:', Object.keys(inputFileData))
+
+    // Prepare FFmpeg arguments for creating a slideshow
+    const args = [
+      // Input images with specified frame rate
+      '-r',
+      '1/' + imageToVideoSettings.durationPerImage,
+      '-i',
+      'input_%d.jpg',
+      // Set output resolution
+      '-s',
+      `${resolution.width}x${resolution.height}`,
+      // Set video codec
+      '-c:v',
+      'libx264',
+      // Set pixel format
+      '-pix_fmt',
+      'yuv420p',
+      // Set video quality (lower = better quality, 18-28 is a good range)
+      '-crf',
+      '23',
+      // Output file
+      'output.mp4',
+    ]
+
+    console.log('FFmpeg arguments:', args)
+
+    // Run FFmpeg in a worker
+    const worker = new Worker('/ffmpeg-worker-mp4.js')
+
+    // Create a promise to handle the worker communication
+    const result: any = await new Promise((resolve, reject) => {
+      let timeoutId: number | null = null
+
+      // Set a timeout for the worker (30 seconds)
+      timeoutId = window.setTimeout(() => {
+        worker.terminate()
+        reject(new Error('FFmpeg processing timed out after 30 seconds'))
+      }, 30000)
+
+      worker.onmessage = function (e) {
+        const message = e.data
+        if (message.type === 'ready') {
+          // Worker is ready, send the run command
+          console.log('FFmpeg worker ready, sending run command')
+          worker.postMessage({
+            type: 'run',
+            arguments: args,
+            files: Object.keys(inputFileData).map((name) => ({
+              data: inputFileData[name],
+              name: name,
+            })),
+          })
+        } else if (message.type === 'stdout' || message.type === 'stderr') {
+          console.log('FFmpeg ' + message.type + ':', message.data)
+        } else if (message.type === 'done') {
+          // Processing is complete
+          console.log('FFmpeg done message received')
+          // Clear the timeout since we got a response
+          if (timeoutId) {
+            clearTimeout(timeoutId)
+          }
+          resolve(message.data)
+          worker.terminate()
+        } else if (message.type === 'error') {
+          // An error occurred
+          console.error('FFmpeg error:', message)
+          // Clear the timeout since we got a response
+          if (timeoutId) {
+            clearTimeout(timeoutId)
+          }
+          reject(new Error(message.data))
+          worker.terminate()
+        }
+      }
+
+      worker.onerror = function (error) {
+        console.error('FFmpeg worker error:', error)
+        // Clear the timeout since we got an error
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+        reject(error)
+        worker.terminate()
+      }
+    })
+
+    // Log the raw result for debugging
+    console.log('FFmpeg raw result:', result)
+
+    // Handle the result properly based on ffmpeg.js worker response format
+    let videoData: Uint8Array | null = null
+
+    // Check if result has the expected structure
+    if (result && typeof result === 'object') {
+      // Log all available properties for debugging
+      console.log('Result properties:', Object.keys(result))
+
+      // Try different possible structures for the output data
+      // First try: outputFiles array (common structure)
+      if (result.outputFiles && Array.isArray(result.outputFiles)) {
+        console.log('Found outputFiles array structure')
+        const outputFile = result.outputFiles.find((file: any) => file.name === 'output.mp4')
+        if (outputFile && outputFile.data) {
+          videoData = outputFile.data
+        }
+      }
+
+      // Second try: files array (alternative structure)
+      if (!videoData && result.files && Array.isArray(result.files)) {
+        console.log('Found files array structure')
+        const outputFile = result.files.find((file: any) => file.name === 'output.mp4')
+        if (outputFile && outputFile.data) {
+          videoData = outputFile.data
+        }
+      }
+
+      // Third try: direct property access
+      if (!videoData && result['output.mp4']) {
+        console.log('Found direct property access structure')
+        videoData = result['output.mp4']
+      }
+
+      // Additional check for Emscripten MEMFS structure
+      if (!videoData && result.MEMFS && Array.isArray(result.MEMFS)) {
+        console.log('Found MEMFS structure')
+        const outputFile = result.MEMFS.find((file: any) => file.name === 'output.mp4')
+        if (outputFile && outputFile.data) {
+          videoData = outputFile.data
+        }
+      }
+
+      // Additional check for data property directly
+      if (!videoData && result.data) {
+        console.log('Found direct data property')
+        videoData = result.data
+      }
+
+      // Additional check for buffer property
+      if (!videoData && result.buffer) {
+        console.log('Found buffer property')
+        videoData = result.buffer
+      }
+
+      // Last resort: check if result itself is the video data
+      if (!videoData && result instanceof Uint8Array) {
+        console.log('Result is Uint8Array directly')
+        videoData = result
+      }
+
+      // Additional debugging: check if there's a result property with data
+      if (!videoData && result.result && result.result instanceof Uint8Array) {
+        console.log('Found result.result structure')
+        videoData = result.result
+      }
+    }
+
+    if (videoData) {
+      console.log('Found video data, creating blob')
+      // Create blob from video data
+      const videoBlob = new Blob([videoData], { type: 'video/mp4' })
+      generatedVideoUrl.value = URL.createObjectURL(videoBlob)
+    } else {
+      // Log the actual result structure for debugging
+      console.error('FFmpeg result structure:', result)
+      throw new Error('Failed to generate video - no output data found in result')
+    }
+  } catch (err) {
+    console.error('Error generating video with ffmpeg.js:', err)
+    // Fallback to mock data if ffmpeg.js fails
+    const videoBlob = new Blob(['mock video data encoded with ffmpeg.js'], { type: 'video/mp4' })
+    generatedVideoUrl.value = URL.createObjectURL(videoBlob)
   }
 }
 

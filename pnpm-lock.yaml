@@ -35,6 +35,9 @@ importers:
       fabric:
         specifier: ^6.7.1
         version: 6.7.1
+      ffmpeg.js:
+        specifier: ^4.2.9003
+        version: 4.2.9003
       framer-motion:
         specifier: ^12.23.12
         version: 12.23.12
@@ -2106,6 +2109,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  ffmpeg.js@4.2.9003:
+    resolution: {integrity: sha512-l1JBr8HwnnJEaSwg5p8K3Ifbom8O2IDHsZp7UVyr6MzQ7gc32tt/2apoOuQAr/j76c+uDOjla799VSsBnRvSTg==}
 
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
@@ -6127,6 +6133,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
+
+  ffmpeg.js@4.2.9003: {}
 
   figures@6.1.0:
     dependencies:

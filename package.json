@@ -30,6 +30,7 @@
     "crypto-js": "^4.2.0",
     "dompurify": "^3.2.6",
     "fabric": "^6.7.1",
+    "ffmpeg.js": "^4.2.9003",
     "framer-motion": "^12.23.12",
     "gif.js": "^0.2.0",
     "gifuct-js": "^2.1.2",
