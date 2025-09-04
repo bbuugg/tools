@@ -28,6 +28,7 @@ const ImageToGifConverter = () => import('../tools/image/ImageToGifConverter.vue
 const GifEditor = () => import('../tools/image/GifEditor.vue')
 const BackgroundRemover = () => import('../tools/image/BackgroundRemover.vue')
 const ImageWatermark = () => import('../tools/image/ImageWatermark.vue')
+const VideoImageConverter = () => import('../tools/image/VideoImageConverter.vue')
 const JsonMissingKeyFinder = () => import('../tools/json/JsonMissingKeyFinder.vue')
 const JsonArraySlicer = () => import('../tools/json/JsonArraySlicer.vue')
 const JsonPathExtractor = () => import('../tools/json/JsonPathExtractor.vue')
@@ -235,6 +236,16 @@ export const routeConfig: RouteRecordRaw[] = [
           title: 'Heart Collage',
           icon: '❤️',
           status: Status.ComingSoon,
+        },
+      },
+      {
+        path: 'video-image-converter',
+        name: 'videoImageConverter',
+        component: VideoImageConverter,
+        meta: {
+          title: 'Video/Image Converter',
+          icon: '🎥',
+          status: Status.Active,
         },
       },
       {
