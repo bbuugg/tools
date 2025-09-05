@@ -40,6 +40,7 @@ const TextProcessor = () => import('../tools/TextProcessor.vue')
 const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 const HeartCollage = () => import('../tools/image/HeartCollage.vue')
 const WsTool = () => import('../tools/WsTool.vue')
+const JwtTool = () => import('../tools/JwtTool.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -331,6 +332,16 @@ export const routeConfig: RouteRecordRaw[] = [
       icon: '📊',
     },
     children: [
+      {
+        path: 'jwt-tool',
+        name: 'jwtTool',
+        component: JwtTool,
+        meta: {
+          title: 'JWT Tool',
+          icon: '🔐',
+          status: Status.Active,
+        },
+      },
       {
         path: 'text-steganography',
         name: 'textSteganography',

@@ -1,4 +1,6 @@
 onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
   - canvas
   - electron
+  - esbuild
   - protobufjs
