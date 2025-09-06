@@ -2380,5 +2380,18 @@ export default {
         verifyFailed: '验证签名失败',
       },
     },
+    transformTools: {
+      title: '转换工具',
+      description: '用于代码格式化、压缩和转换的在线工具',
+      editor: '转换编辑器',
+      loading: '正在加载 transform.tools...',
+      note: '注意：此工具加载外部网站。某些功能可能需要互联网连接。',
+      footer: '💡 提示：此工具在 iframe 中运行，不会将您的数据上传到任何服务器',
+      features: {
+        '1': '代码格式化和美化',
+        '2': '代码压缩和缩小',
+        '3': '格式转换工具',
+      },
+    },
   },
 }

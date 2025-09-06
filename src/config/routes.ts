@@ -41,6 +41,7 @@ const ColorPickerTool = () => import('../tools/ColorPickerTool.vue')
 const HeartCollage = () => import('../tools/image/HeartCollage.vue')
 const WsTool = () => import('../tools/WsTool.vue')
 const JwtTool = () => import('../tools/JwtTool.vue')
+const TransformTools = () => import('../tools/TransformTools.vue')
 
 // Lazy loaded PDF Viewer component
 const PdfViewer = () => import('../tools/pdf/PdfViewer.vue')
@@ -134,6 +135,16 @@ export const routeConfig: RouteRecordRaw[] = [
         component: UniversalConverter,
         meta: {
           title: 'Universal Format Converter',
+          icon: '🔄',
+          status: Status.Active,
+        },
+      },
+      {
+        path: 'transform-tools',
+        name: 'transformTools',
+        component: TransformTools,
+        meta: {
+          title: 'Transform Tools',
           icon: '🔄',
           status: Status.Active,
         },
