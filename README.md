@@ -1,4 +1,3 @@
-````sh
 # Tools — 开发者工具集合
 
 这是一个基于 Vue 3 + Vite 的开发者工具集合仓库。项目把很多实用的小工具（图片处理、JSON/文本处理、二维码、JWT、颜色拾取等）组织在 `src/tools` 下，每个工具以单文件组件的形式实现，方便单独维护与扩展。
@@ -8,13 +7,13 @@
 ## 仓库结构（重点）
 
 - `src/tools/` — 各类工具组件（Vue 单文件组件），例如：
-	- `FaviconGenerator.vue`：从图片裁剪并生成多尺寸 favicon（支持 ICO/PNG/JPG，ZIP 批量下载）。
-	- `FileRenamer.vue`：批量文件重命名（顺序、替换、大小写、插入、截断），支持生成重命名脚本（Windows/Linux）。
-	- `TextProcessor.vue`：文本处理（URL 编码/解码、Base64 编/解、MD5/SHA256 等哈希）。
-	- `ImageSteganography.vue`：图像隐写（在目标图像 LSB 中嵌入/提取隐藏图片）。
-	- `ColorPickerTool.vue`：颜色拾取器（图片取色、放大镜、HEX/RGB/HSL/HSV/CMYK 互转、常用色板）。
-	- `JwtTool.vue`：JWT 生成 / 解码 / 验证（支持 HS256/384/512、签名校验、claims 展示）。
-	- `Pdf*`、`qrcode/QrCodeTool.vue`、`image/*`（`ImageCompressor.vue`、`GifEditor.vue`、`BackgroundRemover.vue`、`ImageToGifConverter.vue`、`SvgEditor.vue` 等）和 `json/*`（`JsonPathExtractor.vue`、`JsonToExcel.vue`、`JsonFormatter.vue` 等）等子目录下还有大量专用工具组件。
+  - `FaviconGenerator.vue`：从图片裁剪并生成多尺寸 favicon（支持 ICO/PNG/JPG，ZIP 批量下载）。
+  - `FileRenamer.vue`：批量文件重命名（顺序、替换、大小写、插入、截断），支持生成重命名脚本（Windows/Linux）。
+  - `TextProcessor.vue`：文本处理（URL 编码/解码、Base64 编/解、MD5/SHA256 等哈希）。
+  - `ImageSteganography.vue`：图像隐写（在目标图像 LSB 中嵌入/提取隐藏图片）。
+  - `ColorPickerTool.vue`：颜色拾取器（图片取色、放大镜、HEX/RGB/HSL/HSV/CMYK 互转、常用色板）。
+  - `JwtTool.vue`：JWT 生成 / 解码 / 验证（支持 HS256/384/512、签名校验、claims 展示）。
+  - `Pdf*`、`qrcode/QrCodeTool.vue`、`image/*`（`ImageCompressor.vue`、`GifEditor.vue`、`BackgroundRemover.vue`、`ImageToGifConverter.vue`、`SvgEditor.vue` 等）和 `json/*`（`JsonPathExtractor.vue`、`JsonToExcel.vue`、`JsonFormatter.vue` 等）等子目录下还有大量专用工具组件。
 
 具体组件请查看 `src/tools` 目录以获取详细实现与参数。
 
@@ -33,7 +32,7 @@
 
 ```powershell
 pnpm install
-````
+```
 
 运行开发服务器（Vite）并热重载：
 
