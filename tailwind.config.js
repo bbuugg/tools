@@ -3,10 +3,24 @@ import withMT from '@material-tailwind/html/utils/withMT'
 
 const config = withMT({
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  darkMode: 'class',
+  darkMode: 'class', // 使用 class 策略来控制深色模式
   theme: {
     extend: {
       colors: {
+        // 浅色模式背景色
+        light: {
+          50: '#ffffff',
+          100: '#fafafa',
+          200: '#f5f5f5',
+          300: '#eeeeee',
+          400: '#e0e0e0',
+          500: '#bdbdbd',
+          600: '#9e9e9e',
+          700: '#757575',
+          800: '#616161',
+          900: '#424242',
+          950: '#212121',
+        },
         // 暗色调主题色彩系统
         dark: {
           50: '#f8fafc',

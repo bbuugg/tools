@@ -87,6 +87,10 @@ export default {
     noToolsInCategory: 'No tools available in this category.',
     home: 'Home',
   },
+  theme: {
+    switchToLight: 'Switch to Light Mode',
+    switchToDark: 'Switch to Dark Mode',
+  },
   homepage: {
     title: 'Developer Tools Collection',
     subtitle:

@@ -38,6 +38,10 @@ export default {
     noToolsInCategory: '该分类中没有可用的工具。',
     home: '首页',
   },
+  theme: {
+    switchToLight: '切换到浅色模式',
+    switchToDark: '切换到深色模式',
+  },
   homepage: {
     title: '开发者工具集合',
     subtitle: '为开发者、设计师和内容创作者提供强大的在线工具。提升您的工作效率。',

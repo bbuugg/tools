@@ -1,5 +1,9 @@
 <template>
-  <div class="h-screen flex bg-dark-950 text-slate-100">
+  <div :class="[
+    'h-screen flex transition-colors duration-300',
+    'dark:bg-dark-950 dark:text-slate-100',
+    'bg-light-100 text-slate-900'
+  ]">
     <!-- Electron Title Bar -->
     <ElectronTitleBar />
 
@@ -36,7 +40,9 @@
       <!-- Sidebar -->
       <aside
         :class="[
-          'glass border-r border-slate-700/50 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-dark-xl',
+          'glass border-r flex flex-col transition-all duration-300 ease-in-out z-40',
+          'dark:border-slate-700/50 dark:shadow-dark-xl',
+          'border-slate-300/50 shadow-lg',
           'custom-mobile:relative custom-mobile:translate-x-0',
           isMobile
             ? ['fixed inset-y-0 left-0 w-80', isSidebarOpen ? 'translate-x-0' : '-translate-x-full']
@@ -44,7 +50,7 @@
         ]"
       >
         <!-- Category Navigation -->
-        <div class="p-4 border-b border-slate-700/30">
+        <div class="p-4 border-b dark:border-slate-700/30 border-slate-300/50">
           <div class="flex items-center justify-between">
             <!-- Category Title - Clickable with arrow when in tool view -->
             <div
@@ -276,6 +282,9 @@
               <span class="text-sm font-medium">{{ $t('navigation.home') }}</span>
             </router-link>
 
+            <!-- Theme Toggle Button -->
+            <ThemeToggle />
+
             <button
               @click="showLanguageMenu = !showLanguageMenu"
               class="w-full bg-slate-800/50 p-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition-all duration-200 flex items-center space-x-3 cursor-pointer hover-lift group"
@@ -323,11 +332,15 @@
 
       <!-- Main Content -->
       <main
-        class="flex-1 overflow-auto relative bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800"
-        :class="{
-          'pt-8': isElectron,
-          'electron-scrollbar': isElectron,
-        }"
+        :class="[
+          'flex-1 overflow-auto relative transition-colors duration-300',
+          'dark:bg-gradient-to-br dark:from-dark-950 dark:via-dark-900 dark:to-dark-800',
+          'bg-gradient-to-br from-light-50 via-light-100 to-light-200',
+          {
+            'pt-8': isElectron,
+            'electron-scrollbar': isElectron,
+          }
+        ]"
       >
         <!-- Loading Overlay -->
         <transition
@@ -392,6 +405,8 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import ElectronTitleBar from '@/components/ElectronTitleBar.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import { useTheme } from '@/composables/useTheme'
 
 const route = useRoute()
 const router = useRouter()
@@ -405,6 +420,9 @@ const isLoading = ref(false)
 const showCategoryView = ref(true) // true: show categories, false: show tools
 const showLanguageMenu = ref(false)
 const isElectron = ref(false)
+
+// Initialize theme
+const { initTheme } = useTheme()
 
 // Language switcher data
 const languages = [
@@ -588,6 +606,9 @@ onMounted(() => {
   if (isMobile.value) {
     isSidebarOpen.value = false
   }
+
+  // Initialize theme
+  initTheme()
 })
 
 onUnmounted(() => {
