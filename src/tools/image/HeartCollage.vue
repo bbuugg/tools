@@ -13,24 +13,11 @@
 
       <!-- Upload Area -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div
-          @drop="handleDrop"
-          @dragover.prevent
-          @dragenter.prevent
-          @click="openFileSelector"
-          :class="[
-            'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
-            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
-          ]"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            @change="handleFileSelect"
-            class="hidden"
-          />
+        <div @drop="handleDrop" @dragover.prevent @dragenter.prevent @click="openFileSelector" :class="[
+          'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
+          isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
+        ]">
+          <input ref="fileInput" type="file" multiple accept="image/*" @change="handleFileSelect" class="hidden" />
           <div class="space-y-4">
             <div class="text-6xl text-gray-400">❤️</div>
             <div>
@@ -44,9 +31,7 @@
                 {{ $t('tools.heartCollage.supportedFormats') }}: JPG, PNG, WebP, GIF
               </p>
             </div>
-            <button
-              class="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
-            >
+            <button class="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
               {{ $t('tools.heartCollage.selectFiles') }}
             </button>
           </div>
@@ -64,10 +49,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ $t('tools.heartCollage.canvasSize') }}
             </label>
-            <select
-              v-model="canvasSize"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            >
+            <select v-model="canvasSize"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
               <option value="small">{{ $t('tools.heartCollage.small') }} (600×600)</option>
               <option value="medium" selected>
                 {{ $t('tools.heartCollage.medium') }} (800×800)
@@ -81,10 +64,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ $t('tools.heartCollage.shape') }}
             </label>
-            <select
-              v-model="selectedShape"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            >
+            <select v-model="selectedShape"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
               <option value="heart">{{ $t('tools.heartCollage.heart') }}</option>
               <option value="square">{{ $t('tools.heartCollage.square') }}</option>
               <option value="rectangle">{{ $t('tools.heartCollage.rectangle') }}</option>
@@ -98,10 +79,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ $t('tools.heartCollage.imageShape') }}
             </label>
-            <select
-              v-model="imageShape"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            >
+            <select v-model="imageShape"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
               <option value="square">{{ $t('tools.heartCollage.square') }}</option>
               <option value="circle">{{ $t('tools.heartCollage.circle') }}</option>
               <option value="rounded">{{ $t('tools.heartCollage.rounded') }}</option>
@@ -113,10 +92,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ $t('tools.heartCollage.arrangement') }}
             </label>
-            <select
-              v-model="arrangementType"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            >
+            <select v-model="arrangementType"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
               <option value="random">{{ $t('tools.heartCollage.random') }}</option>
               <option value="grid">{{ $t('tools.heartCollage.grid') }}</option>
               <option value="fit">{{ $t('tools.heartCollage.fitAll') }}</option>
@@ -135,13 +112,8 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 {{ $t('tools.heartCollage.spacing') }}: {{ spacing }}px
               </label>
-              <input
-                type="range"
-                min="0"
-                max="20"
-                v-model="spacing"
-                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-              />
+              <input type="range" min="0" max="20" v-model="spacing"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider" />
             </div>
 
             <!-- Background Color -->
@@ -150,11 +122,8 @@
                 {{ $t('tools.heartCollage.backgroundColor') }}
               </label>
               <div class="flex items-center space-x-2">
-                <input
-                  type="color"
-                  v-model="backgroundColor"
-                  class="w-10 h-10 border border-gray-300 rounded cursor-pointer"
-                />
+                <input type="color" v-model="backgroundColor"
+                  class="w-10 h-10 border border-gray-300 rounded cursor-pointer" />
                 <span class="text-sm text-gray-600">{{ backgroundColor }}</span>
               </div>
             </div>
@@ -166,11 +135,8 @@
               </label>
               <div class="flex items-center space-x-4">
                 <label class="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="showBorder"
-                    class="rounded border-gray-300 text-pink-600 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
-                  />
+                  <input type="checkbox" v-model="showBorder"
+                    class="rounded border-gray-300 text-pink-600 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50" />
                   <span class="ml-2 text-sm text-gray-700">{{
                     $t('tools.heartCollage.showBorder')
                   }}</span>
@@ -183,31 +149,22 @@
 
       <!-- Canvas and Controls -->
       <div v-if="images.length > 0" class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div
-          class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
-        >
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <h3 class="text-lg font-semibold text-gray-900">
             {{ $t('tools.heartCollage.canvas') }} ({{ images.length }}
             {{ $t('tools.heartCollage.images') }})
           </h3>
           <div class="flex flex-wrap gap-3">
-            <button
-              @click="autoArrange"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <button @click="autoArrange"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               {{ $t('tools.heartCollage.autoArrange') }}
             </button>
-            <button
-              @click="downloadCollage"
-              :disabled="positionedImages.length === 0"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button @click="downloadCollage" :disabled="positionedImages.length === 0"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {{ $t('tools.heartCollage.downloadCollage') }}
             </button>
-            <button
-              @click="clearAll"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
+            <button @click="clearAll"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
               {{ $t('common.clear') }}
             </button>
           </div>
@@ -215,95 +172,62 @@
 
         <!-- Interactive Canvas -->
         <div class="flex flex-col items-center">
-          <div
-            ref="canvasContainer"
-            class="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100 select-none"
-            :style="{
+          <div ref="canvasContainer"
+            class="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100 select-none" :style="{
               width: `${canvasDimensions.width}px`,
               height: `${canvasDimensions.height}px`,
-            }"
-            @mouseup="endDrag"
-            @mouseleave="endDrag"
-            @mousemove="drag"
-          >
+            }" @mouseup="endDrag" @mouseleave="endDrag" @mousemove="drag">
             <!-- Draggable images -->
-            <div
-              v-for="(image, index) in positionedImages"
-              :key="index"
-              :class="[
-                'absolute cursor-move transition-all duration-75 ease-out',
-                draggingImage === index ? 'z-10' : 'z-0',
-              ]"
-              :style="{
-                left: `${image.x}px`,
-                top: `${image.y}px`,
-                width: `${image.width}px`,
-                height: `${image.height}px`,
-                transition: draggingImage === index ? 'none' : 'all 0.1s ease-out',
-              }"
-              @mousedown="startImageDrag($event, index)"
-            >
-              <div
-                :class="[
-                  'w-full h-full overflow-hidden relative',
-                  imageShape === 'circle'
-                    ? 'rounded-full'
-                    : imageShape === 'rounded'
-                      ? 'rounded-xl'
-                      : 'rounded-none',
-                ]"
-                :style="{
-                  border: showBorder ? '2px solid white' : 'none',
-                  boxShadow:
-                    draggingImage === index
-                      ? '0 0 0 2px #3b82f6, 0 4px 12px rgba(0, 0, 0, 0.15)'
-                      : 'none',
-                  transform: draggingImage === index ? 'scale(1.03)' : 'scale(1)',
-                  transition: 'transform 0.1s ease-out, box-shadow 0.1s ease-out',
-                }"
-              >
-                <img :src="image.src" :alt="image.name" class="w-full h-full object-cover" />
+            <div v-for="(image, index) in positionedImages" :key="index" :class="[
+              'absolute cursor-move transition-all duration-75 ease-out',
+              draggingImage === index ? 'z-10' : 'z-0',
+            ]" :style="{
+              left: `${image.x}px`,
+              top: `${image.y}px`,
+              width: `${image.width}px`,
+              height: `${image.height}px`,
+              transition: draggingImage === index ? 'none' : 'all 0.1s ease-out',
+            }" @mousedown="startImageDrag($event, index)">
+              <div :class="[
+                'w-full h-full overflow-hidden relative',
+                imageShape === 'circle'
+                  ? 'rounded-full'
+                  : imageShape === 'rounded'
+                    ? 'rounded-xl'
+                    : 'rounded-none',
+              ]" :style="{
+                border: showBorder ? '2px solid white' : 'none',
+                boxShadow:
+                  draggingImage === index
+                    ? '0 0 0 2px #3b82f6, 0 4px 12px rgba(0, 0, 0, 0.15)'
+                    : 'none',
+                transform: draggingImage === index ? 'scale(1.03)' : 'scale(1)',
+                transition: 'transform 0.1s ease-out, box-shadow 0.1s ease-out',
+              }">
+                <img referrerpolicy="no-referrer" :src="image.src" :alt="image.name"
+                  class="w-full h-full object-cover" />
 
                 <!-- Resize handles -->
-                <div
-                  v-if="draggingImage === index"
-                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-se-resize"
-                  style="right: -6px; bottom: -6px"
-                  @mousedown.stop="startResize($event, index, 'se')"
-                ></div>
-                <div
-                  v-if="draggingImage === index"
-                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-sw-resize"
-                  style="left: -6px; bottom: -6px"
-                  @mousedown.stop="startResize($event, index, 'sw')"
-                ></div>
-                <div
-                  v-if="draggingImage === index"
-                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-nw-resize"
-                  style="left: -6px; top: -6px"
-                  @mousedown.stop="startResize($event, index, 'nw')"
-                ></div>
-                <div
-                  v-if="draggingImage === index"
-                  class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-ne-resize"
-                  style="right: -6px; top: -6px"
-                  @mousedown.stop="startResize($event, index, 'ne')"
-                ></div>
+                <div v-if="draggingImage === index" class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-se-resize"
+                  style="right: -6px; bottom: -6px" @mousedown.stop="startResize($event, index, 'se')"></div>
+                <div v-if="draggingImage === index" class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-sw-resize"
+                  style="left: -6px; bottom: -6px" @mousedown.stop="startResize($event, index, 'sw')"></div>
+                <div v-if="draggingImage === index" class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-nw-resize"
+                  style="left: -6px; top: -6px" @mousedown.stop="startResize($event, index, 'nw')"></div>
+                <div v-if="draggingImage === index" class="absolute w-3 h-3 bg-blue-500 rounded-full cursor-ne-resize"
+                  style="right: -6px; top: -6px" @mousedown.stop="startResize($event, index, 'ne')"></div>
               </div>
             </div>
 
             <!-- Heart shape mask overlay -->
-            <div
-              v-if="selectedShape === 'heart'"
-              class="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
+            <div v-if="selectedShape === 'heart'" class="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
               :style="{
                 backgroundImage: 'url(/images/heart.png)',
                 backgroundSize: '100%',
                 backgroundPosition: 'center',
                 opacity: 0.9,
                 zIndex: 5,
-              }"
-            ></div>
+              }"></div>
           </div>
 
           <div class="mt-4 text-sm text-gray-600">
@@ -318,32 +242,19 @@
           {{ $t('tools.heartCollage.selectedImages') }}
         </h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <div
-            v-for="(image, index) in images"
-            :key="index"
-            class="relative group border border-gray-200 rounded-lg overflow-hidden"
-          >
+          <div v-for="(image, index) in images" :key="index"
+            class="relative group border border-gray-200 rounded-lg overflow-hidden">
             <div class="aspect-square flex items-center justify-center bg-gray-100">
-              <img :src="image.previewUrl" :alt="image.name" class="object-cover w-full h-full" />
+              <img referrerpolicy="no-referrer" :src="image.previewUrl" :alt="image.name"
+                class="object-cover w-full h-full" />
             </div>
             <div
-              class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <button
-                @click="removeImage(index)"
-                class="p-2 bg-red-600 text-white rounded-full hover:bg-red-700"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fill-rule="evenodd"
+              class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <button @click="removeImage(index)" class="p-2 bg-red-600 text-white rounded-full hover:bg-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
+                    clip-rule="evenodd" />
                 </svg>
               </button>
             </div>
@@ -627,7 +538,7 @@ async function autoArrange() {
   const shuffledImages = [...images.value]
   for (let i = shuffledImages.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffledImages[i], shuffledImages[j]] = [shuffledImages[j], shuffledImages[i]]
+      ;[shuffledImages[i], shuffledImages[j]] = [shuffledImages[j], shuffledImages[i]]
   }
 
   // Temporarily replace images with shuffled version
@@ -709,7 +620,7 @@ async function arrangeRandomly() {
         // Shuffle points for random distribution
         for (let i = validPoints.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1))
-          ;[validPoints[i], validPoints[j]] = [validPoints[j], validPoints[i]]
+            ;[validPoints[i], validPoints[j]] = [validPoints[j], validPoints[i]]
         }
 
         // Calculate image size based on available points and number of images
@@ -721,7 +632,7 @@ async function arrangeRandomly() {
             Math.floor(
               Math.sqrt(
                 (canvasDimensions.width * canvasDimensions.height) /
-                  Math.max(1, images.value.length),
+                Math.max(1, images.value.length),
               ) * 0.8,
             ),
           ),
@@ -902,7 +813,7 @@ function fallbackToParametricHeart() {
     // Shuffle points
     for (let i = shapePoints.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[shapePoints[i], shapePoints[j]] = [shapePoints[j], shapePoints[i]]
+        ;[shapePoints[i], shapePoints[j]] = [shapePoints[j], shapePoints[i]]
     }
 
     // Position images

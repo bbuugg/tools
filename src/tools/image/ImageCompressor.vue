@@ -13,26 +13,13 @@
 
       <!-- Upload Area -->
       <div class="glass rounded-xl p-6 mb-8 border border-slate-700/50">
-        <div
-          @drop="handleDrop"
-          @dragover.prevent
-          @dragenter.prevent
-          @click="openFileSelector"
-          :class="[
-            'border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200',
-            isDragging
-              ? 'border-primary-500 bg-primary-500/10'
-              : 'border-slate-600/50 hover:border-slate-500/70',
-          ]"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            @change="handleFileSelect"
-            class="hidden"
-          />
+        <div @drop="handleDrop" @dragover.prevent @dragenter.prevent @click="openFileSelector" :class="[
+          'border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200',
+          isDragging
+            ? 'border-primary-500 bg-primary-500/10'
+            : 'border-slate-600/50 hover:border-slate-500/70',
+        ]">
+          <input ref="fileInput" type="file" multiple accept="image/*" @change="handleFileSelect" class="hidden" />
           <div class="space-y-4">
             <div class="text-6xl text-slate-500">📸</div>
             <div>
@@ -47,8 +34,7 @@
               </p>
             </div>
             <button
-              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift"
-            >
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift">
               {{ $t('tools.imageCompressor.selectFiles') }}
             </button>
           </div>
@@ -66,13 +52,8 @@
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageCompressor.quality') }}: {{ compressionQuality }}%
             </label>
-            <input
-              type="range"
-              min="10"
-              max="95"
-              v-model="compressionQuality"
-              class="w-full h-2 bg-slate-700 rounded-xl appearance-none cursor-pointer slider"
-            />
+            <input type="range" min="10" max="95" v-model="compressionQuality"
+              class="w-full h-2 bg-slate-700 rounded-xl appearance-none cursor-pointer slider" />
             <div class="flex justify-between text-xs text-slate-500 mt-1">
               <span>{{ $t('tools.imageCompressor.smaller') }}</span>
               <span>{{ $t('tools.imageCompressor.larger') }}</span>
@@ -84,10 +65,8 @@
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageCompressor.outputFormat') }}
             </label>
-            <select
-              v-model="outputFormat"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
-            >
+            <select v-model="outputFormat"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200">
               <option value="original">{{ $t('tools.imageCompressor.keepOriginal') }}</option>
               <option value="jpg">JPG</option>
               <option value="png">PNG</option>
@@ -100,14 +79,8 @@
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageCompressor.maxWidth') }} (px)
             </label>
-            <input
-              type="number"
-              v-model="maxWidth"
-              placeholder="留空保持原尺寸"
-              min="100"
-              max="4096"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 placeholder-slate-500 transition-all duration-200"
-            />
+            <input type="number" v-model="maxWidth" placeholder="留空保持原尺寸" min="100" max="4096"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 placeholder-slate-500 transition-all duration-200" />
           </div>
         </div>
       </div>
@@ -119,56 +92,33 @@
             {{ $t('tools.imageCompressor.imageList') }} ({{ images.length }})
           </h3>
           <div class="flex gap-3">
-            <button
-              @click="compressAll"
-              :disabled="isCompressing"
-              class="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button @click="compressAll" :disabled="isCompressing"
+              class="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed">
               <span v-if="isCompressing" class="flex items-center">
-                <svg
-                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
                 </svg>
                 {{ $t('tools.imageCompressor.compressing') }}
               </span>
               <span v-else>{{ $t('tools.imageCompressor.compressAll') }}</span>
             </button>
-            <button
-              @click="downloadAll"
-              :disabled="!hasCompressedImages"
-              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button @click="downloadAll" :disabled="!hasCompressedImages"
+              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50 disabled:cursor-not-allowed">
               {{ $t('tools.imageCompressor.downloadAll') }}
             </button>
-            <button
-              @click="clearAll"
-              class="px-4 py-2 bg-slate-700 text-slate-100 rounded-xl hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift"
-            >
+            <button @click="clearAll"
+              class="px-4 py-2 bg-slate-700 text-slate-100 rounded-xl hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift">
               {{ $t('common.clear') }}
             </button>
           </div>
         </div>
 
         <!-- Statistics -->
-        <div
-          v-if="compressionStats.totalOriginalSize > 0"
-          class="mb-6 p-4 bg-success-900/30 rounded-xl border border-success-700/50"
-        >
+        <div v-if="compressionStats.totalOriginalSize > 0"
+          class="mb-6 p-4 bg-success-900/30 rounded-xl border border-success-700/50">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div>
               <div class="text-2xl font-bold text-success-400">
@@ -199,19 +149,13 @@
 
         <!-- Image Items -->
         <div class="space-y-4">
-          <div
-            v-for="(image, index) in images"
-            :key="index"
-            class="border border-slate-700/50 rounded-xl p-4 hover:shadow-dark-lg transition-all duration-200"
-          >
+          <div v-for="(image, index) in images" :key="index"
+            class="border border-slate-700/50 rounded-xl p-4 hover:shadow-dark-lg transition-all duration-200">
             <div class="flex items-center space-x-4">
               <!-- Thumbnail -->
               <div class="flex-shrink-0">
-                <img
-                  :src="image.preview"
-                  :alt="image.name"
-                  class="w-16 h-16 object-cover rounded-xl border border-slate-600/50"
-                />
+                <img referrerpolicy="no-referrer" :src="image.preview" :alt="image.name"
+                  class="w-16 h-16 object-cover rounded-xl border border-slate-600/50" />
               </div>
 
               <!-- Info -->
@@ -239,18 +183,16 @@
               <div class="flex-shrink-0 flex items-center space-x-3">
                 <!-- Status -->
                 <div class="text-center">
-                  <div
-                    :class="[
-                      'w-3 h-3 rounded-full mx-auto mb-1',
-                      image.status === 'pending'
-                        ? 'bg-slate-500'
-                        : image.status === 'compressing'
-                          ? 'bg-warning-500'
-                          : image.status === 'completed'
-                            ? 'bg-success-500'
-                            : 'bg-error-500',
-                    ]"
-                  ></div>
+                  <div :class="[
+                    'w-3 h-3 rounded-full mx-auto mb-1',
+                    image.status === 'pending'
+                      ? 'bg-slate-500'
+                      : image.status === 'compressing'
+                        ? 'bg-warning-500'
+                        : image.status === 'completed'
+                          ? 'bg-success-500'
+                          : 'bg-error-500',
+                  ]"></div>
                   <span class="text-xs text-slate-400">
                     {{ $t(`tools.imageCompressor.status.${image.status}`) }}
                   </span>
@@ -259,40 +201,27 @@
                 <!-- Progress -->
                 <div v-if="image.status === 'compressing'" class="w-16">
                   <div class="bg-slate-700 rounded-full h-2">
-                    <div
-                      class="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                      :style="{ width: `${image.progress}%` }"
-                    ></div>
+                    <div class="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                      :style="{ width: `${image.progress}%` }"></div>
                   </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex space-x-2">
-                  <button
-                    @click="compressImage(index)"
-                    :disabled="isCompressing"
-                    class="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50"
-                  >
+                  <button @click="compressImage(index)" :disabled="isCompressing"
+                    class="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-500 transition-all duration-200 cursor-pointer hover-lift disabled:opacity-50">
                     {{ $t('tools.imageCompressor.compress') }}
                   </button>
-                  <button
-                    v-if="image.status === 'completed' && image.compressedBlob"
-                    @click="downloadImage(index)"
-                    class="px-3 py-1 text-sm bg-success-600 text-white rounded hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift"
-                  >
+                  <button v-if="image.status === 'completed' && image.compressedBlob" @click="downloadImage(index)"
+                    class="px-3 py-1 text-sm bg-success-600 text-white rounded hover:bg-success-500 transition-all duration-200 cursor-pointer hover-lift">
                     {{ $t('common.download') }}
                   </button>
-                  <button
-                    v-if="image.status === 'completed' && image.compressedBlob"
-                    @click="previewImage(index)"
-                    class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-500 transition-all duration-200 cursor-pointer hover-lift"
-                  >
+                  <button v-if="image.status === 'completed' && image.compressedBlob" @click="previewImage(index)"
+                    class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-500 transition-all duration-200 cursor-pointer hover-lift">
                     {{ $t('common.preview') }}
                   </button>
-                  <button
-                    @click="removeImage(index)"
-                    class="px-3 py-1 text-sm bg-slate-700 text-slate-100 rounded hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift"
-                  >
+                  <button @click="removeImage(index)"
+                    class="px-3 py-1 text-sm bg-slate-700 text-slate-100 rounded hover:bg-slate-600 transition-all duration-200 cursor-pointer hover-lift">
                     {{ $t('tools.imageCompressor.remove') }}
                   </button>
                 </div>
@@ -303,30 +232,17 @@
       </div>
 
       <!-- Preview Modal -->
-      <div
-        v-if="showPreviewModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      >
-        <div
-          class="relative glass rounded-xl shadow-dark-xl w-full max-w-4xl mx-4 border border-slate-700/50"
-        >
-          <div
-            class="flex items-center justify-between p-4 border-b border-slate-700/30 rounded-t-xl"
-          >
+      <div v-if="showPreviewModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="relative glass rounded-xl shadow-dark-xl w-full max-w-4xl mx-4 border border-slate-700/50">
+          <div class="flex items-center justify-between p-4 border-b border-slate-700/30 rounded-t-xl">
             <h3 class="text-xl font-semibold text-slate-100">
               {{ $t('tools.imageCompressor.imagePreview') }}
             </h3>
-            <button
-              @click="showPreviewModal = false"
-              class="text-slate-400 bg-transparent hover:bg-slate-800/50 hover:text-slate-100 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-all duration-200 cursor-pointer"
-            >
+            <button @click="showPreviewModal = false"
+              class="text-slate-400 bg-transparent hover:bg-slate-800/50 hover:text-slate-100 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-all duration-200 cursor-pointer">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
           </div>
@@ -337,11 +253,8 @@
                   {{ $t('tools.imageCompressor.originalImage') }}
                 </h4>
                 <div class="border border-slate-700/50 rounded-xl p-2">
-                  <img
-                    :src="previewImageItem?.preview"
-                    :alt="previewImageItem?.name"
-                    class="w-full h-auto max-h-96 object-contain"
-                  />
+                  <img referrerpolicy="no-referrer" :src="previewImageItem?.preview" :alt="previewImageItem?.name"
+                    class="w-full h-auto max-h-96 object-contain" />
                 </div>
                 <div class="mt-2 text-sm text-slate-400">
                   {{ previewImageItem?.name }}<br />
@@ -357,11 +270,8 @@
                   {{ $t('tools.imageCompressor.compressedImage') }}
                 </h4>
                 <div class="border border-slate-700/50 rounded-xl p-2">
-                  <img
-                    :src="compressedPreviewUrl"
-                    :alt="previewImageItem?.name"
-                    class="w-full h-auto max-h-96 object-contain"
-                  />
+                  <img referrerpolicy="no-referrer" :src="compressedPreviewUrl" :alt="previewImageItem?.name"
+                    class="w-full h-auto max-h-96 object-contain" />
                 </div>
                 <div class="mt-2 text-sm text-slate-400">
                   {{ previewImageItem?.name }}<br />
@@ -373,10 +283,8 @@
             </div>
           </div>
           <div class="flex items-center justify-end p-6 border-t border-slate-700/30 rounded-b-xl">
-            <button
-              @click="showPreviewModal = false"
-              class="text-slate-300 bg-slate-700 hover:bg-slate-600 focus:ring-4 focus:ring-slate-600 font-medium rounded-lg text-sm px-5 py-2.5 transition-all duration-200 cursor-pointer hover-lift"
-            >
+            <button @click="showPreviewModal = false"
+              class="text-slate-300 bg-slate-700 hover:bg-slate-600 focus:ring-4 focus:ring-slate-600 font-medium rounded-lg text-sm px-5 py-2.5 transition-all duration-200 cursor-pointer hover-lift">
               {{ $t('common.close') }}
             </button>
           </div>

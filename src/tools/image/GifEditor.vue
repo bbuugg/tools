@@ -1,14 +1,10 @@
 <template>
-  <ToolLayout
-    :title="$t('tools.gifEditor.title')"
-    :description="$t('tools.gifEditor.description')"
-    icon="🎞️"
+  <ToolLayout :title="$t('tools.gifEditor.title')" :description="$t('tools.gifEditor.description')" icon="🎞️"
     :features="[
       $t('tools.gifEditor.features.frameEditing.title'),
       $t('tools.gifEditor.features.customization.title'),
       $t('tools.gifEditor.features.animation.title'),
-    ]"
-  >
+    ]">
     <!-- How to Use Section -->
     <div class="glass rounded-xl border border-slate-700/30 p-6 mb-6">
       <h3 class="text-lg font-semibold text-slate-100 mb-3">
@@ -30,28 +26,15 @@
 
       <!-- File Upload -->
       <div class="mb-6">
-        <div
-          @drop="handleFileDrop"
-          @dragover.prevent
-          @dragenter.prevent
+        <div @drop="handleFileDrop" @dragover.prevent @dragenter.prevent
           class="border-2 border-dashed border-slate-600/50 rounded-lg p-8 text-center hover:border-primary-500/50 transition-colors cursor-pointer"
-          :class="{ 'border-primary-500/50 bg-primary-500/10': isDragging }"
-          @click="fileInput!.click()"
-        >
+          :class="{ 'border-primary-500/50 bg-primary-500/10': isDragging }" @click="fileInput!.click()">
           <div class="text-slate-400 text-4xl mb-4">🎞️</div>
           <p class="text-slate-400 mb-4">
             {{ $t('tools.gifEditor.upload.dragDrop') }}
           </p>
-          <input
-            type="file"
-            ref="fileInput"
-            @change="handleFileSelect"
-            accept="image/gif"
-            class="hidden"
-          />
-          <button
-            class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
+          <input type="file" ref="fileInput" @change="handleFileSelect" accept="image/gif" class="hidden" />
+          <button class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
             {{ $t('tools.gifEditor.upload.selectFile') }}
           </button>
           <p class="text-xs text-slate-500 mt-2">
@@ -66,14 +49,9 @@
           <label class="block text-sm font-medium text-slate-300 mb-2">
             {{ $t('tools.gifEditor.settings.width') }}
           </label>
-          <input
-            v-model.number="gifSettings.width"
-            type="number"
-            min="100"
-            max="800"
+          <input v-model.number="gifSettings.width" type="number" min="100" max="800"
             class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-            disabled
-          />
+            disabled />
           <p class="text-xs text-slate-500 mt-1">
             {{ $t('tools.gifEditor.settings.preserveOriginal') }}
           </p>
@@ -82,10 +60,8 @@
           <label class="block text-sm font-medium text-slate-300 mb-2">
             {{ $t('tools.gifEditor.settings.quality') }}
           </label>
-          <select
-            v-model="gifSettings.quality"
-            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-          >
+          <select v-model="gifSettings.quality"
+            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
             <option value="high">
               {{ $t('tools.gifEditor.settings.qualityOptions.high') }}
             </option>
@@ -101,13 +77,8 @@
           <label class="block text-sm font-medium text-slate-300 mb-2">
             {{ $t('tools.gifEditor.settings.fps') }}
           </label>
-          <input
-            v-model.number="gifSettings.fps"
-            type="number"
-            min="1"
-            max="30"
-            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-          />
+          <input v-model.number="gifSettings.fps" type="number" min="1" max="30"
+            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200" />
         </div>
       </div>
     </div>
@@ -125,16 +96,10 @@
             {{ $t('tools.gifEditor.preview.originalGif') }}
           </h4>
           <div class="flex items-center justify-center w-full h-64 bg-slate-800/50 rounded-lg">
-            <img
-              v-if="selectedGif.url"
-              :src="selectedGif.url"
-              :alt="selectedGif.name"
-              class="max-h-full max-w-full object-contain"
-            />
+            <img referrerpolicy="no-referrer" v-if="selectedGif.url" :src="selectedGif.url" :alt="selectedGif.name"
+              class="max-h-full max-w-full object-contain" />
             <div v-else class="text-center">
-              <div
-                class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"
-              ></div>
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
               <p class="mt-2 text-slate-400">{{ $t('tools.gifEditor.loadingGif') }}</p>
             </div>
           </div>
@@ -151,17 +116,11 @@
           </h4>
 
           <div class="space-y-3 max-h-96 overflow-y-auto">
-            <div
-              v-for="(frame, index) in frames"
-              :key="index"
-              class="flex items-center p-3 border border-slate-700/50 rounded-lg bg-slate-800/30"
-            >
+            <div v-for="(frame, index) in frames" :key="index"
+              class="flex items-center p-3 border border-slate-700/50 rounded-lg bg-slate-800/30">
               <div class="flex-shrink-0 w-16 h-16 bg-slate-800/50 rounded-md overflow-hidden">
-                <img
-                  :src="frame.dataUrl"
-                  :alt="`Frame ${index + 1}`"
-                  class="w-full h-full object-cover"
-                />
+                <img referrerpolicy="no-referrer" :src="frame.dataUrl" :alt="`Frame ${index + 1}`"
+                  class="w-full h-full object-cover" />
               </div>
               <div class="ml-3 flex-grow min-w-0">
                 <p class="text-sm font-medium text-slate-100">
@@ -175,28 +134,15 @@
                 </p>
               </div>
               <div class="flex items-center">
-                <input
-                  v-model.number="frame.delay"
-                  type="number"
-                  min="20"
-                  max="5000"
-                  step="10"
+                <input v-model.number="frame.delay" type="number" min="20" max="5000" step="10"
                   class="w-16 px-2 py-1 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded text-xs focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  @input="updateFrameDelay(index, $event)"
-                />
+                  @input="updateFrameDelay(index, $event)" />
                 <span class="ml-1 text-xs text-slate-400">ms</span>
                 <button @click="removeFrame(index)" class="ml-2 text-red-500 hover:text-red-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
                       d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clip-rule="evenodd"
-                    />
+                      clip-rule="evenodd" />
                   </svg>
                 </button>
               </div>
@@ -204,32 +150,20 @@
           </div>
 
           <div class="mt-4 flex flex-wrap gap-2">
-            <button
-              @click="moveFrameUp"
-              :disabled="frames.length <= 1"
-              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors"
-            >
+            <button @click="moveFrameUp" :disabled="frames.length <= 1"
+              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors">
               {{ $t('tools.gifEditor.preview.moveUp') }}
             </button>
-            <button
-              @click="moveFrameDown"
-              :disabled="frames.length <= 1"
-              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors"
-            >
+            <button @click="moveFrameDown" :disabled="frames.length <= 1"
+              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors">
               {{ $t('tools.gifEditor.preview.moveDown') }}
             </button>
-            <button
-              @click="reverseFrames"
-              :disabled="frames.length <= 1"
-              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors"
-            >
+            <button @click="reverseFrames" :disabled="frames.length <= 1"
+              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors">
               {{ $t('tools.gifEditor.preview.reverse') }}
             </button>
-            <button
-              @click="shuffleFrames"
-              :disabled="frames.length <= 1"
-              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors"
-            >
+            <button @click="shuffleFrames" :disabled="frames.length <= 1"
+              class="px-3 py-1 bg-slate-800/50 text-slate-300 rounded text-sm hover:bg-slate-700/50 disabled:opacity-50 border border-slate-700/50 transition-colors">
               {{ $t('tools.gifEditor.preview.shuffle') }}
             </button>
           </div>
@@ -238,17 +172,12 @@
 
       <!-- Action Buttons -->
       <div class="mt-6 flex flex-wrap gap-3">
-        <button
-          @click="generateGif"
-          :disabled="isProcessing || frames.length === 0"
-          class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium"
-        >
+        <button @click="generateGif" :disabled="isProcessing || frames.length === 0"
+          class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium">
           {{ isProcessing ? $t('common.loading') : $t('tools.gifEditor.actions.generateGif') }}
         </button>
-        <button
-          @click="clearAll"
-          class="px-4 py-2 bg-red-600/10 text-red-300 rounded-lg hover:bg-red-600/20 border border-red-600/30 hover:border-red-600/50 transition-colors font-medium"
-        >
+        <button @click="clearAll"
+          class="px-4 py-2 bg-red-600/10 text-red-300 rounded-lg hover:bg-red-600/20 border border-red-600/30 hover:border-red-600/50 transition-colors font-medium">
           {{ $t('common.clear') }}
         </button>
       </div>
@@ -257,9 +186,7 @@
     <!-- Processing Status -->
     <div v-if="isProcessing" class="glass rounded-xl border border-slate-700/30 p-6 mb-6">
       <div class="text-center">
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"
-        ></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
         <h3 class="text-lg font-semibold text-slate-100 mb-2">
           {{ $t('tools.gifEditor.processing.title') }}
         </h3>
@@ -267,10 +194,8 @@
           {{ $t('tools.gifEditor.processing.description') }}
         </p>
         <div class="mt-4 bg-slate-700 rounded-full h-2">
-          <div
-            class="bg-primary-500 h-2 rounded-full transition-all duration-300"
-            :style="{ width: processingProgress + '%' }"
-          ></div>
+          <div class="bg-primary-500 h-2 rounded-full transition-all duration-300"
+            :style="{ width: processingProgress + '%' }"></div>
         </div>
         <p class="text-sm text-slate-400 mt-2">{{ processingProgress }}%</p>
 
@@ -279,12 +204,8 @@
           <h4 class="text-md font-medium text-slate-200 mb-2">
             {{ $t('tools.gifEditor.processing.preview') }}
           </h4>
-          <img
-            :src="generatedGif"
-            alt="GIF Preview"
-            class="max-w-full h-auto mx-auto rounded-lg shadow-lg"
-            style="max-height: 200px"
-          />
+          <img referrerpolicy="no-referrer" :src="generatedGif" alt="GIF Preview"
+            class="max-w-full h-auto mx-auto rounded-lg shadow-lg" style="max-height: 200px" />
         </div>
       </div>
     </div>
@@ -296,23 +217,16 @@
       </h3>
 
       <div class="text-center">
-        <img
-          :src="generatedGif"
-          alt="Generated GIF"
-          class="max-w-full h-auto mx-auto rounded-lg shadow-lg mb-4"
-        />
+        <img referrerpolicy="no-referrer" :src="generatedGif" alt="Generated GIF"
+          class="max-w-full h-auto mx-auto rounded-lg shadow-lg mb-4" />
 
         <div class="flex justify-center gap-4 flex-wrap">
-          <button
-            @click="downloadGif"
-            class="px-6 py-2 bg-green-600/10 text-green-300 rounded-lg hover:bg-green-600/20 border border-green-600/30 hover:border-green-600/50 transition-colors font-medium"
-          >
+          <button @click="downloadGif"
+            class="px-6 py-2 bg-green-600/10 text-green-300 rounded-lg hover:bg-green-600/20 border border-green-600/30 hover:border-green-600/50 transition-colors font-medium">
             {{ $t('tools.gifEditor.result.download') }}
           </button>
-          <button
-            @click="resetTool"
-            class="px-6 py-2 bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 border border-slate-700/50 transition-colors font-medium"
-          >
+          <button @click="resetTool"
+            class="px-6 py-2 bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 border border-slate-700/50 transition-colors font-medium">
             {{ $t('tools.gifEditor.result.createNew') }}
           </button>
         </div>
@@ -664,7 +578,7 @@ function shuffleFrames() {
   // Fisher-Yates shuffle algorithm
   for (let i = frames.value.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[frames.value[i], frames.value[j]] = [frames.value[j], frames.value[i]]
+      ;[frames.value[i], frames.value[j]] = [frames.value[j], frames.value[i]]
   }
 }
 
@@ -851,6 +765,7 @@ img {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

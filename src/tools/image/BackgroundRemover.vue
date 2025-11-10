@@ -1,14 +1,10 @@
 <template>
-  <ToolLayout
-    :title="$t('tools.backgroundRemover.title')"
-    :description="$t('tools.backgroundRemover.description')"
-    icon="✂️"
-    :features="[
+  <ToolLayout :title="$t('tools.backgroundRemover.title')" :description="$t('tools.backgroundRemover.description')"
+    icon="✂️" :features="[
       $t('tools.backgroundRemover.features.aiPowered.title'),
       $t('tools.backgroundRemover.features.fastProcessing.title'),
       $t('tools.backgroundRemover.features.highQuality.title'),
-    ]"
-  >
+    ]">
     <div class="grid lg:grid-cols-2 gap-6">
       <!-- Upload Section -->
       <div class="glass rounded-xl border border-slate-700/30 p-6">
@@ -17,25 +13,18 @@
             {{ $t('tools.backgroundRemover.upload.title') }}
           </h3>
           <div class="flex space-x-2">
-            <button
-              v-if="originalImage"
-              @click="resetTool"
-              class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-600/30 hover:border-slate-500/50"
-            >
+            <button v-if="originalImage" @click="resetTool"
+              class="px-3 py-1 text-sm bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-600/30 hover:border-slate-500/50">
               {{ $t('common.clear') }}
             </button>
           </div>
         </div>
 
         <!-- File Upload Area -->
-        <div
-          @drop="handleDrop"
-          @dragover.prevent
-          @dragenter.prevent="isDragging = true"
+        <div @drop="handleDrop" @dragover.prevent @dragenter.prevent="isDragging = true"
           @dragleave.prevent="isDragging = false"
           class="border-2 border-dashed border-slate-600/50 rounded-lg p-8 text-center hover:border-primary-500/50 transition-colors"
-          :class="{ 'border-primary-500/50 bg-primary-500/10': isDragging }"
-        >
+          :class="{ 'border-primary-500/50 bg-primary-500/10': isDragging }">
           <div v-if="!originalImage">
             <div class="text-4xl mb-4">📸</div>
             <h4 class="text-lg font-medium text-slate-100 mb-2">
@@ -44,17 +33,9 @@
             <p class="text-slate-400 mb-4">
               {{ $t('tools.backgroundRemover.upload.supportedFormats') }}
             </p>
-            <input
-              ref="fileInput"
-              type="file"
-              accept="image/*"
-              @change="handleFileSelect"
-              class="hidden"
-            />
-            <button
-              @click="() => fileInput?.click()"
-              class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors cursor-pointer"
-            >
+            <input ref="fileInput" type="file" accept="image/*" @change="handleFileSelect" class="hidden" />
+            <button @click="() => fileInput?.click()"
+              class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors cursor-pointer">
               {{ $t('tools.backgroundRemover.upload.selectFile') }}
             </button>
           </div>
@@ -65,37 +46,23 @@
               {{ $t('tools.backgroundRemover.preview.original') }}
             </h4>
             <div class="relative">
-              <img
-                :src="originalImageUrl"
+              <img referrerpolicy="no-referrer" :src="originalImageUrl"
                 :alt="$t('tools.backgroundRemover.preview.originalAlt')"
-                class="max-w-full max-h-96 mx-auto rounded-lg shadow-sm border border-slate-700/50"
-              />
+                class="max-w-full max-h-96 mx-auto rounded-lg shadow-sm border border-slate-700/50" />
               <!-- Progress overlay -->
-              <div
-                v-if="isProcessing"
-                class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg"
-              >
+              <div v-if="isProcessing"
+                class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
                 <div class="text-white text-center">
                   <div class="relative">
-                    <div
-                      class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"
-                    ></div>
-                    <div
-                      v-if="progress > 0"
-                      class="absolute inset-0 flex items-center justify-center"
-                    >
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                    <div v-if="progress > 0" class="absolute inset-0 flex items-center justify-center">
                       <span class="text-xs font-bold">{{ Math.round(progress) }}%</span>
                     </div>
                   </div>
                   <p>{{ currentStatus }}</p>
-                  <div
-                    v-if="progress > 0"
-                    class="w-32 bg-slate-700 rounded-full h-1.5 mt-2 mx-auto"
-                  >
-                    <div
-                      class="bg-primary-500 h-1.5 rounded-full transition-all duration-300"
-                      :style="{ width: progress + '%' }"
-                    ></div>
+                  <div v-if="progress > 0" class="w-32 bg-slate-700 rounded-full h-1.5 mt-2 mx-auto">
+                    <div class="bg-primary-500 h-1.5 rounded-full transition-all duration-300"
+                      :style="{ width: progress + '%' }"></div>
                   </div>
                 </div>
               </div>
@@ -117,11 +84,9 @@
           <div class="space-y-3">
             <label class="text-sm font-medium text-slate-300">{{
               $t('tools.backgroundRemover.options.model')
-            }}</label>
-            <select
-              v-model="options.model"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-            >
+              }}</label>
+            <select v-model="options.model"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
               <option value="small">{{ $t('tools.backgroundRemover.models.small') }}</option>
               <option value="medium">{{ $t('tools.backgroundRemover.models.medium') }}</option>
               <option value="large">{{ $t('tools.backgroundRemover.models.large') }}</option>
@@ -132,40 +97,25 @@
           <div class="space-y-3">
             <label class="text-sm font-medium text-slate-300">{{
               $t('tools.backgroundRemover.options.outputFormat')
-            }}</label>
+              }}</label>
             <div class="space-y-2">
               <label class="flex items-center space-x-3">
-                <input
-                  v-model="options.outputFormat"
-                  type="radio"
-                  value="png"
-                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600"
-                />
-                <span class="text-sm font-medium text-slate-300"
-                  >PNG ({{ $t('tools.backgroundRemover.options.transparent') }})</span
-                >
+                <input v-model="options.outputFormat" type="radio" value="png"
+                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600" />
+                <span class="text-sm font-medium text-slate-300">PNG ({{
+                  $t('tools.backgroundRemover.options.transparent') }})</span>
               </label>
               <label class="flex items-center space-x-3">
-                <input
-                  v-model="options.outputFormat"
-                  type="radio"
-                  value="jpg"
-                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600"
-                />
-                <span class="text-sm font-medium text-slate-300"
-                  >JPG ({{ $t('tools.backgroundRemover.options.whiteBackground') }})</span
-                >
+                <input v-model="options.outputFormat" type="radio" value="jpg"
+                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600" />
+                <span class="text-sm font-medium text-slate-300">JPG ({{
+                  $t('tools.backgroundRemover.options.whiteBackground') }})</span>
               </label>
               <label class="flex items-center space-x-3">
-                <input
-                  v-model="options.outputFormat"
-                  type="radio"
-                  value="webp"
-                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600"
-                />
-                <span class="text-sm font-medium text-slate-300"
-                  >WebP ({{ $t('tools.backgroundRemover.options.transparent') }})</span
-                >
+                <input v-model="options.outputFormat" type="radio" value="webp"
+                  class="text-primary-500 focus:ring-primary-500 bg-slate-800 border-slate-600" />
+                <span class="text-sm font-medium text-slate-300">WebP ({{
+                  $t('tools.backgroundRemover.options.transparent') }})</span>
               </label>
             </div>
           </div>
@@ -175,41 +125,27 @@
             <label class="text-sm font-medium text-slate-300">
               {{ $t('tools.backgroundRemover.options.quality') }}: {{ options.quality }}%
             </label>
-            <input
-              v-model="options.quality"
-              type="range"
-              min="70"
-              max="100"
-              class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
-            />
+            <input v-model="options.quality" type="range" min="70" max="100"
+              class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider" />
           </div>
 
           <!-- Background Color Picker -->
           <div v-if="options.outputFormat === 'jpg'" class="space-y-2">
             <label class="text-sm font-medium text-slate-300">{{
               $t('tools.backgroundRemover.options.backgroundColor')
-            }}</label>
+              }}</label>
             <div class="flex space-x-2">
-              <input
-                v-model="options.backgroundColor"
-                type="color"
-                class="w-12 h-8 border border-slate-600 rounded cursor-pointer bg-slate-800"
-              />
-              <input
-                v-model="options.backgroundColor"
-                type="text"
+              <input v-model="options.backgroundColor" type="color"
+                class="w-12 h-8 border border-slate-600 rounded cursor-pointer bg-slate-800" />
+              <input v-model="options.backgroundColor" type="text"
                 class="flex-1 px-3 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                placeholder="#ffffff"
-              />
+                placeholder="#ffffff" />
             </div>
           </div>
 
           <!-- Process Button -->
-          <button
-            @click="handleRemoveBackground"
-            :disabled="isProcessing"
-            class="w-full px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium"
-          >
+          <button @click="handleRemoveBackground" :disabled="isProcessing"
+            class="w-full px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-slate-700 disabled:cursor-not-allowed transition-colors font-medium">
             <span v-if="!isProcessing">{{ $t('tools.backgroundRemover.actions.remove') }}</span>
             <span v-else>{{ currentStatus }}</span>
           </button>
@@ -223,25 +159,19 @@
             {{ $t('tools.backgroundRemover.result.title') }}
           </h3>
           <div v-if="processedImage" class="flex space-x-2">
-            <button
-              @click="downloadResult"
-              class="px-3 py-1 text-sm bg-green-500/10 text-green-300 rounded-lg hover:bg-green-500/20 transition-colors border border-green-500/30 hover:border-green-500/50"
-            >
+            <button @click="downloadResult"
+              class="px-3 py-1 text-sm bg-green-500/10 text-green-300 rounded-lg hover:bg-green-500/20 transition-colors border border-green-500/30 hover:border-green-500/50">
               {{ $t('common.download') }}
             </button>
-            <button
-              @click="copyToClipboard"
-              class="px-3 py-1 text-sm bg-blue-500/10 text-blue-300 rounded-lg hover:bg-blue-500/20 transition-colors border border-blue-500/30 hover:border-blue-500/50"
-            >
+            <button @click="copyToClipboard"
+              class="px-3 py-1 text-sm bg-blue-500/10 text-blue-300 rounded-lg hover:bg-blue-500/20 transition-colors border border-blue-500/30 hover:border-blue-500/50">
               {{ $t('common.copy') }}
             </button>
           </div>
         </div>
 
-        <div
-          v-if="!processedImage && !isProcessing"
-          class="h-96 flex items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/50 rounded-lg"
-        >
+        <div v-if="!processedImage && !isProcessing"
+          class="h-96 flex items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/50 rounded-lg">
           <div class="text-center">
             <div class="text-3xl mb-2">✨</div>
             <p>{{ $t('tools.backgroundRemover.result.noResult') }}</p>
@@ -249,25 +179,19 @@
         </div>
 
         <!-- Processing Animation -->
-        <div
-          v-else-if="isProcessing"
-          class="h-96 flex items-center justify-center border-2 border-dashed border-slate-700/50 rounded-lg"
-        >
+        <div v-else-if="isProcessing"
+          class="h-96 flex items-center justify-center border-2 border-dashed border-slate-700/50 rounded-lg">
           <div class="text-center max-w-md">
             <div class="relative mb-4">
-              <div
-                class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-500 mx-auto"
-              ></div>
+              <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-500 mx-auto"></div>
               <div v-if="progress > 0" class="absolute inset-0 flex items-center justify-center">
                 <span class="text-sm font-bold text-primary-500">{{ Math.round(progress) }}%</span>
               </div>
             </div>
             <p class="text-slate-300 mb-2 font-medium">{{ currentStatus }}</p>
             <div v-if="progress > 0" class="w-64 bg-slate-700 rounded-full h-2 mx-auto">
-              <div
-                class="bg-primary-500 h-2 rounded-full transition-all duration-300"
-                :style="{ width: progress + '%' }"
-              ></div>
+              <div class="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                :style="{ width: progress + '%' }"></div>
             </div>
             <p class="text-sm text-slate-400 mt-2">
               {{ $t('tools.backgroundRemover.processing.pleaseWait') }}
@@ -302,14 +226,9 @@
               <h5 class="text-sm font-medium text-slate-300">
                 {{ $t('tools.backgroundRemover.comparison.before') }}
               </h5>
-              <div
-                class="relative bg-slate-800/50 rounded-lg overflow-hidden shadow-sm border border-slate-700/50"
-              >
-                <img
-                  :src="originalImageUrl"
-                  :alt="$t('tools.backgroundRemover.preview.originalAlt')"
-                  class="w-full h-48 object-contain"
-                />
+              <div class="relative bg-slate-800/50 rounded-lg overflow-hidden shadow-sm border border-slate-700/50">
+                <img referrerpolicy="no-referrer" :src="originalImageUrl"
+                  :alt="$t('tools.backgroundRemover.preview.originalAlt')" class="w-full h-48 object-contain" />
               </div>
             </div>
 
@@ -318,8 +237,7 @@
               <h5 class="text-sm font-medium text-slate-300">
                 {{ $t('tools.backgroundRemover.comparison.after') }}
               </h5>
-              <div
-                class="relative bg-slate-800/50 rounded-lg overflow-hidden shadow-sm border border-slate-700/50"
+              <div class="relative bg-slate-800/50 rounded-lg overflow-hidden shadow-sm border border-slate-700/50"
                 style="
                   background-image:
                     linear-gradient(45deg, #334155 25%, transparent 25%),
@@ -332,13 +250,9 @@
                     0 10px,
                     10px -10px,
                     -10px 0px;
-                "
-              >
-                <img
-                  :src="processedImageUrl"
-                  :alt="$t('tools.backgroundRemover.preview.processedAlt')"
-                  class="w-full h-48 object-contain"
-                />
+                ">
+                <img referrerpolicy="no-referrer" :src="processedImageUrl"
+                  :alt="$t('tools.backgroundRemover.preview.processedAlt')" class="w-full h-48 object-contain" />
               </div>
             </div>
           </div>
@@ -718,10 +632,12 @@ onUnmounted(() => {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     border-color: #60a5fa;
   }
+
   50% {
     border-color: #3b82f6;
   }

@@ -14,28 +14,20 @@
       <!-- Toggle Switch -->
       <div class="flex justify-center mb-6">
         <div class="inline-flex rounded-md shadow-sm" role="group">
-          <button
-            type="button"
-            @click="mode = 'encode'"
-            :class="[
-              'px-4 py-2 text-sm font-medium rounded-l-lg',
-              mode === 'encode'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100',
-            ]"
-          >
+          <button type="button" @click="mode = 'encode'" :class="[
+            'px-4 py-2 text-sm font-medium rounded-l-lg',
+            mode === 'encode'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100',
+          ]">
             {{ $t('tools.imageSteganography.modeToggle.encode') }}
           </button>
-          <button
-            type="button"
-            @click="mode = 'decode'"
-            :class="[
-              'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
-              mode === 'decode'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100',
-            ]"
-          >
+          <button type="button" @click="mode = 'decode'" :class="[
+            'px-4 py-2 text-sm font-medium rounded-r-lg border-l border-gray-200',
+            mode === 'decode'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100',
+          ]">
             {{ $t('tools.imageSteganography.modeToggle.decode') }}
           </button>
         </div>
@@ -112,22 +104,13 @@
           <div class="flex justify-center">
             <div
               class="relative border-2 border-dashed border-gray-300 rounded-lg bg-white flex items-center justify-center w-full"
-              style="min-height: 500px"
-              :class="{ 'cursor-pointer hover:border-blue-500': !state.isLoading }"
-            >
-              <canvas
-                ref="canvasRef"
-                id="steganography-canvas"
-                class="rounded-lg max-w-full max-h-full"
-                style="width: 100%; height: 100%; object-fit: contain"
-              ></canvas>
-              <div
-                v-if="
-                  !canvasInitialized ||
-                  (mode === 'encode' ? !state.targetImageData : !decodedImageDataUrl)
-                "
-                class="absolute inset-0 flex flex-col items-center justify-center text-gray-500"
-              >
+              style="min-height: 500px" :class="{ 'cursor-pointer hover:border-blue-500': !state.isLoading }">
+              <canvas ref="canvasRef" id="steganography-canvas" class="rounded-lg max-w-full max-h-full"
+                style="width: 100%; height: 100%; object-fit: contain"></canvas>
+              <div v-if="
+                !canvasInitialized ||
+                (mode === 'encode' ? !state.targetImageData : !decodedImageDataUrl)
+              " class="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
                 <div class="text-4xl mb-2">{{ mode === 'encode' ? '🖼️' : '🔍' }}</div>
                 <p>
                   {{
@@ -141,20 +124,13 @@
           </div>
 
           <div class="mt-4 flex justify-center">
-            <button
-              v-if="mode === 'encode'"
-              @click="exportCanvas"
+            <button v-if="mode === 'encode'" @click="exportCanvas"
               :disabled="!canvasInitialized || state.isLoading || !state.targetImageData"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-            >
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
               {{ $t('tools.imageSteganography.exportImage') }}
             </button>
-            <button
-              v-else
-              @click="exportDecodedImage"
-              :disabled="!decodedImageDataUrl || state.isLoading"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-            >
+            <button v-else @click="exportDecodedImage" :disabled="!decodedImageDataUrl || state.isLoading"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
               {{ $t('tools.imageSteganography.exportDecodedImage') }}
             </button>
           </div>
@@ -183,18 +159,12 @@
                 {{ $t('tools.imageSteganography.step1Desc') }}
               </p>
               <div class="flex space-x-2">
-                <button
-                  @click="selectHiddenImage"
-                  :disabled="state.isLoading"
-                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-                >
+                <button @click="selectHiddenImage" :disabled="state.isLoading"
+                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                   {{ $t('tools.imageSteganography.selectHiddenImage') }}
                 </button>
-                <button
-                  v-if="state.hiddenImageData"
-                  @click="previewHiddenImage"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-                >
+                <button v-if="state.hiddenImageData" @click="previewHiddenImage"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
                   {{ $t('common.preview') }}
                 </button>
               </div>
@@ -203,11 +173,8 @@
               <div v-if="state.hiddenImageData" class="mt-2">
                 <p class="text-sm text-gray-600 mb-1">{{ $t('common.preview') }}:</p>
                 <div class="border rounded p-2 bg-gray-50">
-                  <img
-                    :src="hiddenImagePreviewUrl || ''"
-                    alt="Hidden image preview"
-                    class="max-w-full max-h-32 object-contain"
-                  />
+                  <img referrerpolicy="no-referrer" :src="hiddenImagePreviewUrl || ''" alt="Hidden image preview"
+                    class="max-w-full max-h-32 object-contain" />
                 </div>
               </div>
             </div>
@@ -220,11 +187,8 @@
               <p class="text-sm text-gray-600">
                 {{ $t('tools.imageSteganography.step2Desc') }}
               </p>
-              <button
-                @click="saveHiddenImageData"
-                :disabled="!hiddenImageSelected || state.isLoading"
-                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-              >
+              <button @click="saveHiddenImageData" :disabled="!hiddenImageSelected || state.isLoading"
+                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                 {{ $t('tools.imageSteganography.saveHiddenData') }}
               </button>
             </div>
@@ -238,18 +202,12 @@
                 {{ $t('tools.imageSteganography.step3Desc') }}
               </p>
               <div class="flex space-x-2">
-                <button
-                  @click="selectTargetImage"
-                  :disabled="state.isLoading"
-                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-                >
+                <button @click="selectTargetImage" :disabled="state.isLoading"
+                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                   {{ $t('tools.imageSteganography.selectTargetImage') }}
                 </button>
-                <button
-                  v-if="state.targetImageData"
-                  @click="previewTargetImage"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-                >
+                <button v-if="state.targetImageData" @click="previewTargetImage"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
                   {{ $t('common.preview') }}
                 </button>
               </div>
@@ -258,11 +216,8 @@
               <div v-if="targetImagePreviewUrl" class="mt-2">
                 <p class="text-sm text-gray-600 mb-1">{{ $t('common.preview') }}:</p>
                 <div class="border rounded p-2 bg-gray-50">
-                  <img
-                    :src="targetImagePreviewUrl || ''"
-                    alt="Target image preview"
-                    class="max-w-full max-h-32 object-contain"
-                  />
+                  <img referrerpolicy="no-referrer" :src="targetImagePreviewUrl || ''" alt="Target image preview"
+                    class="max-w-full max-h-32 object-contain" />
                 </div>
               </div>
             </div>
@@ -275,21 +230,15 @@
               <p class="text-sm text-gray-600">
                 {{ $t('tools.imageSteganography.step4Desc') }}
               </p>
-              <button
-                @click="drawHiddenData"
-                :disabled="!canStartEncryption"
-                class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-              >
+              <button @click="drawHiddenData" :disabled="!canStartEncryption"
+                class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                 {{ $t('tools.imageSteganography.startEncryption') }}
               </button>
             </div>
 
             <!-- Reset button -->
-            <button
-              @click="resetCanvas"
-              :disabled="state.isLoading"
-              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-            >
+            <button @click="resetCanvas" :disabled="state.isLoading"
+              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
               {{ $t('common.clear') }}
             </button>
           </div>
@@ -305,11 +254,8 @@
                 {{ $t('tools.imageSteganography.decodeStep1Desc') }}
               </p>
               <div class="flex space-x-2">
-                <button
-                  @click="selectImageToDecode"
-                  :disabled="state.isLoading"
-                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-                >
+                <button @click="selectImageToDecode" :disabled="state.isLoading"
+                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                   {{ $t('tools.imageSteganography.selectImageToDecode') }}
                 </button>
               </div>
@@ -323,11 +269,8 @@
               <p class="text-sm text-gray-600">
                 {{ $t('tools.imageSteganography.decodeStep2Desc') }}
               </p>
-              <button
-                @click="decodeImage"
-                :disabled="!imageToDecodeData || state.isLoading"
-                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-              >
+              <button @click="decodeImage" :disabled="!imageToDecodeData || state.isLoading"
+                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
                 {{ $t('tools.imageSteganography.startDecoding') }}
               </button>
             </div>
@@ -338,20 +281,14 @@
                 {{ $t('tools.imageSteganography.decodedImagePreview') }}
               </h4>
               <div class="border rounded p-2 bg-gray-50">
-                <img
-                  :src="decodedImageDataUrl || ''"
-                  alt="Decoded image preview"
-                  class="max-w-full max-h-64 object-contain"
-                />
+                <img referrerpolicy="no-referrer" :src="decodedImageDataUrl || ''" alt="Decoded image preview"
+                  class="max-w-full max-h-64 object-contain" />
               </div>
             </div>
 
             <!-- Reset button -->
-            <button
-              @click="resetDecoding"
-              :disabled="state.isLoading"
-              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
-            >
+            <button @click="resetDecoding" :disabled="state.isLoading"
+              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium">
               {{ $t('common.clear') }}
             </button>
           </div>
@@ -584,7 +521,7 @@ function previewHiddenImage() {
           <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5;">
             <div>
               <h2 style="text-align: center; font-family: Arial, sans-serif;">${t('tools.imageSteganography.hiddenImagePreview')}</h2>
-              <img src="${tempCanvas.toDataURL()}" style="max-width: 90vw; max-height: 80vh;" />
+              <img referrerpolicy="no-referrer" src="${tempCanvas.toDataURL()}" style="max-width: 90vw; max-height: 80vh;" />
             </div>
           </body>
         </html>
@@ -612,7 +549,7 @@ function previewTargetImage() {
         <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5;">
           <div>
             <h2 style="text-align: center; font-family: Arial, sans-serif;">${t('tools.imageSteganography.targetImagePreview')}</h2>
-            <img src="${dataURL}" style="max-width: 90vw; max-height: 80vh;" />
+            <img referrerpolicy="no-referrer" src="${dataURL}" style="max-width: 90vw; max-height: 80vh;" />
           </div>
         </body>
       </html>

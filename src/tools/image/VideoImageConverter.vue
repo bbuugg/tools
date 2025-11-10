@@ -28,15 +28,12 @@
           {{ $t('tools.videoImageConverter.mode.title') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            @click="setMode('videoToImage')"
-            :class="[
-              'p-6 rounded-xl border transition-all duration-200 text-left',
-              mode === 'videoToImage'
-                ? 'border-primary-500 bg-primary-500/10'
-                : 'border-slate-600/50 hover:border-primary-500/50',
-            ]"
-          >
+          <button @click="setMode('videoToImage')" :class="[
+            'p-6 rounded-xl border transition-all duration-200 text-left',
+            mode === 'videoToImage'
+              ? 'border-primary-500 bg-primary-500/10'
+              : 'border-slate-600/50 hover:border-primary-500/50',
+          ]">
             <div class="flex items-center">
               <div class="text-2xl mr-4">📹</div>
               <div>
@@ -49,15 +46,12 @@
               </div>
             </div>
           </button>
-          <button
-            @click="setMode('imageToVideo')"
-            :class="[
-              'p-6 rounded-xl border transition-all duration-200 text-left',
-              mode === 'imageToVideo'
-                ? 'border-primary-500 bg-primary-500/10'
-                : 'border-slate-600/50 hover:border-primary-500/50',
-            ]"
-          >
+          <button @click="setMode('imageToVideo')" :class="[
+            'p-6 rounded-xl border transition-all duration-200 text-left',
+            mode === 'imageToVideo'
+              ? 'border-primary-500 bg-primary-500/10'
+              : 'border-slate-600/50 hover:border-primary-500/50',
+          ]">
             <div class="flex items-center">
               <div class="text-2xl mr-4">🖼️</div>
               <div>
@@ -74,38 +68,23 @@
       </div>
 
       <!-- Video to Image Section -->
-      <div
-        v-if="mode === 'videoToImage'"
-        class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg"
-      >
+      <div v-if="mode === 'videoToImage'" class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
         <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-3">
           {{ $t('tools.videoImageConverter.videoToImage.title') }}
         </h3>
 
         <!-- File Upload -->
         <div class="mb-6">
-          <div
-            @drop="handleVideoDrop"
-            @dragover.prevent
-            @dragenter.prevent
+          <div @drop="handleVideoDrop" @dragover.prevent @dragenter.prevent
             class="border-2 border-dashed border-slate-600/50 rounded-2xl p-8 text-center hover:border-primary-500 transition-colors cursor-pointer hover-lift"
-            :class="{ 'border-primary-500 bg-primary-500/10': isVideoDragging }"
-            @click="videoInput!.click()"
-          >
+            :class="{ 'border-primary-500 bg-primary-500/10': isVideoDragging }" @click="videoInput!.click()">
             <div class="text-slate-400 text-4xl mb-4">📹</div>
             <p class="text-slate-300 mb-4">
               {{ $t('tools.videoImageConverter.videoToImage.dragDrop') }}
             </p>
-            <input
-              type="file"
-              ref="videoInput"
-              @change="handleVideoSelect"
-              accept="video/*"
-              class="hidden"
-            />
+            <input type="file" ref="videoInput" @change="handleVideoSelect" accept="video/*" class="hidden" />
             <button
-              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift"
-            >
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift">
               {{ $t('tools.videoImageConverter.videoToImage.selectFile') }}
             </button>
             <p class="text-xs text-slate-400 mt-2">
@@ -121,14 +100,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.videoToImage.settings.frameInterval') }}
               </label>
-              <input
-                v-model.number="videoToImageSettings.frameInterval"
-                type="number"
-                min="0.1"
-                max="10"
-                step="0.1"
-                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-              />
+              <input v-model.number="videoToImageSettings.frameInterval" type="number" min="0.1" max="10" step="0.1"
+                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200" />
               <p class="text-xs text-slate-400 mt-1">
                 {{ $t('tools.videoImageConverter.videoToImage.settings.frameIntervalDesc') }}
               </p>
@@ -137,10 +110,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.videoToImage.settings.imageFormat') }}
               </label>
-              <select
-                v-model="videoToImageSettings.imageFormat"
-                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-              >
+              <select v-model="videoToImageSettings.imageFormat"
+                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
                 <option value="png">PNG</option>
                 <option value="jpg">JPEG</option>
                 <option value="webp">WebP</option>
@@ -150,14 +121,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.videoToImage.settings.quality') }}
               </label>
-              <input
-                v-model.number="videoToImageSettings.quality"
-                type="range"
-                min="0.1"
-                max="1"
-                step="0.1"
-                class="w-full"
-              />
+              <input v-model.number="videoToImageSettings.quality" type="range" min="0.1" max="1" step="0.1"
+                class="w-full" />
               <div class="flex justify-between text-xs text-slate-400">
                 <span>Low</span>
                 <span>{{ Math.round(videoToImageSettings.quality * 100) }}%</span>
@@ -173,13 +138,8 @@
             {{ $t('tools.videoImageConverter.videoToImage.preview') }}
           </h4>
           <div class="bg-slate-900 rounded-xl overflow-hidden">
-            <video
-              ref="videoPlayer"
-              :src="videoUrl"
-              controls
-              class="w-full max-h-96"
-              @loadedmetadata="onVideoLoaded"
-            ></video>
+            <video ref="videoPlayer" :src="videoUrl" controls class="w-full max-h-96"
+              @loadedmetadata="onVideoLoaded"></video>
           </div>
           <div class="mt-2 text-sm text-slate-400">
             {{ $t('tools.videoImageConverter.videoToImage.duration') }}:
@@ -189,11 +149,8 @@
 
         <!-- Extract Frames Button -->
         <div v-if="selectedVideo" class="flex justify-center mt-6">
-          <button
-            @click="extractFrames"
-            :disabled="isProcessing"
-            class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift disabled:opacity-50 flex items-center"
-          >
+          <button @click="extractFrames" :disabled="isProcessing"
+            class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift disabled:opacity-50 flex items-center">
             <span v-if="isProcessing" class="animate-spin mr-2">🌀</span>
             {{
               isProcessing
@@ -211,22 +168,18 @@
             }})
           </h4>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div
-              v-for="(image, index) in extractedImages"
-              :key="index"
-              class="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50"
-            >
+            <div v-for="(image, index) in extractedImages" :key="index"
+              class="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
               <div class="aspect-square bg-slate-900 flex items-center justify-center">
-                <img :src="image.url" :alt="`Frame ${index + 1}`" class="object-contain max-h-32" />
+                <img referrerpolicy="no-referrer" :src="image.url" :alt="`Frame ${index + 1}`"
+                  class="object-contain max-h-32" />
               </div>
               <div class="p-2 text-xs text-slate-400 truncate">Frame {{ index + 1 }}</div>
             </div>
           </div>
           <div class="mt-4 flex justify-center">
-            <button
-              @click="downloadAllImages"
-              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift"
-            >
+            <button @click="downloadAllImages"
+              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift">
               {{ $t('tools.videoImageConverter.videoToImage.downloadAll') }}
             </button>
           </div>
@@ -234,39 +187,23 @@
       </div>
 
       <!-- Image to Video Section -->
-      <div
-        v-if="mode === 'imageToVideo'"
-        class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg"
-      >
+      <div v-if="mode === 'imageToVideo'" class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
         <h3 class="text-lg font-semibold text-slate-100 mb-4 border-b border-slate-700/30 pb-3">
           {{ $t('tools.videoImageConverter.imageToVideo.title') }}
         </h3>
 
         <!-- File Upload -->
         <div class="mb-6">
-          <div
-            @drop="handleImageDrop"
-            @dragover.prevent
-            @dragenter.prevent
+          <div @drop="handleImageDrop" @dragover.prevent @dragenter.prevent
             class="border-2 border-dashed border-slate-600/50 rounded-2xl p-8 text-center hover:border-primary-500 transition-colors cursor-pointer hover-lift"
-            :class="{ 'border-primary-500 bg-primary-500/10': isImageDragging }"
-            @click="imageInput!.click()"
-          >
+            :class="{ 'border-primary-500 bg-primary-500/10': isImageDragging }" @click="imageInput!.click()">
             <div class="text-slate-400 text-4xl mb-4">🖼️</div>
             <p class="text-slate-300 mb-4">
               {{ $t('tools.videoImageConverter.imageToVideo.dragDrop') }}
             </p>
-            <input
-              type="file"
-              ref="imageInput"
-              @change="handleImageSelect"
-              accept="image/*"
-              multiple
-              class="hidden"
-            />
+            <input type="file" ref="imageInput" @change="handleImageSelect" accept="image/*" multiple class="hidden" />
             <button
-              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift"
-            >
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift">
               {{ $t('tools.videoImageConverter.imageToVideo.selectFiles') }}
             </button>
             <p class="text-xs text-slate-400 mt-2">
@@ -280,14 +217,9 @@
           <h4 class="text-md font-semibold text-slate-100 mb-3">
             {{ $t('tools.videoImageConverter.imageToVideo.audio.title') }}
           </h4>
-          <div
-            @drop="handleAudioDrop"
-            @dragover.prevent
-            @dragenter.prevent
+          <div @drop="handleAudioDrop" @dragover.prevent @dragenter.prevent
             class="border-2 border-dashed border-slate-600/50 rounded-2xl p-6 text-center hover:border-primary-500 transition-colors cursor-pointer hover-lift"
-            :class="{ 'border-primary-500 bg-primary-500/10': isAudioDragging }"
-            @click="audioInput!.click()"
-          >
+            :class="{ 'border-primary-500 bg-primary-500/10': isAudioDragging }" @click="audioInput!.click()">
             <div class="text-slate-400 text-2xl mb-2">🎵</div>
             <p class="text-slate-300 mb-2" v-if="!selectedAudio">
               {{ $t('tools.videoImageConverter.imageToVideo.audio.dragDrop') }}
@@ -295,23 +227,13 @@
             <p class="text-slate-300 mb-2" v-else>
               {{ selectedAudio.name }}
             </p>
-            <input
-              type="file"
-              ref="audioInput"
-              @change="handleAudioSelect"
-              accept="audio/*"
-              class="hidden"
-            />
-            <button
-              v-if="selectedAudio"
-              @click.stop="removeAudio"
-              class="px-3 py-1 bg-error-600 text-white rounded text-sm hover:bg-error-700 transition-colors hover-lift mr-2"
-            >
+            <input type="file" ref="audioInput" @change="handleAudioSelect" accept="audio/*" class="hidden" />
+            <button v-if="selectedAudio" @click.stop="removeAudio"
+              class="px-3 py-1 bg-error-600 text-white rounded text-sm hover:bg-error-700 transition-colors hover-lift mr-2">
               {{ $t('common.remove') }}
             </button>
             <button
-              class="px-4 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 transition-colors hover-lift"
-            >
+              class="px-4 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 transition-colors hover-lift">
               {{ $t('tools.videoImageConverter.imageToVideo.audio.selectFile') }}
             </button>
             <p class="text-xs text-slate-400 mt-2">
@@ -330,14 +252,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.imageToVideo.settings.durationPerImage') }}
               </label>
-              <input
-                v-model.number="imageToVideoSettings.durationPerImage"
-                type="number"
-                min="0.1"
-                max="10"
-                step="0.1"
-                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-              />
+              <input v-model.number="imageToVideoSettings.durationPerImage" type="number" min="0.1" max="10" step="0.1"
+                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200" />
               <p class="text-xs text-slate-400 mt-1">
                 {{ $t('tools.videoImageConverter.imageToVideo.settings.durationPerImageDesc') }}
               </p>
@@ -346,10 +262,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.imageToVideo.settings.transition') }}
               </label>
-              <select
-                v-model="imageToVideoSettings.transition"
-                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-              >
+              <select v-model="imageToVideoSettings.transition"
+                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
                 <option value="none">
                   {{ $t('tools.videoImageConverter.imageToVideo.settings.transitions.none') }}
                 </option>
@@ -365,10 +279,8 @@
               <label class="block text-sm font-medium text-slate-300 mb-2">
                 {{ $t('tools.videoImageConverter.imageToVideo.settings.resolution') }}
               </label>
-              <select
-                v-model="imageToVideoSettings.resolution"
-                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-              >
+              <select v-model="imageToVideoSettings.resolution"
+                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
                 <option value="720p">720p (1280×720)</option>
                 <option value="1080p">1080p (1920×1080)</option>
                 <option value="4k">4K (3840×2160)</option>
@@ -385,52 +297,35 @@
             }})
           </h4>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div
-              v-for="(image, index) in selectedImages"
-              :key="index"
-              class="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50 relative group"
-            >
+            <div v-for="(image, index) in selectedImages" :key="index"
+              class="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50 relative group">
               <div class="aspect-square bg-slate-900 flex items-center justify-center">
-                <img :src="image.url" :alt="image.name" class="object-contain max-h-32" />
+                <img referrerpolicy="no-referrer" :src="image.url" :alt="image.name" class="object-contain max-h-32" />
               </div>
               <div class="p-2 text-xs text-slate-400 truncate">
                 {{ image.name }}
               </div>
-              <button
-                @click="removeImage(index)"
-                class="absolute top-1 right-1 bg-error-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
+              <button @click="removeImage(index)"
+                class="absolute top-1 right-1 bg-error-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 ×
               </button>
             </div>
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
-            <button
-              @click="moveImageUp"
-              :disabled="selectedImages.length <= 1"
-              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50"
-            >
+            <button @click="moveImageUp" :disabled="selectedImages.length <= 1"
+              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50">
               {{ $t('tools.videoImageConverter.imageToVideo.actions.moveUp') }}
             </button>
-            <button
-              @click="moveImageDown"
-              :disabled="selectedImages.length <= 1"
-              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50"
-            >
+            <button @click="moveImageDown" :disabled="selectedImages.length <= 1"
+              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50">
               {{ $t('tools.videoImageConverter.imageToVideo.actions.moveDown') }}
             </button>
-            <button
-              @click="reverseImages"
-              :disabled="selectedImages.length <= 1"
-              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50"
-            >
+            <button @click="reverseImages" :disabled="selectedImages.length <= 1"
+              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50">
               {{ $t('tools.videoImageConverter.imageToVideo.actions.reverse') }}
             </button>
-            <button
-              @click="shuffleImages"
-              :disabled="selectedImages.length <= 1"
-              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50"
-            >
+            <button @click="shuffleImages" :disabled="selectedImages.length <= 1"
+              class="px-3 py-1 bg-slate-700 text-slate-100 rounded text-sm hover:bg-slate-600 disabled:opacity-50">
               {{ $t('tools.videoImageConverter.imageToVideo.actions.shuffle') }}
             </button>
           </div>
@@ -438,11 +333,8 @@
 
         <!-- Generate Video Button -->
         <div v-if="selectedImages.length > 0" class="flex justify-center mt-6">
-          <button
-            @click="generateVideo"
-            :disabled="isProcessing"
-            class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift disabled:opacity-50 flex items-center"
-          >
+          <button @click="generateVideo" :disabled="isProcessing"
+            class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift disabled:opacity-50 flex items-center">
             <span v-if="isProcessing" class="animate-spin mr-2">🌀</span>
             {{
               isProcessing
@@ -469,10 +361,8 @@
             <video :src="generatedVideoUrl" controls class="w-full max-h-96"></video>
           </div>
           <div class="mt-4 flex justify-center">
-            <button
-              @click="downloadVideo"
-              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift"
-            >
+            <button @click="downloadVideo"
+              class="px-4 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift">
               {{ $t('tools.videoImageConverter.imageToVideo.download') }}
             </button>
           </div>
@@ -483,17 +373,11 @@
       <div class="bg-warning-900/30 border-l-4 border-warning-500 p-4 rounded-r-xl">
         <div class="flex">
           <div class="flex-shrink-0">
-            <svg
-              class="h-5 w-5 text-warning-500"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
+            <svg class="h-5 w-5 text-warning-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path fill-rule="evenodd"
                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
+                clip-rule="evenodd" />
             </svg>
           </div>
           <div class="ml-3">
@@ -1164,6 +1048,7 @@ onUnmounted(() => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

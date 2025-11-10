@@ -1,22 +1,13 @@
 <template>
-  <ToolLayout
-    :icon="'🖼️'"
-    :title="$t('tools.faviconGenerator.title')"
-    :description="$t('tools.faviconGenerator.description')"
-    :features="[
+  <ToolLayout :icon="'🖼️'" :title="$t('tools.faviconGenerator.title')"
+    :description="$t('tools.faviconGenerator.description')" :features="[
       $t('tools.faviconGenerator.features.cropping.title'),
       $t('tools.faviconGenerator.features.multiSize.title'),
       $t('tools.faviconGenerator.features.formats.title'),
-    ]"
-  >
+    ]">
     <template #header-actions>
-      <Button
-        v-if="generatedFavicons.length > 0"
-        @click="downloadAll"
-        variant="success"
-        size="md"
-        :icon-left="DownloadIcon"
-      >
+      <Button v-if="generatedFavicons.length > 0" @click="downloadAll" variant="success" size="md"
+        :icon-left="DownloadIcon">
         {{ $t('tools.faviconGenerator.downloadAll') }}
       </Button>
     </template>
@@ -28,26 +19,14 @@
           {{ $t('tools.faviconGenerator.uploadSection') }}
         </h3>
 
-        <div
-          v-if="!selectedImage"
-          @drop="handleDrop"
-          @dragover.prevent
-          @dragenter.prevent
-          @click="openFileSelector"
+        <div v-if="!selectedImage" @drop="handleDrop" @dragover.prevent @dragenter.prevent @click="openFileSelector"
           :class="[
             'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover-lift',
             isDragging
               ? 'border-primary-500 bg-primary-500/20 shadow-glow'
               : 'border-slate-600 hover:border-slate-500',
-          ]"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/*"
-            @change="handleFileSelect"
-            class="hidden"
-          />
+          ]">
+          <input ref="fileInput" type="file" accept="image/*" @change="handleFileSelect" class="hidden" />
           <div class="space-y-4">
             <div class="text-5xl text-slate-400">🖼️</div>
             <div>
@@ -90,21 +69,14 @@
               </h5>
               <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 glass">
                 <div class="cropper-container w-full" style="height: 500px">
-                  <Cropper
-                    ref="cropperRef"
-                    :src="originalImageUrl"
-                    :stencil-props="{
-                      aspectRatio: 1,
-                      movable: true,
-                      resizable: true,
-                    }"
-                    :resize-image="{
-                      adjustStencil: false,
-                    }"
-                    :default-size="{ width: 200, height: 200 }"
-                    @change="onCropChange"
-                    class="rounded-xl border border-slate-700 w-full h-full"
-                  />
+                  <Cropper ref="cropperRef" :src="originalImageUrl" :stencil-props="{
+                    aspectRatio: 1,
+                    movable: true,
+                    resizable: true,
+                  }" :resize-image="{
+                    adjustStencil: false,
+                  }" :default-size="{ width: 200, height: 200 }" @change="onCropChange"
+                    class="rounded-xl border border-slate-700 w-full h-full" />
                 </div>
               </div>
               <p class="text-sm text-slate-500 mt-2">
@@ -119,10 +91,8 @@
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                   {{ $t('tools.faviconGenerator.outputFormat') }}
                 </label>
-                <select
-                  v-model="outputFormat"
-                  class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200"
-                >
+                <select v-model="outputFormat"
+                  class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-100 transition-all duration-200">
                   <option value="ico">ICO</option>
                   <option value="png">PNG</option>
                   <option value="jpg">JPG</option>
@@ -135,31 +105,18 @@
                   {{ $t('tools.faviconGenerator.sizes') }}
                 </label>
                 <div class="space-y-2">
-                  <label
-                    v-for="size in availableSizes"
-                    :key="size"
-                    class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-slate-800/70 transition-colors duration-200 border border-slate-700/50"
-                  >
-                    <input
-                      type="checkbox"
-                      v-model="selectedSizes"
-                      :value="size"
-                      class="h-5 w-5 text-primary-600 rounded focus:ring-primary-500 border-slate-600 bg-slate-800"
-                    />
+                  <label v-for="size in availableSizes" :key="size"
+                    class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-slate-800/70 transition-colors duration-200 border border-slate-700/50">
+                    <input type="checkbox" v-model="selectedSizes" :value="size"
+                      class="h-5 w-5 text-primary-600 rounded focus:ring-primary-500 border-slate-600 bg-slate-800" />
                     <span class="text-sm font-medium text-slate-300">{{ size }}×{{ size }} px</span>
                   </label>
                 </div>
               </div>
 
               <!-- Generate Button -->
-              <Button
-                @click="generateFavicons"
-                :disabled="selectedSizes.length === 0 || isGenerating"
-                :loading="isGenerating"
-                variant="primary"
-                size="lg"
-                class="w-full"
-              >
+              <Button @click="generateFavicons" :disabled="selectedSizes.length === 0 || isGenerating"
+                :loading="isGenerating" variant="primary" size="lg" class="w-full">
                 {{ $t('tools.faviconGenerator.generate') }}
               </Button>
             </div>
@@ -168,10 +125,7 @@
       </div>
 
       <!-- Generated Favicons -->
-      <div
-        v-if="generatedFavicons.length > 0"
-        class="rounded-2xl p-6 mb-8 glass border border-slate-700/50"
-      >
+      <div v-if="generatedFavicons.length > 0" class="rounded-2xl p-6 mb-8 glass border border-slate-700/50">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-lg font-semibold text-slate-100">
             {{ $t('tools.faviconGenerator.generatedFavicons') }} ({{ generatedFavicons.length }})
@@ -180,22 +134,15 @@
 
         <!-- Favicon Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <Card
-            v-for="favicon in generatedFavicons"
-            :key="`${favicon.size}-${favicon.format}`"
-            class="text-center border border-slate-700/50 bg-slate-800/30"
-          >
+          <Card v-for="favicon in generatedFavicons" :key="`${favicon.size}-${favicon.format}`"
+            class="text-center border border-slate-700/50 bg-slate-800/30">
             <template #content>
               <div class="flex justify-center items-center h-20 mb-4 bg-slate-800/50 rounded-lg">
-                <img
-                  :src="favicon.dataUrl"
-                  :alt="`${favicon.size}x${favicon.size} favicon`"
-                  class="max-w-full max-h-full"
-                  :style="{
+                <img referrerpolicy="no-referrer" :src="favicon.dataUrl"
+                  :alt="`${favicon.size}x${favicon.size} favicon`" class="max-w-full max-h-full" :style="{
                     width: Math.min(favicon.size, 48) + 'px',
                     height: Math.min(favicon.size, 48) + 'px',
-                  }"
-                />
+                  }" />
               </div>
               <div class="text-sm font-medium text-slate-100 mb-1">
                 {{ favicon.size }}×{{ favicon.size }}
@@ -223,22 +170,22 @@
                 {{ $t('tools.faviconGenerator.htmlUsage') }}
               </h4>
               <pre
-                class="bg-slate-800/50 text-green-400 p-4 rounded-xl text-xs overflow-x-auto border border-slate-700/50"
-              ><code>&lt;!-- Basic favicon --&gt;
-&lt;link rel="shortcut icon" href="/favicon.ico" /&gt;
+                class="bg-slate-800/50 text-green-400 p-4 rounded-xl text-xs overflow-x-auto border border-slate-700/50">
+          <code>&lt;!-- Basic favicon --&gt;
+            &lt;link rel="shortcut icon" href="/favicon.ico" /&gt;
 
-&lt;!-- Multiple sizes --&gt;
-&lt;link rel="icon" sizes="16x16" href="/favicon-16.png" /&gt;
-&lt;link rel="icon" sizes="32x32" href="/favicon-32.png" /&gt;
-&lt;link rel="icon" sizes="48x48" href="/favicon-48.png" /&gt;</code></pre>
+            &lt;!-- Multiple sizes --&gt;
+            &lt;link rel="icon" sizes="16x16" href="/favicon-16.png" /&gt;
+            &lt;link rel="icon" sizes="32x32" href="/favicon-32.png" /&gt;
+            &lt;link rel="icon" sizes="48x48" href="/favicon-48.png" /&gt;</code>
+        </pre>
             </div>
             <div>
               <h4 class="font-medium text-slate-100 mb-2">
                 {{ $t('tools.faviconGenerator.tips') }}
               </h4>
               <ul
-                class="text-sm space-y-2 list-disc list-inside bg-blue-500/10 p-4 rounded-xl border border-blue-500/30"
-              >
+                class="text-sm space-y-2 list-disc list-inside bg-blue-500/10 p-4 rounded-xl border border-blue-500/30">
                 <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip1') }}</li>
                 <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip2') }}</li>
                 <li class="text-blue-300">{{ $t('tools.faviconGenerator.tip3') }}</li>

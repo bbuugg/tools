@@ -30,29 +30,16 @@
 
         <!-- File Upload -->
         <div class="mb-6">
-          <div
-            @drop="handleFileDrop"
-            @dragover.prevent
-            @dragenter.prevent
+          <div @drop="handleFileDrop" @dragover.prevent @dragenter.prevent
             class="border-2 border-dashed border-slate-600/50 rounded-2xl p-8 text-center hover:border-primary-500 transition-colors cursor-pointer hover-lift"
-            :class="{ 'border-primary-500 bg-primary-500/10': isDragging }"
-            @click="fileInput!.click()"
-          >
+            :class="{ 'border-primary-500 bg-primary-500/10': isDragging }" @click="fileInput!.click()">
             <div class="text-slate-400 text-4xl mb-4">🖼️</div>
             <p class="text-slate-300 mb-4">
               {{ $t('tools.imageToGifConverter.upload.dragDrop') }}
             </p>
-            <input
-              type="file"
-              ref="fileInput"
-              @change="handleFileSelect"
-              accept="image/*"
-              multiple
-              class="hidden"
-            />
+            <input type="file" ref="fileInput" @change="handleFileSelect" accept="image/*" multiple class="hidden" />
             <button
-              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift"
-            >
+              class="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors hover-lift">
               {{ $t('tools.imageToGifConverter.upload.selectFile') }}
             </button>
             <p class="text-xs text-slate-400 mt-2">
@@ -67,22 +54,15 @@
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.width') }}
             </label>
-            <input
-              v-model.number="gifSettings.width"
-              type="number"
-              min="100"
-              max="800"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-            />
+            <input v-model.number="gifSettings.width" type="number" min="100" max="800"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200" />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.quality') }}
             </label>
-            <select
-              v-model="gifSettings.quality"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-            >
+            <select v-model="gifSettings.quality"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
               <option value="high">
                 {{ $t('tools.imageToGifConverter.settings.qualityOptions.high') }}
               </option>
@@ -98,13 +78,8 @@
             <label class="block text-sm font-medium text-slate-300 mb-2">
               {{ $t('tools.imageToGifConverter.settings.fps') }}
             </label>
-            <input
-              v-model.number="gifSettings.fps"
-              type="number"
-              min="1"
-              max="30"
-              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-            />
+            <input v-model.number="gifSettings.fps" type="number" min="1" max="30"
+              class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-xl text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200" />
           </div>
         </div>
       </div>
@@ -125,41 +100,26 @@
             </h4>
 
             <div class="space-y-3 max-h-96 overflow-y-auto">
-              <div
-                v-for="(image, index) in selectedImages"
-                :key="index"
-                class="flex items-center p-3 border border-gray-200 rounded-lg"
-              >
+              <div v-for="(image, index) in selectedImages" :key="index"
+                class="flex items-center p-3 border border-gray-200 rounded-lg">
                 <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
-                  <img :src="image.url" :alt="image.name" class="w-full h-full object-cover" />
+                  <img referrerpolicy="no-referrer" :src="image.url" :alt="image.name"
+                    class="w-full h-full object-cover" />
                 </div>
                 <div class="ml-3 flex-grow min-w-0">
                   <p class="text-sm font-medium text-gray-900 truncate">{{ image.name }}</p>
                   <p class="text-xs text-gray-500">{{ formatFileSize(image.file.size) }}</p>
                 </div>
                 <div class="flex items-center">
-                  <input
-                    v-model.number="image.delay"
-                    type="number"
-                    min="0.1"
-                    max="10"
-                    step="0.1"
+                  <input v-model.number="image.delay" type="number" min="0.1" max="10" step="0.1"
                     class="w-16 px-2 py-1 border border-gray-300 rounded text-xs"
-                    @input="updateImageDelay(index, $event)"
-                  />
+                    @input="updateImageDelay(index, $event)" />
                   <span class="ml-1 text-xs text-gray-500">s</span>
                   <button @click="removeImage(index)" class="ml-2 text-red-500 hover:text-red-700">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd"
                         d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clip-rule="evenodd"
-                      />
+                        clip-rule="evenodd" />
                     </svg>
                   </button>
                 </div>
@@ -167,32 +127,20 @@
             </div>
 
             <div class="mt-4 flex flex-wrap gap-2">
-              <button
-                @click="moveImageUp"
-                :disabled="selectedImages.length <= 1"
-                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50"
-              >
+              <button @click="moveImageUp" :disabled="selectedImages.length <= 1"
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50">
                 {{ $t('tools.imageToGifConverter.preview.moveUp') }}
               </button>
-              <button
-                @click="moveImageDown"
-                :disabled="selectedImages.length <= 1"
-                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50"
-              >
+              <button @click="moveImageDown" :disabled="selectedImages.length <= 1"
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50">
                 {{ $t('tools.imageToGifConverter.preview.moveDown') }}
               </button>
-              <button
-                @click="reverseImages"
-                :disabled="selectedImages.length <= 1"
-                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50"
-              >
+              <button @click="reverseImages" :disabled="selectedImages.length <= 1"
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50">
                 {{ $t('tools.imageToGifConverter.preview.reverse') }}
               </button>
-              <button
-                @click="shuffleImages"
-                :disabled="selectedImages.length <= 1"
-                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50"
-              >
+              <button @click="shuffleImages" :disabled="selectedImages.length <= 1"
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50">
                 {{ $t('tools.imageToGifConverter.preview.shuffle') }}
               </button>
             </div>
@@ -202,21 +150,16 @@
           <div>
             <div class="space-y-4">
               <div class="flex gap-2">
-                <button
-                  @click="generateGif"
-                  :disabled="isProcessing"
-                  class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <button @click="generateGif" :disabled="isProcessing"
+                  class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                   {{
                     isProcessing
                       ? $t('common.loading')
                       : $t('tools.imageToGifConverter.actions.generateGif')
                   }}
                 </button>
-                <button
-                  @click="clearAll"
-                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
+                <button @click="clearAll"
+                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                   {{ $t('common.clear') }}
                 </button>
               </div>
@@ -227,13 +170,8 @@
                   {{ $t('tools.imageToGifConverter.settings.loopCount') }}
                 </label>
                 <div class="flex items-center gap-2">
-                  <input
-                    v-model.number="gifSettings.loopCount"
-                    type="number"
-                    min="0"
-                    max="100"
-                    class="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                  />
+                  <input v-model.number="gifSettings.loopCount" type="number" min="0" max="100"
+                    class="w-20 px-2 py-1 border border-gray-300 rounded text-sm" />
                   <span class="text-sm text-gray-500">
                     (0 = {{ $t('tools.imageToGifConverter.settings.infinite') }})
                   </span>
@@ -248,13 +186,10 @@
       <div v-if="isProcessing" class="glass rounded-2xl p-6 mb-8 border border-slate-700/30 shadow-dark-lg">
         <div class="text-center">
           <div class="relative mx-auto mb-4">
-            <div
-              class="w-16 h-16 border-4 border-slate-700 border-t-primary-500 rounded-full animate-spin"
-            ></div>
+            <div class="w-16 h-16 border-4 border-slate-700 border-t-primary-500 rounded-full animate-spin"></div>
             <div
               class="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-primary-400 rounded-full animate-spin"
-              style="animation-direction: reverse; animation-duration: 1s"
-            ></div>
+              style="animation-direction: reverse; animation-duration: 1s"></div>
           </div>
           <h3 class="text-lg font-semibold text-slate-100 mb-2">
             {{ $t('tools.imageToGifConverter.processing.title') }}
@@ -263,10 +198,8 @@
             {{ $t('tools.imageToGifConverter.processing.description') }}
           </p>
           <div class="mt-4 bg-slate-700/50 rounded-full h-2">
-            <div
-              class="bg-primary-600 h-2 rounded-full transition-all duration-300"
-              :style="{ width: processingProgress + '%' }"
-            ></div>
+            <div class="bg-primary-600 h-2 rounded-full transition-all duration-300"
+              :style="{ width: processingProgress + '%' }"></div>
           </div>
           <p class="text-sm text-slate-400 mt-2">{{ processingProgress }}%</p>
 
@@ -275,12 +208,8 @@
             <h4 class="text-md font-medium text-slate-200 mb-2">
               {{ $t('tools.imageToGifConverter.processing.preview') }}
             </h4>
-            <img
-              :src="generatedGif"
-              alt="GIF Preview"
-              class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg"
-              style="max-height: 200px"
-            />
+            <img referrerpolicy="no-referrer" :src="generatedGif" alt="GIF Preview"
+              class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg" style="max-height: 200px" />
           </div>
         </div>
       </div>
@@ -292,23 +221,16 @@
         </h3>
 
         <div class="text-center">
-          <img
-            :src="generatedGif"
-            alt="Generated GIF"
-            class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg mb-4"
-          />
+          <img referrerpolicy="no-referrer" :src="generatedGif" alt="Generated GIF"
+            class="max-w-full h-auto mx-auto rounded-xl shadow-dark-lg mb-4" />
 
           <div class="flex justify-center gap-4">
-            <button
-              @click="downloadGif"
-              class="px-6 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift"
-            >
+            <button @click="downloadGif"
+              class="px-6 py-2 bg-success-600 text-white rounded-xl hover:bg-success-700 transition-colors hover-lift">
               {{ $t('tools.imageToGifConverter.result.download') }}
             </button>
-            <button
-              @click="resetTool"
-              class="px-6 py-2 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors hover-lift"
-            >
+            <button @click="resetTool"
+              class="px-6 py-2 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors hover-lift">
               {{ $t('tools.imageToGifConverter.result.createNew') }}
             </button>
           </div>
@@ -319,17 +241,11 @@
       <div class="bg-warning-500/10 border-l-4 border-warning-500 p-4 mb-8 rounded-xl">
         <div class="flex">
           <div class="flex-shrink-0">
-            <svg
-              class="h-5 w-5 text-warning-500"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
+            <svg class="h-5 w-5 text-warning-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path fill-rule="evenodd"
                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
+                clip-rule="evenodd" />
             </svg>
           </div>
           <div class="ml-3">
@@ -575,10 +491,10 @@ function shuffleImages() {
   // Fisher-Yates shuffle algorithm
   for (let i = selectedImages.value.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[selectedImages.value[i], selectedImages.value[j]] = [
-      selectedImages.value[j],
-      selectedImages.value[i],
-    ]
+      ;[selectedImages.value[i], selectedImages.value[j]] = [
+        selectedImages.value[j],
+        selectedImages.value[i],
+      ]
   }
 }
 
@@ -743,6 +659,7 @@ img {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
