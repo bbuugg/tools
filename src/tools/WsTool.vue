@@ -5,7 +5,6 @@ import ToolLayout from '../components/ToolLayout.vue'
 import Button from '../components/ui/Button.vue'
 import Input from '../components/ui/Input.vue'
 import Textarea from '../components/ui/Textarea.vue'
-import { useToast } from '../composables/useToast'
 
 interface ConsoleMessage {
   content: string
@@ -20,7 +19,6 @@ interface Message {
 }
 
 const { t } = useI18n()
-const { toast } = useToast()
 
 // Reactive data
 const consoleData = ref<ConsoleMessage[]>([])
@@ -79,14 +77,28 @@ const writeConsole = (className: 'success' | 'danger' | 'info' | 'warning', cont
   })
 }
 
+const formatJson = (content: string): string => {
+  try {
+    const parsed = JSON.parse(content)
+    return JSON.stringify(parsed, null, 2)
+  } catch (_error) {
+    // If parsing fails, return original content
+    // We don't need to use _error, just catch it to prevent throwing
+    return content
+  }
+}
+
 const writeNews = (direction: 1 | 0, content: string) => {
   if (recvClean.value) {
     messageData.value = []
   }
 
+  // Format content as pretty JSON if recvDecode is enabled
+  const formattedContent = recvDecode.value ? formatJson(content) : content
+
   messageData.value.push({
     direction,
-    content,
+    content: formattedContent,
     time: formatDate(),
   })
 
