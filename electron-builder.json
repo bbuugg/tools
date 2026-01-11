@@ -1,0 +1,26 @@
+{
+  "appId": "com.tools.app",
+  "productName": "Tools App",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "files": ["dist/**/*", "electron/**/*", "package.json", "!node_modules"],
+  "win": {
+    "target": ["nsis"],
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
+  },
+  "mac": {
+    "target": ["dmg"],
+    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "artifactName": "${productName}-Linux-${version}.${ext}"
+  }
+}

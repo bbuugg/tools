@@ -1,0 +1,43 @@
+@layer theme, base, antd, components, utilities;
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+*::-webkit-scrollbar {
+  width: 0.3em;
+  height: 0.3em;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #DDDDDD;
+  border-radius: 5px;
+}
+
+
+* {
+  scroll-behavior: smooth;
+}
+
+@layer utilities {
+  @layer responsive {
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ant-layout-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
