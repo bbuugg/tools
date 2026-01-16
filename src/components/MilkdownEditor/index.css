@@ -1,0 +1,219 @@
+.milkdown {
+  background: unset;
+  color: unset;
+}
+
+.milkdown-editor-container {
+  position: relative;
+  transition: border-color 0.3s;
+}
+
+/* 确保光标可见 */
+.milkdown-editor-container .ProseMirror {
+  padding: 64px;
+  min-height: 360px;
+  outline: none;
+  cursor: text;
+}
+
+.milkdown-editor-container .ProseMirror:focus {
+  outline: none !important;
+}
+
+/* 工具栏按钮样式 */
+[data-crepe-toolbar] button,
+.crepe-toolbar button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 6px 10px !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+  font-size: 14px !important;
+}
+
+[data-crepe-toolbar] button:hover,
+.crepe-toolbar button:hover {
+  background-color: #f5f5f5 !important;
+}
+
+[data-crepe-toolbar] button[data-active='true'],
+[data-crepe-toolbar] button.active,
+[data-crepe-toolbar] button[aria-pressed='true'],
+.crepe-toolbar button[data-active='true'],
+.crepe-toolbar button.active,
+.crepe-toolbar button[aria-pressed='true'] {
+  background-color: #e6f7ff !important;
+  color: #1890ff !important;
+}
+
+[data-crepe-toolbar] button:disabled,
+.crepe-toolbar button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* 块级菜单样式 */
+[data-crepe-block-menu],
+.crepe-block-menu {
+  background: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  padding: 8px !important;
+  z-index: 1000 !important;
+}
+
+/* Slash 菜单样式 */
+[data-crepe-slash-menu],
+.crepe-slash-menu {
+  background: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  padding: 8px !important;
+  z-index: 1000 !important;
+}
+
+/* Gap cursor 样式 */
+.milkdown-editor-container .ProseMirror-gapcursor {
+  display: block !important;
+  pointer-events: none !important;
+  position: relative !important;
+}
+
+.milkdown-editor-container .ProseMirror-gapcursor::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  top: -2px !important;
+  width: 20px !important;
+  border-top: 2px solid #000 !important;
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite !important;
+}
+
+@keyframes ProseMirror-cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* 占位符样式 */
+.milkdown-editor-container .ProseMirror p.is-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
+
+/* 标题样式 */
+.milkdown-editor-container .ProseMirror h1,
+.milkdown-editor-container .ProseMirror h2,
+.milkdown-editor-container .ProseMirror h3,
+.milkdown-editor-container .ProseMirror h4,
+.milkdown-editor-container .ProseMirror h5,
+.milkdown-editor-container .ProseMirror h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.milkdown-editor-container .ProseMirror h1 {
+  font-size: 2em;
+  padding-bottom: 0.3em;
+}
+
+.milkdown-editor-container .ProseMirror h2 {
+  font-size: 1.5em;
+  padding-bottom: 0.3em;
+}
+
+.milkdown-editor-container .ProseMirror h3 {
+  font-size: 1.25em;
+}
+
+/* 段落样式 */
+.milkdown-editor-container .ProseMirror p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* 代码块样式 */
+.milkdown-editor-container .ProseMirror pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.milkdown-editor-container .ProseMirror code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+}
+
+.milkdown-editor-container .ProseMirror pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+/* 引用样式 */
+.milkdown-editor-container .ProseMirror blockquote {
+  padding: 0 1em;
+  border-left: 0.25em solid #d0d7de;
+  margin: 0 0 16px 0;
+}
+
+/* 表格样式 */
+.milkdown-editor-container .ProseMirror table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.milkdown-editor-container .ProseMirror table th {
+  font-weight: 600;
+}
+
+/* 列表样式 */
+.milkdown-editor-container .ProseMirror ul,
+.milkdown-editor-container .ProseMirror ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* 图片样式 */
+.milkdown-editor-container .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+
+/* 链接样式 */
+.milkdown-editor-container .ProseMirror a {
+  text-decoration: none;
+}
+
+.milkdown-editor-container .ProseMirror a:hover {
+  text-decoration: underline;
+}
+
+/* 分隔线样式 */
+.milkdown-editor-container .ProseMirror hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  border: 0;
+}

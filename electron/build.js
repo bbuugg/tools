@@ -32,14 +32,24 @@ function runCommand(command, args, options = {}) {
   })
 }
 
-// Build and package the Electron app
-async function buildElectronApp() {
+// Build and package the Electron app for specific platform
+async function buildElectronApp(platform = null) {
   try {
-    console.log('Building Vue application...')
-    await runCommand('npm', ['run', 'build'])
+    console.log('Converting icon to ICO format...')
+    await runCommand('node', ['scripts/convert-icon.js'])
 
-    console.log('Packaging Electron application...')
-    await runCommand('npx', ['electron-builder'])
+    console.log('Building Vite application...')
+    await runCommand('npm', ['run', 'build-only'])
+
+    const builderArgs = ['electron-builder'];
+    if (platform) {
+      builderArgs.push('--' + platform);
+      console.log(`Packaging Electron application for ${platform.toUpperCase()}...`);
+    } else {
+      console.log('Packaging Electron application for all platforms...');
+    }
+    
+    await runCommand('npx', builderArgs)
 
     console.log('Electron app built successfully!')
   } catch (error) {
@@ -48,5 +58,19 @@ async function buildElectronApp() {
   }
 }
 
+// Parse command line arguments to determine platform
+const args = process.argv.slice(2);
+let targetPlatform = null;
+
+if (args.length > 0) {
+  if (args.includes('--win') || args.includes('-w')) {
+    targetPlatform = 'win';
+  } else if (args.includes('--mac') || args.includes('-m')) {
+    targetPlatform = 'mac';
+  } else if (args.includes('--linux') || args.includes('-l')) {
+    targetPlatform = 'linux';
+  }
+}
+
 // Run the build process
-buildElectronApp()
+buildElectronApp(targetPlatform)

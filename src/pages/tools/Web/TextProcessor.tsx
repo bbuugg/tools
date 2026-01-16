@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { Card, Typography, Button, Input, message, Tooltip } from "antd";
-import { FormattedMessage, useIntl } from "react-intl";
 import {
+  BookOutlined,
+  ClearOutlined,
   CopyOutlined,
   DownloadOutlined,
-  ClearOutlined,
-  BookOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
+import { Button, Card, Input, message, Tooltip, Typography } from "antd";
+import React, { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 // @ts-expect-error No type definitions available for crypto-js
 import CryptoJS from "crypto-js";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 const TextProcessor: React.FC = () => {
   const intl = useIntl();
@@ -64,6 +65,13 @@ const TextProcessor: React.FC = () => {
     URL.revokeObjectURL(url);
 
     message.success(intl.formatMessage({ id: "common.downloadSuccess" }));
+  };
+
+  // Swap input and output content
+  const swapInputOutput = () => {
+    const temp = inputText;
+    setInputText(outputText);
+    setOutputText(temp);
   };
 
   // Text processing functions
@@ -169,47 +177,118 @@ const TextProcessor: React.FC = () => {
     }
   };
 
+  const unicodeEncode = () => {
+    if (!inputText) {
+      setOutputText("");
+      return;
+    }
+
+    try {
+      const result = Array.from(inputText)
+        .map((char) => {
+          const code = char.charCodeAt(0);
+          // Only convert non-ASCII characters
+          if (code > 127) {
+            return `\\u${code.toString(16).padStart(4, "0")}`;
+          }
+          return char;
+        })
+        .join("");
+
+      setOutputText(result);
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      message.error(
+        intl.formatMessage({ id: "tools.textProcessor.errors.encodingError" })
+      );
+      setOutputText("");
+    }
+  };
+
+  const unicodeDecode = () => {
+    if (!inputText) {
+      setOutputText("");
+      return;
+    }
+
+    try {
+      const result = inputText.replace(
+        /\\u([0-9a-fA-F]{4})/g,
+        (_, group) => {
+          return String.fromCharCode(parseInt(group, 16));
+        }
+      );
+
+      setOutputText(result);
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      message.error(
+        intl.formatMessage({ id: "tools.textProcessor.errors.decodingError" })
+      );
+      setOutputText("");
+    }
+  };
+
+  const htmlEntityEncode = () => {
+    if (!inputText) {
+      setOutputText("");
+      return;
+    }
+
+    try {
+      // Convert text to HTML hexadecimal entity format (&#x6C49;)
+      const result = Array.from(inputText)
+        .map(char => {
+          const codePoint = char.codePointAt(0);
+          return `&#x${codePoint?.toString(16).toLowerCase()};`;
+        })
+        .join("");
+
+      setOutputText(result);
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      message.error(
+        intl.formatMessage({ id: "tools.textProcessor.errors.encodingError" })
+      );
+      setOutputText("");
+    }
+  };
+
+  const htmlEntityDecode = () => {
+    if (!inputText) {
+      setOutputText("");
+      return;
+    }
+
+    try {
+      // Convert HTML hexadecimal entity format back to text
+      // Regular expression to match &#xXXXX; format hexadecimal values
+      const result = inputText.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => 
+        String.fromCodePoint(parseInt(hex, 16))
+      );
+
+      setOutputText(result);
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      message.error(
+        intl.formatMessage({ id: "tools.textProcessor.errors.decodingError" })
+      );
+      setOutputText("");
+    }
+  };
+
+
+
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-7xl mx-auto px-4">
       {/* Header */}
       <div className="text-center mb-8">
         <Title level={1} className="text-white mb-2">
-          <FormattedMessage id="tools.textProcessor.title" />
+          <FormattedMessage id="tools.textProcessor.name" />
         </Title>
         <Text className="text-lg text-slate-400">
           <FormattedMessage id="tools.textProcessor.description" />
         </Text>
-      </div>
-
-      {/* Features */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-white/5 border-slate-700">
-          <div className="text-2xl mb-3">🔗</div>
-          <Title level={3} className="text-white mb-2">
-            <FormattedMessage id="tools.textProcessor.features.urlEncoding.title" />
-          </Title>
-          <Paragraph className="text-slate-400 text-sm">
-            <FormattedMessage id="tools.textProcessor.features.urlEncoding.description" />
-          </Paragraph>
-        </Card>
-        <Card className="bg-white/5 border-slate-700">
-          <div className="text-2xl mb-3">🔒</div>
-          <Title level={3} className="text-white mb-2">
-            <FormattedMessage id="tools.textProcessor.features.base64.title" />
-          </Title>
-          <Paragraph className="text-slate-400 text-sm">
-            <FormattedMessage id="tools.textProcessor.features.base64.description" />
-          </Paragraph>
-        </Card>
-        <Card className="bg-white/5 border-slate-700">
-          <div className="text-2xl mb-3">#️⃣</div>
-          <Title level={3} className="text-white mb-2">
-            <FormattedMessage id="tools.textProcessor.features.hashing.title" />
-          </Title>
-          <Paragraph className="text-slate-400 text-sm">
-            <FormattedMessage id="tools.textProcessor.features.hashing.description" />
-          </Paragraph>
-        </Card>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -240,6 +319,16 @@ const TextProcessor: React.FC = () => {
                     <FormattedMessage id="common.clear" />
                   </Button>
                 </Tooltip>
+                <Tooltip title={<FormattedMessage id="common.swap" />}>
+                  <Button
+                    icon={<SwapOutlined />}
+                    onClick={swapInputOutput}
+                    size="small"
+                    className="bg-slate-700/50 text-slate-300 hover:bg-slate-600/50"
+                  >
+                    <FormattedMessage id="common.swap" />
+                  </Button>
+                </Tooltip>
               </div>
             </div>
           }
@@ -251,38 +340,36 @@ const TextProcessor: React.FC = () => {
               id: "tools.textProcessor.inputPlaceholder",
             })}
             rows={10}
-            className="font-mono text-sm bg-slate-800/50 text-slate-100 border-slate-700/30"
+            className="font-mono text-sm bg-slate-800/50 border-slate-700/30"
           />
 
           {/* Text Statistics */}
-          <div className="mt-4 p-3 bg-slate-800/30 border border-slate-700/30 rounded-xl">
+          <div className="mt-4 p-3 rounded-xl border">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm">
                   <FormattedMessage id="tools.textProcessor.chars" />
                 </p>
-                <p className="font-semibold text-slate-100">
-                  {inputText.length}
-                </p>
+                <p className="font-semibold">{inputText.length}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm">
                   <FormattedMessage id="tools.textProcessor.words" />
                 </p>
-                <p className="font-semibold text-slate-100">{wordCount}</p>
+                <p className="font-semibold">{wordCount}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm">
                   <FormattedMessage id="tools.textProcessor.lines" />
                 </p>
-                <p className="font-semibold text-slate-100">{lineCount}</p>
+                <p className="font-semibold">{lineCount}</p>
               </div>
             </div>
           </div>
 
           {/* Operations */}
           <div className="mt-6 space-y-4">
-            <h4 className="font-medium text-slate-100">
+            <h4 className="font-medium">
               <FormattedMessage id="tools.textProcessor.operations" />
             </h4>
 
@@ -322,6 +409,30 @@ const TextProcessor: React.FC = () => {
                 className="bg-success-600 text-white hover:bg-success-700"
               >
                 <FormattedMessage id="tools.textProcessor.sha256Hash" />
+              </Button>
+              <Button
+                onClick={unicodeEncode}
+                className="bg-blue-600 text-white hover:bg-blue-700"
+              >
+                <FormattedMessage id="tools.textProcessor.unicodeEncode" />
+              </Button>
+              <Button
+                onClick={unicodeDecode}
+                className="bg-blue-600 text-white hover:bg-blue-700"
+              >
+                <FormattedMessage id="tools.textProcessor.unicodeDecode" />
+              </Button>
+              <Button
+                onClick={htmlEntityEncode}
+                className="bg-orange-600 text-white hover:bg-orange-700"
+              >
+                <FormattedMessage id="tools.textProcessor.htmlEntityEncode" />
+              </Button>
+              <Button
+                onClick={htmlEntityDecode}
+                className="bg-orange-600 text-white hover:bg-orange-700"
+              >
+                <FormattedMessage id="tools.textProcessor.htmlEntityDecode" />
               </Button>
             </div>
           </div>
@@ -366,7 +477,7 @@ const TextProcessor: React.FC = () => {
             })}
             rows={10}
             readOnly
-            className="font-mono text-sm bg-slate-800/50 text-slate-100 border-slate-700/30"
+            className="font-mono text-sm bg-slate-800/50 border-slate-700/30"
           />
         </Card>
       </div>

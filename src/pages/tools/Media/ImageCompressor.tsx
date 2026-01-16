@@ -470,7 +470,7 @@ const ImageCompressor: React.FC = () => {
                                         )}
                                     </div>
 
-                                    <Space direction="vertical" align="end">
+                                    <Space orientation="vertical" align="end">
                                         <Space>
                                             <Button size="small" icon={<CompressOutlined />} onClick={() => compressImage(img.id)} disabled={isCompressing || img.status === 'completed' || img.status === 'compressing'} />
                                             <Button size="small" icon={<EyeOutlined />} onClick={() => handlePreview(img)} disabled={img.status !== 'completed'}><FormattedMessage id="tools.qrCodeTool.recognize" /></Button>

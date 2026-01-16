@@ -11,6 +11,7 @@ import {
   Col,
   Row,
   Select,
+  Space,
   Typography,
   Upload,
   message,
@@ -217,7 +218,7 @@ const FaviconGenerator: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4">
-      <div className="text-center mb-10">
+      <div className="text-center mb-8">
         <Title level={1} className="text-white mb-2">
           <FormattedMessage id="tools.faviconGenerator.name" />
         </Title>
@@ -254,14 +255,18 @@ const FaviconGenerator: React.FC = () => {
         </div>
       ) : (
         // Editor State
-        <div className="animate-fade-in">
+        <Space orientation="vertical" className="animate-fade-in w-full">
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={16}>
               <Card
                 className="bg-white/5 border-slate-700"
                 title={<FormattedMessage id="tools.favicon.cropTitle" />}
                 extra={
-                  <Button icon={<ReloadOutlined />} onClick={handleReset}>
+                  <Button
+                    size="small"
+                    icon={<ReloadOutlined />}
+                    onClick={handleReset}
+                  >
                     <FormattedMessage id="common.clear" />
                   </Button>
                 }
@@ -348,12 +353,12 @@ const FaviconGenerator: React.FC = () => {
 
           {/* Results Section */}
           {generatedFavicons.length > 0 && (
-            <div className="mt-8">
+            <div className="">
               <Card
-                className="bg-white/5 border-slate-700"
                 title={<FormattedMessage id="tools.favicon.resultsTitle" />}
                 extra={
                   <Button
+                    size="small"
                     type="primary"
                     icon={<DownloadOutlined />}
                     onClick={downloadAll}
@@ -400,51 +405,49 @@ const FaviconGenerator: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </Card>
-
-              {/* Usage Tips */}
-              <Card className="mt-8 bg-white/5 border-slate-700">
-                <Title level={4}>
-                  <FormattedMessage id="tools.favicon.howToUse" />
-                </Title>
-                <Row gutter={24}>
-                  <Col md={12}>
-                    <Paragraph className="text-slate-300">
-                      <Text strong>HTML Usage:</Text>
-                      <pre className="mt-2 border border-slate-700 p-3 rounded text-xs text-green-400 overflow-x-auto">
-                        {`<!-- Basic -->
+                <div className="mt-4">
+                  <Title level={5}>
+                    <FormattedMessage id="tools.favicon.howToUse" />
+                  </Title>
+                  <Row gutter={24}>
+                    <Col md={12}>
+                      <Paragraph className="text-slate-300">
+                        <Text strong>HTML Usage:</Text>
+                        <pre className="mt-2 border border-slate-700 p-3 rounded text-xs text-green-700 overflow-x-auto">
+                          {`<!-- Basic -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
 <!-- Modern (PNG) -->
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">`}
-                      </pre>
-                    </Paragraph>
-                  </Col>
-                  <Col md={12}>
-                    <Text strong>
-                      <FormattedMessage id="common.options" />:
-                    </Text>
-                    <ul className="list-disc pl-5 mt-2 space-y-1">
-                      <li>
-                        <FormattedMessage id="tools.favicon.tip1" />
-                      </li>
-                      <li>
-                        <FormattedMessage id="tools.favicon.tip2" />
-                      </li>
-                      <li>
-                        <FormattedMessage id="tools.favicon.tip3" />
-                      </li>
-                      <li>
-                        <FormattedMessage id="tools.favicon.tip4" />
-                      </li>
-                    </ul>
-                  </Col>
-                </Row>
+                        </pre>
+                      </Paragraph>
+                    </Col>
+                    <Col md={12}>
+                      <Text strong>
+                        <FormattedMessage id="common.options" />:
+                      </Text>
+                      <ul className="list-disc pl-5 mt-2 space-y-1">
+                        <li>
+                          <FormattedMessage id="tools.favicon.tip1" />
+                        </li>
+                        <li>
+                          <FormattedMessage id="tools.favicon.tip2" />
+                        </li>
+                        <li>
+                          <FormattedMessage id="tools.favicon.tip3" />
+                        </li>
+                        <li>
+                          <FormattedMessage id="tools.favicon.tip4" />
+                        </li>
+                      </ul>
+                    </Col>
+                  </Row>
+                </div>
               </Card>
             </div>
           )}
-        </div>
+        </Space>
       )}
 
       <style>{`

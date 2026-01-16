@@ -408,7 +408,7 @@ const ImageWatermark: React.FC = () => {
                         {(watermarkType === 'text' || watermarkType === 'combined') && (
                             <div className="p-4 rounded-lg mb-4 border border-slate-700">
                                 <Title level={5} className="text-white mb-3"><FormattedMessage id="tools.imageWatermark.textOptions" /></Title>
-                                <Space direction="vertical" className="w-full">
+                                <Space orientation="vertical" className="w-full">
                                     <Input
                                         placeholder={intl.formatMessage({ id: 'tools.imageWatermark.textPlaceholder' })}
                                         value={textOptions.text}
