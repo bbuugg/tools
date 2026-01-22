@@ -78,11 +78,11 @@ const ClipboardApp: React.FC = () => {
     const updatedNotes = notes.map((note) =>
       note.uuid === selectedNote.uuid
         ? {
-            ...note,
-            title: selectedNote.title,
-            content: selectedNote.content,
-            updatedAt: new Date().toISOString(),
-          }
+          ...note,
+          title: selectedNote.title,
+          content: selectedNote.content,
+          updatedAt: new Date().toISOString(),
+        }
         : note
     );
 
@@ -110,9 +110,6 @@ const ClipboardApp: React.FC = () => {
 
   // Delete note
   const deleteNote = (uuid: string) => {
-    const confirmMessage = intl.formatMessage({ id: "tools.clipboard.confirmDelete" });
-    if (!confirm(confirmMessage)) return;
-
     const updatedNotes = notes.filter((note) => note.uuid !== uuid);
     setNotes(updatedNotes);
     saveAllNotes(updatedNotes);
@@ -176,12 +173,12 @@ const ClipboardApp: React.FC = () => {
       );
       setNotes(updatedNotes);
       saveAllNotes(updatedNotes);
-      
+
       // Update selected note if it's the one being edited
       if (selectedNote && selectedNote.uuid === editingNoteId) {
         setSelectedNote({ ...selectedNote, title: editingTitle });
       }
-      
+
       setEditingNoteId(null);
       message.success(intl.formatMessage({ id: "tools.clipboard.titleUpdated" }));
     }
@@ -238,11 +235,10 @@ const ClipboardApp: React.FC = () => {
                     <List.Item
                       key={note.uuid}
                       onClick={() => selectNote(note)}
-                      className={`cursor-pointer p-2 rounded ${
-                        selectedNote?.uuid === note.uuid
+                      className={`cursor-pointer p-2 rounded ${selectedNote?.uuid === note.uuid
                           ? "bg-blue-100 dark:bg-blue-900"
                           : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                      }`}
+                        }`}
                       actions={[
                         <Button
                           type="text"
