@@ -1,5 +1,5 @@
 import { type ToolConfig } from "@/types/tool";
-import { CopyOutlined } from "@ant-design/icons";
+import { CodeOutlined, CopyOutlined } from "@ant-design/icons";
 import React from "react";
 
 const tools: ToolConfig[] = [
@@ -39,6 +39,15 @@ const tools: ToolConfig[] = [
     category: "Text",
     component: React.lazy(() => import("./ExcelToJson")),
     path: "/json/excel-to-json",
+  },
+  {
+    id: "jsonConverter",
+    name: "JSON Converter",
+    description: "Convert JSON to/from XML, CSV, and YAML formats",
+    icon: <CodeOutlined />,
+    category: "Web",
+    component: React.lazy(() => import("./JsonConverter")),
+    path: "/web/json-converter",
   },
 ];
 

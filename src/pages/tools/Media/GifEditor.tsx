@@ -11,7 +11,9 @@ import {
   Alert,
   Progress,
   Space,
+  Upload,
 } from "antd";
+
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   DownloadOutlined,
@@ -57,7 +59,6 @@ interface GifSettings {
 const GifEditor: React.FC = () => {
   const intl = useIntl();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [generatedGif, setGeneratedGif] = useState("");
@@ -247,46 +248,17 @@ const GifEditor: React.FC = () => {
     }
   };
 
-  // Handle file drop
-  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
 
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      const gifFiles = Array.from(files).filter(
-        (file) => file.type === "image/gif"
+
+  const handleFileChange = (file: any) => {
+    const actualFile = file.originFileObj || file;
+    if (actualFile && actualFile.type !== "image/gif") {
+      message.error(
+        intl.formatMessage({ id: "tools.gifEditor.errors.invalidFile" })
       );
-      if (gifFiles.length > 0) {
-        handleGifFile(gifFiles[0]);
-      } else {
-        message.error(
-          intl.formatMessage({ id: "tools.gifEditor.errors.noGif" })
-        );
-      }
+      return;
     }
-  };
-
-  // Handle file select
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const gifFiles = Array.from(files).filter(
-        (file) => file.type === "image/gif"
-      );
-      if (gifFiles.length > 0) {
-        handleGifFile(gifFiles[0]);
-      } else {
-        message.error(
-          intl.formatMessage({ id: "tools.gifEditor.errors.noGif" })
-        );
-      }
-    }
-
-    // Reset input to allow selecting the same file again
-    if (event.target) {
-      event.target.value = "";
-    }
+    handleGifFile(actualFile);
   };
 
   // Remove a frame
@@ -624,42 +596,26 @@ const GifEditor: React.FC = () => {
         >
           {/* File Upload */}
           <div className="mb-6">
-            <div
-              onDrop={handleFileDrop}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
+            <Upload.Dragger
+              accept="image/gif"
+              showUploadList={false}
+              customRequest={({ file, onSuccess }) => {
+                handleFileChange(file);
+                setTimeout(() => onSuccess?.("ok"), 0);
               }}
-              onDragEnter={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
-                isDragging
-                  ? "border-primary-500 bg-primary-500/10"
-                  : "border-slate-600 hover:border-primary-500"
-              }`}
+              className="bg-transparent border-slate-600 hover:border-primary-500"
+              style={{ padding: "40px 0" }}
             >
-              <div className="text-slate-400 text-4xl mb-4">🎞️</div>
-              <p className="mb-4">
+              <p className="ant-upload-drag-icon text-5xl text-slate-500 text-center">
+                🎞️
+              </p>
+              <p className="ant-upload-text text-xl font-medium mt-4 text-center">
                 <FormattedMessage id="tools.gifEditor.upload.dragDrop" />
               </p>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept="image/gif"
-                className="hidden"
-              />
-              <Button className="px-6 py-2">
-                <FormattedMessage id="tools.gifEditor.upload.selectFile" />
-              </Button>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="ant-upload-hint text-slate-400 mt-2 text-center">
                 <FormattedMessage id="tools.gifEditor.upload.supportedFormats" />
               </p>
-            </div>
+            </Upload.Dragger>
           </div>
 
           {/* GIF Settings */}

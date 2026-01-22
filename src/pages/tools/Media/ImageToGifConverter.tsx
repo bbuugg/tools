@@ -1,30 +1,31 @@
-import React, { useState, useRef, useEffect } from "react";
 import {
-  Card,
-  Button,
-  Typography,
-  InputNumber,
-  Select,
-  message,
-  Space,
-  Row,
-  Col,
-  Tag,
-  Alert,
-} from "antd";
-import { FormattedMessage, useIntl } from "react-intl";
-import {
-  DownloadOutlined,
   DeleteOutlined,
-  UpOutlined,
+  DownloadOutlined,
   DownOutlined,
-  SwapOutlined,
   ReloadOutlined,
+  SwapOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  InputNumber,
+  message,
+  Row,
+  Select,
+  Space,
+  Tag,
+  Typography,
+  Upload,
+} from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 // @ts-expect-error No type definitions available for gif.js
 import GIF from "gif.js";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 interface SelectedImage {
@@ -44,8 +45,6 @@ interface GifSettings {
 
 const ImageToGifConverter: React.FC = () => {
   const intl = useIntl();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [generatedGif, setGeneratedGif] = useState("");
@@ -153,51 +152,7 @@ const ImageToGifConverter: React.FC = () => {
     }
   };
 
-  // Handle file drop
-  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
 
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      const imageFiles = Array.from(files).filter((file) =>
-        file.type.startsWith("image/")
-      );
-      if (imageFiles.length > 0) {
-        addImageFiles(imageFiles);
-      } else {
-        message.error(
-          intl.formatMessage({
-            id: "tools.imageToGifConverter.errors.noImages",
-          })
-        );
-      }
-    }
-  };
-
-  // Handle file select
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const imageFiles = Array.from(files).filter((file) =>
-        file.type.startsWith("image/")
-      );
-      if (imageFiles.length > 0) {
-        addImageFiles(imageFiles);
-      } else {
-        message.error(
-          intl.formatMessage({
-            id: "tools.imageToGifConverter.errors.noImages",
-          })
-        );
-      }
-    }
-
-    // Reset input to allow selecting the same file again
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
 
   // Remove an image
   const removeImage = (id: string) => {
@@ -449,11 +404,6 @@ const ImageToGifConverter: React.FC = () => {
     gifSettings.quality = "medium" as const;
     gifSettings.fps = 2;
     gifSettings.loopCount = 0;
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   return (
@@ -507,43 +457,27 @@ const ImageToGifConverter: React.FC = () => {
         >
           {/* File Upload */}
           <div className="mb-6">
-            <div
-              onDrop={handleFileDrop}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
+            <Upload.Dragger
+              accept="image/*"
+              showUploadList={false}
+              multiple
+              customRequest={({ file, onSuccess }) => {
+                addImageFiles([file as File]);
+                setTimeout(() => onSuccess?.("ok"), 0);
               }}
-              onDragEnter={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
-                isDragging
-                  ? "border-primary-500 bg-primary-500/10"
-                  : "border-slate-600 hover:border-primary-500"
-              }`}
+              className="bg-transparent border-slate-600 hover:border-primary-500"
+              style={{ padding: "40px 0" }}
             >
-              <div className="text-slate-400 text-4xl mb-4">🖼️</div>
-              <p className="mb-4">
+              <p className="ant-upload-drag-icon">
+                <span className="text-4xl">🖼️</span>
+              </p>
+              <p className="ant-upload-text text-xl font-medium mt-4">
                 <FormattedMessage id="tools.imageToGifConverter.upload.dragDrop" />
               </p>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept="image/*"
-                multiple
-                className="hidden"
-              />
-              <Button className="px-6 py-2">
-                <FormattedMessage id="tools.imageToGifConverter.upload.selectFile" />
-              </Button>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="ant-upload-hint text-slate-400 mt-2">
                 <FormattedMessage id="tools.imageToGifConverter.upload.supportedFormats" />
               </p>
-            </div>
+            </Upload.Dragger>
           </div>
 
           {/* GIF Settings */}
@@ -708,7 +642,7 @@ const ImageToGifConverter: React.FC = () => {
               {/* Controls */}
               <Col xs={24} lg={8}>
                 <div className="space-y-4">
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Space orientation="vertical" style={{ width: "100%" }}>
                     <Button
                       onClick={generateGif}
                       loading={isProcessing}

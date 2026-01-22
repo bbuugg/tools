@@ -1,5 +1,5 @@
 import React from 'react';
-import { PictureOutlined, QrcodeOutlined, BgColorsOutlined, FileTextOutlined, CompressOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { PictureOutlined, QrcodeOutlined, BgColorsOutlined, FileTextOutlined, CompressOutlined, FileImageOutlined, VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { type ToolConfig } from '@/types/tool';
 
 const tools: ToolConfig[] = [
@@ -40,6 +40,15 @@ const tools: ToolConfig[] = [
         path: '/media/file-renamer',
     },
     {
+        id: "livePhoto",
+        name: "Live Photo Utility",
+        description: "Extract or create Live Photos (MVIMG, Motion Photos) from images and videos",
+        icon: <VideoCameraOutlined />,
+        category: "Media",
+        component: React.lazy(() => import("../Media/LivePhotoUtility")),
+        path: "/media/live-photo-utility",
+    },
+    {
         id: 'imageCompressor',
         name: 'Image Compressor',
         description: 'Compress images (JPG, PNG, WebP, GIF) locally',
@@ -66,32 +75,32 @@ const tools: ToolConfig[] = [
         component: React.lazy(() => import('./ImageToGifConverter')),
         path: '/media/image-to-gif-converter',
     },
+    // {
+    //     id: 'gifEditor',
+    //     name: 'GIF Editor',
+    //     description: 'Edit and customize animated GIFs by manipulating frames and delays',
+    //     icon: <FileImageOutlined />,
+    //     category: 'Media',
+    //     component: React.lazy(() => import('./GifEditor')),
+    //     path: '/media/gif-editor',
+    // },
+    // {
+    //     id: 'videoImageConverter',
+    //     name: 'Video Image Converter',
+    //     description: 'Convert videos to images and images to videos with customizable settings',
+    //     icon: <VideoCameraOutlined />,
+    //     category: 'Media',
+    //     component: React.lazy(() => import('./VideoImageConverter')),
+    //     path: '/media/video-image-converter',
+    // },
     {
-        id: 'gifEditor',
-        name: 'GIF Editor',
-        description: 'Edit and customize animated GIFs by manipulating frames and delays',
-        icon: <FileImageOutlined />,
+        id: 'universalVideoPlayer',
+        name: 'Universal Video Player',
+        description: 'Professional video player supporting HLS, DASH, and local files',
+        icon: <PlayCircleOutlined />,
         category: 'Media',
-        component: React.lazy(() => import('./GifEditor')),
-        path: '/media/gif-editor',
-    },
-    {
-        id: 'videoImageConverter',
-        name: 'Video Image Converter',
-        description: 'Convert videos to images and images to videos with customizable settings',
-        icon: <VideoCameraOutlined />,
-        category: 'Media',
-        component: React.lazy(() => import('./VideoImageConverter')),
-        path: '/media/video-image-converter',
-    },
-    {
-        id: 'videoToGifConverter',
-        name: 'Video to GIF Converter',
-        description: 'Convert videos to animated GIFs with time range selection and text overlay',
-        icon: <VideoCameraOutlined />,
-        category: 'Media',
-        component: React.lazy(() => import('./VideoToGifConverter')),
-        path: '/media/video-to-gif-converter',
+        component: React.lazy(() => import('./UniversalVideoPlayer')),
+        path: '/media/universal-video-player',
     }
 ];
 
