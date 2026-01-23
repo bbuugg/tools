@@ -63,14 +63,14 @@ const Taskbar: React.FC<TaskbarProps> = ({
         if (win.isMinimized) {
             items.push({
                 key: 'restore',
-                label: <FormattedMessage id="common.restore" defaultMessage="Restore" />,
+                label: <FormattedMessage id="taskbar.restore" defaultMessage="Restore" />,
                 icon: <BorderOutlined />,
                 onClick: () => onWindowClick(win.id)
             });
         } else {
             items.push({
                 key: 'minimize',
-                label: <FormattedMessage id="common.minimize" defaultMessage="Minimize" />,
+                label: <FormattedMessage id="taskbar.minimize" defaultMessage="Minimize" />,
                 icon: <MinusOutlined />,
                 onClick: () => onMinimize(win.id)
             });
@@ -80,7 +80,7 @@ const Taskbar: React.FC<TaskbarProps> = ({
         if (!win.isMinimized) {
             items.push({
                 key: 'maximize',
-                label: win.isMaximized ? <FormattedMessage id="common.restore" defaultMessage="Restore" /> : <FormattedMessage id="common.maximize" defaultMessage="Maximize" />,
+                label: win.isMaximized ? <FormattedMessage id="taskbar.restore" defaultMessage="Restore" /> : <FormattedMessage id="taskbar.maximize" defaultMessage="Maximize" />,
                 icon: win.isMaximized ? <CompressOutlined /> : <ExpandOutlined />,
                 onClick: () => onMaximize(win.id)
             });
@@ -100,7 +100,7 @@ const Taskbar: React.FC<TaskbarProps> = ({
 
         items.push({
             key: 'close',
-            label: <FormattedMessage id="common.close" defaultMessage="Close" />,
+            label: <FormattedMessage id="taskbar.close" defaultMessage="Close" />,
             icon: <CloseOutlined />,
             danger: true,
             onClick: () => onClose(win.id)

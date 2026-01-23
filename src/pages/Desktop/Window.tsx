@@ -151,7 +151,7 @@ const Window: React.FC<WindowProps> = ({
                 Separating visuals from Rnd allows us to scale/fade the content 
                 without fighting Rnd's transform-based positioning.
             */}
-            <div className={`w-full h-full flex flex-col bg-slate-100/40 dark:bg-slate-900/40 ${baseStyle} ${activeStyle} ${currentStateClass}`}>
+            <div onContextMenu={(e) => e.stopPropagation()} className={`w-full h-full flex flex-col bg-slate-100/40 dark:bg-slate-900/40 ${baseStyle} ${activeStyle} ${currentStateClass}`}>
 
                 {/* Header */}
                 <div

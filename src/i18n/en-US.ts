@@ -19,6 +19,7 @@ export default {
 
   // Common Actions/Labels
   "common.copy": "Copy",
+  "common.open": "Open",
   "common.clear": "Clear",
   "common.characters": "Characters",
   "common.words": "Words",
@@ -79,6 +80,10 @@ export default {
   "taskbar.pinnedToDock": "Pinned to dock",
   "taskbar.unpinnedFromDock": "Unpinned from dock",
   "taskbar.alreadyPinned": "Already pinned to dock",
+  "taskbar.restore": "Restore",
+  "taskbar.minimize": "Minimize",
+  "taskbar.maximize": "Maximize",
+  "taskbar.close": "Clsoe",
 
   // Categories
   "common.category.Text": "Text",

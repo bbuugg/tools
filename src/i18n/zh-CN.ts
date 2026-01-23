@@ -18,6 +18,7 @@ export default {
 
   // Common Actions/Labels
   "common.copy": "复制",
+  "common.open": "打开",
   "common.clear": "清除",
   "common.characters": "字符",
   "common.words": "单词",
@@ -79,6 +80,10 @@ export default {
   "taskbar.pinnedToDock": "已固定到 Dock",
   "taskbar.unpinnedFromDock": "已从 Dock 取消固定",
   "taskbar.alreadyPinned": "已经固定到 Dock",
+  "taskbar.restore": "恢复",
+  "taskbar.minimize": "最小化",
+  "taskbar.maximize": "最大化",
+  "taskbar.close": "关闭",
 
   // Categories
   "common.category.Text": "文本工具",
