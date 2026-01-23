@@ -152,16 +152,20 @@ const Taskbar: React.FC<TaskbarProps> = ({
                         const openWindow = windows.find(w => w.toolId === toolId);
                         if (openWindow) return null; // Don't show pinned app if it's already open
 
+                        const tool = allTools.find(t => t.id === toolId);
+                        const toolTitle = tool ? intl.formatMessage({ id: `tools.${tool.id}.name`, defaultMessage: tool.name }) : toolId;
+                        const toolIcon = tool ? tool.icon : <AppstoreOutlined />;
+
                         return (
                             <Dropdown key={`pinned-${toolId}`} menu={{ items: getPinnedAppMenuItems(toolId) }} trigger={['contextMenu']} placement="top" overlayStyle={{ zIndex: 20000 }}>
                                 <div className="flex">
-                                    <Tooltip title={toolId}>
+                                    <Tooltip title={toolTitle}>
                                         <div
                                             onClick={() => onOpenWindow(toolId)}
                                             className="relative group cursor-pointer transition-all duration-500 ease-out w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-white/20 dark:hover:bg-white/10"
                                         >
                                             <div className="text-2xl transition-transform duration-500 group-hover:scale-110">
-                                                <AppstoreOutlined />
+                                                {toolIcon}
                                             </div>
                                             {/* Small pin indicator */}
                                             <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-slate-400/60" />

@@ -70,6 +70,15 @@ export default {
   "desktop.addToDesktop": "放置到桌面",
   "desktop.alreadyOnDesktop": "已在桌面上",
   "desktop.addedToDesktop": "已添加到桌面",
+  "desktop.backgroundChanged": "背景已成功更改！",
+  "desktop.backgroundReset": "背景已重置为默认！",
+
+  // Taskbar
+  "taskbar.pinToDock": "固定到 Dock",
+  "taskbar.unpinFromDock": "从 Dock 取消固定",
+  "taskbar.pinnedToDock": "已固定到 Dock",
+  "taskbar.unpinnedFromDock": "已从 Dock 取消固定",
+  "taskbar.alreadyPinned": "已经固定到 Dock",
 
   // Categories
   "common.category.Text": "文本工具",

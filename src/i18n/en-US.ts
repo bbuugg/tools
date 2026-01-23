@@ -70,6 +70,15 @@ export default {
   "desktop.addToDesktop": "Place on Desktop",
   "desktop.alreadyOnDesktop": "Already on desktop",
   "desktop.addedToDesktop": "Added to desktop",
+  "desktop.backgroundChanged": "Background changed successfully!",
+  "desktop.backgroundReset": "Background reset to default!",
+
+  // Taskbar
+  "taskbar.pinToDock": "Pin to Dock",
+  "taskbar.unpinFromDock": "Unpin from Dock",
+  "taskbar.pinnedToDock": "Pinned to dock",
+  "taskbar.unpinnedFromDock": "Unpinned from dock",
+  "taskbar.alreadyPinned": "Already pinned to dock",
 
   // Categories
   "common.category.Text": "Text",
