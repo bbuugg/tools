@@ -73,6 +73,16 @@ export default {
   "desktop.addedToDesktop": "已添加到桌面",
   "desktop.backgroundChanged": "背景已成功更改！",
   "desktop.backgroundReset": "背景已重置为默认！",
+  "desktop.refresh": "刷新桌面",
+  "desktop.addNewShortcut": "添加快捷方式",
+  "desktop.autoArrange": "自动排列图标",
+  "desktop.uploadBackground": "上传背景图",
+  "desktop.resetBackground": "重置背景图",
+  "desktop.changeWallpaper": "切换壁纸",
+  "desktop.switchToLight": "切换至浅色模式",
+  "desktop.switchToDark": "切换至深色模式",
+  "desktop.goHome": "返回主页",
+  "desktop.arranged": "图标已自动排列",
 
   // Taskbar
   "taskbar.pinToDock": "固定到 Dock",

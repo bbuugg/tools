@@ -347,13 +347,13 @@ const Desktop: React.FC = () => {
             y: 40 + ((index % 6) * 120),
         }));
         saveIcons(arranged);
-        message.success('Icons rearranged');
+        message.success(intl.formatMessage({ id: 'desktop.arranged', defaultMessage: 'Icons rearranged' }));
     };
 
     const desktopMenuItems: MenuProps['items'] = [
         {
             key: 'refresh',
-            label: 'Refresh Desktop',
+            label: intl.formatMessage({ id: 'desktop.refresh', defaultMessage: 'Refresh Desktop' }),
             icon: <ReloadOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -363,7 +363,7 @@ const Desktop: React.FC = () => {
         { type: 'divider' },
         {
             key: 'new',
-            label: 'Add New Shortcut',
+            label: intl.formatMessage({ id: 'desktop.addNewShortcut', defaultMessage: 'Add New Shortcut' }),
             icon: <PlusOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -372,7 +372,7 @@ const Desktop: React.FC = () => {
         },
         {
             key: 'arrange',
-            label: 'Auto-arrange Icons',
+            label: intl.formatMessage({ id: 'desktop.autoArrange', defaultMessage: 'Auto-arrange Icons' }),
             icon: <AppstoreOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -382,7 +382,7 @@ const Desktop: React.FC = () => {
         { type: 'divider' },
         {
             key: 'upload-bg',
-            label: 'Upload Background',
+            label: intl.formatMessage({ id: 'desktop.uploadBackground', defaultMessage: 'Upload Background' }),
             icon: <BgColorsOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -408,7 +408,7 @@ const Desktop: React.FC = () => {
         },
         {
             key: 'reset-bg',
-            label: 'Reset Background',
+            label: intl.formatMessage({ id: 'desktop.resetBackground', defaultMessage: 'Reset Background' }),
             icon: <BgColorsOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -419,7 +419,7 @@ const Desktop: React.FC = () => {
         },
         {
             key: 'wallpaper',
-            label: 'Change Wallpaper',
+            label: intl.formatMessage({ id: 'desktop.changeWallpaper', defaultMessage: 'Change Wallpaper' }),
             icon: <BgColorsOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -428,7 +428,9 @@ const Desktop: React.FC = () => {
         },
         {
             key: 'theme',
-            label: currentTheme === 'dark' ? 'Switch to Light' : 'Switch to Dark',
+            label: currentTheme === 'dark' 
+                ? intl.formatMessage({ id: 'desktop.switchToLight', defaultMessage: 'Switch to Light' }) 
+                : intl.formatMessage({ id: 'desktop.switchToDark', defaultMessage: 'Switch to Dark' }),
             icon: <SettingOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();
@@ -438,7 +440,7 @@ const Desktop: React.FC = () => {
         { type: 'divider' },
         {
             key: 'dashboard',
-            label: 'Go to Home Page',
+            label: intl.formatMessage({ id: 'desktop.goHome', defaultMessage: 'Go to Home Page' }),
             icon: <DashboardOutlined />,
             onClick: ({ domEvent }) => {
                 domEvent.stopPropagation();

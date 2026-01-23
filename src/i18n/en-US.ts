@@ -73,6 +73,16 @@ export default {
   "desktop.addedToDesktop": "Added to desktop",
   "desktop.backgroundChanged": "Background changed successfully!",
   "desktop.backgroundReset": "Background reset to default!",
+  "desktop.refresh": "Refresh Desktop",
+  "desktop.addNewShortcut": "Add New Shortcut",
+  "desktop.autoArrange": "Auto-arrange Icons",
+  "desktop.uploadBackground": "Upload Background",
+  "desktop.resetBackground": "Reset Background",
+  "desktop.changeWallpaper": "Change Wallpaper",
+  "desktop.switchToLight": "Switch to Light Mode",
+  "desktop.switchToDark": "Switch to Dark Mode",
+  "desktop.goHome": "Go to Home Page",
+  "desktop.arranged": "Icons rearranged",
 
   // Taskbar
   "taskbar.pinToDock": "Pin to Dock",
