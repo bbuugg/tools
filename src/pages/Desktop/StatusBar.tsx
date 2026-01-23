@@ -5,9 +5,10 @@ import {
     BulbOutlined,
     ControlOutlined,
     SearchOutlined,
-    GlobalOutlined
+    GlobalOutlined,
+    SettingOutlined
 } from '@ant-design/icons';
-import { Button, Space, Tooltip, Dropdown, type MenuProps } from 'antd';
+import { Button, Space, Tooltip, Dropdown, type MenuProps, Drawer, Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useLocaleStore } from '@/store/useLocaleStore';
 import ControlCenter from './ControlCenter';
@@ -21,6 +22,7 @@ interface StatusBarProps {
 const StatusBar: React.FC<StatusBarProps> = ({ currentTheme, toggleTheme, toggleStartMenu }) => {
     const [time, setTime] = useState(new Date());
     const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const { setLocale } = useLocaleStore();
     
     const langItems: MenuProps['items'] = [
@@ -94,6 +96,19 @@ const StatusBar: React.FC<StatusBarProps> = ({ currentTheme, toggleTheme, toggle
                             </Tooltip>
                         </div>
                         <div className="no-drag hover:bg-white/20 rounded-full p-1 cursor-pointer transition-colors">
+                            <Tooltip title="Settings">
+                                <Button
+                                    type="text"
+                                    icon={<SettingOutlined className="text-2xl text-slate-600" />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsSettingsOpen(true);
+                                    }}
+                                    className="no-drag hover:rotate-12 transition-all w-12 h-12 rounded-2xl hover:bg-white/20 dark:hover:bg-white/10"
+                                />
+                            </Tooltip>
+                        </div>
+                        <div className="no-drag hover:bg-white/20 rounded-full p-1 cursor-pointer transition-colors">
                             <Tooltip title="Control Center">
                                 <Button
                                     type="text"
@@ -117,6 +132,97 @@ const StatusBar: React.FC<StatusBarProps> = ({ currentTheme, toggleTheme, toggle
             </div>
 
             <ControlCenter isOpen={isControlCenterOpen} onClose={() => setIsControlCenterOpen(false)} />
+            
+            <Drawer
+                title="Desktop Settings"
+                placement="right"
+                closable={true}
+                onClose={() => setIsSettingsOpen(false)}
+                open={isSettingsOpen}
+                width={320}
+            >
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="font-medium mb-2">Wallpaper</h3>
+                        <div className="flex space-x-2">
+                            <Button 
+                                size="small" 
+                                type={currentTheme === 'dark' ? "primary" : "default"}
+                                onClick={() => {
+                                    if (currentTheme !== 'dark') toggleTheme();
+                                }}
+                            >
+                                Dark
+                            </Button>
+                            <Button 
+                                size="small" 
+                                type={currentTheme === 'light' ? "primary" : "default"}
+                                onClick={() => {
+                                    if (currentTheme !== 'light') toggleTheme();
+                                }}
+                            >
+                                Light
+                            </Button>
+                        </div>
+                    </div>
+                    
+                    <Divider />
+                    
+                    <div>
+                        <h3 className="font-medium mb-2">Background Image</h3>
+                        <div className="flex flex-col space-y-2">
+                            <Button 
+                                size="small" 
+                                onClick={() => {
+                                    // Create a hidden file input
+                                    const input = document.createElement('input');
+                                    input.type = 'file';
+                                    input.accept = 'image/*';
+                                    input.onchange = (e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = (event) => {
+                                                const result = event.target?.result as string;
+                                                localStorage.setItem('as-desktop-background-image', result);
+                                                // Trigger a custom event to notify the desktop to update background
+                                                window.dispatchEvent(new CustomEvent('backgroundChanged', { detail: result }));
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    };
+                                    input.click();
+                                }}
+                            >
+                                Upload Image
+                            </Button>
+                            <Button 
+                                size="small" 
+                                onClick={() => {
+                                    localStorage.removeItem('as-desktop-background-image');
+                                    window.dispatchEvent(new CustomEvent('backgroundChanged', { detail: null }));
+                                }}
+                            >
+                                Reset Background
+                            </Button>
+                        </div>
+                    </div>
+                    
+                    <Divider />
+                    
+                    <div>
+                        <h3 className="font-medium mb-2">Auto Arrange Icons</h3>
+                        <Button 
+                            size="small" 
+                            onClick={() => {
+                                window.dispatchEvent(new CustomEvent('autoArrangeIcons'));
+                            }}
+                        >
+                            Arrange Now
+                        </Button>
+                    </div>
+                </div>
+            </Drawer>
         </>
     );
 };
