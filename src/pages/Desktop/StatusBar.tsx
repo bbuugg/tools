@@ -4,10 +4,12 @@ import {
     BulbFilled,
     BulbOutlined,
     ControlOutlined,
-    SearchOutlined
+    SearchOutlined,
+    GlobalOutlined
 } from '@ant-design/icons';
-import { Button, Space, Tooltip } from 'antd';
+import { Button, Space, Tooltip, Dropdown, type MenuProps } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { useLocaleStore } from '@/store/useLocaleStore';
 import ControlCenter from './ControlCenter';
 
 interface StatusBarProps {
@@ -19,6 +21,20 @@ interface StatusBarProps {
 const StatusBar: React.FC<StatusBarProps> = ({ currentTheme, toggleTheme, toggleStartMenu }) => {
     const [time, setTime] = useState(new Date());
     const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+    const { setLocale } = useLocaleStore();
+    
+    const langItems: MenuProps['items'] = [
+        { 
+            key: 'en-US', 
+            label: 'English', 
+            onClick: () => setLocale('en-US') 
+        },
+        { 
+            key: 'zh-CN', 
+            label: '中文', 
+            onClick: () => setLocale('zh-CN') 
+        },
+    ];
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
@@ -64,6 +80,17 @@ const StatusBar: React.FC<StatusBarProps> = ({ currentTheme, toggleTheme, toggle
                                     }}
                                     className="no-drag hover:rotate-12 transition-all w-12 h-12 rounded-2xl hover:bg-white/20 dark:hover:bg-white/10"
                                 />
+                            </Tooltip>
+                        </div>
+                        <div className="no-drag hover:bg-white/20 rounded-full p-1 cursor-pointer transition-colors">
+                            <Tooltip title="Language">
+                                <Dropdown menu={{ items: langItems }} placement="top">
+                                    <Button
+                                        type="text"
+                                        icon={<GlobalOutlined className="text-2xl text-slate-600" />}
+                                        className="no-drag hover:rotate-12 transition-all w-12 h-12 rounded-2xl hover:bg-white/20 dark:hover:bg-white/10"
+                                    />
+                                </Dropdown>
                             </Tooltip>
                         </div>
                         <div className="no-drag hover:bg-white/20 rounded-full p-1 cursor-pointer transition-colors">
