@@ -7,9 +7,12 @@ import {
     ExpandOutlined,
     CompressOutlined,
     MinusOutlined,
-    BorderOutlined
+    BorderOutlined,
+    PushpinOutlined,
+    PushpinFilled
 } from '@ant-design/icons';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { allTools } from '@/utils/toolList';
 
 interface WindowState {
     id: string;
@@ -30,6 +33,10 @@ interface TaskbarProps {
     onClose: (id: string) => void;
     onMinimize: (id: string) => void;
     onMaximize: (id: string) => void;
+    pinnedApps: string[]; // Array of toolIds
+    onPinApp: (toolId: string) => void;
+    onUnpinApp: (toolId: string) => void;
+    onOpenWindow: (toolId: string) => void;
 }
 
 const Taskbar: React.FC<TaskbarProps> = ({
@@ -40,10 +47,17 @@ const Taskbar: React.FC<TaskbarProps> = ({
     onWindowClick,
     onClose,
     onMinimize,
-    onMaximize
+    onMaximize,
+    pinnedApps = [],
+    onPinApp,
+    onUnpinApp,
+    onOpenWindow
 }) => {
+    const intl = useIntl();
+
     const getContextMenuItems = (win: WindowState): MenuProps['items'] => {
         const items: MenuProps['items'] = [];
+        const isPinned = pinnedApps.includes(win.toolId);
 
         // Restore / Minimize
         if (win.isMinimized) {
@@ -51,7 +65,7 @@ const Taskbar: React.FC<TaskbarProps> = ({
                 key: 'restore',
                 label: <FormattedMessage id="common.restore" defaultMessage="Restore" />,
                 icon: <BorderOutlined />,
-                onClick: () => onWindowClick(win.id) // onWindowClick acts as toggleMinimize
+                onClick: () => onWindowClick(win.id)
             });
         } else {
             items.push({
@@ -74,6 +88,16 @@ const Taskbar: React.FC<TaskbarProps> = ({
 
         items.push({ type: 'divider' });
 
+        // Pin / Unpin
+        items.push({
+            key: 'pin',
+            label: isPinned ? <FormattedMessage id="taskbar.unpinFromDock" defaultMessage="Unpin from Dock" /> : <FormattedMessage id="taskbar.pinToDock" defaultMessage="Pin to Dock" />,
+            icon: isPinned ? <PushpinFilled /> : <PushpinOutlined />,
+            onClick: () => isPinned ? onUnpinApp(win.toolId) : onPinApp(win.toolId)
+        });
+
+        items.push({ type: 'divider' });
+
         items.push({
             key: 'close',
             label: <FormattedMessage id="common.close" defaultMessage="Close" />,
@@ -83,6 +107,17 @@ const Taskbar: React.FC<TaskbarProps> = ({
         });
 
         return items;
+    };
+
+    const getPinnedAppMenuItems = (toolId: string): MenuProps['items'] => {
+        return [
+            {
+                key: 'unpin',
+                label: <FormattedMessage id="taskbar.unpinFromDock" defaultMessage="Unpin from Dock" />,
+                icon: <PushpinFilled />,
+                onClick: () => onUnpinApp(toolId)
+            }
+        ];
     };
 
     return (
@@ -110,8 +145,34 @@ const Taskbar: React.FC<TaskbarProps> = ({
 
                 <div className="w-[1px] h-10 bg-gradient-to-b from-transparent via-black/10 dark:via-white/20 to-transparent mx-2" />
 
-                {/* Open Windows List */}
+                {/* Pinned Apps and Open Windows List */}
                 <div className="flex items-center gap-2 overflow-x-auto max-w-[40vw] custom-scrollbar pb-1">
+                    {/* Pinned Apps */}
+                    {pinnedApps.map((toolId) => {
+                        const openWindow = windows.find(w => w.toolId === toolId);
+                        if (openWindow) return null; // Don't show pinned app if it's already open
+
+                        return (
+                            <Dropdown key={`pinned-${toolId}`} menu={{ items: getPinnedAppMenuItems(toolId) }} trigger={['contextMenu']} placement="top" overlayStyle={{ zIndex: 20000 }}>
+                                <div className="flex">
+                                    <Tooltip title={toolId}>
+                                        <div
+                                            onClick={() => onOpenWindow(toolId)}
+                                            className="relative group cursor-pointer transition-all duration-500 ease-out w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-white/20 dark:hover:bg-white/10"
+                                        >
+                                            <div className="text-2xl transition-transform duration-500 group-hover:scale-110">
+                                                <AppstoreOutlined />
+                                            </div>
+                                            {/* Small pin indicator */}
+                                            <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-slate-400/60" />
+                                        </div>
+                                    </Tooltip>
+                                </div>
+                            </Dropdown>
+                        );
+                    })}
+
+                    {/* Open Windows */}
                     {windows.map((win) => (
                         <Dropdown key={win.id} menu={{ items: getContextMenuItems(win) }} trigger={['contextMenu']} placement="top" overlayStyle={{ zIndex: 20000 }}>
                             <div className="flex">

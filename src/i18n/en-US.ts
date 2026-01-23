@@ -67,6 +67,9 @@ export default {
   "desktop.addIcon": "Add Icon",
   "desktop.path": "Path",
   "desktop.iconColor": "Icon Color",
+  "desktop.addToDesktop": "Place on Desktop",
+  "desktop.alreadyOnDesktop": "Already on desktop",
+  "desktop.addedToDesktop": "Added to desktop",
 
   // Categories
   "common.category.Text": "Text",

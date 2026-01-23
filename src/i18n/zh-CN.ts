@@ -67,6 +67,9 @@ export default {
   "desktop.addIcon": "添加图标",
   "desktop.path": "指向路径",
   "desktop.iconColor": "图标颜色",
+  "desktop.addToDesktop": "放置到桌面",
+  "desktop.alreadyOnDesktop": "已在桌面上",
+  "desktop.addedToDesktop": "已添加到桌面",
 
   // Categories
   "common.category.Text": "文本工具",

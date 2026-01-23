@@ -64,7 +64,7 @@ const Desktop: React.FC = () => {
         if (savedIcons) {
             return JSON.parse(savedIcons);
         } else {
-            return allTools.slice(0, 10).map((tool, index) => ({
+            return allTools.slice(0, 5).map((tool, index) => ({
                 id: tool.id,
                 title: tool.name,
                 icon: tool.id,
@@ -87,6 +87,12 @@ const Desktop: React.FC = () => {
     // Window Management State
     const [windows, setWindows] = useState<WindowState[]>([]);
     const [activeWindowMaxZIndex, setActiveWindowMaxZIndex] = useState(100);
+
+    // Pinned Apps State
+    const [pinnedApps, setPinnedApps] = useState<string[]>(() => {
+        const savedPinnedApps = localStorage.getItem('as-pinned-apps');
+        return savedPinnedApps ? JSON.parse(savedPinnedApps) : [];
+    });
 
     const desktopRef = useRef<HTMLDivElement>(null);
     const [form] = Form.useForm();
@@ -237,6 +243,47 @@ const Desktop: React.FC = () => {
             }
             setIsStartOpen(false);
         }
+    };
+
+    const handleAddToDesktop = (toolId: string) => {
+        const tool = allTools.find(t => t.id === toolId);
+        if (!tool) return;
+
+        // Check if already exists
+        if (icons.some(icon => icon.id === tool.id)) {
+            message.info(intl.formatMessage({ id: 'desktop.alreadyOnDesktop', defaultMessage: 'Already on desktop' }));
+            return;
+        }
+
+        const newIcon: DesktopIconData = {
+            id: tool.id,
+            title: tool.name,
+            icon: tool.id,
+            path: tool.path,
+            x: 100, // Defalut position
+            y: 100,
+            color: '#22c55e'
+        };
+        saveIcons([...icons, newIcon]);
+        message.success(intl.formatMessage({ id: 'desktop.addedToDesktop', defaultMessage: 'Added to desktop' }));
+    };
+
+    const handlePinApp = (toolId: string) => {
+        if (pinnedApps.includes(toolId)) {
+            message.info(intl.formatMessage({ id: 'taskbar.alreadyPinned', defaultMessage: 'Already pinned to dock' }));
+            return;
+        }
+        const newPinnedApps = [...pinnedApps, toolId];
+        setPinnedApps(newPinnedApps);
+        localStorage.setItem('as-pinned-apps', JSON.stringify(newPinnedApps));
+        message.success(intl.formatMessage({ id: 'taskbar.pinnedToDock', defaultMessage: 'Pinned to dock' }));
+    };
+
+    const handleUnpinApp = (toolId: string) => {
+        const newPinnedApps = pinnedApps.filter(id => id !== toolId);
+        setPinnedApps(newPinnedApps);
+        localStorage.setItem('as-pinned-apps', JSON.stringify(newPinnedApps));
+        message.success(intl.formatMessage({ id: 'taskbar.unpinnedFromDock', defaultMessage: 'Unpinned from dock' }));
     };
 
     // --- End Window Management ---
@@ -508,6 +555,7 @@ const Desktop: React.FC = () => {
                     visible={isStartOpen}
                     onClose={() => setIsStartOpen(false)}
                     onOpenWindow={openWindow}
+                    onAddToDesktop={handleAddToDesktop}
                 />
 
                 <Taskbar
@@ -522,6 +570,10 @@ const Desktop: React.FC = () => {
                     onClose={closeWindow}
                     onMinimize={minimizeWindow}
                     onMaximize={maximizeWindow}
+                    pinnedApps={pinnedApps}
+                    onPinApp={handlePinApp}
+                    onUnpinApp={handleUnpinApp}
+                    onOpenWindow={openWindow}
                 />
 
                 <Modal
