@@ -1,22 +1,22 @@
 import {
-    DeleteOutlined,
-    DownloadOutlined,
-    PlayCircleOutlined,
-    PlusOutlined,
-    StopOutlined,
-    UploadOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import {
-    Alert,
-    Button,
-    Card,
-    Input,
-    InputNumber,
-    Select,
-    Space,
-    Tag,
-    Typography,
-    message,
+  Alert,
+  Button,
+  Card,
+  Input,
+  InputNumber,
+  Select,
+  Space,
+  Tag,
+  Typography,
+  Upload,
+  message,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -48,18 +48,13 @@ interface TimeRange {
 
 const VideoToGifConverter: React.FC = () => {
   const intl = useIntl();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [generatedGif, setGeneratedGif] = useState("");
   const [videoDuration, setVideoDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [capturedFrames, setCapturedFrames] = useState<string[]>([]);
-
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
 
@@ -120,27 +115,7 @@ const VideoToGifConverter: React.FC = () => {
     };
   }, [videoUrl, generatedGif]);
 
-  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
 
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleVideoFile(files[0]);
-    }
-  };
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      handleVideoFile(files[0]);
-    }
-
-    // Reset input to allow selecting the same file again
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
 
   const handleVideoFile = (file: File) => {
     if (!file.type.startsWith("video/")) {
@@ -243,7 +218,6 @@ const VideoToGifConverter: React.FC = () => {
   // Capture and processing
   const startCapture = () => {
     setIsCapturing(true);
-    setCapturedFrames([]);
 
     if (videoPlayerRef.current) {
       videoPlayerRef.current.currentTime = timeRange.start;
@@ -261,7 +235,6 @@ const VideoToGifConverter: React.FC = () => {
 
   const resetCapture = () => {
     setIsCapturing(false);
-    setCapturedFrames([]);
     setGeneratedGif("");
     setProcessingProgress(0);
   };
@@ -498,10 +471,7 @@ const VideoToGifConverter: React.FC = () => {
       URL.revokeObjectURL(generatedGif);
     }
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+
   };
 
   return (
@@ -555,45 +525,26 @@ const VideoToGifConverter: React.FC = () => {
         >
           {/* File Upload */}
           <div className="mb-6">
-            <div
-              onDrop={handleFileDrop}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
+            <Upload.Dragger
+              accept="video/*"
+              showUploadList={false}
+              customRequest={({ file, onSuccess }) => {
+                handleVideoFile(file as File);
+                setTimeout(() => onSuccess?.("ok"), 0);
               }}
-              onDragEnter={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
-                isDragging
-                  ? "border-primary-500 bg-primary-500/10"
-                  : "border-slate-600/50 hover:border-primary-500/50"
-              }`}
+              className="bg-transparent border-slate-600 hover:border-primary-500"
+              style={{ padding: "40px 0" }}
             >
-              <div className="text-slate-500 text-4xl mb-4">🎥</div>
-              <p className="text-slate-400 mb-4">
+              <p className="ant-upload-drag-icon">
+                <span className="text-4xl">🎥</span>
+              </p>
+              <p className="ant-upload-text text-xl font-medium mt-4">
                 <FormattedMessage id="tools.videoToGifConverter.upload.dragDrop" />
               </p>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept="video/*"
-                className="hidden"
-              />
-              <Button
-                icon={<UploadOutlined />}
-                className="px-6 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500"
-              >
-                <FormattedMessage id="tools.videoToGifConverter.upload.selectFile" />
-              </Button>
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="ant-upload-hint text-slate-400 mt-2">
                 <FormattedMessage id="tools.videoToGifConverter.upload.supportedFormats" />
               </p>
-            </div>
+            </Upload.Dragger>
           </div>
 
           {/* GIF Settings */}

@@ -4,8 +4,14 @@ export default {
   "nav.json": "Json Tools",
   "nav.web": "Web Tools",
   "nav.media": "Media Tools",
-  "nav.artificialStupidity": "Artificial Stupidity",
-  "home.title": "Artificial Stupidity Toolbox",
+  "nav.other": "Other Tools",
+  "nav.blog": "Blog",
+  "nav.as": "Useless Tools",
+  "nav.desktop": "Desktop Mode",
+  "nav.download.client": "Download Client",
+  "nav.download.mac": "Mac Client",
+  "nav.download.windows": "Windows Client",
+  "home.title": "Tools",
   "home.subtitle":
     "Simple, fast, and free online tools for developers and creators.",
   "home.searchPlaceholder": "Search tools...",
@@ -13,6 +19,7 @@ export default {
 
   // Common Actions/Labels
   "common.copy": "Copy",
+  "common.open": "Open",
   "common.clear": "Clear",
   "common.characters": "Characters",
   "common.words": "Words",
@@ -22,11 +29,13 @@ export default {
   "common.upload": "Upload",
   "common.again": "Redetect",
   "common.download": "Download",
+  "common.swap": "Swap",
   "common.action": "Action",
   "common.validate": "Validate",
   "common.format": "Format",
   "common.minify": "Minify",
   "common.save": "Save",
+  "common.ok": "OK",
   "common.cancel": "Cancel",
   "common.delete": "Delete",
   "common.edit": "Edit",
@@ -49,8 +58,42 @@ export default {
   "common.neuralComplete": "Neural Analysis Complete",
   "common.waitComplete": "Patience Training Complete",
   "common.enterText": "Please enter some text first",
-  "toast.success": "Success",
+  "common.deleteSuccess": "Deleted successfully",
+  "toast.success": "Operation successful",
   "toast.error": "Error",
+
+  // Desktop
+  "desktop.instruction": "Drag icons to move • Right click to edit • Click to open",
+  "desktop.editIcon": "Edit Icon",
+  "desktop.addIcon": "Add Icon",
+  "desktop.path": "Path",
+  "desktop.iconColor": "Icon Color",
+  "desktop.addToDesktop": "Place on Desktop",
+  "desktop.alreadyOnDesktop": "Already on desktop",
+  "desktop.addedToDesktop": "Added to desktop",
+  "desktop.backgroundChanged": "Background changed successfully!",
+  "desktop.backgroundReset": "Background reset to default!",
+  "desktop.refresh": "Refresh Desktop",
+  "desktop.addNewShortcut": "Add New Shortcut",
+  "desktop.autoArrange": "Auto-arrange Icons",
+  "desktop.uploadBackground": "Upload Background",
+  "desktop.resetBackground": "Reset Background",
+  "desktop.changeWallpaper": "Change Wallpaper",
+  "desktop.switchToLight": "Switch to Light Mode",
+  "desktop.switchToDark": "Switch to Dark Mode",
+  "desktop.goHome": "Go to Home Page",
+  "desktop.arranged": "Icons rearranged",
+
+  // Taskbar
+  "taskbar.pinToDock": "Pin to Dock",
+  "taskbar.unpinFromDock": "Unpin from Dock",
+  "taskbar.pinnedToDock": "Pinned to dock",
+  "taskbar.unpinnedFromDock": "Unpinned from dock",
+  "taskbar.alreadyPinned": "Already pinned to dock",
+  "taskbar.restore": "Restore",
+  "taskbar.minimize": "Minimize",
+  "taskbar.maximize": "Maximize",
+  "taskbar.close": "Clsoe",
 
   // Categories
   "common.category.Text": "Text",
@@ -100,7 +143,7 @@ export default {
     'Analysis complete: Your mouse has traveled approximately {pixels} pixels. This indicates that your screen is indeed being used. Keep up the "hard work"!',
 
   // Tool: Empty Detector
-  "tools.emptyDetector.name": "AS Empty Text Detector",
+  "tools.emptyDetector.name": "Empty Text Detector",
   "tools.emptyDetector.description":
     "Advanced AS analysis to determine if your text input is actually empty.",
   "tools.emptyDetector.placeholder": "Paste text for AS deep analysis...",
@@ -117,7 +160,7 @@ export default {
   "common.analyzeAnother": "Analyze Another",
 
   // Tool: Day of Week
-  "tools.dayOfWeek.name": "AS Day of the Week",
+  "tools.dayOfWeek.name": "Day of the Week",
   "tools.dayOfWeek.description":
     "Leverage AS to discover what day of the week it is today.",
   "common.timeSync": "Time Synchronizer",
@@ -132,7 +175,7 @@ export default {
   "common.recalculate": "Recalculate",
 
   // Tool: Breathing Reminder
-  "tools.breathing.name": "AS Breathing Reminder",
+  "tools.breathing.name": "Breathing Reminder",
   "tools.breathing.description":
     "Critical health management: AS reminds you to breathe every 10 seconds.",
   "common.breatheIn": "Breathe In!",
@@ -165,7 +208,6 @@ export default {
   "common.praise8": "A masterpiece of an achievement! 🎭",
 
   // Tool: 404 Not Found
-  "tools.notFound.name": "404 Page Detector",
   "tools.notFound.description":
     "Advanced tool for analyzing and locating missing web resources.",
   "tools.notFound.title": "Lost in Space-Time?",
@@ -173,6 +215,193 @@ export default {
     "Our neural network has analyzed the current URL and concluded that it leads to a non-existent dimension.",
   "tools.notFound.result": "Analysis Result: 100% missing data detected.",
   "tools.notFound.backHome": "Relocate to Reality (Go Home)",
+
+  // Tool: HTTP Tester
+  "tools.httpTester.name": "HTTP Request Tester",
+  "tools.httpTester.description":
+    "Test HTTP requests with various methods, headers, and request bodies.",
+  "tools.httpTester.method": "Method",
+  "tools.httpTester.url": "URL",
+  "tools.httpTester.network_type": "Network Type",
+  "tools.httpTester.public": "Public (Proxy)",
+  "tools.httpTester.local": "Local/Intranet",
+  "tools.httpTester.request_headers": "Request Headers",
+  "tools.httpTester.add_header": "Add Header",
+  "tools.httpTester.header_key": "Key",
+  "tools.httpTester.header_value": "Value",
+  "tools.httpTester.request_body": "Request Body",
+  "tools.httpTester.body_format": "Body Format",
+  "tools.httpTester.json": "JSON",
+  "tools.httpTester.text": "Text",
+  "tools.httpTester.form": "Form",
+  "tools.httpTester.add_field": "Add Field",
+  "tools.httpTester.field_key": "Field Key",
+  "tools.httpTester.field_value": "Field Value",
+  "tools.httpTester.send_request": "Send Request",
+  "tools.httpTester.clear_all": "Clear All",
+  "tools.httpTester.response_status": "Status",
+  "tools.httpTester.response_time": "Time",
+  "tools.httpTester.response_size": "Size",
+  "tools.httpTester.response_headers": "Response Headers",
+  "tools.httpTester.response_body": "Response Body",
+  "tools.httpTester.history": "History",
+  "tools.httpTester.no_history": "No history yet",
+  "tools.httpTester.clear_history": "Clear History",
+  "tools.httpTester.confirm_clear": "Confirm Clear",
+  "tools.httpTester.are_you_sure":
+    "Are you sure you want to clear all history?",
+  "tools.httpTester.ok": "OK",
+  "tools.httpTester.cancel": "Cancel",
+  "tools.httpTester.request_error": "Request Error",
+  "tools.httpTester.copy_success": "Copied successfully",
+  "tools.httpTester.copy_failed": "Copy failed",
+  "tools.httpTester.generate_doc": "Generate Doc",
+  "tools.httpTester.markdown_doc": "Markdown Documentation",
+  "tools.httpTester.doc_generated": "Documentation generated",
+  "tools.httpTester.copy_doc": "Copy Documentation",
+  "tools.httpTester.download_doc": "Download Documentation",
+  "tools.httpTester.preview_doc": "Preview Documentation",
+  "tools.httpTester.cors_warning": "CORS Warning",
+  "tools.httpTester.cors_desc":
+    "For local/intranet requests, the target server must have CORS configured to allow cross-origin requests from your browser. If you encounter errors, consider using the Public (Proxy) mode.",
+  "tools.httpTester.proxy_mode": "Proxy Mode",
+  "tools.httpTester.local_mode": "Local Mode",
+  "tools.httpTester.save_to_history": "Request saved to history",
+  "tools.httpTester.response_tab": "Response",
+  "tools.httpTester.headers_tab": "Headers",
+  "tools.httpTester.raw_tab": "Raw",
+  "tools.httpTester.pretty_tab": "Pretty",
+  "tools.httpTester.error_tab": "Error",
+  "tools.httpTester.request_sent": "Request sent successfully",
+  "tools.httpTester.invalid_url": "Invalid URL format",
+  "tools.httpTester.json_parse_error": "Invalid JSON format",
+  "tools.httpTester.form_empty_error":
+    "Form must have at least one valid field",
+  "tools.httpTester.form_process_error": "Form data processing failed",
+  "tools.httpTester.local_request_failed": "Local request failed",
+  "tools.httpTester.http_request": "HTTP Request",
+  "tools.httpTester.clear": "Clear",
+  "tools.httpTester.clear_history_confirm":
+    "Are you sure you want to clear the history?",
+  "tools.httpTester.cors_settings": "CORS Settings",
+  "tools.httpTester.cors_description":
+    "Configure Cross-Origin Resource Sharing (CORS) settings for your backend service to enable API requests from browsers.",
+  "tools.httpTester.https_to_http_title": "HTTPS to HTTP Mixed Content Issue",
+  "tools.httpTester.https_to_http_description":
+    "When accessing an HTTPS website, browsers block requests to HTTP URLs due to security policies. This is known as mixed content blocking. Solutions:",
+  "tools.httpTester.solution_one": "Solution 1: Use HTTPS for your API",
+  "tools.httpTester.solution_one_1": "Upgrade your API endpoint to HTTPS",
+  "tools.httpTester.solution_one_2":
+    "Use a reverse proxy (like Nginx) to add SSL certificate",
+  "tools.httpTester.solution_one_3":
+    "Use cloud services (like Cloudflare) to provide SSL",
+  "tools.httpTester.solution_two": "Solution 2: Configure CORS on your server",
+  "tools.httpTester.solution_two_1":
+    "Allow all origins (not recommended for production)",
+  "tools.httpTester.solution_two_2": "Configure specific origin domains",
+  "tools.httpTester.solution_two_3": "Use development proxies",
+  "tools.httpTester.security_note":
+    "Security Note: Setting Access-Control-Allow-Origin to '*' allows all domains to access your API, which may pose security risks in production environments.",
+  "tools.httpTester.enter_url": "Enter URL",
+  "tools.httpTester.local_network": "Local/Intranet",
+  "tools.httpTester.json_format": "JSON",
+  "tools.httpTester.text_format": "Text",
+  "tools.httpTester.form_format": "Form",
+  "tools.httpTester.enter_request_body": "Enter request body...",
+  "tools.httpTester.add_form_field": "Add Field",
+  "tools.httpTester.form_field_key": "Field Key",
+  "tools.httpTester.form_field_value": "Field Value",
+  "tools.httpTester.response_result": "Response Result",
+  "tools.httpTester.copied": "Copied",
+  "tools.httpTester.request_info": "Request Info",
+  "tools.httpTester.network_mode": "Network Mode",
+  "tools.httpTester.network_mode_local": "Local/Intranet",
+  "tools.httpTester.network_mode_public": "Public (Proxy)",
+  "tools.httpTester.request_url": "Request URL",
+  "tools.httpTester.request_method": "Request Method",
+  "tools.httpTester.history_empty": "No history yet",
+
+  // Tool: Icon Designer
+  "tools.iconDesigner.name": "Icon Designer",
+  "tools.iconDesigner.description":
+    "Design and export icons in various styles and formats",
+  "tools.iconDesigner.icon_selection": "Icon Selection",
+  "tools.iconDesigner.icon_type": "Icon Type",
+  "tools.iconDesigner.icon_type_fontawesome": "FontAwesome",
+  "tools.iconDesigner.icon_type_text": "Text",
+  "tools.iconDesigner.text_input": "Text Input",
+  "tools.iconDesigner.text_input_placeholder": "Enter text (max 10 chars)",
+  "tools.iconDesigner.font_family": "Font Family",
+  "tools.iconDesigner.font_weight": "Font Weight",
+  "tools.iconDesigner.font_size": "Font Size",
+  "tools.iconDesigner.icon_settings": "Icon Settings",
+  "tools.iconDesigner.icon_color": "Icon Color",
+  "tools.iconDesigner.icon_size": "Icon Size",
+  "tools.iconDesigner.icon_rotation": "Icon Rotation",
+  "tools.iconDesigner.background_settings": "Background Settings",
+  "tools.iconDesigner.background_shape": "Background Shape",
+  "tools.iconDesigner.shape_circle": "Circle",
+  "tools.iconDesigner.shape_square": "Square",
+  "tools.iconDesigner.shape_rounded_square": "Rounded Square",
+  "tools.iconDesigner.shape_hexagon": "Hexagon",
+  "tools.iconDesigner.background_color": "Background Color",
+  "tools.iconDesigner.preset_templates": "Preset Templates",
+  "tools.iconDesigner.template_ios_style": "iOS Style",
+  "tools.iconDesigner.template_material": "Material",
+  "tools.iconDesigner.template_minimal": "Minimal",
+  "tools.iconDesigner.template_gradient": "Gradient",
+  "tools.iconDesigner.template_neon": "Neon",
+  "tools.iconDesigner.template_retro": "Retro",
+  "tools.iconDesigner.template_glassmorphism": "Glassmorphism",
+  "tools.iconDesigner.template_neumorphism": "Neumorphism",
+  "tools.iconDesigner.solid": "Solid",
+  "tools.iconDesigner.gradient": "Gradient",
+  "tools.iconDesigner.shape_rounded_hexagon": "Rounded Hexagon",
+  "tools.iconDesigner.preview": "Preview",
+  "tools.iconDesigner.export_settings": "Export Settings",
+  "tools.iconDesigner.export_size": "Export Size",
+  "tools.iconDesigner.export_format": "Export Format",
+  "tools.iconDesigner.generating_icon": "Generating Icon...",
+  "tools.iconDesigner.download_icon": "Download Icon",
+  "tools.iconDesigner.usage_guide": "Usage Guide",
+  "tools.iconDesigner.guide_1":
+    "Select an icon type (FontAwesome icon or custom text)",
+  "tools.iconDesigner.guide_2": "Choose your desired icon or enter custom text",
+  "tools.iconDesigner.guide_3":
+    "Customize icon appearance (color, size, rotation)",
+  "tools.iconDesigner.guide_4": "Set background style and shape",
+  "tools.iconDesigner.guide_5": "Apply preset templates for quick styling",
+  "tools.iconDesigner.guide_6": "Export your icon in desired format and size",
+  "tools.iconDesigner.tips": "Tips:",
+  "tools.iconDesigner.tip_1": "Use high contrast colors for better visibility",
+  "tools.iconDesigner.tip_2": "Consider the target platform's icon guidelines",
+  "tools.iconDesigner.tip_3": "Rounded shapes are more modern and friendly",
+  "tools.iconDesigner.tip_4":
+    "Gradient backgrounds can add depth and visual interest",
+  "tools.iconDesigner.tip_5": "Keep text simple and readable at small sizes",
+  "tools.iconDesigner.tip_6":
+    "Test different export sizes for various use cases",
+  "tools.iconDesigner.icon_search_placeholder":
+    "Search icons by name or keyword...",
+  "tools.iconDesigner.popular_icons": "Popular Icons",
+  "tools.iconDesigner.business_icons": "Business Icons",
+  "tools.iconDesigner.tech_icons": "Technology Icons",
+  "tools.iconDesigner.social_icons": "Social Icons",
+  "tools.iconDesigner.ui_icons": "UI Icons",
+  "tools.iconDesigner.media_icons": "Media Icons",
+  "tools.iconDesigner.transport_icons": "Transport Icons",
+  "tools.iconDesigner.shopping_icons": "Shopping Icons",
+  "tools.iconDesigner.health_icons": "Health Icons",
+  "tools.iconDesigner.food_icons": "Food Icons",
+  "tools.iconDesigner.sports_icons": "Sports Icons",
+  "tools.iconDesigner.weather_icons": "Weather Icons",
+  "tools.iconDesigner.time_icons": "Time Icons",
+  "tools.iconDesigner.security_icons": "Security Icons",
+  "tools.iconDesigner.files_icons": "File Icons",
+  "tools.iconDesigner.no_matching_icons": "No matching icons found",
+  "tools.iconDesigner.background": "Background",
+  "tools.iconDesigner.text": "Text",
+  "tools.iconDesigner.icon": "Icon",
 
   // Tool: Typing Simulator
   "tools.typing.name": "Attention Simulator",
@@ -251,6 +480,44 @@ export default {
   "tools.jsonFormatter.stats.keys": "Keys",
   "tools.jsonFormatter.stats.depth": "Depth",
   "tools.jsonFormatter.waitingInput": "Formatted JSON will appear here",
+  "tools.jsonFormatter.jsonpath_query": "JSONPath Query",
+  "tools.jsonFormatter.enter_jsonpath":
+    "Enter a JSONPath to query your JSON data (e.g., $.store.book[0].title)",
+  "tools.jsonFormatter.jsonpath_placeholder":
+    "e.g., $.store.book[*].title, $.store.bicycle.color",
+  "tools.jsonFormatter.query_result": "Query Result",
+  "tools.jsonFormatter.query_error": "Query Error",
+  "tools.jsonFormatter.remove_slash": "Remove Slash",
+  "tools.jsonFormatter.escape_string": "Escape String",
+  "tools.jsonFormatter.unescape_string": "Unescape String",
+  "tools.jsonFormatter.cancel": "Cancel",
+  "tools.jsonFormatter.processing": "Processing",
+  "tools.jsonFormatter.processing_large_json": "Processing Large JSON",
+  "tools.jsonFormatter.parsing_json": "Parsing JSON",
+  "tools.jsonFormatter.processing_large_json_message":
+    "Processing large JSON data...",
+  "tools.jsonFormatter.cancel_processing": "Cancel Processing",
+  "tools.jsonFormatter.large_json_processed":
+    "Large JSON processed ({size} KB)",
+  "tools.jsonFormatter.json_valid": "Valid JSON",
+  "tools.jsonFormatter.json_invalid": "Invalid JSON",
+  "tools.jsonFormatter.load_history_error": "Error loading history",
+  "tools.jsonFormatter.copy": "Copy",
+  "tools.jsonFormatter.clear": "Clear",
+  "tools.jsonFormatter.load_example": "Load Example",
+  "tools.jsonFormatter.reformat": "Reformat",
+  "tools.jsonFormatter.save": "Save",
+  "tools.jsonFormatter.history": "History",
+  "tools.jsonFormatter.beautify": "Beautify",
+  "tools.jsonFormatter.compress": "Compress",
+  "tools.jsonFormatter.normal_mode": "Normal Mode",
+  "tools.jsonFormatter.fold_mode": "Fold Mode",
+  "tools.jsonFormatter.input_json": "Input JSON",
+  "tools.jsonFormatter.paste_json_here": "Paste JSON here",
+  "tools.jsonFormatter.paste_json_placeholder": "Paste JSON here...",
+  "tools.jsonFormatter.characters": "characters",
+  "tools.jsonFormatter.output": "Output",
+  "tools.jsonFormatter.copy_failed": "Copy failed",
 
   "tools.jsonExtractor.quickPaths.root": "Root ($)",
   "tools.jsonExtractor.quickPaths.all": "All Properties ($.*)",
@@ -537,6 +804,54 @@ export default {
   "tools.qrCodeTool.copyImageError": "Failed to copy image",
   "tools.qrCodeTool.noImagesFound": "No valid image files found",
   "tools.qrCodeTool.processedCount": "Processed {count} files",
+
+  // QR Code Generator
+  "tools.qrCodeTool.basic_settings": "Basic Settings",
+  "tools.qrCodeTool.qrcode_content": "QR Code Content",
+  "tools.qrCodeTool.input_placeholder": "Enter URL or text to encode...",
+  "tools.qrCodeTool.size_pixels": "Size (pixels)",
+  "tools.qrCodeTool.margin_pixels": "Margin (pixels)",
+  "tools.qrCodeTool.dot_style": "Dot Style",
+  "tools.qrCodeTool.squares": "Squares",
+  "tools.qrCodeTool.dots": "Dots",
+  "tools.qrCodeTool.color_settings": "Color Settings",
+  "tools.qrCodeTool.background_color": "Background Color",
+  "tools.qrCodeTool.foreground_color": "Foreground Color",
+  "tools.qrCodeTool.eye_color": "Eye Color",
+  "tools.qrCodeTool.eye_radius": "Eye Radius",
+  "tools.qrCodeTool.preset_colors": "Preset Colors",
+  "tools.qrCodeTool.preset_classic_bw": "Classic Black & White",
+  "tools.qrCodeTool.preset_blue_white": "Blue & White",
+  "tools.qrCodeTool.preset_vibrant_red": "Vibrant Red",
+  "tools.qrCodeTool.preset_fresh_green": "Fresh Green",
+  "tools.qrCodeTool.preset_tech_purple": "Tech Purple",
+  "tools.qrCodeTool.preset_dark_mode": "Dark Mode",
+  "tools.qrCodeTool.preset_orange_accent": "Orange Accent",
+  "tools.qrCodeTool.preset_warm_brown": "Warm Brown",
+  "tools.qrCodeTool.logo_settings": "Logo Settings",
+  "tools.qrCodeTool.upload_logo": "Upload Logo",
+  "tools.qrCodeTool.remove": "Remove",
+  "tools.qrCodeTool.logo_width": "Logo Width",
+  "tools.qrCodeTool.logo_height": "Logo Height",
+  "tools.qrCodeTool.logo_opacity": "Logo Opacity",
+  "tools.qrCodeTool.remove_code_behind_logo": "Remove QR code behind logo",
+  "tools.qrCodeTool.preview": "Preview",
+  "tools.qrCodeTool.copy_content": "Copy Content",
+  "tools.qrCodeTool.download_qrcode": "Download QR Code",
+  "tools.qrCodeTool.reset_settings": "Reset Settings",
+  "tools.qrCodeTool.please_input_content":
+    "Please input content to generate QR code",
+  "tools.qrCodeTool.instructions": "Instructions",
+  "tools.qrCodeTool.instruction_1":
+    "Enter the content you want to encode in the QR code",
+  "tools.qrCodeTool.instruction_2":
+    "Adjust the size, colors and other settings as needed",
+  "tools.qrCodeTool.instruction_3":
+    "Add a logo if you want to customize the QR code",
+  "tools.qrCodeTool.instruction_4":
+    "Download or copy the generated QR code as needed",
+  "tools.qrCodeTool.note":
+    "Note: The QR code will be generated in real-time as you adjust the settings",
   "tools.wsTool.disconnected": "Disconnected: Code {code} - {reason}",
   "tools.wsTool.error": "WebSocket Error",
   "tools.wsTool.userDisconnected": "User Disconnected",
@@ -940,4 +1255,1148 @@ export default {
   "tools.textProcessor.errors.encodingError": "Encoding error occurred",
   "tools.textProcessor.errors.decodingError": "Decoding error occurred",
   "tools.textProcessor.errors.hashingError": "Hashing error occurred",
+  "tools.textProcessor.unicodeEncode": "Unicode Encode",
+  "tools.textProcessor.unicodeDecode": "Unicode Decode",
+  "tools.textProcessor.htmlEntityEncode": "HTML Entity Encode",
+  "tools.textProcessor.htmlEntityDecode": "HTML Entity Decode",
+  "tools.textProcessor.htmlEscapeEncode": "HTML Escape Encode",
+  "tools.textProcessor.htmlEscapeDecode": "HTML Escape Decode",
+
+  // Base64 Image Converter
+  "tools.base64ImageConverter.name": "Base64 to Image Converter",
+  "tools.base64ImageConverter.description":
+    "Convert Base64 strings to images and vice versa.",
+  "tools.base64ImageConverter.base64ToImageTab": "Base64 to Image",
+  "tools.base64ImageConverter.imageToBase64Tab": "Image to Base64",
+  "tools.base64ImageConverter.inputTitle": "Base64 Input",
+  "tools.base64ImageConverter.outputTitle": "Image Output",
+  "tools.base64ImageConverter.base64Input": "Base64 String",
+  "tools.base64ImageConverter.inputPlaceholder":
+    "Paste your Base64 string here...",
+  "tools.base64ImageConverter.loadExample": "Load Example",
+  "tools.base64ImageConverter.copy": "Copy Base64",
+  "tools.base64ImageConverter.clearAll": "Clear All",
+  "tools.base64ImageConverter.convertedImage": "Converted Image",
+  "tools.base64ImageConverter.noImage": "No image to display",
+  "tools.base64ImageConverter.imageType": "Image Type",
+  "tools.base64ImageConverter.fileName": "File Name",
+  "tools.base64ImageConverter.downloadImage": "Download Image",
+  "tools.base64ImageConverter.imageInputTitle": "Image Input",
+  "tools.base64ImageConverter.selectImage": "Select Image",
+  "tools.base64ImageConverter.chooseFile": "Choose File",
+  "tools.base64ImageConverter.uploadedImage": "Uploaded Image",
+  "tools.base64ImageConverter.noUploadedImage": "No image uploaded",
+  "tools.base64ImageConverter.base64OutputTitle": "Base64 Output",
+  "tools.base64ImageConverter.includePrefix": "Include Data URL Prefix",
+  "tools.base64ImageConverter.outputPlaceholder":
+    "Base64 output will appear here...",
+  "tools.base64ImageConverter.copyBase64": "Copy Base64",
+  "tools.base64ImageConverter.saveAsText": "Save as Text",
+  "tools.base64ImageConverter.switchToImageToBase64":
+    "Switch to Image to Base64",
+  "tools.base64ImageConverter.switchToBase64ToImage":
+    "Switch to Base64 to Image",
+  "tools.base64ImageConverter.usageGuide": "Usage Guide",
+  "tools.base64ImageConverter.guide1":
+    "Enter a Base64 string in the input field",
+  "tools.base64ImageConverter.guide2":
+    "The image will be displayed in the output area",
+  "tools.base64ImageConverter.guide3": "You can download the converted image",
+  "tools.base64ImageConverter.guide4":
+    "Optionally adjust the filename before downloading",
+  "tools.base64ImageConverter.guide5":
+    "Upload an image using the file selector",
+  "tools.base64ImageConverter.guide6": "The image preview will be displayed",
+  "tools.base64ImageConverter.guide7":
+    "The Base64 representation will be generated",
+  "tools.base64ImageConverter.guide8":
+    "Copy or save the Base64 string as needed",
+  "tools.base64ImageConverter.invalidDataUrl": "Invalid data URL format",
+  "tools.base64ImageConverter.processingError":
+    "Error processing Base64 string",
+  "tools.base64ImageConverter.invalidImageFile": "Invalid image file",
+  "tools.base64ImageConverter.fileTooLarge": "File is too large (max 10MB)",
+  "tools.base64ImageConverter.fileReadingError": "Error reading file",
+  "tools.base64ImageConverter.conversionSuccess": "Conversion successful",
+
+  // Clipboard
+  "tools.clipboard.name": "Clipboard Notes",
+  "tools.clipboard.description":
+    "Manage your notes using browser's local storage.",
+  "tools.clipboard.noteList": "Note List",
+  "tools.clipboard.new": "New",
+  "tools.clipboard.newNote": "New Note",
+  "tools.clipboard.save": "Save",
+  "tools.clipboard.selectNote": "Please select a note",
+  "tools.clipboard.noteSaved": "Note saved successfully",
+  "tools.clipboard.noteCreated": "Note created successfully",
+  "tools.clipboard.noteDeleted": "Note deleted successfully",
+  "tools.clipboard.confirmDelete": "Are you sure you want to delete this note?",
+  "tools.clipboard.titleUpdated": "Title updated successfully",
+  "tools.clipboard.emptyNote": "Empty Note",
+  "tools.clipboard.titlePlaceholder": "Enter title...",
+  "tools.clipboard.contentPlaceholder": "Enter content here...",
+  "tools.clipboard.selectOrCreateNote":
+    "Please select a note or create a new one",
+  "tools.stringGenerator.name": "String Generator",
+  "tools.stringGenerator.description": "Generate UUID, ULID and random strings.",
+  "tools.stringGenerator.count": "Count",
+  "tools.stringGenerator.generate": "Generate",
+  "tools.stringGenerator.randomString": "Random String",
+  "tools.stringGenerator.length": "Length",
+  "tools.stringGenerator.characterSet": "Character Set",
+  "tools.stringGenerator.customChars": "Custom Characters",
+  "tools.stringGenerator.customCharsPlaceholder": "Enter custom character set...",
+  "tools.stringGenerator.errorNoCharset": "Please select at least one character set or enter custom characters.",
+
+  // Unicode Converter
+  "tools.unicodeConverter.name": "Unicode Converter",
+  "tools.unicodeConverter.description":
+    "Convert text to Unicode escape sequences and vice versa.",
+  "tools.unicodeConverter.text_to_unicode": "Text to Unicode",
+  "tools.unicodeConverter.unicode_to_text": "Unicode to Text",
+  "tools.unicodeConverter.text_to_unicode_description":
+    "Convert non-ASCII characters to \\uXXXX format",
+  "tools.unicodeConverter.unicode_to_text_description":
+    "Convert \\uXXXX sequences back to text",
+  "tools.unicodeConverter.original_text": "Original Text",
+  "tools.unicodeConverter.unicode_encoding": "Unicode Encoding",
+  "tools.unicodeConverter.converted_text": "Converted Text",
+  "tools.unicodeConverter.text_to_unicode_placeholder":
+    "Enter text to convert to Unicode...",
+  "tools.unicodeConverter.unicode_to_text_placeholder":
+    "Enter Unicode sequences to convert to text...",
+  "tools.unicodeConverter.unicode_result_placeholder":
+    "Unicode sequences will appear here...",
+  "tools.unicodeConverter.text_result_placeholder":
+    "Converted text will appear here...",
+  "tools.unicodeConverter.copy": "Copy",
+  "tools.unicodeConverter.swap_input_output": "Swap Input/Output",
+  "tools.unicodeConverter.load_example": "Load Example",
+  "tools.unicodeConverter.clear": "Clear",
+  "tools.unicodeConverter.conversion_error": "Conversion Error",
+  "tools.unicodeConverter.feature_intro": "Feature Introduction",
+  "tools.unicodeConverter.unicode_description":
+    "Unicode is a computing industry standard designed to consistently represent and manipulate text expressed in most of the world's writing systems.",
+  "tools.unicodeConverter.supported_operations":
+    "This tool supports two-way conversion between regular text and Unicode escape sequences:",
+  "tools.unicodeConverter.operation_text_to_unicode":
+    "Text to Unicode: Converts non-ASCII characters to \\uXXXX format",
+  "tools.unicodeConverter.operation_unicode_to_text":
+    "Unicode to Text: Converts \\uXXXX sequences back to readable text",
+  "tools.unicodeConverter.note":
+    "Note: ASCII characters (0-127) remain unchanged during conversion.",
+
+  // Timestamp Converter
+  "tools.timestampConverter.name": "Timestamp Converter",
+  "tools.timestampConverter.description":
+    "Convert between Unix timestamps and human-readable date/time formats.",
+  "tools.timestampConverter.timestamp": "Timestamp",
+  "tools.timestampConverter.datetime": "Date/Time",
+  "tools.timestampConverter.current_time_colon": "Current Time:",
+  "tools.timestampConverter.current_time": "Current Time",
+  "tools.timestampConverter.today_zero": "Today 00:00",
+  "tools.timestampConverter.this_monday": "This Monday",
+  "tools.timestampConverter.this_month_start": "Start of Month",
+  "tools.timestampConverter.this_year_start": "Start of Year",
+  "tools.timestampConverter.common_timestamps": "Common Timestamps",
+  "tools.timestampConverter.enter_unix_timestamp": "Enter Unix timestamp...",
+  "tools.timestampConverter.enter_datetime":
+    "Enter date/time (YYYY-MM-DDTHH:mm:ss)...",
+  "tools.timestampConverter.copy_timestamp": "Copy timestamp",
+  "tools.timestampConverter.copy_datetime": "Copy date/time",
+  "tools.timestampConverter.use_current_time": "Use current time",
+  "tools.timestampConverter.swap_positions": "Swap positions",
+  "tools.timestampConverter.timestamp_conversion_error":
+    "Timestamp conversion error",
+  "tools.timestampConverter.datetime_conversion_error":
+    "Datetime conversion error",
+  "tools.timestampConverter.datetime_format_error": "Datetime format error",
+  "tools.timestampConverter.how_to_use": "How to Use",
+  "tools.timestampConverter.how_to_use_desc1":
+    "Enter a Unix timestamp (seconds since epoch) in the left field",
+  "tools.timestampConverter.how_to_use_desc2":
+    "The corresponding human-readable date/time will appear on the right",
+  "tools.timestampConverter.how_to_use_desc3":
+    "Enter a date/time in the right field to convert to timestamp",
+  "tools.timestampConverter.how_to_use_desc4":
+    "Use the swap button to change the position of the input fields",
+
+  // Timezone Converter
+  "tools.timezoneConverter.name": "Timezone Converter",
+  "tools.timezoneConverter.description":
+    "Convert date and time between different timezones.",
+  "tools.timezoneConverter.date_time": "Date/Time",
+  "tools.timezoneConverter.select_datetime": "Select Date/Time",
+  "tools.timezoneConverter.source_timezone": "Source Timezone",
+  "tools.timezoneConverter.target_timezone": "Target Timezone",
+  "tools.timezoneConverter.conversion_result": "Conversion Result",
+  "tools.timezoneConverter.converted_time": "Converted Time",
+  "tools.timezoneConverter.detailed_result": "Detailed Result",
+  "tools.timezoneConverter.copy": "Copy",
+  "tools.timezoneConverter.copied": "Copied",
+  "tools.timezoneConverter.use_current_time": "Use Current Time",
+  "tools.timezoneConverter.current_time": "Current Time",
+  "tools.timezoneConverter.invalid_date_time": "Invalid Date/Time",
+  "tools.timezoneConverter.please_enter_valid_date_time":
+    "Please enter a valid date/time",
+  "tools.timezoneConverter.source_time": "Source Time",
+  "tools.timezoneConverter.target_time": "Target Time",
+  "tools.timezoneConverter.timestamp": "Timestamp",
+  "tools.timezoneConverter.iso_format": "ISO Format",
+  "tools.timezoneConverter.timezone_conversion_error":
+    "Timezone conversion error",
+  "tools.timezoneConverter.copy_failed": "Copy failed",
+  "tools.timezoneConverter.timezone_display_note":
+    "Note: Displayed time may vary based on your system's timezone settings",
+  "tools.timezoneConverter.input_date_time_select_timezone":
+    "Please enter a date/time and select source and target timezones",
+  "tools.timezoneConverter.timezone_note":
+    "Note: Some timezones may observe Daylight Saving Time (DST), which may affect the conversion result",
+  "tools.timezoneConverter.common_timezone_info": "Common Timezone Information",
+  "tools.timezoneConverter.region": "Region",
+  "tools.timezoneConverter.timezones": "Timezones",
+  "tools.timezoneConverter.china": "China",
+  "tools.timezoneConverter.japan": "Japan",
+  "tools.timezoneConverter.korea": "Korea",
+  "tools.timezoneConverter.singapore": "Singapore",
+  "tools.timezoneConverter.india": "India",
+  "tools.timezoneConverter.australia": "Australia",
+  "tools.timezoneConverter.uk": "UK",
+  "tools.timezoneConverter.france": "France",
+  "tools.timezoneConverter.germany": "Germany",
+  "tools.timezoneConverter.russia": "Russia",
+  "tools.timezoneConverter.us_eastern": "US Eastern",
+  "tools.timezoneConverter.us_central": "US Central",
+  "tools.timezoneConverter.us_western": "US Western",
+  "tools.timezoneConverter.brazil": "Brazil",
+  "tools.timezoneConverter.asia_pacific": "Asia-Pacific",
+  "tools.timezoneConverter.europe": "Europe",
+  "tools.timezoneConverter.americas": "Americas",
+  "tools.timezoneConverter.about_timezone": "About Timezones:",
+  "tools.timezoneConverter.timezone_offset_info":
+    "Timezone offsets represent the difference between local time and UTC (Coordinated Universal Time)",
+  "tools.timezoneConverter.timezone_dst_info":
+    "Daylight Saving Time (DST) may be observed in some timezones, causing time shifts during the year",
+  "tools.timezoneConverter.dst_implementation":
+    "DST implementation varies by region and may change over time",
+
+  // Regex Tester
+  "tools.regexTester.name": "Regex Tester",
+  "tools.regexTester.description":
+    "Test and validate regular expressions with live matching results.",
+  "tools.regexTester.regex_expression": "Regex Expression",
+  "tools.regexTester.test_text": "Test Text",
+  "tools.regexTester.match_results": "Match Results",
+  "tools.regexTester.match_count": "Match Count",
+  "tools.regexTester.copy": "Copy",
+  "tools.regexTester.clear": "Clear",
+  "tools.regexTester.options": "Options",
+  "tools.regexTester.flags": "Flags",
+  "tools.regexTester.flag_descriptions.global": "Global",
+  "tools.regexTester.flag_descriptions.case_insensitive": "Case Insensitive",
+  "tools.regexTester.flag_descriptions.multiline": "Multiline",
+  "tools.regexTester.flag_descriptions.dotall": "Dot All",
+  "tools.regexTester.show_capture_groups": "Show Capture Groups",
+  "tools.regexTester.enter_regex": "Enter regex pattern...",
+  "tools.regexTester.enter_test_text": "Enter test text...",
+  "tools.regexTester.character_count": "Character Count",
+  "tools.regexTester.found": "Found",
+  "tools.regexTester.matches": "matches",
+  "tools.regexTester.no_matches": "No matches found",
+  "tools.regexTester.original_text_length": "Original text length",
+  "tools.regexTester.result_characters": "characters",
+  "tools.regexTester.capture_groups": "Capture Groups",
+  "tools.regexTester.match": "Match",
+  "tools.regexTester.position": "Position",
+  "tools.regexTester.full": "Full",
+  "tools.regexTester.group": "Group",
+  "tools.regexTester.empty": "Empty",
+  "tools.regexTester.regex_error": "Regex Error",
+  "tools.regexTester.copy_failed": "Copy failed",
+  "tools.regexTester.enter_text_prompt": "Enter text to test your regex",
+  "tools.regexTester.examples.title": "Common Patterns",
+  "tools.regexTester.examples.email": "Email",
+  "tools.regexTester.examples.phone": "Phone",
+  "tools.regexTester.examples.url": "URL",
+  "tools.regexTester.examples.ip": "IP Address",
+  "tools.regexTester.examples.chinese": "Chinese Characters",
+  "tools.regexTester.example_texts.phone":
+    "My phone number is 13812345678 and my backup is 15987654321",
+  "tools.regexTester.example_texts.url":
+    "Visit https://www.example.com or http://sub.domain.org/page",
+  "tools.regexTester.example_texts.ip":
+    "Server IPs: 192.168.1.1, 10.0.0.1, 8.8.8.8, 255.255.255.255",
+  "tools.regexTester.example_texts.chinese": "这里有中文字符，比如汉字和符号。",
+
+  // Password Generator
+  "tools.passwordGenerator.name": "Password Generator",
+  "tools.passwordGenerator.description":
+    "Generate secure passwords with customizable options.",
+  "tools.passwordGenerator.settings": "Settings",
+  "tools.passwordGenerator.length": "Password Length",
+  "tools.passwordGenerator.chars": "chars",
+  "tools.passwordGenerator.count": "Number of Passwords",
+  "tools.passwordGenerator.passwords": "passwords",
+  "tools.passwordGenerator.charset_options": "Character Sets",
+  "tools.passwordGenerator.set_uppercase": "Uppercase Letters (A-Z)",
+  "tools.passwordGenerator.set_lowercase": "Lowercase Letters (a-z)",
+  "tools.passwordGenerator.set_digits": "Digits (0-9)",
+  "tools.passwordGenerator.set_symbols": "Symbols (!@#$%^&*)",
+  "tools.passwordGenerator.force_all_sets":
+    "Include characters from all selected sets",
+  "tools.passwordGenerator.custom_include": "Custom Characters",
+  "tools.passwordGenerator.custom_include_placeholder":
+    "Add custom characters to include",
+  "tools.passwordGenerator.custom_include_hint":
+    "Additional characters to include in generation",
+  "tools.passwordGenerator.exclude_chars": "Exclude Characters",
+  "tools.passwordGenerator.exclude_chars_placeholder": "Characters to exclude",
+  "tools.passwordGenerator.avoid_similar": "Avoid Similar Characters",
+  "tools.passwordGenerator.avoid_similar_on": "Avoid Similar On",
+  "tools.passwordGenerator.avoid_similar_off": "Avoid Similar Off",
+  "tools.passwordGenerator.avoid_ambiguous": "Avoid Ambiguous Characters",
+  "tools.passwordGenerator.avoid_ambiguous_on": "Avoid Ambiguous On",
+  "tools.passwordGenerator.avoid_ambiguous_off": "Avoid Ambiguous Off",
+  "tools.passwordGenerator.generate": "Generate Passwords",
+  "tools.passwordGenerator.copy_all": "Copy All",
+  "tools.passwordGenerator.download": "Download",
+  "tools.passwordGenerator.reset": "Reset",
+  "tools.passwordGenerator.results": "Generated Passwords",
+  "tools.passwordGenerator.no_result": "No passwords generated yet",
+  "tools.passwordGenerator.copy_one": "Copy password",
+  "tools.passwordGenerator.length_hint": "Minimum 4, Maximum 128 characters",
+  "tools.passwordGenerator.count_hint": "Minimum 1, Maximum 100 passwords",
+
+  // HTML Markdown Converter
+  "tools.htmlMarkdownConverter.name": "HTML Markdown Converter",
+  "tools.htmlMarkdownConverter.description":
+    "Convert between HTML and Markdown formats.",
+  "tools.htmlMarkdownConverter.md2html": "Markdown to HTML",
+  "tools.htmlMarkdownConverter.html2md": "HTML to Markdown",
+  "tools.htmlMarkdownConverter.md_input": "Markdown Input",
+  "tools.htmlMarkdownConverter.html_input": "HTML Input",
+  "tools.htmlMarkdownConverter.md_output": "Markdown Output",
+  "tools.htmlMarkdownConverter.html_output": "HTML Output",
+  "tools.htmlMarkdownConverter.md_placeholder": "Enter your markdown here...",
+  "tools.htmlMarkdownConverter.html_placeholder": "Enter your HTML here...",
+  "tools.htmlMarkdownConverter.html_result_placeholder":
+    "Converted HTML will appear here...",
+  "tools.htmlMarkdownConverter.md_result_placeholder":
+    "Converted markdown will appear here...",
+  "tools.htmlMarkdownConverter.convert": "Convert",
+  "tools.htmlMarkdownConverter.converting": "Converting...",
+  "tools.htmlMarkdownConverter.copy_result": "Copy Result",
+  "tools.htmlMarkdownConverter.copied": "Copied!",
+  "tools.htmlMarkdownConverter.load_example": "Load Example",
+  "tools.htmlMarkdownConverter.clear": "Clear",
+  "tools.htmlMarkdownConverter.exchange": "Exchange Input/Output",
+  "tools.htmlMarkdownConverter.error_empty": "Input cannot be empty.",
+  "tools.htmlMarkdownConverter.error_convert": "Conversion error: {error}",
+  "tools.htmlMarkdownConverter.error_unknown": "Unknown error",
+  "tools.htmlMarkdownConverter.error_copy": "Failed to copy text",
+  "tools.htmlMarkdownConverter.error_load":
+    "Failed to load conversion libraries",
+  "tools.htmlMarkdownConverter.loading_modules":
+    "Loading conversion libraries...",
+  "tools.htmlMarkdownConverter.feature_title": "Features",
+  "tools.htmlMarkdownConverter.feature_intro":
+    "This tool allows you to convert between HTML and Markdown formats:",
+  "tools.htmlMarkdownConverter.feature_1": "Markdown to HTML conversion",
+  "tools.htmlMarkdownConverter.feature_2": "HTML to Markdown conversion",
+  "tools.htmlMarkdownConverter.feature_3": "Real-time conversion",
+  "tools.htmlMarkdownConverter.feature_4":
+    "Supports all common markdown syntax",
+  "tools.htmlMarkdownConverter.md2html_description":
+    "Converts Markdown syntax to HTML. Supports headings, lists, links, code blocks, quotes, tables, and more.",
+  "tools.htmlMarkdownConverter.html2md_description":
+    "Converts HTML to Markdown syntax. Preserves formatting and structure as much as possible.",
+
+  // File to Markdown Converter
+  "tools.fileToMarkdownConverter.name": "File to Markdown Converter",
+  "tools.fileToMarkdownConverter.description":
+    "Convert various file formats (PDF, DOCX, PPTX, etc.) to Markdown format.",
+  "tools.fileToMarkdownConverter.select_file":
+    "Click to select or drag and drop a file",
+  "tools.fileToMarkdownConverter.drop_file_here":
+    "Drop your file here or click to select",
+  "tools.fileToMarkdownConverter.supported_formats":
+    "Supports: DOCX, PDF, PPTX, XLSX, HTML, HTM, RTF, TXT, CSV, JSON, XML, EPUB, MD",
+  "tools.fileToMarkdownConverter.file_size": "File size: {size} KB",
+  "tools.fileToMarkdownConverter.convert": "Convert to Markdown",
+  "tools.fileToMarkdownConverter.converting": "Converting...",
+  "tools.fileToMarkdownConverter.clear": "Clear",
+  "tools.fileToMarkdownConverter.markdown_output": "Markdown Output",
+  "tools.fileToMarkdownConverter.copy": "Copy",
+  "tools.fileToMarkdownConverter.copied": "Copied!",
+  "tools.fileToMarkdownConverter.download": "Download",
+  "tools.fileToMarkdownConverter.no_file_selected":
+    "Please select a file to convert.",
+  "tools.fileToMarkdownConverter.conversion_success":
+    "Conversion completed successfully in {time} seconds.",
+  "tools.fileToMarkdownConverter.conversion_error":
+    "An error occurred during conversion.",
+  "tools.fileToMarkdownConverter.file_too_large":
+    "File is too large. Maximum size is {size} MB.",
+  "tools.fileToMarkdownConverter.old_office_format":
+    "Old Office formats ({format}) are not supported. Please convert to newer formats first.",
+  "tools.fileToMarkdownConverter.copy_failed":
+    "Failed to copy text to clipboard.",
+
+  // Cron Generator
+  "tools.cronGenerator.name": "Cron Generator",
+  "tools.cronGenerator.description":
+    "Generate and parse cron expressions for scheduling tasks.",
+  "tools.cronGenerator.generate": "Generate Expression",
+  "tools.cronGenerator.expression_preview": "Expression Preview",
+  "tools.cronGenerator.copy_expression": "Copy Expression",
+  "tools.cronGenerator.custom_expression": "Custom Expression",
+  "tools.cronGenerator.invalid_expression": "Invalid cron expression",
+  "tools.cronGenerator.next_executions_count": "Number of Next Executions",
+  "tools.cronGenerator.execution_times": "Next Execution Times",
+  "tools.cronGenerator.presets": "Common Expressions",
+  "tools.cronGenerator.simulated_description":
+    "This is a simulated description of the cron expression. In a real implementation, this would be generated by cronstrue.",
+  "tools.cronGenerator.every": "Every",
+  "tools.cronGenerator.specific": "Specific",
+  "tools.cronGenerator.range": "Range",
+  "tools.cronGenerator.interval": "Interval",
+  "tools.cronGenerator.not_specified": "Not Specified",
+  "tools.cronGenerator.to": "to",
+  "tools.cronGenerator.from": "from",
+  "tools.cronGenerator.step": "step",
+  "tools.cronGenerator.second": "Second",
+  "tools.cronGenerator.minute": "Minute",
+  "tools.cronGenerator.hour": "Hour",
+  "tools.cronGenerator.day": "Day",
+  "tools.cronGenerator.month": "Month",
+  "tools.cronGenerator.week": "Week",
+  "tools.cronGenerator.year": "Year",
+  "tools.cronGenerator.every_minute": "Every minute",
+  "tools.cronGenerator.every_hour": "Every hour",
+  "tools.cronGenerator.every_day_midnight": "Every day at midnight",
+  "tools.cronGenerator.every_day_morning": "Every day at 8 AM",
+  "tools.cronGenerator.every_monday": "Every Monday at 9 AM",
+  "tools.cronGenerator.every_month_first":
+    "First day of every month at midnight",
+  "tools.cronGenerator.copy_failed": "Failed to copy expression to clipboard",
+
+  // CSS Gradient Generator
+  "tools.cssGradientGenerator.name": "CSS Gradient Generator",
+  "tools.cssGradientGenerator.description":
+    "Generate beautiful CSS gradients with visual controls.",
+  "tools.cssGradientGenerator.gradient_type": "Gradient Type",
+  "tools.cssGradientGenerator.linear_gradient": "Linear",
+  "tools.cssGradientGenerator.radial_gradient": "Radial",
+  "tools.cssGradientGenerator.gradient_direction": "Gradient Direction",
+  "tools.cssGradientGenerator.gradient_shape_position": "Shape & Position",
+  "tools.cssGradientGenerator.custom_angle": "Custom Angle",
+  "tools.cssGradientGenerator.apply": "Apply",
+  "tools.cssGradientGenerator.gradient_shape": "Gradient Shape",
+  "tools.cssGradientGenerator.circle": "Circle",
+  "tools.cssGradientGenerator.ellipse": "Ellipse",
+  "tools.cssGradientGenerator.gradient_position": "Gradient Position",
+  "tools.cssGradientGenerator.gradient_colors": "Gradient Colors",
+  "tools.cssGradientGenerator.add_color_stop": "Add Color Stop",
+  "tools.cssGradientGenerator.random_gradient": "Random Gradient",
+  "tools.cssGradientGenerator.preset_colors": "Preset Colors",
+  "tools.cssGradientGenerator.apply_preset": "Apply Preset",
+  "tools.cssGradientGenerator.gradient_preview": "Gradient Preview",
+  "tools.cssGradientGenerator.preview_hint":
+    "Click and drag to rotate the preview",
+  "tools.cssGradientGenerator.css_code": "CSS Code",
+  "tools.cssGradientGenerator.css_comment":
+    "/* Copy and paste this CSS code into your stylesheet */",
+  "tools.cssGradientGenerator.copy_code": "Copy Code",
+  "tools.cssGradientGenerator.copied": "Copied!",
+  "tools.cssGradientGenerator.copy_failed": "Failed to copy code",
+  "tools.cssGradientGenerator.direction_titles.0deg": "Bottom to Top",
+  "tools.cssGradientGenerator.direction_titles.45deg":
+    "Bottom-left to Top-right",
+  "tools.cssGradientGenerator.direction_titles.90deg": "Left to Right",
+  "tools.cssGradientGenerator.direction_titles.135deg":
+    "Top-left to Bottom-right",
+  "tools.cssGradientGenerator.direction_titles.180deg": "Top to Bottom",
+  "tools.cssGradientGenerator.direction_titles.225deg":
+    "Top-right to Bottom-left",
+  "tools.cssGradientGenerator.direction_titles.270deg": "Right to Left",
+  "tools.cssGradientGenerator.direction_titles.315deg":
+    "Bottom-right to Top-left",
+
+  // Code Formatter
+  "tools.codeFormatter.name": "Code Formatter",
+  "tools.codeFormatter.description":
+    "Format and beautify code with Prettier for multiple languages.",
+  "tools.codeFormatter.title": "Code Formatter",
+  "tools.codeFormatter.input_code": "Input Code",
+  "tools.codeFormatter.formatted_result": "Formatted Result",
+  "tools.codeFormatter.input_placeholder": "Enter {language} code to format...",
+  "tools.codeFormatter.result_placeholder": "Formatted code will appear here",
+  "tools.codeFormatter.click_format":
+    "Click the format button to process your code",
+  "tools.codeFormatter.format": "Format Code",
+  "tools.codeFormatter.processing": "Processing...",
+  "tools.codeFormatter.loading_library": "Loading Prettier Library...",
+  "tools.codeFormatter.first_time_loading":
+    "First time loading may take a moment...",
+  "tools.codeFormatter.copy": "Copy",
+  "tools.codeFormatter.copied": "Copied!",
+  "tools.codeFormatter.download": "Download",
+  "tools.codeFormatter.clear": "Clear",
+  "tools.codeFormatter.load_example": "Load Example",
+  "tools.codeFormatter.formatting_error_title": "Formatting Error",
+  "tools.codeFormatter.usage_guide": "Usage Guide",
+  "tools.codeFormatter.usage_step1":
+    "Select the code language from the dropdown",
+  "tools.codeFormatter.usage_step2":
+    "Enter or paste your code in the input area",
+  "tools.codeFormatter.usage_step3":
+    "Click the 'Format Code' button to process your code",
+  "tools.codeFormatter.usage_step4": "Copy or download the formatted result",
+  "tools.codeFormatter.error_empty_input": "Please enter some code to format",
+  "tools.codeFormatter.error_browser_only":
+    "Code formatting only works in browser environments",
+  "tools.codeFormatter.error_library_loading":
+    "Prettier library is still loading, please wait",
+  "tools.codeFormatter.error_unsupported_language":
+    "Unsupported language: {language}",
+  "tools.codeFormatter.error_prettier": "Prettier formatting error: {message}",
+  "tools.codeFormatter.error_formatting": "Error formatting code: {message}",
+  "tools.codeFormatter.error_unknown": "An unknown error occurred",
+  "tools.codeFormatter.error_initialization": "Initialization error",
+  "tools.codeFormatter.warning_missing_files":
+    "Warning: Some Prettier library files may be missing",
+  "tools.codeFormatter.load_error": "Error loading library",
+  "tools.codeFormatter.load_failed": "Failed to load Prettier library",
+  "tools.codeFormatter.prettier_core_loaded": "Prettier core loaded",
+  "tools.codeFormatter.babel_parser_loaded": "Babel parser loaded",
+  "tools.codeFormatter.html_parser_loaded": "HTML parser loaded",
+  "tools.codeFormatter.css_parser_loaded": "CSS parser loaded",
+  "tools.codeFormatter.typescript_parser_loaded": "TypeScript parser loaded",
+  "tools.codeFormatter.markdown_parser_loaded": "Markdown parser loaded",
+  "tools.codeFormatter.yaml_parser_loaded": "YAML parser loaded",
+  "tools.codeFormatter.graphql_parser_loaded": "GraphQL parser loaded",
+  "tools.codeFormatter.all_modules_loaded": "All modules loaded",
+  "tools.codeFormatter.using_parser": "Using parser:",
+  "tools.codeFormatter.available_plugins": "Available plugins:",
+  "tools.codeFormatter.prettier_error_log": "Prettier error log:",
+
+  // Date Calculator
+  "tools.dateCalculator.name": "Date Calculator",
+  "tools.dateCalculator.description":
+    "Calculate differences between dates or add/subtract time units from a date.",
+  "tools.dateCalculator.mode.diff": "Date Difference",
+  "tools.dateCalculator.mode.add": "Date Addition/Subtraction",
+  "tools.dateCalculator.error.calculation_error": "Calculation error:",
+  "tools.dateCalculator.error.copy_failed": "Failed to copy to clipboard",
+  "tools.dateCalculator.diff_calculator.title": "Date Difference Calculator",
+  "tools.dateCalculator.diff_calculator.start_date": "Start Date",
+  "tools.dateCalculator.diff_calculator.end_date": "End Date",
+  "tools.dateCalculator.diff_calculator.current": "Current",
+  "tools.dateCalculator.diff_calculator.swap_dates": "Swap Dates",
+  "tools.dateCalculator.diff_calculator.result_title": "Difference Result",
+  "tools.dateCalculator.diff_calculator.years": "Years",
+  "tools.dateCalculator.diff_calculator.months": "Months",
+  "tools.dateCalculator.diff_calculator.weeks": "Weeks",
+  "tools.dateCalculator.diff_calculator.days": "Days",
+  "tools.dateCalculator.diff_calculator.hours": "Hours",
+  "tools.dateCalculator.diff_calculator.minutes": "Minutes",
+  "tools.dateCalculator.diff_calculator.seconds": "Seconds",
+  "tools.dateCalculator.diff_calculator.year_unit": "year(s)",
+  "tools.dateCalculator.diff_calculator.month_unit": "month(s)",
+  "tools.dateCalculator.diff_calculator.week_unit": "week(s)",
+  "tools.dateCalculator.diff_calculator.day_unit": "day(s)",
+  "tools.dateCalculator.diff_calculator.hour_unit": "hour(s)",
+  "tools.dateCalculator.diff_calculator.minute_unit": "minute(s)",
+  "tools.dateCalculator.diff_calculator.second_unit": "second(s)",
+  "tools.dateCalculator.diff_calculator.no_valid_dates":
+    "Please enter valid dates to see the difference",
+  "tools.dateCalculator.add_calculator.title":
+    "Date Addition/Subtraction Calculator",
+  "tools.dateCalculator.add_calculator.base_date": "Base Date",
+  "tools.dateCalculator.add_calculator.operation": "Operation",
+  "tools.dateCalculator.add_calculator.add": "Add",
+  "tools.dateCalculator.add_calculator.subtract": "Subtract",
+  "tools.dateCalculator.add_calculator.time_amount": "Time Amount",
+  "tools.dateCalculator.add_calculator.time_unit": "Time Unit",
+  "tools.dateCalculator.add_calculator.result_title": "Result",
+  "tools.dateCalculator.add_calculator.add_result":
+    "Adding {amount} {unit} to the base date",
+  "tools.dateCalculator.add_calculator.subtract_result":
+    "Subtracting {amount} {unit} from the base date",
+  "tools.dateCalculator.add_calculator.copy_result": "Copy Result",
+  "tools.dateCalculator.add_calculator.copied": "Copied!",
+  "tools.dateCalculator.add_calculator.no_valid_input":
+    "Please enter valid input to see the result",
+  "tools.dateCalculator.add_calculator.notes_title": "Notes",
+  "tools.dateCalculator.add_calculator.note1":
+    "Date calculations account for daylight saving time changes",
+  "tools.dateCalculator.add_calculator.note2":
+    "Month/year calculations may result in different day numbers if the resulting month has fewer days",
+  "tools.dateCalculator.add_calculator.note3":
+    "The calculation uses your local time zone",
+
+  // Number Base Converter
+  "tools.numberBaseConverter.name": "Number Base Converter",
+  "tools.numberBaseConverter.description":
+    "Convert numbers between different bases (binary, octal, decimal, hexadecimal, and custom bases).",
+  "tools.numberBaseConverter.from_base": "From Base",
+  "tools.numberBaseConverter.to_base": "To Base",
+  "tools.numberBaseConverter.binary": "Binary (2)",
+  "tools.numberBaseConverter.octal": "Octal (8)",
+  "tools.numberBaseConverter.decimal": "Decimal (10)",
+  "tools.numberBaseConverter.hex": "Hexadecimal (16)",
+  "tools.numberBaseConverter.custom": "Custom",
+  "tools.numberBaseConverter.custom_base_from": "Custom From Base (2-36)",
+  "tools.numberBaseConverter.custom_base_to": "Custom To Base (2-36)",
+  "tools.numberBaseConverter.input_label": "Input Number",
+  "tools.numberBaseConverter.input_placeholder": "Enter a number to convert",
+  "tools.numberBaseConverter.result_label": "Converted Number",
+  "tools.numberBaseConverter.output_placeholder":
+    "Converted number will appear here",
+  "tools.numberBaseConverter.advanced_options": "Advanced Options",
+  "tools.numberBaseConverter.use_uppercase": "Use Uppercase",
+  "tools.numberBaseConverter.add_prefix": "Add Prefix",
+  "tools.numberBaseConverter.group_digits": "Group Digits",
+  "tools.numberBaseConverter.load_example": "Load Example",
+  "tools.numberBaseConverter.clear": "Clear",
+  "tools.numberBaseConverter.copy": "Copy",
+  "tools.numberBaseConverter.copy_success": "Copied!",
+  "tools.numberBaseConverter.base_error": "Base must be between 2 and 36",
+  "tools.numberBaseConverter.input_error":
+    "Invalid input number for the selected base",
+  "tools.numberBaseConverter.general_error":
+    "An error occurred during conversion",
+  "tools.numberBaseConverter.copy_failed": "Failed to copy to clipboard",
+  "tools.numberBaseConverter.clipboard_error": "Clipboard access denied",
+  "tools.numberBaseConverter.example_binary": "1010",
+  "tools.numberBaseConverter.example_octal": "12",
+  "tools.numberBaseConverter.example_decimal": "10",
+  "tools.numberBaseConverter.example_hex": "A",
+
+  // Text Counter
+  "tools.textCounter.name": "Text Counter",
+  "tools.textCounter.description":
+    "Count characters, words, sentences, paragraphs and other statistics in text.",
+  "tools.textCounter.input_text": "Input Text",
+  "tools.textCounter.input_placeholder": "Enter text to count...",
+  "tools.textCounter.clear": "Clear",
+  "tools.textCounter.copy_results": "Copy Results",
+  "tools.textCounter.copied": "Copied!",
+  "tools.textCounter.statistics_results": "Statistics Results",
+  "tools.textCounter.tool_options": "Tool Options",
+  "tools.textCounter.load_chinese_example": "Load Chinese Example",
+  "tools.textCounter.load_english_example": "Load English Example",
+  "tools.textCounter.empty_notice": "Enter text to see the statistics",
+  "tools.textCounter.how_it_works": "How it works",
+  "tools.textCounter.counting_method": "Counting Method",
+  "tools.textCounter.explanation":
+    "This tool analyzes your text and provides detailed statistics about characters, words, sentences, and more.",
+  "tools.textCounter.method_details":
+    "Character counting includes all characters. Word counting separates English words and estimates Chinese words.",
+  "tools.textCounter.tag_characters": "Characters",
+  "tools.textCounter.tag_words": "Words",
+  "tools.textCounter.tag_paragraphs": "Paragraph",
+  "tools.textCounter.tag_lines": "Lines",
+  "tools.textCounter.word_statistics": "Word Statistics",
+  "tools.textCounter.other_statistics": "Other Statistics",
+  "tools.textCounter.copy_result_text":
+    "Text Statistics:\n- Total Characters: {characters}\n- Characters (No Spaces): {charactersNoSpaces}\n- Chinese Characters: {chineseCharacters}\n- Total Words: {words}\n- Chinese Words: {chineseWords}\n- English Words: {englishWords}\n- Sentences: {sentences}\n- Paragraphs: {paragraphs}\n- Lines: {lines}",
+  "tools.textCounter.copy_failed": "Failed to copy to clipboard",
+  "tools.textCounter.statistics.total_characters": "Total Characters",
+  "tools.textCounter.statistics.characters_no_spaces": "Characters (No Spaces)",
+  "tools.textCounter.statistics.chinese_characters": "Chinese Characters",
+  "tools.textCounter.statistics.total_words": "Total Words",
+  "tools.textCounter.statistics.chinese_words": "Chinese Words",
+  "tools.textCounter.statistics.english_words": "English Words",
+  "tools.textCounter.statistics.sentences": "Sentences",
+  "tools.textCounter.statistics.paragraphs": "Paragraphs",
+  "tools.textCounter.statistics.lines": "Lines",
+
+  // YML Properties Converter
+  "tools.ymlPropertiesConverter.name": "YML Properties Converter",
+  "tools.ymlPropertiesConverter.description":
+    "Convert between YML and Properties formats for configuration files.",
+  "tools.ymlPropertiesConverter.direction.yml_to_properties":
+    "YML to Properties",
+  "tools.ymlPropertiesConverter.direction.properties_to_yml":
+    "Properties to YML",
+  "tools.ymlPropertiesConverter.input.yml": "YML Input",
+  "tools.ymlPropertiesConverter.input.properties": "Properties Input",
+  "tools.ymlPropertiesConverter.input.yml_placeholder":
+    "Paste your YML content here...",
+  "tools.ymlPropertiesConverter.input.properties_placeholder":
+    "Paste your Properties content here...",
+  "tools.ymlPropertiesConverter.output.yml": "YML Output",
+  "tools.ymlPropertiesConverter.output.properties": "Properties Output",
+  "tools.ymlPropertiesConverter.output.yml_placeholder":
+    "Converted YML will appear here...",
+  "tools.ymlPropertiesConverter.output.properties_placeholder":
+    "Converted Properties will appear here...",
+  "tools.ymlPropertiesConverter.actions.convert": "Convert",
+  "tools.ymlPropertiesConverter.actions.converting": "Converting...",
+  "tools.ymlPropertiesConverter.actions.copy": "Copy",
+  "tools.ymlPropertiesConverter.actions.copied": "Copied!",
+  "tools.ymlPropertiesConverter.actions.download": "Download",
+  "tools.ymlPropertiesConverter.actions.load_example": "Load Example",
+  "tools.ymlPropertiesConverter.actions.clear": "Clear",
+  "tools.ymlPropertiesConverter.advanced_options.title": "Advanced Options",
+  "tools.ymlPropertiesConverter.advanced_options.yml.indent": "YML Indent Size",
+  "tools.ymlPropertiesConverter.advanced_options.yml.quote_strings":
+    "Quote Strings in YML",
+  "tools.ymlPropertiesConverter.advanced_options.yml.sort_keys":
+    "Sort Keys in YML",
+  "tools.ymlPropertiesConverter.advanced_options.properties.delimiter":
+    "Properties Delimiter",
+  "tools.ymlPropertiesConverter.advanced_options.properties.delimiters.equals":
+    "Equals (=)",
+  "tools.ymlPropertiesConverter.advanced_options.properties.delimiters.colon":
+    "Colon (:)",
+  "tools.ymlPropertiesConverter.advanced_options.properties.escape_unicode":
+    "Escape Unicode in Properties",
+  "tools.ymlPropertiesConverter.advanced_options.properties.sort_keys":
+    "Sort Keys in Properties",
+  "tools.ymlPropertiesConverter.advanced_options.description":
+    "Configure advanced options for the conversion process",
+  "tools.ymlPropertiesConverter.notes.title": "Conversion Notes",
+  "tools.ymlPropertiesConverter.notes.items.0":
+    "Complex nested structures may lose some formatting during conversion",
+  "tools.ymlPropertiesConverter.notes.items.1":
+    "Comments in YML will not be preserved in Properties and vice versa",
+  "tools.ymlPropertiesConverter.notes.items.2":
+    "Special characters and multiline values may require manual adjustment",
+  "tools.ymlPropertiesConverter.notes.items.3":
+    "Arrays in YML may not convert perfectly to Properties format",
+  "tools.ymlPropertiesConverter.errors.conversion_error":
+    "An error occurred during conversion",
+  "tools.ymlPropertiesConverter.errors.clipboard_error":
+    "Failed to copy to clipboard",
+
+  // PDF Converter
+  "tools.pdfConverter.title": "PDF Converter",
+  "tools.pdfConverter.description":
+    "Convert PDF files to images or extract text from PDFs.",
+  "tools.pdfConverter.conversion_type": "Conversion Type",
+  "tools.pdfConverter.pdf_to_image": "PDF to Image",
+  "tools.pdfConverter.pdf_to_text": "PDF to Text",
+  "tools.pdfConverter.settings": "Conversion Settings",
+  "tools.pdfConverter.image_format": "Image Format",
+  "tools.pdfConverter.image_quality": "Image Quality",
+  "tools.pdfConverter.quality.high": "High",
+  "tools.pdfConverter.quality.medium": "Medium",
+  "tools.pdfConverter.quality.low": "Low",
+  "tools.pdfConverter.upload_files": "Upload PDF Files",
+  "tools.pdfConverter.upload.title": "Drag and drop PDF files here",
+  "tools.pdfConverter.upload.subtitle": "or click to browse your files",
+  "tools.pdfConverter.upload.button": "Select PDF Files",
+  "tools.pdfConverter.upload.max_size": "Maximum file size: 100MB",
+  "tools.pdfConverter.selected_files": "Selected Files",
+  "tools.pdfConverter.start_conversion": "Start Conversion",
+  "tools.pdfConverter.clear_all": "Clear All",
+  "tools.pdfConverter.converting": "Converting...",
+  "tools.pdfConverter.results": "Conversion Results",
+  "tools.pdfConverter.download": "Download",
+  "tools.pdfConverter.preview": "Preview",
+  "tools.pdfConverter.loading": "Loading...",
+  "tools.pdfConverter.text_recommendation.title": "Recommendation",
+  "tools.pdfConverter.text_recommendation.description":
+    "For better text extraction and format conversion, we recommend using our File to Markdown tool.",
+  "tools.pdfConverter.text_recommendation.button": "Open Tool",
+  "tools.pdfConverter.errors.no_file": "Please select a file to convert",
+  "tools.pdfConverter.errors.pdf_required":
+    "Please select PDF files for conversion",
+  "tools.pdfConverter.errors.conversion_failed": "Conversion failed",
+  "tools.pdfConverter.errors.loading_failed":
+    "PDF processing library failed to load",
+  "tools.pdfConverter.errors.pdfjs_not_loaded":
+    "PDF processing library not loaded",
+
+  // PDF Manager
+  "tools.pdfManager.title": "PDF Manager",
+  "tools.pdfManager.description":
+    "Merge or split PDF files with advanced options.",
+  "tools.pdfManager.operation_mode.title": "Operation Mode",
+  "tools.pdfManager.operation_mode.merge": "Merge PDFs",
+  "tools.pdfManager.operation_mode.split": "Split PDF",
+  "tools.pdfManager.upload_area.title": "Upload PDF Files",
+  "tools.pdfManager.upload_area.subtitle":
+    "Drag and drop PDF files here or click to browse",
+  "tools.pdfManager.upload_area.button": "Select PDF Files",
+  "tools.pdfManager.upload_area.merge_limit": "Maximum total size: 500MB",
+  "tools.pdfManager.upload_area.split_limit": "Maximum file size: 100MB",
+  "tools.pdfManager.file_list.title": "Uploaded Files",
+  "tools.pdfManager.file_list.total_size": "Total Size",
+  "tools.pdfManager.file_list.drag_hint": "Click and drag to reorder files",
+  "tools.pdfManager.merge_mode.title": "Merge Settings",
+  "tools.pdfManager.merge_mode.output_name": "Output Filename",
+  "tools.pdfManager.merge_mode.output_name_placeholder": "merged_document.pdf",
+  "tools.pdfManager.split_mode.title": "Split Settings",
+  "tools.pdfManager.split_mode.split_method": "Split Method",
+  "tools.pdfManager.split_methods.single_pages": "Single Pages",
+  "tools.pdfManager.split_methods.single_pages_description":
+    "Split into individual pages",
+  "tools.pdfManager.split_methods.custom_ranges": "Custom Ranges",
+  "tools.pdfManager.split_methods.equal_parts": "Equal Parts",
+  "tools.pdfManager.custom_ranges.title": "Custom Page Ranges",
+  "tools.pdfManager.custom_ranges.placeholder":
+    "Enter page ranges (e.g., 1-3, 5, 7-10)",
+  "tools.pdfManager.custom_ranges.add_range": "Add Range",
+  "tools.pdfManager.custom_ranges.range_format":
+    "Format: 1-5 for pages 1 to 5, or 3 for single page 3",
+  "tools.pdfManager.custom_ranges.single_page": "Page {page}",
+  "tools.pdfManager.custom_ranges.page_range": "Pages {start}-{end}",
+  "tools.pdfManager.equal_parts.parts_count": "Number of Parts",
+  "tools.pdfManager.status.merging": "Merging PDFs...",
+  "tools.pdfManager.status.splitting": "Splitting PDF...",
+  "tools.pdfManager.actions.merge": "Merge PDFs",
+  "tools.pdfManager.actions.split": "Split PDF",
+  "tools.pdfManager.actions.clear": "Clear All",
+  "tools.pdfManager.actions.download": "Download",
+  "tools.pdfManager.results.title": "Results",
+  "tools.pdfManager.results.files_count": "Files Generated",
+  "tools.pdfManager.results.download_all": "Download All",
+  "tools.pdfManager.errors.no_files": "Please upload at least one PDF file",
+  "tools.pdfManager.errors.need_at_least_two":
+    "Need at least two files to merge",
+  "tools.pdfManager.errors.file_too_large": "File size exceeds the limit",
+  "tools.pdfManager.errors.range_out_of_bounds": "Page range is out of bounds",
+  "tools.pdfManager.errors.invalid_parts_count": "Invalid number of parts",
+  "tools.pdfManager.errors.operation_failed": "Operation failed",
+  "tools.pdfManager.errors.library_not_loaded":
+    "PDF processing library not loaded",
+  "tools.pdfManager.errors.loading_failed":
+    "PDF processing library failed to load",
+  "tools.pdfManager.loading": "Loading...",
+
+  // PDF Compressor
+  "tools.pdfCompressor.title": "PDF Compressor",
+  "tools.pdfCompressor.description":
+    "Compress PDF files to reduce file size with advanced compression options.",
+  "tools.pdfCompressor.compression_settings.title": "Compression Settings",
+  "tools.pdfCompressor.compression_settings.quality": "Compression Quality",
+  "tools.pdfCompressor.compression_settings.quality_high": "High Quality",
+  "tools.pdfCompressor.compression_settings.quality_medium": "Medium Quality",
+  "tools.pdfCompressor.compression_settings.quality_low": "Low Quality",
+  "tools.pdfCompressor.compression_settings.compression_level":
+    "Compression Level",
+  "tools.pdfCompressor.compression_settings.image_compression":
+    "Enable Image Compression",
+  "tools.pdfCompressor.compression_settings.font_subsetting":
+    "Enable Font Subsetting",
+  "tools.pdfCompressor.compression_settings.metadata_removal":
+    "Remove Metadata",
+  "tools.pdfCompressor.compression_settings.remove_bookmarks":
+    "Remove Bookmarks",
+  "tools.pdfCompressor.compression_settings.remove_annotations":
+    "Remove Annotations",
+  "tools.pdfCompressor.upload_area.title": "Upload PDF Files",
+  "tools.pdfCompressor.upload_area.subtitle":
+    "Drag and drop PDF files here or click to browse",
+  "tools.pdfCompressor.upload_area.button": "Select PDF Files",
+  "tools.pdfCompressor.upload_area.max_size": "Maximum file size: 100MB",
+  "tools.pdfCompressor.selected_files": "Selected Files",
+  "tools.pdfCompressor.status.compressing": "Compressing PDFs...",
+  "tools.pdfCompressor.actions.compress": "Compress PDFs",
+  "tools.pdfCompressor.actions.clear": "Clear All",
+  "tools.pdfCompressor.actions.download": "Download",
+  "tools.pdfCompressor.results.title": "Compression Results",
+  "tools.pdfCompressor.results.original_size": "Original Size",
+  "tools.pdfCompressor.results.compressed_size": "Compressed Size",
+  "tools.pdfCompressor.results.savings": "Savings",
+  "tools.pdfCompressor.errors.no_file":
+    "Please select at least one PDF file to compress",
+  "tools.pdfCompressor.errors.invalid_format": "Please select valid PDF files",
+  "tools.pdfCompressor.errors.compression_failed": "PDF compression failed",
+  "tools.pdfCompressor.errors.library_failed":
+    "PDF processing library failed to load",
+  "tools.pdfCompressor.loading": "Loading...",
+
+  // JSON Converter
+  "tools.jsonConverter.name": "JSON Converter",
+  "tools.jsonConverter.description":
+    "Convert JSON to/from XML, CSV, and YAML formats.",
+  "tools.jsonConverter.select_format_type": "Select Format Type",
+  "tools.jsonConverter.format_types.xml.name": "XML",
+  "tools.jsonConverter.format_types.xml.description":
+    "Extensible Markup Language",
+  "tools.jsonConverter.format_types.csv.name": "CSV",
+  "tools.jsonConverter.format_types.csv.description": "Comma-Separated Values",
+  "tools.jsonConverter.format_types.yaml.name": "YAML",
+  "tools.jsonConverter.format_types.yaml.description":
+    "YAML Ain't Markup Language",
+  "tools.jsonConverter.direction.json_to_format": "JSON to Format",
+  "tools.jsonConverter.direction.format_to_json": "{format} to JSON",
+  "tools.jsonConverter.input.json": "JSON Input",
+  "tools.jsonConverter.input.format": "{format} Input",
+  "tools.jsonConverter.input.json_placeholder": "Enter JSON data here...",
+  "tools.jsonConverter.input.format_placeholder": "Enter {format} data here...",
+  "tools.jsonConverter.output.json": "JSON Output",
+  "tools.jsonConverter.output.format": "{format} Output",
+  "tools.jsonConverter.output.json_placeholder":
+    "Converted JSON will appear here...",
+  "tools.jsonConverter.output.format_placeholder":
+    "Converted {format} will appear here...",
+  "tools.jsonConverter.actions.convert": "Convert",
+  "tools.jsonConverter.actions.converting": "Converting...",
+  "tools.jsonConverter.actions.copy": "Copy",
+  "tools.jsonConverter.actions.copied": "Copied!",
+  "tools.jsonConverter.actions.download": "Download",
+  "tools.jsonConverter.actions.clear": "Clear",
+  "tools.jsonConverter.actions.example": "Example",
+  "tools.jsonConverter.actions.swap_direction": "Swap Direction",
+  "tools.jsonConverter.actions.load_example": "Load Example",
+  "tools.jsonConverter.advanced_options.show": "Show Advanced Options",
+  "tools.jsonConverter.advanced_options.hide": "Hide Advanced Options",
+  "tools.jsonConverter.advanced_options.csv.delimiter": "CSV Delimiter",
+  "tools.jsonConverter.advanced_options.csv.delimiters.comma": "Comma (,)",
+  "tools.jsonConverter.advanced_options.csv.delimiters.semicolon":
+    "Semicolon (;)",
+  "tools.jsonConverter.advanced_options.csv.delimiters.tab": "Tab (\t)",
+  "tools.jsonConverter.advanced_options.csv.delimiters.pipe": "Pipe (|)",
+  "tools.jsonConverter.advanced_options.csv.include_header":
+    "Include Header Row",
+  "tools.jsonConverter.advanced_options.csv.generate_header":
+    "Generate header from JSON keys",
+  "tools.jsonConverter.advanced_options.csv.parse_header":
+    "Parse header as column names",
+  "tools.jsonConverter.advanced_options.xml.root_element": "XML Root Element",
+  "tools.jsonConverter.advanced_options.xml.root_placeholder":
+    "Enter root element name",
+  "tools.jsonConverter.advanced_options.description":
+    "Advanced options for fine-tuning the conversion process.",
+  "tools.jsonConverter.notes.title": "Format Notes",
+  "tools.jsonConverter.notes.xml.title": "XML Conversion Notes:",
+  "tools.jsonConverter.notes.xml.items.0": "JSON objects become XML elements",
+  "tools.jsonConverter.notes.xml.items.1":
+    "Property names become element names",
+  "tools.jsonConverter.notes.xml.items.2":
+    "Arrays create multiple elements with same name",
+  "tools.jsonConverter.notes.csv.title": "CSV Conversion Notes:",
+  "tools.jsonConverter.notes.csv.items.0":
+    "JSON arrays of objects convert to CSV rows",
+  "tools.jsonConverter.notes.csv.items.1":
+    "Property names become column headers",
+  "tools.jsonConverter.notes.csv.items.2":
+    "Nested objects are stringified in cells",
+  "tools.jsonConverter.notes.yaml.title": "YAML Conversion Notes:",
+  "tools.jsonConverter.notes.yaml.items.0": "JSON objects become YAML mappings",
+  "tools.jsonConverter.notes.yaml.items.1": "JSON arrays become YAML sequences",
+  "tools.jsonConverter.notes.yaml.items.2":
+    "YAML uses indentation for hierarchy",
+  "tools.jsonConverter.errors.invalid_json": "Invalid JSON format",
+  "tools.jsonConverter.errors.conversion_error": "Conversion error occurred",
+  "tools.jsonConverter.errors.copy_failed": "Failed to copy to clipboard",
+  "tools.jsonConverter.errors.clipboard_error": "Clipboard access denied",
+
+  // Text Space Stripper
+  "tools.textSpaceStripper.name": "Text Space Stripper",
+  "tools.textSpaceStripper.description":
+    "Remove unwanted spaces and newlines from text using various modes.",
+  "tools.textSpaceStripper.input_text": "Input Text",
+  "tools.textSpaceStripper.input_placeholder":
+    "Enter text with spaces to strip...",
+  "tools.textSpaceStripper.output_text": "Output Text",
+  "tools.textSpaceStripper.output_placeholder":
+    "Processed text will appear here...",
+  "tools.textSpaceStripper.clear": "Clear",
+  "tools.textSpaceStripper.process": "Process",
+  "tools.textSpaceStripper.copy_result": "Copy Result",
+  "tools.textSpaceStripper.copied": "Copied!",
+  "tools.textSpaceStripper.copy_failed": "Failed to copy to clipboard",
+  "tools.textSpaceStripper.tool_options": "Tool Options",
+  "tools.textSpaceStripper.strip_mode": "Strip Mode",
+  "tools.textSpaceStripper.strip_mode_both": "Both ends (trim)",
+  "tools.textSpaceStripper.strip_mode_start": "Start only",
+  "tools.textSpaceStripper.strip_mode_end": "End only",
+  "tools.textSpaceStripper.strip_mode_all": "All spaces",
+  "tools.textSpaceStripper.strip_mode_newlines": "Newlines only",
+  "tools.textSpaceStripper.strip_mode_all_and_newlines":
+    "All spaces and newlines",
+  "tools.textSpaceStripper.load_example": "Load Example",
+
+  // Crypto Tools
+  "tools.cryptoTools.name": "Crypto Tools",
+  "tools.cryptoTools.description":
+    "Various cryptographic tools for hashing, encryption, and encoding.",
+  "tools.cryptoTools.select_algorithm": "Select Algorithm",
+  "tools.cryptoTools.input_text": "Input Text",
+  "tools.cryptoTools.input_placeholder": "Enter text to process...",
+  "tools.cryptoTools.secret_key": "Secret Key",
+  "tools.cryptoTools.key_placeholder": "Enter secret key...",
+  "tools.cryptoTools.encrypted_result": "Encrypted Result",
+  "tools.cryptoTools.decoded_result": "Decoded Result",
+  "tools.cryptoTools.hash_result": "Hash Result",
+  "tools.cryptoTools.result_placeholder":
+    "Processed result will appear here...",
+  "tools.cryptoTools.encrypt": "Encrypt",
+  "tools.cryptoTools.decrypt": "Decrypt",
+  "tools.cryptoTools.encode": "Encode",
+  "tools.cryptoTools.decode": "Decode",
+  "tools.cryptoTools.calculate": "Calculate",
+  "tools.cryptoTools.copy_result": "Copy Result",
+  "tools.cryptoTools.copied": "Copied!",
+  "tools.cryptoTools.load_example": "Load Example",
+  "tools.cryptoTools.example": "Example",
+  "tools.cryptoTools.clear": "Clear",
+  "tools.cryptoTools.input_required": "Input text is required",
+  "tools.cryptoTools.key_required": "Secret key is required for this algorithm",
+  "tools.cryptoTools.encryption_success": "Encryption successful",
+  "tools.cryptoTools.decryption_success": "Decryption successful",
+  "tools.cryptoTools.copy_failed": "Failed to copy to clipboard",
+  "tools.cryptoTools.decryption_failed": "Decryption failed",
+  "tools.cryptoTools.base64_decode_failed": "Base64 decoding failed",
+  "tools.cryptoTools.encrypted_text": "Encrypted Text",
+  "tools.cryptoTools.decrypt_placeholder": "Enter encrypted text to decrypt...",
+  "tools.cryptoTools.base64_encoded": "Base64 Encoded Text",
+  "tools.cryptoTools.base64_decode_placeholder":
+    "Enter Base64 encoded text to decode...",
+  "tools.cryptoTools.algorithm_info": "Algorithm Information",
+  "tools.cryptoTools.algorithms.md5.name": "MD5",
+  "tools.cryptoTools.algorithms.md5.description": "Message Digest Algorithm 5",
+  "tools.cryptoTools.algorithms.md5.additional_info":
+    "MD5 produces a 128-bit hash value. Not recommended for security purposes as it's vulnerable to collision attacks.",
+  "tools.cryptoTools.algorithms.sha1.name": "SHA-1",
+  "tools.cryptoTools.algorithms.sha1.description": "Secure Hash Algorithm 1",
+  "tools.cryptoTools.algorithms.sha1.additional_info":
+    "SHA-1 produces a 160-bit hash value. Also not recommended for security purposes due to vulnerabilities.",
+  "tools.cryptoTools.algorithms.sha256.name": "SHA-256",
+  "tools.cryptoTools.algorithms.sha256.description":
+    "Secure Hash Algorithm 256-bit",
+  "tools.cryptoTools.algorithms.sha256.additional_info":
+    "SHA-256 produces a 256-bit hash value. Part of the SHA-2 family, widely used for security applications.",
+  "tools.cryptoTools.algorithms.sha512.name": "SHA-512",
+  "tools.cryptoTools.algorithms.sha512.description":
+    "Secure Hash Algorithm 512-bit",
+  "tools.cryptoTools.algorithms.sha512.additional_info":
+    "SHA-512 produces a 512-bit hash value. Part of the SHA-2 family, suitable for applications requiring higher security.",
+  "tools.cryptoTools.algorithms.aes.name": "AES",
+  "tools.cryptoTools.algorithms.aes.description":
+    "Advanced Encryption Standard",
+  "tools.cryptoTools.algorithms.aes.additional_info":
+    "AES is a symmetric encryption algorithm. Use a strong secret key for security.",
+  "tools.cryptoTools.algorithms.base64.name": "Base64",
+  "tools.cryptoTools.algorithms.base64.description":
+    "Binary-to-text encoding scheme",
+  "tools.cryptoTools.algorithms.base64.additional_info":
+    "Base64 is commonly used for encoding binary data in a text format.",
+
+  // URL Encoder
+  "tools.urlEncoder.name": "URL Encoder/Decoder",
+  "tools.urlEncoder.description":
+    "Encode and decode URLs using different methods (encodeURI vs encodeURIComponent).",
+  "tools.urlEncoder.original_text": "Original Text",
+  "tools.urlEncoder.url_encoded_text": "URL Encoded Text",
+  "tools.urlEncoder.uri_encoding": "URI",
+  "tools.urlEncoder.uri_component_encoding": "URI Component",
+  "tools.urlEncoder.uri_encoding_description":
+    "encodeURI: Preserves URL structure characters like :, /, ?, #, etc.",
+  "tools.urlEncoder.uri_component_description":
+    "encodeURIComponent: Encodes all special characters for use in URL components.",
+  "tools.urlEncoder.input_original_text": "Input Original Text",
+  "tools.urlEncoder.input_encoded_text": "Input Encoded Text",
+  "tools.urlEncoder.enter_text_to_encode": "Enter text to encode...",
+  "tools.urlEncoder.enter_text_to_decode": "Enter encoded text to decode...",
+  "tools.urlEncoder.encoding_result": "Encoding Result",
+  "tools.urlEncoder.decoding_result": "Decoding Result",
+  "tools.urlEncoder.encoded_result_placeholder":
+    "Encoded URL will appear here...",
+  "tools.urlEncoder.decoded_result_placeholder":
+    "Decoded text will appear here...",
+  "tools.urlEncoder.clear": "Clear",
+  "tools.urlEncoder.copy_result": "Copy Result",
+  "tools.urlEncoder.copied": "Copied!",
+  "tools.urlEncoder.show_history": "Show History",
+  "tools.urlEncoder.hide_history": "Hide History",
+  "tools.urlEncoder.history": "History",
+  "tools.urlEncoder.clear_history": "Clear History",
+  "tools.urlEncoder.no_history": "No history yet",
+  "tools.urlEncoder.swap_direction": "Swap Direction",
+  "tools.urlEncoder.encode": "Encode",
+  "tools.urlEncoder.decode": "Decode",
+  "tools.urlEncoder.copied_to_clipboard": "Copied to clipboard!",
+  "tools.urlEncoder.copy_failed": "Failed to copy to clipboard",
+  "tools.urlEncoder.error_processing": "Error processing text",
+  "tools.urlEncoder.load_history_error": "Error loading history",
+  "tools.urlEncoder.url_encoding_explanation": "URL Encoding Explanation",
+  "tools.urlEncoder.uri_vs_component": "encodeURI vs encodeURIComponent",
+  "tools.urlEncoder.encode_uri_description":
+    "Encodes a complete URI. Preserves special characters that are part of URI syntax.",
+  "tools.urlEncoder.encode_uri_component_description":
+    "Encodes a URI component. Encodes all special characters that have meaning in URIs.",
+  "tools.urlEncoder.usage_scenarios": "Usage Scenarios",
+  "tools.urlEncoder.scenario_1": "Use encodeURI when building complete URLs",
+  "tools.urlEncoder.scenario_2": "Use encodeURIComponent for query parameters",
+  "tools.urlEncoder.scenario_3": "Use encodeURIComponent for form data",
+  "tools.urlEncoder.encoding_rules": "Encoding Rules",
+  "tools.urlEncoder.rules_1": "encodeURI does not encode: ~!@#$&*()=:/,;?+'",
+  "tools.urlEncoder.rules_2": "encodeURIComponent does not encode: ~!*()'",
+
+  // Tool: Live Photo Unpacker
+  "tools.livePhoto.name": "Live Photo Utility",
+  "tools.livePhoto.description": "Extract or create Live Photos (MVIMG, Motion Photos) from images and videos",
+  "tools.livePhoto.mode.unpack": "Extract (Unpack)",
+  "tools.livePhoto.mode.make": "Create (Pack)",
+  "tools.livePhoto.dragTitle": "Click or drag Live Photo here",
+  "tools.livePhoto.dragHint": "Supports .jpg Live Photos (e.g. Huawei/Xiaomi MVIMG)",
+  "tools.livePhoto.processing": "Processing...",
+  "tools.livePhoto.success": "Unpacked successfully",
+  "tools.livePhoto.error": "Unpacking failed, please check if the file is corrupted",
+  "tools.livePhoto.errorNoVideo": "No video data found in the file, it might not be a Live Photo",
+  "tools.livePhoto.errorInvalidFormat": "Invalid file format",
+  "tools.livePhoto.extractedImage": "Extracted Image",
+  "tools.livePhoto.extractedVideo": "Extracted Video",
+  "tools.livePhoto.emptyHint": "Please upload a Live Photo (e.g. MVIMG_xxx.jpg)",
+  "tools.livePhoto.howToUse": "How to Use",
+  "tools.livePhoto.step1": "Export the Live Photo from your phone (usually .jpg)",
+  "tools.livePhoto.step2": "Drag and drop the photo into the upload area above",
+  "tools.livePhoto.step3": "Once unpacked, you can preview and download the image and video separately",
+  "tools.livePhoto.makeTitle": "Create Live Photo",
+  "tools.livePhoto.selectImage": "Select Cover Image (JPG)",
+  "tools.livePhoto.selectVideo": "Select Motion Video (MP4)",
+  "tools.livePhoto.makeAction": "Pack to Live Photo",
+  "tools.livePhoto.makeSuccess": "Live Photo created successfully!",
+  "tools.livePhoto.makeError": "Creation failed, please check file formats",
+  "tools.livePhoto.makeStep1": "Prepare a JPG image as the cover",
+  "tools.livePhoto.makeStep2": "Prepare an MP4 video as the motion content",
+  "tools.livePhoto.makeStep3": "Click the pack button to generate an MVIMG file recognizable by smartphones",
+  "tools.livePhoto.note": "Note: This tool runs locally in your browser. Your photos are not uploaded to the server, ensuring your privacy.",
+
+  // Tool: Universal Video Player
+  "tools.universalVideoPlayer.name": "Universal Video Player",
+  "tools.universalVideoPlayer.description": "Professional video player supporting HLS (m3u8), DASH, local files, and external subtitles.",
+  "tools.universalVideoPlayer.urlPlaceholder": "Enter video URL (e.g., http://.../video.m3u8)",
+  "tools.universalVideoPlayer.playAction": "Play Now",
+  "tools.universalVideoPlayer.fileUpload": "Select Local Video",
+  "tools.universalVideoPlayer.subtitleUpload": "Load External Subtitles",
+  "tools.universalVideoPlayer.autoPlay": "Auto Play",
+  "tools.universalVideoPlayer.waiting": "Waiting for video source...",
+  "tools.universalVideoPlayer.source": "Video Source",
+  "tools.universalVideoPlayer.subtitles": "Subtitles",
+  "tools.universalVideoPlayer.loadVideoFirst": "Please load a video first",
+  "tools.universalVideoPlayer.subtitleLoaded": "Subtitle loaded successfully",
+  "tools.universalVideoPlayer.enterUrl": "Please enter a video URL",
+  "tools.universalVideoPlayer.tips": "Tip: Supports major streaming formats. For CORS issues, ensure the server allows cross-origin requests.",
+  "tools.universalVideoPlayer.feat1.title": "All-Format Support",
+  "tools.universalVideoPlayer.feat1.desc": "Native MP4/WebM support, with HLS and DASH streaming via expert libraries.",
+  "tools.universalVideoPlayer.feat2.title": "Pro Controls",
+  "tools.universalVideoPlayer.feat2.desc": "Playback speed, aspect ratio, PiP, and screenshot functionality at your fingertips.",
+  "tools.universalVideoPlayer.feat3.title": "Privacy First",
+  "tools.universalVideoPlayer.feat3.desc": "Smooth local file playback without uploading any data to external servers.",
+
+  // Tool: Monaco Editor
+  "tools.monacoEditor.name": "Monaco Code Editor",
+  "tools.monacoEditor.description": "Full-featured online code editor powered by VS Code engine supporting multiple languages.",
+  "tools.monacoEditor.theme": "Editor Theme",
+  "tools.monacoEditor.fontSize": "Font Size",
+  "tools.monacoEditor.minimap": "Minimap",
+  "tools.monacoEditor.wordWrap": "Word Wrap",
+  "tools.monacoEditor.readOnly": "Read Only",
+  "tools.monacoEditor.format": "Format Code",
+  "tools.monacoEditor.tip": "Tip: You can use standard browser shortcuts like Ctrl+F to search and Ctrl+H to replace.",
+  "tools.monacoEditor.feat1.title": "Multi-language Support",
+  "tools.monacoEditor.feat1.desc": "Native support for dozens of mainstream languages including JS, Python, Go, and Rust.",
+  "tools.monacoEditor.feat2.title": "Highly Customizable",
+  "tools.monacoEditor.feat2.desc": "Switch between dark/light themes and freely adjust font size and editor behavior.",
+  "tools.monacoEditor.feat3.title": "Pro Experience",
+  "tools.monacoEditor.feat3.desc": "Integrated syntax highlighting, code folding, IntelliSense, and auto-completion.",
 };

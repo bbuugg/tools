@@ -315,7 +315,7 @@ const JsonToExcel: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto px-4">
             {/* Header */}
-            <div className="text-center mb-10">
+            <div className="text-center mb-4">
                 <Title level={1} className="text-white mb-2">
                     <FormattedMessage id="tools.jsonToExcel.name" />
                 </Title>
@@ -348,7 +348,7 @@ const JsonToExcel: React.FC = () => {
                             />
 
                             {/* Conversion Type Config */}
-                            <div className="p-4 space-y-4">
+                            <div className="space-y-4">
                                 <div className="flex items-center gap-4">
                                     <Text className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.format" />:</Text>
                                     <Select
@@ -362,11 +362,9 @@ const JsonToExcel: React.FC = () => {
                                     </Select>
                                 </div>
 
-                                <Divider />
-
                                 {/* Excel Options */}
                                 {options.conversionType === 'excel' && (
-                                    <Space direction="vertical" className="w-full">
+                                    <Space orientation="vertical" className="w-full">
                                         <Row gutter={16}>
                                             <Col span={32}>
                                                 <Input
@@ -400,7 +398,7 @@ const JsonToExcel: React.FC = () => {
 
                                 {/* CSV Options */}
                                 {options.conversionType === 'csv' && (
-                                    <Space direction="vertical" className="w-full">
+                                    <Space orientation="vertical" className="w-full">
                                         <Row gutter={16}>
                                             <Col span={12}>
                                                 <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.delimiter" /></Text>
@@ -427,7 +425,7 @@ const JsonToExcel: React.FC = () => {
 
                                 {/* SQL Options */}
                                 {options.conversionType === 'sql' && (
-                                    <Space direction="vertical" className="w-full">
+                                    <Space orientation="vertical" className="w-full">
                                         <Row gutter={16}>
                                             <Col span={12}>
                                                 <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.tableName" /></Text>
@@ -533,7 +531,7 @@ const JsonToExcel: React.FC = () => {
                                     <TextArea
                                         value={options.conversionType === 'csv' ? csvOutput : sqlOutput}
                                         readOnly
-                                        className="font-mono text-sm text-blue-300 rounded-lg"
+                                        className="font-mono text-sm text-green-300 rounded-lg"
                                         style={{ height: '300px', resize: 'none' }}
                                     />
                                 )}

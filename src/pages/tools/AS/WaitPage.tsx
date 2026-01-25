@@ -51,7 +51,7 @@ const WaitPage: React.FC = () => {
                             type="primary"
                             size="large"
                             onClick={startWaiting}
-                            className="bg-blue-600 rounded-full px-12 border-none"
+                            className="bg-green-600 rounded-full px-12 border-none"
                         >
                             <FormattedMessage id="common.beginTraining" />
                         </Button>

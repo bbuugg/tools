@@ -40,21 +40,6 @@ const NotFound: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <Title level={1} className="text-white mb-4">
-          <FormattedMessage
-            id="tools.notFound.name"
-            defaultMessage="404 Page Detector"
-          />
-        </Title>
-        <Text className="text-slate-400 text-lg">
-          <FormattedMessage
-            id="tools.notFound.description"
-            defaultMessage="Advanced tool for analyzing and locating missing web resources."
-          />
-        </Text>
-      </div>
-
       <Card className="bg-white/5 border-slate-700 text-center py-8">
         {status === "idle" && (
           <div className="animate-fade-in">
@@ -92,7 +77,7 @@ const NotFound: React.FC = () => {
         {status === "scanning" && (
           <div className="animate-fade-in py-8">
             <Steps
-              direction="vertical"
+              orientation="vertical"
               current={currentStep}
               className="max-w-xs mx-auto text-left"
               items={[

@@ -352,7 +352,7 @@ const ImageListProcessor: React.FC = () => {
                 {imageList.map((img, idx) => (
                   <div
                     key={idx}
-                    className="rounded-lg p-2 border border-slate-700/50 group hover:border-blue-500/50 transition-all"
+                    className="rounded-lg p-2 border border-slate-700/50 group hover:border-green-500/50 transition-all"
                   >
                     <div className="aspect-square w-full rounded overflow-hidden flex items-center justify-center mb-2 relative">
                       <Image

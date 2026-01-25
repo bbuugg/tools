@@ -1,13 +1,17 @@
+import DownloadDropdown from "@/components/DownloadDropdown";
 import useIsMobile from "@/hooks/useIsMobile";
-import ArtificialStupidity from "@/pages/tools/ArtificialStupidity";
+import AS from "@/pages/tools/AS";
 import JsonTools from "@/pages/tools/Json";
 import MediaTools from "@/pages/tools/Media";
 import WebTools from "@/pages/tools/Web";
+import OtherTools from "@/pages/tools/Other";
 import { useLocaleStore } from "@/store/useLocaleStore";
 import { useThemeStore } from "@/store/useThemeStore";
+import { isElectron as isElectronEnv } from "@/utils/env";
 import { allTools } from "@/utils/toolList";
 import {
   AppstoreOutlined,
+  BookOutlined,
   BulbFilled,
   BulbOutlined,
   GithubOutlined,
@@ -17,17 +21,24 @@ import {
   MenuUnfoldOutlined,
   PictureOutlined,
   SearchOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons";
-import { AutoComplete, Button, Dropdown, Layout, Menu, Tag, theme } from "antd";
-import React, { useState } from "react";
+import {
+  AutoComplete,
+  Button,
+  Dropdown,
+  Layout,
+  Menu,
+  type MenuProps,
+  Tag,
+  theme,
+} from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import WindowControls from "../components/WindowControls";
 
 const { Header, Sider, Content } = Layout;
-
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
 
 interface LevelKeysProps {
   key?: string;
@@ -47,8 +58,8 @@ const menuItems = [
   {
     key: "artificial-stupidity",
     icon: <AppstoreOutlined />,
-    label: <FormattedMessage id="nav.artificialStupidity" />,
-    children: ArtificialStupidity.map((tool) => ({
+    label: <FormattedMessage id="nav.as" />,
+    children: AS.map((tool) => ({
       key: tool.path,
       icon: tool.icon,
       label: (
@@ -112,6 +123,23 @@ const menuItems = [
       ),
     })),
   },
+  {
+    key: "other",
+    icon: <PictureOutlined />,
+    label: <FormattedMessage id="nav.other" defaultMessage="Other Tools" />,
+    children: OtherTools.map((tool) => ({
+      key: tool.path,
+      icon: tool.icon,
+      label: (
+        <Link to={tool.path}>
+          <FormattedMessage
+            id={`tools.${tool.id}.name`}
+            defaultMessage={tool.name}
+          />
+        </Link>
+      ),
+    })),
+  },
 ];
 
 const getLevelKeys = (items1: LevelKeysProps[]) => {
@@ -132,9 +160,17 @@ const getLevelKeys = (items1: LevelKeysProps[]) => {
 
 const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC = () => {
   const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(isMobile);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Check if we're running in Electron environment
+  // const isElectron = typeof window !== 'undefined' &&
+  //   (typeof (window as unknown as { process?: { type?: string } }).process?.type !== 'undefined' ||
+  const isElectron = isElectronEnv();
+
+  // If in Electron, don't collapse the sidebar
+  const [collapsed, setCollapsed] = useState(isMobile && !isElectron);
   const location = useLocation();
   const navigate = useNavigate();
   const intl = useIntl();
@@ -143,7 +179,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const [stateOpenKeys, setStateOpenKeys] = useState([]);
+  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>([]);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    } else {
+      // Fallback to window scroll if content ref is not available
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
 
   const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
     const currentOpenKey = openKeys.find((key) => !stateOpenKeys.includes(key));
@@ -216,7 +262,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     setOptions(filtered);
   };
 
-  const handleSelect = (_: string, option: any) => {
+  const handleSelect = (_: string, option: { path: string }) => {
     navigate(option.path);
   };
 
@@ -228,23 +274,29 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <Layout className="h-screen overflow-hidden">
       <Header
-        className="flex items-center justify-between w-full !px-4"
+        className="flex items-center justify-between w-full !px-4 draggable-header"
         style={{ background: colorBgContainer }}
       >
         <div className="flex items-center gap-2">
           <Link to="/" className="font-bold text-xl !text-green-600 mr-4">
-            {collapsed ? "AS" : "Artificial Stupidity"}
+            {isElectron || (!isElectron && !collapsed) ? "As Tools" : "Tools"}
           </Link>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-10 h-10"
+            onClick={() => {
+              // If in Electron, don't allow collapsing
+              if (!isElectron) {
+                setCollapsed(!collapsed);
+              }
+            }}
+            className="w-10 h-10 no-drag"
+            hidden={isElectron}
           />
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="w-64 hidden md:flex items-center">
+          <div className="w-48 hidden md:flex items-center auto-complete-container">
             <AutoComplete
               prefix={<SearchOutlined />}
               options={options}
@@ -252,7 +304,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 onSearch: handleSearch,
               }}
               onSelect={handleSelect}
-              className="w-full"
+              className="w-full no-drag"
+              popupMatchSelectWidth={false}
+              style={{ height: 32 }}
               placeholder={intl.formatMessage({
                 id: "layout.searchPlaceholder",
               })}
@@ -260,23 +314,50 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
 
           <Button
-            icon={currentTheme === "dark" ? <BulbFilled /> : <BulbOutlined />}
-            onClick={toggleTheme}
+            icon={<BookOutlined />}
             type="text"
-          />
-
-          <Dropdown menu={{ items: langItems }} placement="bottomRight">
-            <Button icon={<GlobalOutlined />} type="text">
-              {locale === "zh-CN" ? "中文" : "EN"}
-            </Button>
-          </Dropdown>
-
+            onClick={() =>
+              navigate(
+                "/iframe?url=" + encodeURIComponent("https://www.codeemo.cn")
+              )
+            }
+            className="no-drag"
+          >
+            <FormattedMessage id="nav.blog" defaultMessage={"博客"} />
+          </Button>
+          <Button
+            icon={<VideoCameraOutlined />}
+            type="text"
+            onClick={() =>
+              navigate(
+                "/iframe?url=" + encodeURIComponent("https://live.codeemo.cn")
+              )
+            }
+            className="no-drag"
+          >
+            Digo
+          </Button>
+          <DownloadDropdown />
           <Button
             icon={<GithubOutlined />}
             type="text"
-            href="https://github.com/bbuugg/as"
+            href="https://github.com/bbuugg/tools"
             target="_blank"
+            className="no-drag"
           />
+          <Button
+            icon={currentTheme === "dark" ? <BulbFilled /> : <BulbOutlined />}
+            onClick={toggleTheme}
+            type="text"
+            className="no-drag"
+          />
+
+          <Dropdown menu={{ items: langItems }} placement="bottomRight">
+            <Button icon={<GlobalOutlined />} type="text" className="no-drag">
+              {locale === "zh-CN" ? "中文" : "English"}
+            </Button>
+          </Dropdown>
+          <WindowControls />
         </div>
       </Header>
 
@@ -285,8 +366,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         <Sider
           trigger={null}
-          collapsible
-          collapsed={collapsed}
+          collapsible={!isElectron}
+          collapsed={isElectron ? false : collapsed}
           collapsedWidth={isMobile ? 50 : 80}
           className="overflow-y-auto no-scrollbar"
         >
@@ -300,13 +381,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           />
         </Sider>
         <Content
+          ref={contentRef}
           style={{
             overflowY: "auto",
             borderRadius: borderRadiusLG,
             padding: "24px",
           }}
         >
-          {children}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

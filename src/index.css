@@ -16,7 +16,8 @@
 
 
 * {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
+  /* user-select: none; */
 }
 
 @layer utilities {
@@ -40,4 +41,22 @@
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
+}
+
+/* Electron window dragging */
+.draggable-header {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag !important;
+}
+
+/* Control autocomplete container */
+.auto-complete-container {
+  position: relative;
+  height: 40px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
 }
