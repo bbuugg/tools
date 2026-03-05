@@ -101,6 +101,15 @@ const tools: ToolConfig[] = [
         category: 'Media',
         component: React.lazy(() => import('./UniversalVideoPlayer')),
         path: '/media/universal-video-player',
+    },
+    {
+        id: 'imageBase64Converter',
+        name: 'Image Base64 Converter',
+        description: 'Convert images to base64 strings and vice versa',
+        icon: <FileImageOutlined />,
+        category: 'Media',
+        component: React.lazy(() => import('./ImageBase64Converter')),
+        path: '/media/image-base64-converter',
     }
 ];
 

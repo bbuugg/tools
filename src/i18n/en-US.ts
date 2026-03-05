@@ -776,6 +776,21 @@ export default {
   "tools.imageWatermark.name": "Image Watermark",
   "tools.imageWatermark.description": "Add text or image watermarks to images.",
   "tools.imageToGifConverter.name": "Image to GIF Converter",
+  "tools.imageToGifConverter.description":
+    "Convert multiple images into a single animated GIF.",
+
+  "tools.imageBase64Converter.name": "Image Base64 Converter",
+  "tools.imageBase64Converter.description": "Convert images to base64 strings and vice versa.",
+  "tools.imageBase64Converter.mode.imageToBase64": "Image to Base64",
+  "tools.imageBase64Converter.mode.base64ToImage": "Base64 to Image",
+  "tools.imageBase64Converter.inputTitle": "Input",
+  "tools.imageBase64Converter.outputTitle": "Output",
+  "tools.imageBase64Converter.uploadText": "Click or drag image to this area to upload",
+  "tools.imageBase64Converter.uploadHint": "Support image files only",
+  "tools.imageBase64Converter.noResults": "Output will appear here",
+  "tools.imageBase64Converter.base64Placeholder": "Paste your Base64 string here...",
+  "tools.imageBase64Converter.withPrefix": "Data URI Prefix",
+  "tools.imageBase64Converter.preview": "Preview Image",
 
   "tools.qrCodeTool.generate": "Generate",
   "tools.qrCodeTool.recognize": "Recognize",
