@@ -734,7 +734,18 @@ export default {
   "tools.imageCompressor.description": "本地压缩图片 (JPG, PNG, WebP, GIF)。",
   "tools.imageWatermark.name": "图片水印",
   "tools.imageWatermark.description": "为图片添加文本或图片水印。",
-  "tools.imageToGifConverter.name": "图片转GIF",
+  "tools.imageBase64Converter.name": "图片 Base64 转换",
+  "tools.imageBase64Converter.description": "实现图片与 Base64 字符串之间的相互转换。",
+  "tools.imageBase64Converter.mode.imageToBase64": "图片转 Base64",
+  "tools.imageBase64Converter.mode.base64ToImage": "Base64 转图片",
+  "tools.imageBase64Converter.inputTitle": "输入",
+  "tools.imageBase64Converter.outputTitle": "输出",
+  "tools.imageBase64Converter.uploadText": "点击或拖拽图片到此区域上传",
+  "tools.imageBase64Converter.uploadHint": "仅支持图片文件",
+  "tools.imageBase64Converter.noResults": "结果将显示在此处",
+  "tools.imageBase64Converter.base64Placeholder": "在此粘贴 Base64 字符串...",
+  "tools.imageBase64Converter.withPrefix": "数据 URI 前缀",
+  "tools.imageBase64Converter.preview": "预览图片",
 
   "tools.qrCodeTool.generate": "生成",
   "tools.qrCodeTool.recognize": "识别",
@@ -846,7 +857,7 @@ export default {
   "tools.colorPicker.commonColors": "常用颜色",
 
   // 图片转GIF转换器
-  "tools.imageToGifConverter.title": "图片转GIF转换器",
+  "tools.imageToGifConverter.name": "图片转GIF转换器",
   "tools.imageToGifConverter.description": "将多张图片转换为单个动画GIF。",
   "tools.imageToGifConverter.howToUse.title": "如何使用",
   "tools.imageToGifConverter.howToUse.step1":
