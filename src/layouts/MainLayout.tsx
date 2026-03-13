@@ -1,6 +1,5 @@
 import DownloadDropdown from "@/components/DownloadDropdown";
 import useIsMobile from "@/hooks/useIsMobile";
-import AS from "@/pages/tools/AS";
 import JsonTools from "@/pages/tools/Json";
 import MediaTools from "@/pages/tools/Media";
 import WebTools from "@/pages/tools/Web";
@@ -35,7 +34,7 @@ import {
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import WindowControls from "../components/WindowControls";
 
 const { Header, Sider, Content } = Layout;
@@ -54,23 +53,6 @@ const menuItems = [
         <FormattedMessage id="nav.allTools" />
       </Link>
     ),
-  },
-  {
-    key: "artificial-stupidity",
-    icon: <AppstoreOutlined />,
-    label: <FormattedMessage id="nav.as" />,
-    children: AS.map((tool) => ({
-      key: tool.path,
-      icon: tool.icon,
-      label: (
-        <Link to={tool.path}>
-          <FormattedMessage
-            id={`tools.${tool.id}.name`}
-            defaultMessage={tool.name}
-          />
-        </Link>
-      ),
-    })),
   },
   {
     key: "json",

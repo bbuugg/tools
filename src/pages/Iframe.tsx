@@ -1,7 +1,7 @@
 import { ReloadOutlined } from "@ant-design/icons";
 import { Alert, FloatButton, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 interface IframeProps {
   url?: string;

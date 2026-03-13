@@ -8,7 +8,7 @@ import {
 import { Button, Card, Result, Steps, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const { Title, Text, Paragraph } = Typography;
 

@@ -3,7 +3,6 @@ import Desktop from "@/pages/Desktop";
 import HomePage from "@/pages/HomePage";
 import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
-import AsTools from "@/pages/tools/AS";
 import JsonTools from "@/pages/tools/Json";
 import MediaTools from "@/pages/tools/Media";
 import OtherTools from "@/pages/tools/Other";
@@ -11,7 +10,7 @@ import WebTools from "@/pages/tools/Web";
 import { isElectron } from "@/utils/env";
 import { Spin } from "antd";
 import React, { Suspense } from "react";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router";
 
 const AppRouter: React.FC = () => {
   // 根据环境选择路由类型
@@ -34,13 +33,6 @@ const AppRouter: React.FC = () => {
           {/* Wrapper for routes with MainLayout */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
-            {AsTools.map((tool) => (
-              <Route
-                key={tool.id}
-                path={tool.path}
-                element={<tool.component />}
-              />
-            ))}
             {JsonTools.map((tool) => (
               <Route
                 key={tool.id}

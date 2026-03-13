@@ -5,7 +5,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Card, Col, Input, Row, Tag, Typography } from "antd";
 import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const { Title, Text } = Typography;
 

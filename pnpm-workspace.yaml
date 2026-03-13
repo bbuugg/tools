@@ -3,3 +3,4 @@ onlyBuiltDependencies:
   - core-js
   - electron
   - esbuild
+  - msw

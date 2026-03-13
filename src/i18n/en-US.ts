@@ -406,12 +406,6 @@ export default {
   // Tool: Typing Simulator
   "tools.typing.name": "Attention Simulator",
   "tools.typing.description": "Someone is typing... someone is always typing.",
-  "common.typingImportant":
-    "Hey, I have something really important to tell you...",
-  "common.typingStatus": "Artificial Stupidity is typing...",
-  "common.typingWait":
-    "Wait for it... it's going to be big... any second now...",
-
   // Tool: Click Counter
   "tools.clickCounter.name": "Click Counter",
   "tools.clickCounter.description":

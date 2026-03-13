@@ -11,7 +11,7 @@ import {
 import { ColorPicker, Dropdown, Form, Input, message, Modal, theme, type MenuProps } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import DesktopIcon from './DesktopIcon';
 import StartMenu from './StartMenu';
