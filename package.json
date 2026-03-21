@@ -50,7 +50,7 @@
     "gifuct-js": "^2.1.2",
     "hls.js": "^1.6.15",
     "jsonpath-plus": "^10.3.0",
-    "jspdf": "^4.0.0",
+    "jspdf": "^4.2.1",
     "jsqr": "^1.4.0",
     "jszip": "^3.10.1",
     "lucide-react": "^0.562.0",
