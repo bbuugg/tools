@@ -1,25 +1,46 @@
 {
-  "appId": "com.tools.app",
-  "productName": "Tools App",
+  "appId": "cn.codeemo.tools",
+  "productName": "Tools",
   "directories": {
-    "output": "dist-electron"
+    "output": "dist-electron",
+    "buildResources": "build"
   },
-  "files": ["dist/**/*", "electron/**/*", "package.json", "!node_modules"],
+  "extraResources": [
+    {
+      "from": "node_modules/axios/",
+      "to": "node_modules/axios/"
+    }
+  ],
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "public/**/*",
+    "package.json"
+  ],
+  "asar": true,
   "win": {
-    "target": ["nsis"],
+    "icon": "build/icon.ico",
+    "target": {
+      "target" : "nsis",
+      "arch": ["x64"]
+    },
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
   },
   "nsis": {
     "oneClick": false,
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": false
+    "deleteAppDataOnUninstall": false,
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico"
   },
   "mac": {
+    "icon": "build/icon.png",
     "target": ["dmg"],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "linux": {
+    "icon": "build/icon.png",
     "target": ["AppImage"],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   }

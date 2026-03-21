@@ -1,549 +1,516 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Input, Button, Select, Checkbox, Typography, Space, Row, Col, Alert, Divider, message } from 'antd';
+import { useState } from "react";
+import { useIntl } from "react-intl";
+import * as XLSX from "xlsx";
 import {
-    DownloadOutlined,
-    CopyOutlined,
-    TableOutlined,
-    DeleteOutlined,
-    CheckCircleOutlined
-} from '@ant-design/icons';
-import { useCopy } from '@/hooks/useCopy';
-import { FormattedMessage, useIntl } from 'react-intl';
-import * as XLSX from 'xlsx';
+  Download,
+  Trash2,
+  AlertCircle,
+  CheckCircle2,
+  FileSpreadsheet,
+} from "lucide-react";
 
-const { TextArea } = Input;
-const { Title, Text } = Typography;
-const { Option } = Select;
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCopy } from "@/hooks/useCopy";
 
-// Types
-type ConversionType = 'excel' | 'csv' | 'sql';
+type ConversionType = "excel" | "csv" | "sql";
 
 interface Options {
-    conversionType: ConversionType;
-    includeHeaders: boolean;
-    autoFitColumns: boolean;
-    sheetName: string;
-    delimiter: string;
-    quoteChar: string;
-    flattenNested: boolean;
-    tableName: string;
-    sqlType: 'INSERT' | 'UPDATE' | 'CREATE_TABLE';
-    escapeValues: boolean;
-    batchInsert: boolean;
-    whereField: string;
+  conversionType: ConversionType;
+  includeHeaders: boolean;
+  autoFitColumns: boolean;
+  sheetName: string;
+  delimiter: string;
+  flattenNested: boolean;
+  tableName: string;
+  sqlType: "INSERT" | "CREATE_TABLE";
+  batchInsert: boolean;
 }
 
-const JsonToExcel: React.FC = () => {
-    const intl = useIntl();
-    const copy = useCopy();
+const EXAMPLE_JSON = `[
+  { "id": 1, "name": "Alice", "age": 28, "city": "Beijing" },
+  { "id": 2, "name": "Bob", "age": 34, "city": "Shanghai" },
+  { "id": 3, "name": "Charlie", "age": 22, "city": "Guangzhou" }
+]`;
 
-    // State
-    const [inputJson, setInputJson] = useState('');
-    const [excelBlob, setExcelBlob] = useState<Blob | null>(null);
-    const [csvOutput, setCsvOutput] = useState('');
-    const [sqlOutput, setSqlOutput] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+function flattenObject(
+  obj: Record<string, unknown>,
+  prefix = ""
+): Record<string, unknown> {
+  return Object.entries(obj).reduce(
+    (acc, [key, val]) => {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (val && typeof val === "object" && !Array.isArray(val)) {
+        Object.assign(acc, flattenObject(val as Record<string, unknown>, newKey));
+      } else {
+        acc[newKey] = val;
+      }
+      return acc;
+    },
+    {} as Record<string, unknown>
+  );
+}
 
-    // Preview state
-    const [previewData, setPreviewData] = useState<Record<string, unknown>[]>([]);
-    const [previewHeaders, setPreviewHeaders] = useState<string[]>([]);
+function parseInput(
+  input: string,
+  flatten: boolean
+): { data: Record<string, unknown>[]; headers: string[] } | null {
+  try {
+    const parsed = JSON.parse(input);
+    let arr: Record<string, unknown>[] = [];
+    if (Array.isArray(parsed)) {
+      arr = parsed.filter((i) => typeof i === "object" && i !== null);
+    } else if (typeof parsed === "object" && parsed !== null) {
+      arr = [parsed];
+    } else {
+      return null;
+    }
+    const data = flatten ? arr.map((r) => flattenObject(r)) : arr;
+    const headers = Array.from(new Set(data.flatMap((r) => Object.keys(r))));
+    return { data, headers };
+  } catch {
+    return null;
+  }
+}
 
-    const [options, setOptions] = useState<Options>({
-        conversionType: 'excel',
-        includeHeaders: true,
-        autoFitColumns: true,
-        sheetName: 'Sheet1',
-        delimiter: ',',
-        quoteChar: '"',
-        flattenNested: true,
-        tableName: 'my_table',
-        sqlType: 'INSERT',
-        escapeValues: true,
-        batchInsert: false,
-        whereField: 'id',
-    });
+function toCSV(
+  data: Record<string, unknown>[],
+  headers: string[],
+  delimiter: string,
+  includeHeaders: boolean
+): string {
+  const escape = (v: unknown) => {
+    const s = String(v ?? "");
+    return s.includes(delimiter) || s.includes('"') || s.includes("\
+")
+      ? `"${s.replace(/"/g, '""')}"`
+      : s;
+  };
+  const rows: string[] = [];
+  if (includeHeaders) rows.push(headers.map(escape).join(delimiter));
+  for (const row of data) {
+    rows.push(headers.map((h) => escape(row[h])).join(delimiter));
+  }
+  return rows.join("\
+");
+}
 
-    // Reset outputs when conversion type changes
-    useEffect(() => {
-        setExcelBlob(null);
-        setCsvOutput('');
-        setSqlOutput('');
-        setErrorMessage('');
-    }, [options.conversionType]);
+function toSQL(
+  data: Record<string, unknown>[],
+  headers: string[],
+  tableName: string,
+  sqlType: "INSERT" | "CREATE_TABLE",
+  batchInsert: boolean
+): string {
+  const escVal = (v: unknown) => {
+    if (v === null || v === undefined) return "NULL";
+    if (typeof v === "number" || typeof v === "boolean") return String(v);
+    return `\'${String(v).replace(/\'/g, "\\\'\\\'")}\'`;
+  };
+  const cols = headers.map((h) => `\`${h}\``).join(", ");
+  if (sqlType === "CREATE_TABLE") {
+    const colDefs = headers
+      .map((h) => {
+        const sample = data.find((r) => r[h] !== null && r[h] !== undefined)?.[h];
+        const type =
+          typeof sample === "number"
+            ? "DECIMAL(10,2)"
+            : typeof sample === "boolean"
+            ? "BOOLEAN"
+            : "VARCHAR(255)";
+        return `  \`${h}\` ${type}`;
+      })
+      .join(",\
+");
+    const inserts = data
+      .map(
+        (row) =>
+          `INSERT INTO \`${tableName}\` (${cols}) VALUES (${headers
+            .map((h) => escVal(row[h]))
+            .join(", ")});`
+      )
+      .join("\
+");
+    return `CREATE TABLE \`${tableName}\` (\
+${colDefs}\
+);\
+\
+${inserts}`;
+  }
+  if (batchInsert) {
+    const values = data
+      .map((row) => `  (${headers.map((h) => escVal(row[h])).join(", ")})`)
+      .join(",\
+");
+    return `INSERT INTO \`${tableName}\` (${cols}) VALUES\
+${values};`;
+  }
+  return data
+    .map(
+      (row) =>
+        `INSERT INTO \`${tableName}\` (${cols}) VALUES (${headers
+          .map((h) => escVal(row[h]))
+          .join(", ")});`
+    )
+    .join("\
+");
+}
 
+const JsonToExcel = () => {
+  const intl = useIntl();
+  const copy = useCopy();
 
-    // -------------------------------------------------------------------------
-    // Logic: Helpers
-    // -------------------------------------------------------------------------
+  const [inputJson, setInputJson] = useState("");
+  const [csvOutput, setCsvOutput] = useState("");
+  const [sqlOutput, setSqlOutput] = useState("");
+  const [excelBlob, setExcelBlob] = useState<Blob | null>(null);
+  const [error, setError] = useState("");
+  const [previewData, setPreviewData] = useState<Record<string, unknown>[]>([]);
+  const [previewHeaders, setPreviewHeaders] = useState<string[]>([]);
+  const [converted, setConverted] = useState(false);
 
-    const flattenObject = (obj: Record<string, unknown>, prefix = ''): Record<string, unknown> => {
-        const flattened: Record<string, unknown> = {};
+  const [options, setOptions] = useState<Options>({
+    conversionType: "excel",
+    includeHeaders: true,
+    autoFitColumns: true,
+    sheetName: "Sheet1",
+    delimiter: ",",
+    flattenNested: true,
+    tableName: "my_table",
+    sqlType: "INSERT",
+    batchInsert: false,
+  });
 
-        for (const key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                const newKey = prefix ? `${prefix}.${key}` : key;
+  const setOpt = <K extends keyof Options>(key: K, val: Options[K]) =>
+    setOptions((prev) => ({ ...prev, [key]: val }));
 
-                if (Array.isArray(obj[key])) {
-                    flattened[newKey] = (obj[key] as any[]).join('; ');
-                } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    if (options.flattenNested) {
-                        Object.assign(flattened, flattenObject(obj[key] as Record<string, unknown>, newKey));
-                    } else {
-                        flattened[newKey] = JSON.stringify(obj[key]);
-                    }
-                } else {
-                    flattened[newKey] = obj[key];
-                }
-            }
-        }
-        return flattened;
-    };
+  const handleConvert = () => {
+    setError("");
+    setConverted(false);
+    const result = parseInput(inputJson, options.flattenNested);
+    if (!result) {
+      setError("Invalid JSON. Please enter a valid JSON array or object.");
+      return;
+    }
+    const { data, headers } = result;
+    setPreviewData(data);
+    setPreviewHeaders(headers);
 
-    const escapeValue = (value: unknown): string => {
-        let str = String(value ?? '');
-        if (options.quoteChar &&
-            (str.includes(options.delimiter) || str.includes('\n') || str.includes('\r') || str.includes(options.quoteChar))) {
-            str = str.replace(new RegExp(options.quoteChar, 'g'), options.quoteChar + options.quoteChar);
-            str = options.quoteChar + str + options.quoteChar;
-        }
-        return str;
-    };
+    if (options.conversionType === "excel") {
+      const ws = XLSX.utils.json_to_sheet(data, {
+        header: headers,
+        skipHeader: !options.includeHeaders,
+      });
+      if (options.autoFitColumns) {
+        ws["!cols"] = headers.map((h) => ({
+          wch: Math.max(h.length, ...data.map((r) => String(r[h] ?? "").length)),
+        }));
+      }
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, options.sheetName || "Sheet1");
+      const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      setExcelBlob(new Blob([buf], { type: "application/octet-stream" }));
+    } else if (options.conversionType === "csv") {
+      setCsvOutput(toCSV(data, headers, options.delimiter || ",", options.includeHeaders));
+    } else {
+      setSqlOutput(toSQL(data, headers, options.tableName || "my_table", options.sqlType, options.batchInsert));
+    }
+    setConverted(true);
+  };
 
-    const convertToCsv = (data: Record<string, unknown>[]) => {
-        const flattenedData = data.map(item => flattenObject(item));
-        const allHeaders = new Set<string>();
-        flattenedData.forEach(item => Object.keys(item).forEach(k => allHeaders.add(k)));
-        const headers = Array.from(allHeaders);
+  const handleDownload = () => {
+    if (options.conversionType === "excel" && excelBlob) {
+      const url = URL.createObjectURL(excelBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${options.sheetName || "data"}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else if (options.conversionType === "csv") {
+      const blob = new Blob([csvOutput], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "data.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const blob = new Blob([sqlOutput], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "data.sql";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
 
-        let csv = '';
-        if (options.includeHeaders) {
-            csv += headers.map(h => escapeValue(h)).join(options.delimiter) + '\n';
-        }
+  const outputText = options.conversionType === "csv" ? csvOutput : sqlOutput;
+  const hasOutput = converted && (options.conversionType === "excel" ? !!excelBlob : !!outputText);
 
-        flattenedData.forEach(item => {
-            const row = headers.map(h => escapeValue(item[h] ?? ''));
-            csv += row.join(options.delimiter) + '\n';
-        });
+  return (
+    <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
+      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">输入 JSON</CardTitle>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setInputJson(EXAMPLE_JSON)}>
+                    示例
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setInputJson("");
+                      setError("");
+                      setConverted(false);
+                      setPreviewData([]);
+                      setPreviewHeaders([]);
+                      setCsvOutput("");
+                      setSqlOutput("");
+                      setExcelBlob(null);
+                    }}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={inputJson}
+                onChange={(e) => setInputJson(e.target.value)}
+                placeholder={`[
+  { "key": "value" },
+  ...
+]`}
+                className="min-h-[200px] font-mono text-sm"
+              />
+              {error && (
+                <div className="mt-2 flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="size-4 shrink-0" />
+                  {error}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-        return csv.trim();
-    };
+          <Button className="w-full" size="lg" onClick={handleConvert} disabled={!inputJson.trim()}>
+            <FileSpreadsheet className="mr-2 size-4" />
+            转换
+          </Button>
 
-    // SQL Helpers
-    const escapeSqlValue = (value: unknown): string => {
-        if (value === null || value === undefined) return 'NULL';
-        if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
-        if (typeof value === 'number') return String(value);
-        if (typeof value === 'object') value = JSON.stringify(value);
-
-        let str = String(value);
-        if (options.escapeValues) str = str.replace(/'/g, "''");
-        return `'${str}'`;
-    };
-
-    const getSqlDataType = (value: unknown): string => {
-        if (value === null || value === undefined) return 'VARCHAR(255)';
-        if (typeof value === 'boolean') return 'BOOLEAN';
-        if (typeof value === 'number') return Number.isInteger(value) ? 'INT' : 'DECIMAL(10,2)';
-        if (typeof value === 'string') return value.length <= 50 ? 'VARCHAR(50)' : value.length <= 255 ? 'VARCHAR(255)' : 'TEXT';
-        return 'TEXT';
-    };
-
-    const generateCreateTableSql = (data: Record<string, unknown>[]): string => {
-        if (data.length === 0) return '';
-        const fields = new Set<string>();
-        const fieldTypes: Record<string, string> = {};
-
-        data.forEach(item => {
-            Object.keys(item).forEach(key => {
-                fields.add(key);
-                if (!fieldTypes[key]) fieldTypes[key] = getSqlDataType(item[key]);
-            });
-        });
-
-        const definitions = Array.from(fields).map(f => `  ${f} ${fieldTypes[f]}`).join(',\n');
-        return `CREATE TABLE ${options.tableName} (\n${definitions}\n);`;
-    };
-
-    const generateInsertSql = (data: Record<string, unknown>[]): string => {
-        if (data.length === 0) return '';
-        if (options.batchInsert) {
-            const fields = Object.keys(data[0]);
-            const fieldsList = fields.join(', ');
-            const valuesList = data.map(item => {
-                const vals = fields.map(f => escapeSqlValue(item[f])).join(', ');
-                return `(${vals})`;
-            }).join(',\n  ');
-            return `INSERT INTO ${options.tableName} (${fieldsList})\nVALUES\n  ${valuesList};`;
-        } else {
-            return data.map(item => {
-                const fields = Object.keys(item);
-                const vals = fields.map(f => escapeSqlValue(item[f])).join(', ');
-                return `INSERT INTO ${options.tableName} (${fields.join(', ')}) VALUES (${vals});`;
-            }).join('\n');
-        }
-    };
-
-    const generateUpdateSql = (data: Record<string, unknown>[]): string => {
-        if (data.length === 0) return '';
-        return data.map(item => {
-            const fields = Object.keys(item).filter(k => k !== options.whereField);
-            const setClause = fields.map(f => `${f} = ${escapeSqlValue(item[f])}`).join(', ');
-            const whereVal = escapeSqlValue(item[options.whereField]);
-            return `UPDATE ${options.tableName} SET ${setClause} WHERE ${options.whereField} = ${whereVal};`;
-        }).join('\n');
-    };
-
-    // -------------------------------------------------------------------------
-    // Actions
-    // -------------------------------------------------------------------------
-
-    const handleConvert = () => {
-        setErrorMessage('');
-        setExcelBlob(null);
-        setCsvOutput('');
-        setSqlOutput('');
-        setPreviewData([]);
-        setPreviewHeaders([]);
-
-        if (!inputJson.trim() || (options.conversionType === 'sql' && !options.tableName.trim())) {
-            message.error(intl.formatMessage({ id: 'tools.jsonExtractor.errors.invalidJson' }));
-            return;
-        }
-
-        try {
-            let data: any;
-            try {
-                data = JSON.parse(inputJson);
-            } catch {
-                throw new Error('Invalid JSON input');
-            }
-
-            if (!Array.isArray(data)) throw new Error('Root input must be a JSON Array');
-            if (data.length === 0) throw new Error('Array cannot be empty');
-
-            // Set Preview
-            if (options.conversionType !== 'sql') {
-                setPreviewData(data as Record<string, unknown>[]);
-                setPreviewHeaders(Object.keys(data[0] || {}));
-            }
-
-            if (options.conversionType === 'excel') {
-                const workbook = XLSX.utils.book_new();
-                const worksheet = XLSX.utils.json_to_sheet(data, {
-                    header: options.includeHeaders ? undefined : []
-                });
-
-                if (options.autoFitColumns) {
-                    const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-                    const wscols = [];
-                    for (let C = range.s.c; C <= range.e.c; ++C) {
-                        let maxW = 10;
-                        for (let R = range.s.r; R <= range.e.r; ++R) {
-                            const cell = worksheet[XLSX.utils.encode_cell({ c: C, r: R })];
-                            if (cell?.v) maxW = Math.max(maxW, Math.min(String(cell.v).length + 2, 50));
-                        }
-                        wscols.push({ wch: maxW });
-                    }
-                    worksheet['!cols'] = wscols;
-                }
-
-                XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Sheet1');
-                const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-                setExcelBlob(new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-                message.success(intl.formatMessage({ id: 'toast.success' }));
-
-            } else if (options.conversionType === 'csv') {
-                const csv = convertToCsv(data);
-                setCsvOutput(csv);
-                message.success(intl.formatMessage({ id: 'toast.success' }));
-
-            } else if (options.conversionType === 'sql') {
-                if (options.sqlType === 'UPDATE' && !options.whereField) throw new Error('Where field required for UPDATE');
-
-                let sql = '';
-                if (options.sqlType === 'CREATE_TABLE') sql = generateCreateTableSql(data);
-                else if (options.sqlType === 'INSERT') sql = generateInsertSql(data);
-                else if (options.sqlType === 'UPDATE') sql = generateUpdateSql(data);
-
-                setSqlOutput(sql);
-                message.success(intl.formatMessage({ id: 'toast.success' }));
-            }
-
-        } catch (err: any) {
-            setErrorMessage(err.message);
-        }
-    };
-
-    const handleLoadExample = () => {
-        const example = [
-            { id: 1, name: 'John Doe', email: 'john@ex.com', role: 'Admin' },
-            { id: 2, name: 'Jane Smith', email: 'jane@ex.com', role: 'User' }
-        ];
-        setInputJson(JSON.stringify(example, null, 2));
-    };
-
-    const handleDownload = () => {
-        let blob: Blob | null = null;
-        let ext = '';
-
-        if (options.conversionType === 'excel' && excelBlob) {
-            blob = excelBlob;
-            ext = 'xlsx';
-        } else if (options.conversionType === 'csv' && csvOutput) {
-            blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
-            ext = 'csv';
-        } else if (options.conversionType === 'sql' && sqlOutput) {
-            blob = new Blob([sqlOutput], { type: 'application/sql' });
-            ext = 'sql';
-        }
-
-        if (blob) {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `export_${Date.now()}.${ext}`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-    };
-
-    // -------------------------------------------------------------------------
-    // Render
-    // -------------------------------------------------------------------------
-    return (
-        <div className="max-w-7xl mx-auto px-4">
-            {/* Header */}
-            <div className="text-center mb-10">
-                <Title level={1} className="text-white mb-2">
-                    <FormattedMessage id="tools.jsonToExcel.name" />
-                </Title>
-                <Text className="text-slate-400 text-lg">
-                    <FormattedMessage id="tools.jsonToExcel.description" />
-                </Text>
-            </div>
-            <Row gutter={[24, 24]}>
-
-                {/* ----------------- LEFT: INPUT ----------------- */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonToExcel.inputTitle" />}
-                        extra={
-                            <Space>
-                                <Button size="small" onClick={handleLoadExample} className="border-none hover:text-white"><FormattedMessage id="common.loadExample" /></Button>
-                                <Button size="small" onClick={() => { setInputJson(''); setExcelBlob(null); setCsvOutput(''); setSqlOutput(''); }} icon={<DeleteOutlined />} className="border-none hover:text-white"><FormattedMessage id="common.clear" /></Button>
-                            </Space>
-                        }
-                    >
-                        <Space orientation="vertical" style={{ width: '100%' }}>
-                            <TextArea
-                                value={inputJson}
-                                onChange={(e) => setInputJson(e.target.value)}
-                                placeholder={intl.formatMessage({ id: 'tools.jsonToExcel.placeholder' })}
-                                className="font-mono text-sm border-slate-700/50 text-slate-100 placeholder-slate-500 rounded-lg mb-4"
-                                style={{ minHeight: '200px', resize: 'vertical' }}
-                                spellCheck={false}
-                            />
-
-                            {/* Conversion Type Config */}
-                            <div className="p-4 space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <Text className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.format" />:</Text>
-                                    <Select
-                                        value={options.conversionType}
-                                        onChange={(v) => setOptions({ ...options, conversionType: v })}
-                                        className="w-32"
-                                    >
-                                        <Option value="excel">Excel</Option>
-                                        <Option value="csv">CSV</Option>
-                                        <Option value="sql">SQL</Option>
-                                    </Select>
-                                </div>
-
-                                <Divider />
-
-                                {/* Excel Options */}
-                                {options.conversionType === 'excel' && (
-                                    <Space direction="vertical" className="w-full">
-                                        <Row gutter={16}>
-                                            <Col span={32}>
-                                                <Input
-                                                    addonBefore={<FormattedMessage id="tools.jsonToExcel.tableName" />}
-                                                    value={options.sheetName}
-                                                    onChange={e => setOptions({ ...options, sheetName: e.target.value })}
-                                                    className="w-full"
-                                                />
-                                            </Col>
-                                        </Row>
-                                        <Col span={12}>
-                                            <Checkbox
-                                                checked={options.autoFitColumns}
-                                                onChange={e => setOptions({ ...options, autoFitColumns: e.target.checked })}
-                                                className="text-slate-300"
-                                            >
-                                                <FormattedMessage id="tools.jsonToExcel.autoFitCols" />
-                                            </Checkbox>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Checkbox
-                                                checked={options.includeHeaders}
-                                                onChange={e => setOptions({ ...options, includeHeaders: e.target.checked })}
-                                                className="text-slate-300"
-                                            >
-                                                <FormattedMessage id="tools.jsonToExcel.includeHeaders" />
-                                            </Checkbox>
-                                        </Col>
-                                    </Space>
-                                )}
-
-                                {/* CSV Options */}
-                                {options.conversionType === 'csv' && (
-                                    <Space direction="vertical" className="w-full">
-                                        <Row gutter={16}>
-                                            <Col span={12}>
-                                                <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.delimiter" /></Text>
-                                                <Select value={options.delimiter} onChange={v => setOptions({ ...options, delimiter: v })} className="w-full">
-                                                    <Option value=",">Comma (,)</Option>
-                                                    <Option value=";">Semicolon (;)</Option>
-                                                    <Option value="\t"><FormattedMessage id="tools.jsonFormatter.tab" /></Option>
-                                                    <Option value="|">Pipe (|)</Option>
-                                                </Select>
-                                            </Col>
-                                            <Col span={12}>
-                                                <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.quoteChar" /></Text>
-                                                <Select value={options.quoteChar} onChange={v => setOptions({ ...options, quoteChar: v })} className="w-full">
-                                                    <Option value='"'>Double Quote (")</Option>
-                                                    <Option value="'">Single Quote (')</Option>
-                                                    <Option value=""><FormattedMessage id="common.none" /></Option>
-                                                </Select>
-                                            </Col>
-                                        </Row>
-                                        <Checkbox checked={options.flattenNested} onChange={e => setOptions({ ...options, flattenNested: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.flattenNested" /></Checkbox>
-                                        <Checkbox checked={options.includeHeaders} onChange={e => setOptions({ ...options, includeHeaders: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.includeHeaders" /></Checkbox>
-                                    </Space>
-                                )}
-
-                                {/* SQL Options */}
-                                {options.conversionType === 'sql' && (
-                                    <Space direction="vertical" className="w-full">
-                                        <Row gutter={16}>
-                                            <Col span={12}>
-                                                <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.tableName" /></Text>
-                                                <Input value={options.tableName} onChange={e => setOptions({ ...options, tableName: e.target.value })} />
-                                            </Col>
-                                            <Col span={12}>
-                                                <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.sqlType" /></Text>
-                                                <Select value={options.sqlType} onChange={v => setOptions({ ...options, sqlType: v })} className="w-full">
-                                                    <Option value="INSERT">INSERT</Option>
-                                                    <Option value="UPDATE">UPDATE</Option>
-                                                    <Option value="CREATE_TABLE">CREATE TABLE</Option>
-                                                </Select>
-                                            </Col>
-                                        </Row>
-                                        {options.sqlType === 'UPDATE' && (
-                                            <div className="mt-2">
-                                                <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonToExcel.whereField" /></Text>
-                                                <Input value={options.whereField} onChange={e => setOptions({ ...options, whereField: e.target.value })} placeholder="id" />
-                                            </div>
-                                        )}
-                                        <Row gutter={16} className="mt-2">
-                                            <Col span={12}>
-                                                <Checkbox checked={options.batchInsert} onChange={e => setOptions({ ...options, batchInsert: e.target.checked })} disabled={options.sqlType !== 'INSERT'} className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.batchInsert" /></Checkbox>
-                                            </Col>
-                                            <Col span={12}>
-                                                <Checkbox checked={options.escapeValues} onChange={e => setOptions({ ...options, escapeValues: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonToExcel.escapeValues" /></Checkbox>
-                                            </Col>
-                                        </Row>
-                                    </Space>
-                                )}
-
-                                <Button type="primary" block onClick={handleConvert} className="mt-4">
-                                    <FormattedMessage id="tools.jsonToExcel.convertAction" values={{ format: options.conversionType.toUpperCase() }} />
-                                </Button>
-                            </div>
-                        </Space>
-                    </Card>
-                </Col>
-
-                {/* ----------------- RIGHT: OUTPUT ----------------- */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonToExcel.outputTitle" />}
-                        extra={
-                            <Space>
-                                {(excelBlob || csvOutput || sqlOutput) && (
-                                    <>
-                                        {(csvOutput || sqlOutput) && <Button size="small" onClick={() => copy(csvOutput || sqlOutput)} icon={<CopyOutlined />}><FormattedMessage id="common.copy" /></Button>}
-                                        <Button size="small" onClick={handleDownload} icon={<DownloadOutlined />} className="text-green-400 border-green-400/30 hover:text-green-300 hover:border-green-300"><FormattedMessage id="common.download" /></Button>
-                                    </>
-                                )}
-                            </Space>
-                        }
-                    >
-                        {errorMessage ? (
-                            <Alert type="error" showIcon message="Result" description={errorMessage} className="bg-red-500/10 border-red-500/30 text-red-200" />
-                        ) : !excelBlob && !csvOutput && !sqlOutput ? (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/30 rounded-xl">
-                                <TableOutlined className="text-4xl mb-4 opacity-50" />
-                                <p><FormattedMessage id="tools.jsonToExcel.noResults" defaultMessage="Conversion results will appear here" /></p>
-                            </div>
-                        ) : (
-                            <div className="animate-fade-in">
-                                {/* Success Banner */}
-                                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-4 flex items-center gap-3">
-                                    <CheckCircleOutlined className="text-green-400 text-xl" />
-                                    <div>
-                                        <p className="text-green-300 font-medium"><FormattedMessage id="tools.jsonToExcel.conversionComplete" /></p>
-                                        <p className="text-green-400/70 text-sm"><FormattedMessage id="tools.jsonToExcel.readyDownload" /></p>
-                                    </div>
-                                </div>
-
-                                {/* Preview for Excel/CSV Table style */}
-                                {(options.conversionType !== 'sql' && previewData.length > 0) && (
-                                    <div className="border border-slate-700/50 rounded-lg overflow-hidden mb-4">
-                                        <div className="px-3 py-2 border-b border-slate-700/50 text-xs text-slate-400 uppercase tracking-wider"><FormattedMessage id="tools.jsonToExcel.preview" /></div>
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm text-left">
-                                                <thead className="text-xs text-slate-400 uppercase">
-                                                    <tr>
-                                                        {previewHeaders.map(h => <th key={h} className="px-4 py-2 whitespace-nowrap">{h}</th>)}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {previewData.slice(0, 10).map((row, i) => (
-                                                        <tr key={i} className="border-b border-slate-700/30/20">
-                                                            {previewHeaders.map(h => (
-                                                                <td key={h} className="px-4 py-2 whitespace-nowrap font-mono text-xs text-slate-400 max-w-xs truncate">
-                                                                    {String(row[h] ?? '')}
-                                                                </td>
-                                                            ))}
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Raw Text Output for CSV/SQL */}
-                                {(options.conversionType === 'csv' || options.conversionType === 'sql') && (
-                                    <TextArea
-                                        value={options.conversionType === 'csv' ? csvOutput : sqlOutput}
-                                        readOnly
-                                        className="font-mono text-sm text-blue-300 rounded-lg"
-                                        style={{ height: '300px', resize: 'none' }}
-                                    />
-                                )}
-                            </div>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
+          {hasOutput && (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-base">转换结果</CardTitle>
+                    <Badge variant="secondary" className="text-xs">
+                      <CheckCircle2 className="mr-1 size-3 text-green-500" />
+                      {previewData.length} 行 · {previewHeaders.length} 列
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2">
+                    {options.conversionType !== "excel" && (
+                      <Button variant="outline" size="sm" onClick={() => copy(outputText)}>
+                        复制
+                      </Button>
+                    )}
+                    <Button size="sm" onClick={handleDownload}>
+                      <Download className="mr-1 size-4" />
+                      下载
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {options.conversionType === "excel" ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Excel 文件已生成，点击上方下载按钮保存。</p>
+                    <ScrollArea className="h-64 rounded-md border">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b bg-muted/50">
+                            {previewHeaders.map((h) => (
+                              <th key={h} className="px-3 py-2 text-left font-medium whitespace-nowrap">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {previewData.slice(0, 50).map((row, i) => (
+                            <tr key={i} className="border-b last:border-0 hover:bg-muted/30">
+                              {previewHeaders.map((h) => (
+                                <td key={h} className="px-3 py-2 whitespace-nowrap">
+                                  {String(row[h] ?? "")}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </ScrollArea>
+                    {previewData.length > 50 && (
+                      <p className="text-xs text-muted-foreground">仅预览前 50 行</p>
+                    )}
+                  </div>
+                ) : (
+                  <Textarea
+                    value={outputText}
+                    readOnly
+                    className="min-h-[240px] font-mono text-sm"
+                  />
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
-    );
+
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">转换选项</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label>输出格式</Label>
+                <Select
+                  value={options.conversionType}
+                  onValueChange={(v) => setOpt("conversionType", v as ConversionType)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="excel">Excel (.xlsx)</SelectItem>
+                    <SelectItem value="csv">CSV</SelectItem>
+                    <SelectItem value="sql">SQL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="includeHeaders">包含表头</Label>
+                <Switch
+                  id="includeHeaders"
+                  checked={options.includeHeaders}
+                  onCheckedChange={(v) => setOpt("includeHeaders", v)}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="flattenNested">展开嵌套对象</Label>
+                <Switch
+                  id="flattenNested"
+                  checked={options.flattenNested}
+                  onCheckedChange={(v) => setOpt("flattenNested", v)}
+                />
+              </div>
+
+              <Separator />
+
+              {options.conversionType === "excel" && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label>Sheet 名称</Label>
+                    <Input
+                      value={options.sheetName}
+                      onChange={(e) => setOpt("sheetName", e.target.value)}
+                      placeholder="Sheet1"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="autoFit">自动列宽</Label>
+                    <Switch
+                      id="autoFit"
+                      checked={options.autoFitColumns}
+                      onCheckedChange={(v) => setOpt("autoFitColumns", v)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {options.conversionType === "csv" && (
+                <div className="space-y-1.5">
+                  <Label>分隔符</Label>
+                  <Select
+                    value={options.delimiter}
+                    onValueChange={(v) => setOpt("delimiter", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value=",">逗号 (,)</SelectItem>
+                      <SelectItem value=";">分号 (;)</SelectItem>
+                      <SelectItem value={"\	"}>制表符 (Tab)</SelectItem>
+                      <SelectItem value="|">管道符 (|)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {options.conversionType === "sql" && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label>表名</Label>
+                    <Input
+                      value={options.tableName}
+                      onChange={(e) => setOpt("tableName", e.target.value)}
+                      placeholder="my_table"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>SQL 类型</Label>
+                    <Select
+                      value={options.sqlType}
+                      onValueChange={(v) => setOpt("sqlType", v as "INSERT" | "CREATE_TABLE")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="INSERT">INSERT</SelectItem>
+                        <SelectItem value="CREATE_TABLE">CREATE TABLE + INSERT</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="batchInsert">批量 INSERT</Label>
+                    <Switch
+                      id="batchInsert"
+                      checked={options.batchInsert}
+                      onCheckedChange={(v) => setOpt("batchInsert", v)}
+                    />
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default JsonToExcel;

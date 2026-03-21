@@ -1,316 +1,417 @@
-import useIsMobile from "@/hooks/useIsMobile";
-import ArtificialStupidity from "@/pages/tools/ArtificialStupidity";
-import JsonTools from "@/pages/tools/Json";
-import MediaTools from "@/pages/tools/Media";
-import WebTools from "@/pages/tools/Web";
-import { useLocaleStore } from "@/store/useLocaleStore";
-import { useThemeStore } from "@/store/useThemeStore";
-import { allTools } from "@/utils/toolList";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
   AppstoreOutlined,
+  BookOutlined,
   BulbFilled,
   BulbOutlined,
   GithubOutlined,
   GlobalOutlined,
   HomeOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
+  MenuOutlined,
   PictureOutlined,
   SearchOutlined,
+  StarOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons";
-import { AutoComplete, Button, Dropdown, Layout, Menu, Tag, theme } from "antd";
-import React, { useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  AutoComplete,
+  Button,
+  ConfigProvider,
+  Drawer,
+  Dropdown,
+  Input,
+  Menu,
+  Tag,
+} from "antd";
+import type { MenuProps } from "antd";
 
-const { Header, Sider, Content } = Layout;
+import { useLocaleStore } from "@/store/useLocaleStore";
+import { useThemeStore } from "@/store/useThemeStore";
+import { allTools } from "@/utils/toolList";
+import JsonTools from "@/pages/tools/Json";
+import MediaTools from "@/pages/tools/Media";
+import WebTools from "@/pages/tools/Web";
+import OtherTools from "@/pages/tools/Other";
+import WindowControls from "@/components/WindowControls";
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
+type AntMenuItem = Required<MenuProps>["items"][number];
 
-interface LevelKeysProps {
-  key?: string;
-  children?: LevelKeysProps[];
-}
-
-const menuItems = [
+const menuItems: AntMenuItem[] = [
   {
     key: "/",
-    icon: <HomeOutlined />,
-    label: (
-      <Link to="/">
-        <FormattedMessage id="nav.allTools" />
-      </Link>
-    ),
-  },
-  {
-    key: "artificial-stupidity",
-    icon: <AppstoreOutlined />,
-    label: <FormattedMessage id="nav.artificialStupidity" />,
-    children: ArtificialStupidity.map((tool) => ({
-      key: tool.path,
-      icon: tool.icon,
-      label: (
-        <Link to={tool.path}>
-          <FormattedMessage
-            id={`tools.${tool.id}.name`}
-            defaultMessage={tool.name}
-          />
-        </Link>
-      ),
-    })),
+    icon: <HomeOutlined className="text-base" />,
+    label: <FormattedMessage id="nav.allTools" />,
   },
   {
     key: "json",
-    icon: <AppstoreOutlined />,
+    icon: <AppstoreOutlined className="text-base" />,
     label: <FormattedMessage id="nav.json" />,
     children: JsonTools.map((tool) => ({
       key: tool.path,
       icon: tool.icon,
       label: (
-        <Link to={tool.path}>
-          <FormattedMessage
-            id={`tools.${tool.id}.name`}
-            defaultMessage={tool.name}
-          />
-        </Link>
+        <FormattedMessage
+          id={`tools.${tool.id}.name`}
+          defaultMessage={tool.name}
+        />
       ),
     })),
   },
   {
     key: "web",
-    icon: <GlobalOutlined />,
+    icon: <GlobalOutlined className="text-base" />,
     label: <FormattedMessage id="nav.web" defaultMessage="Web Tools" />,
     children: WebTools.map((tool) => ({
       key: tool.path,
       icon: tool.icon,
       label: (
-        <Link to={tool.path}>
-          <FormattedMessage
-            id={`tools.${tool.id}.name`}
-            defaultMessage={tool.name}
-          />
-        </Link>
+        <FormattedMessage
+          id={`tools.${tool.id}.name`}
+          defaultMessage={tool.name}
+        />
       ),
     })),
   },
   {
     key: "media",
-    icon: <PictureOutlined />,
+    icon: <PictureOutlined className="text-base" />,
     label: <FormattedMessage id="nav.media" defaultMessage="Media Tools" />,
     children: MediaTools.map((tool) => ({
       key: tool.path,
       icon: tool.icon,
       label: (
-        <Link to={tool.path}>
-          <FormattedMessage
-            id={`tools.${tool.id}.name`}
-            defaultMessage={tool.name}
-          />
-        </Link>
+        <FormattedMessage
+          id={`tools.${tool.id}.name`}
+          defaultMessage={tool.name}
+        />
+      ),
+    })),
+  },
+  {
+    key: "other",
+    icon: <PictureOutlined className="text-base" />,
+    label: <FormattedMessage id="nav.other" defaultMessage="Other Tools" />,
+    children: OtherTools.map((tool) => ({
+      key: tool.path,
+      icon: tool.icon,
+      label: (
+        <FormattedMessage
+          id={`tools.${tool.id}.name`}
+          defaultMessage={tool.name}
+        />
       ),
     })),
   },
 ];
 
-const getLevelKeys = (items1: LevelKeysProps[]) => {
-  const key: Record<string, number> = {};
-  const func = (items2: LevelKeysProps[], level = 1) => {
-    items2.forEach((item) => {
-      if (item.key) {
-        key[item.key] = level;
-      }
-      if (item.children) {
-        func(item.children, level + 1);
-      }
-    });
-  };
-  func(items1);
-  return key;
+
+type SidebarContentProps = {
+  onNavigate?: () => void;
 };
 
-const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
+function SidebarContent({ onNavigate }: SidebarContentProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(isMobile);
+  // 根据当前路径计算默认展开的分组
+  const defaultOpenKeys = menuItems
+    .filter((item): item is NonNullable<typeof item> & { key: string; children: { key: string }[] } =>
+      item != null && "children" in item && Array.isArray((item as any).children) &&
+      (item as any).children.some((c: any) => location.pathname.startsWith(c.key))
+    )
+    .map((item) => item.key as string);
+
+  const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys);
+
+  const selectedKey = location.pathname;
+
+  return (
+    <div className="flex h-full flex-col gap-5 p-4 overflow-hidden">
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-2 pt-1">
+        <span className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_10px_24px_rgba(16,185,129,0.22)]">
+          <StarOutlined style={{ fontSize: 18 }} />
+        </span>
+        <div>
+          <p className="text-sm font-semibold tracking-tight">As Tools</p>
+          <p className="text-xs text-muted-foreground">开发者工具集</p>
+        </div>
+      </div>
+
+      {/* 菜单导航 */}
+      <div className="flex-1 min-h-0 overflow-y-auto -mx-4">
+        <ConfigProvider
+          theme={{
+            components: {
+              Menu: {
+                itemBorderRadius: 12,
+                itemMarginInline: 8,
+                itemPaddingInline: 12,
+                itemHeight: 40,
+                subMenuItemBorderRadius: 12,
+                collapsedIconSize: 16,
+              },
+            },
+          }}
+        >
+          <Menu
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            openKeys={openKeys}
+            onOpenChange={setOpenKeys}
+            onClick={({ key }) => {
+              navigate(key);
+              onNavigate?.();
+            }}
+            items={menuItems}
+            className="!border-none !bg-transparent"
+            style={{ padding: "0 0 8px" }}
+          />
+        </ConfigProvider>
+      </div>
+    </div>
+  );
+}
+
+export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const intl = useIntl();
+
   const { locale, setLocale } = useLocaleStore();
   const { theme: currentTheme, toggleTheme } = useThemeStore();
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-  const [stateOpenKeys, setStateOpenKeys] = useState([]);
 
-  const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
-    const currentOpenKey = openKeys.find((key) => !stateOpenKeys.includes(key));
-    // open
-    if (currentOpenKey !== undefined) {
-      const repeatIndex = openKeys
-        .filter((key) => key !== currentOpenKey)
-        .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
-      setStateOpenKeys(
-        openKeys
-          // remove repeat key
-          .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
-          .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
-      );
-    } else {
-      // close
-      setStateOpenKeys(openKeys);
-    }
-  };
+  const currentTool = allTools.find((tool) => tool.path === location.pathname);
 
-  const [options, setOptions] = useState<
-    { value: string; label: React.ReactNode; path: string }[]
-  >([]);
-
-  const handleSearch = (value: string) => {
-    if (!value) {
-      setOptions([]);
-      return;
-    }
-
-    const filtered = allTools
-      .map((tool) => {
-        const translatedName = intl.formatMessage({
-          id: `tools.${tool.id}.name`,
-          defaultMessage: tool.name,
-        });
-        const translatedDesc = intl.formatMessage({
-          id: `tools.${tool.id}.description`,
-          defaultMessage: tool.description,
-        });
-        return { ...tool, translatedName, translatedDesc };
+  const pageTitle = currentTool
+    ? intl.formatMessage({
+        id: `tools.${currentTool.id}.name`,
+        defaultMessage: currentTool.name,
       })
-      .filter(
-        (tool) =>
-          tool.translatedName.toLowerCase().includes(value.toLowerCase()) ||
-          tool.translatedDesc.toLowerCase().includes(value.toLowerCase())
-      )
-      .map((tool) => ({
-        value: tool.translatedName,
-        path: tool.path,
-        label: (
-          <div className="flex items-center justify-between py-1">
-            <div className="flex flex-col">
-              <span className="font-medium">{tool.translatedName}</span>
-              <span className="text-[10px] text-slate-400 line-clamp-1">
-                {tool.translatedDesc}
-              </span>
+    : "As Tools";
+
+  const pageDescription = currentTool
+    ? intl.formatMessage({
+        id: `tools.${currentTool.id}.description`,
+        defaultMessage: currentTool.description,
+      })
+    : null;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  const searchOptions = searchValue
+    ? allTools
+        .map((tool) => {
+          const translatedName = intl.formatMessage({
+            id: `tools.${tool.id}.name`,
+            defaultMessage: tool.name,
+          });
+          const translatedDesc = intl.formatMessage({
+            id: `tools.${tool.id}.description`,
+            defaultMessage: tool.description,
+          });
+          return { ...tool, translatedName, translatedDesc };
+        })
+        .filter(
+          (tool) =>
+            tool.translatedName
+              .toLowerCase()
+              .includes(searchValue.toLowerCase()) ||
+            tool.translatedDesc
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())
+        )
+        .map((tool) => ({
+          value: tool.path,
+          label: (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-sm">{tool.translatedName}</div>
+                <div className="text-xs text-muted-foreground truncate max-w-[200px]">
+                  {tool.translatedDesc}
+                </div>
+              </div>
+              <Tag className="shrink-0 ml-2">
+                <FormattedMessage
+                  id={`common.category.${tool.category}`}
+                  defaultMessage={tool.category}
+                />
+              </Tag>
             </div>
-            <Tag className="ml-2 text-[10px] scale-90 origin-right">
-              <FormattedMessage
-                id={`common.category.${tool.category}`}
-                defaultMessage={tool.category}
-              />
-            </Tag>
-          </div>
-        ),
-      }));
-    setOptions(filtered);
-  };
+          ),
+        }))
+    : [];
 
-  const handleSelect = (_: string, option: any) => {
-    navigate(option.path);
-  };
-
-  const langItems = [
+  const langMenuItems: MenuProps["items"] = [
     { key: "en-US", label: "English", onClick: () => setLocale("en-US") },
     { key: "zh-CN", label: "中文", onClick: () => setLocale("zh-CN") },
   ];
 
   return (
-    <Layout className="h-screen overflow-hidden">
-      <Header
-        className="flex items-center justify-between w-full !px-4"
-        style={{ background: colorBgContainer }}
-      >
-        <div className="flex items-center gap-2">
-          <Link to="/" className="font-bold text-xl !text-green-600 mr-4">
-            {collapsed ? "AS" : "Artificial Stupidity"}
-          </Link>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-10 h-10"
-          />
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto grid min-h-screen max-w-[1920px] xl:grid-cols-[270px_minmax(0,1fr)]">
+        {/* 桌面端侧边栏 */}
+        <aside className="hidden bg-muted/35 xl:sticky xl:top-0 xl:flex xl:h-screen xl:flex-col">
+          <SidebarContent />
+        </aside>
+
+        {/* 主内容区域 */}
+        <div className="min-w-0">
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-background/80 shadow-[0_1px_0_rgba(15,23,42,0.05)] backdrop-blur-xl draggable-header">
+            <div className="flex min-h-16 items-center justify-between gap-4 px-4 py-3 md:px-6">
+              {/* 左侧：移动端菜单 + 标题 */}
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <div className="shrink-0 xl:hidden">
+                  <Button
+                    type="text"
+                    icon={<MenuOutlined />}
+                    onClick={() => setIsMobileSidebarOpen(true)}
+                    className="no-drag"
+                    aria-label="打开菜单"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {currentTool ? "Tool" : "Workspace"}
+                  </p>
+                  <h1 className="mt-1 truncate text-lg font-semibold tracking-tight">
+                    {pageTitle}
+                  </h1>
+                  {pageDescription && (
+                    <p className="mt-1 hidden truncate text-sm text-muted-foreground lg:block">
+                      {pageDescription}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* 右侧：操作按钞 */}
+              <div className="flex items-center gap-2 md:gap-3">
+                {/* 搜索框 */}
+                <div className="w-48 hidden md:block">
+                  <AutoComplete
+                    options={searchOptions}
+                    value={searchValue}
+                    onChange={setSearchValue}
+                    onSelect={(value) => {
+                      navigate(value);
+                      setSearchValue("");
+                    }}
+                    style={{ width: "100%" }}
+                    popupMatchSelectWidth={320}
+                  >
+                    <Input
+                      prefix={<SearchOutlined className="text-muted-foreground" />}
+                      placeholder={intl.formatMessage({
+                        id: "layout.searchPlaceholder",
+                        defaultMessage: "搜索工具...",
+                      })}
+                      className="no-drag rounded-xl"
+                    />
+                  </AutoComplete>
+                </div>
+
+                {/* 博客按钞 */}
+                <Button
+                  type="text"
+                  icon={<BookOutlined />}
+                  onClick={() =>
+                    navigate(
+                      "/iframe?url=" +
+                        encodeURIComponent("https://www.codeemo.cn")
+                    )
+                  }
+                  className="no-drag hidden sm:inline-flex"
+                >
+                  <FormattedMessage id="nav.blog" defaultMessage="博客" />
+                </Button>
+
+                {/* Digo 按钞 */}
+                <Button
+                  type="text"
+                  icon={<VideoCameraOutlined />}
+                  onClick={() =>
+                    navigate(
+                      "/iframe?url=" +
+                        encodeURIComponent("https://live.codeemo.cn")
+                    )
+                  }
+                  className="no-drag hidden sm:inline-flex"
+                >
+                  Digo
+                </Button>
+
+                {/* GitHub */}
+                <Button
+                  type="text"
+                  icon={<GithubOutlined />}
+                  href="https://github.com/bbuugg/tools"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="no-drag"
+                  aria-label="GitHub"
+                />
+
+                {/* 主题切换 */}
+                <Button
+                  type="text"
+                  icon={
+                    currentTheme === "dark" ? <BulbFilled /> : <BulbOutlined />
+                  }
+                  onClick={toggleTheme}
+                  className="no-drag"
+                  aria-label="切换主题"
+                />
+
+                {/* 语言切换 */}
+                <Dropdown
+                  menu={{ items: langMenuItems }}
+                  placement="bottomRight"
+                >
+                  <Button
+                    type="text"
+                    icon={<GlobalOutlined />}
+                    className="no-drag"
+                  >
+                    {locale === "zh-CN" ? "中文" : "English"}
+                  </Button>
+                </Dropdown>
+
+                {/* 窗口控制 */}
+                <WindowControls />
+              </div>
+            </div>
+          </header>
+
+          {/* 主内容 */}
+          <main>
+            <Outlet />
+          </main>
         </div>
+      </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-64 hidden md:flex items-center">
-            <AutoComplete
-              prefix={<SearchOutlined />}
-              options={options}
-              showSearch={{
-                onSearch: handleSearch,
-              }}
-              onSelect={handleSelect}
-              className="w-full"
-              placeholder={intl.formatMessage({
-                id: "layout.searchPlaceholder",
-              })}
-            />
-          </div>
-
-          <Button
-            icon={currentTheme === "dark" ? <BulbFilled /> : <BulbOutlined />}
-            onClick={toggleTheme}
-            type="text"
-          />
-
-          <Dropdown menu={{ items: langItems }} placement="bottomRight">
-            <Button icon={<GlobalOutlined />} type="text">
-              {locale === "zh-CN" ? "中文" : "EN"}
-            </Button>
-          </Dropdown>
-
-          <Button
-            icon={<GithubOutlined />}
-            type="text"
-            href="https://github.com/bbuugg/as"
-            target="_blank"
-          />
-        </div>
-      </Header>
-
-      <Layout
-        style={{ transition: "all 0.2s", display: "flex", overflow: "hidden" }}
+      {/* 移动端侧边栏 Drawer */}
+      <Drawer
+        open={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+        placement="left"
+        styles={{
+          wrapper: { width: "min(88vw, 320px)" },
+          body: { padding: 0 },
+          header: { display: "none" },
+        }}
       >
-        <Sider
-          trigger={null}
-          collapsible
-          collapsed={collapsed}
-          collapsedWidth={isMobile ? 50 : 80}
-          className="overflow-y-auto no-scrollbar"
-        >
-          <Menu
-            mode="inline"
-            selectedKeys={[location.pathname]}
-            openKeys={stateOpenKeys}
-            onOpenChange={onOpenChange}
-            items={menuItems}
-            style={{ minHeight: "100%" }}
-          />
-        </Sider>
-        <Content
-          style={{
-            overflowY: "auto",
-            borderRadius: borderRadiusLG,
-            padding: "24px",
-          }}
-        >
-          {children}
-        </Content>
-      </Layout>
-    </Layout>
+        <SidebarContent onNavigate={() => setIsMobileSidebarOpen(false)} />
+      </Drawer>
+    </div>
   );
-};
-
-export default MainLayout;
+}

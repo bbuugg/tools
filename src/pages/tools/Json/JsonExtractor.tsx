@@ -1,693 +1,466 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Card, Input, Button, Checkbox, Radio, Select, Typography, Space, Row, Col, Collapse, Alert, Tag } from 'antd';
+import { useState, useEffect, useMemo } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { JSONPath } from "jsonpath-plus";
 import {
-    CopyOutlined,
-    DownloadOutlined,
-    DeleteOutlined,
-    CheckCircleOutlined,
-    CloseCircleOutlined
-} from '@ant-design/icons';
-import { useCopy } from '@/hooks/useCopy';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { JSONPath } from 'jsonpath-plus';
+  CheckOutlined,
+  CopyOutlined,
+  DownloadOutlined,
+  ExclamationCircleOutlined,
+  StarOutlined,
+  FileTextOutlined,
+  FilterOutlined,
+  KeyOutlined,
+  AppstoreOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Tabs,
+  Input,
+  Switch,
+  Tag,
+  Select,
+  Divider,
+  Typography,
+  Checkbox,
+  Space,
+} from "antd";
+
+import { useCopy } from "@/hooks/useCopy";
 
 const { TextArea } = Input;
-const { Title, Text } = Typography;
-const { Panel } = Collapse;
-const { Option } = Select;
+const { Text } = Typography;
 
-// Types
-type Mode = 'path' | 'field' | 'keys';
-type KeysMode = 'keys' | 'values';
+type Mode = "path" | "field" | "keys";
+type OutputFormat = "array" | "list";
 
-interface FieldOptions {
-    preserveStructure: boolean;
-    removeEmpty: boolean;
-    flattenNested: boolean;
-}
+const JsonExtractor = () => {
+  const intl = useIntl();
+  const copy = useCopy();
 
-interface KeysOptions {
-    includeNested: boolean;
-    sortKeys: boolean;
-    includeArrayIndices: boolean;
-    outputFormat: 'array' | 'list' | 'tree';
-}
+  const [mode, setMode] = useState<Mode>("path");
+  const [inputJson, setInputJson] = useState("");
+  const [parsedJson, setParsedJson] = useState<any>(null);
+  const [isValidJson, setIsValidJson] = useState(false);
+  const [jsonError, setJsonError] = useState("");
 
-const PathExtractor: React.FC = () => {
-    const intl = useIntl();
-    const copy = useCopy();
+  const [jsonPath, setJsonPath] = useState("$");
 
-    // -------------------------------------------------------------------------
-    // State
-    // -------------------------------------------------------------------------
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
+  const [selectedFields, setSelectedFields] = useState<string[]>([]);
+  const [preserveStructure, setPreserveStructure] = useState(true);
+  const [removeEmpty, setRemoveEmpty] = useState(false);
 
-    // Modes
-    const [mode, setMode] = useState<Mode>('path');
-    const [keysMode, setKeysMode] = useState<KeysMode>('keys');
+  const [keysMode, setKeysMode] = useState<"keys" | "values">("keys");
+  const [includeNested, setIncludeNested] = useState(true);
+  const [sortResults, setSortResults] = useState(true);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>("array");
 
-    // Data
-    const [inputJson, setInputJson] = useState('');
-    const [parsedJson, setParsedJson] = useState<any>(null);
-    const [isValidJson, setIsValidJson] = useState(false);
-    const [extractedData, setExtractedData] = useState<any>(null);
+  const [extractedData, setExtractedData] = useState<any>(null);
+  const [extractionError, setExtractionError] = useState("");
 
-    // Errors
-    const [jsonError, setJsonError] = useState('');
-    const [extractionError, setExtractionError] = useState('');
+  const quickPaths = [
+    { label: "$", desc: "Root" },
+    { label: "$.*", desc: "All Props" },
+    { label: "$[0]", desc: "First" },
+    { label: "$[*]", desc: "All Items" },
+    { label: "$[-1]", desc: "Last" },
+    { label: "$..id", desc: "Recursive" },
+  ];
 
-    // Path Mode State
-    const [jsonPath, setJsonPath] = useState('');
+  useEffect(() => {
+    setJsonError("");
+    setIsValidJson(false);
+    setParsedJson(null);
+    if (!inputJson.trim()) return;
+    try {
+      const parsed = JSON.parse(inputJson);
+      setParsedJson(parsed);
+      setIsValidJson(true);
+      analyzeFields(parsed);
+    } catch (err: any) {
+      setJsonError(err.message);
+    }
+  }, [inputJson]);
 
-    // Field Mode State
-    const [availableFields, setAvailableFields] = useState<string[]>([]);
-    const [selectedFields, setSelectedFields] = useState<string[]>([]);
-    const [fieldOptions, setFieldOptions] = useState<FieldOptions>({
-        preserveStructure: true,
-        removeEmpty: false,
-        flattenNested: false,
-    });
+  useEffect(() => {
+    if (!isValidJson || !parsedJson) return;
+    setExtractionError("");
+    try {
+      if (mode === "path" && jsonPath.trim()) {
+        const results = JSONPath({ path: jsonPath, json: parsedJson, wrap: false });
+        setExtractedData(results);
+      } else if (mode === "field" && selectedFields.length > 0) {
+        extractFields();
+      } else if (mode === "keys") {
+        extractKeysValues();
+      }
+    } catch (err: any) {
+      setExtractionError(err.message);
+      setExtractedData(null);
+    }
+  }, [mode, jsonPath, selectedFields, preserveStructure, removeEmpty, keysMode, includeNested, sortResults, outputFormat, parsedJson, isValidJson]);
 
-    // Keys Mode State
-    const [keysOptions, setKeysOptions] = useState<KeysOptions>({
-        includeNested: true,
-        sortKeys: true,
-        includeArrayIndices: false,
-        outputFormat: 'array',
-    });
-
-    // -------------------------------------------------------------------------
-    // Constants / Configuration
-    // -------------------------------------------------------------------------
-
-    const quickPaths = [
-        { key: 'root', path: '$', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.root', defaultMessage: 'Root ($)' }) },
-        { key: 'allProperties', path: '$.*', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.all', defaultMessage: 'All Properties ($.*)' }) },
-        { key: 'firstArrayItem', path: '$[0]', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.first', defaultMessage: 'First Item ($[0])' }) },
-        { key: 'allArrayItems', path: '$[*]', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.allItem', defaultMessage: 'All Items ($[*])' }) },
-        { key: 'lastArrayItem', path: '$[-1]', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.last', defaultMessage: 'Last Item ($[-1])' }) },
-        { key: 'arraySlice', path: '$[0:3]', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.slice', defaultMessage: 'Slice ($[0:3])' }) },
-        { key: 'recursiveMatch', path: '$..id', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.recursive', defaultMessage: 'Recursive Id ($..id)' }) },
-        { key: 'filterExpression', path: '$[?(@.id < 10)]', label: intl.formatMessage({ id: 'tools.jsonExtractor.quickPaths.filter', defaultMessage: 'Filter (id < 10)' }) },
-    ];
-
-    // -------------------------------------------------------------------------
-    // Helpers - JSON & Analysis
-    // -------------------------------------------------------------------------
-
-    const validateJson = useCallback((jsonStr: string) => {
-        setJsonError('');
-        setIsValidJson(false);
-        setParsedJson(null);
-        setAvailableFields([]);
-        // We don't clear selectedFields or path immediately to preserve user intent if they fix typo
-
-        if (!jsonStr.trim()) return;
-
-        try {
-            const parsed = JSON.parse(jsonStr);
-            setParsedJson(parsed);
-            setIsValidJson(true);
-
-            // Analyze fields for Field mode (always analyze to have ready)
-            analyzeFields(parsed);
-        } catch (err: any) {
-            setJsonError(err.message);
-        }
-    }, []);
-
-    // Re-run validation when input changes
-    useEffect(() => {
-        validateJson(inputJson);
-    }, [inputJson, validateJson]);
-
-    // Auto-extract when relevant dependencies change
-    useEffect(() => {
-        if (!isValidJson || !parsedJson) return;
-
-        if (mode === 'path') {
-            if (jsonPath.trim()) extractPath();
-        } else if (mode === 'field') {
-            if (selectedFields.length > 0) extractFields();
-        } else if (mode === 'keys') {
-            extractKeysValues();
-        }
-    }, [
-        mode, keysMode, parsedJson, isValidJson, // Main triggers
-        jsonPath, // Path triggers
-        selectedFields, fieldOptions, // Field triggers
-        keysOptions // Keys triggers
-    ]);
-
-    // -------------------------------------------------------------------------
-    // Logic - Path Mode
-    // -------------------------------------------------------------------------
-
-    const extractPath = () => {
-        setExtractionError('');
-        setExtractedData(null);
-
-        if (!parsedJson || !jsonPath.trim()) return;
-
-        try {
-            const results = JSONPath({ path: jsonPath, json: parsedJson, wrap: false });
-            if (results === undefined || (Array.isArray(results) && results.length === 0)) {
-                // jsonpath-plus might return undefined or empty array for no matches depending on config/version
-                // Let's treat empty array as valid result but maybe user considers it "no match"
-                // The Vue code treated undefined as "No Matches".
-                // We'll set it as result.
-                setExtractedData(results !== undefined ? results : []);
-                if (results === undefined || (Array.isArray(results) && results.length === 0)) {
-                    // Optional: set info message 'No matches found'? 
-                    // Accessing 'length' on undefined is bad, so check definition.
-                }
-            } else {
-                setExtractedData(results);
-            }
-        } catch (err: any) {
-            setExtractionError(err.message);
-        }
-    };
-
-    const handleQuickPath = (path: string) => {
-        setJsonPath(path);
-        // Effect will trigger extraction
-    };
-
-    // -------------------------------------------------------------------------
-    // Logic - Field Mode
-    // -------------------------------------------------------------------------
-
-    const getAllKeys = (obj: any, prefix = ''): Set<string> => {
-        const keys = new Set<string>();
-        if (Array.isArray(obj)) {
-            obj.forEach((item) => {
-                if (typeof item === 'object' && item !== null) {
-                    getAllKeys(item, prefix).forEach((k) => keys.add(k));
-                }
-            });
-        } else if (obj !== null && typeof obj === 'object') {
-            Object.keys(obj).forEach((key) => {
-                const fullKey = prefix ? `${prefix}.${key} ` : key;
-                keys.add(fullKey);
-                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-                    getAllKeys(obj[key], fullKey).forEach((k) => keys.add(k));
-                }
-            });
-        }
-        return keys;
-    };
-
-    const analyzeFields = (data: any) => {
-        try {
-            const allKeys = new Set<string>();
-            if (Array.isArray(data)) {
-                data.forEach((item) => {
-                    if (typeof item === 'object' && item !== null) {
-                        getAllKeys(item).forEach((k) => allKeys.add(k));
-                    }
-                });
-            } else if (typeof data === 'object' && data !== null) {
-                getAllKeys(data).forEach((k) => allKeys.add(k));
-            }
-            setAvailableFields(Array.from(allKeys).sort());
-        } catch (err) {
-            console.error("Error analyzing fields", err);
-        }
-    };
-
-    const getNestedValue = (obj: any, path: string): any => {
-        return path.split('.').reduce((current, key) => {
-            return current && current[key] !== undefined ? current[key] : undefined;
-        }, obj);
-    };
-
-    const extractFields = () => {
-        setExtractionError('');
-        setExtractedData(null);
-
-        if (!parsedJson) return;
-
-        try {
-            let dataArray: any[] = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
-
-            const result = dataArray.map((item: any) => {
-                if (fieldOptions.preserveStructure) {
-                    const extracted: any = {};
-                    selectedFields.forEach((field) => {
-                        const value = getNestedValue(item, field);
-                        if (fieldOptions.removeEmpty && (value === null || value === undefined || value === '')) return;
-
-                        if (fieldOptions.flattenNested) {
-                            extracted[field] = value;
-                        } else {
-                            const keys = field.split('.');
-                            let current = extracted;
-                            for (let i = 0; i < keys.length - 1; i++) {
-                                current[keys[i]] = current[keys[i]] || {};
-                                current = current[keys[i]];
-                            }
-                            current[keys[keys.length - 1]] = value;
-                        }
-                    });
-                    return extracted;
-                } else {
-                    return selectedFields.map((field) => getNestedValue(item, field));
-                }
-            });
-
-            if (Array.isArray(parsedJson)) {
-                setExtractedData(result);
-            } else {
-                setExtractedData(result[0] || {});
-            }
-
-            // Update JsonPath to match selection (Visual cue)
-            updateJsonPathFromFields();
-        } catch (err: any) {
-            setExtractionError(err.message);
-        }
-    };
-
-    const updateJsonPathFromFields = () => {
-        if (selectedFields.length === 0) {
-            // Don't clear path if switching modes, maybe? Logic in Vue cleared it.
-            // setJsonPath(''); 
-        } else if (selectedFields.length === 1) {
-            setJsonPath(`$[*].${selectedFields[0]} `);
-        } else {
-            const fields = selectedFields.map(f => `$[*].${f} `).join(', ');
-            setJsonPath(`[${fields}]`);
-        }
-    };
-
-    // -------------------------------------------------------------------------
-    // Logic - Keys Mode
-    // -------------------------------------------------------------------------
-
-    const getAllKeysForExtraction = (obj: any, path = '', keys: Set<string> = new Set()): Set<string> => {
-        if (Array.isArray(obj)) {
-            obj.forEach((item, index) => {
-                const arrayPath = keysOptions.includeArrayIndices ? `${path} [${index}]` : path;
-                if (typeof item === 'object' && item !== null) {
-                    getAllKeysForExtraction(item, arrayPath, keys);
-                }
-            });
-        } else if (obj !== null && typeof obj === 'object') {
-            Object.keys(obj).forEach((key) => {
-                const fullPath = path ? `${path}.${key} ` : key;
-                if (keysOptions.includeNested) {
-                    keys.add(fullPath);
-                } else {
-                    keys.add(key);
-                }
-                if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    getAllKeysForExtraction(obj[key], fullPath, keys);
-                }
-            });
-        }
-        return keys;
-    };
-
-    const getAllValuesForExtraction = (obj: any, values: any[] = []): any[] => {
-        if (Array.isArray(obj)) {
-            obj.forEach((item) => {
-                if (typeof item === 'object' && item !== null) {
-                    getAllValuesForExtraction(item, values);
-                } else {
-                    values.push(item);
-                }
-            });
-        } else if (obj !== null && typeof obj === 'object') {
-            Object.keys(obj).forEach((key) => {
-                if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    getAllValuesForExtraction(obj[key], values);
-                } else {
-                    values.push(obj[key]);
-                }
-            });
-        }
-        return values;
-    };
-
-    const createTreeStructure = (keys: string[]): any => {
-        const tree: any = {};
-        keys.forEach((key) => {
-            const parts = key.split('.');
-            let current = tree;
-            parts.forEach((part, index) => {
-                if (!current[part]) {
-                    current[part] = index === parts.length - 1 ? null : {};
-                }
-                if (current[part] !== null) {
-                    current = current[part];
-                }
-            });
+  const analyzeFields = (data: any) => {
+    const fields = new Set<string>();
+    const traverse = (obj: any, prefix = "") => {
+      if (Array.isArray(obj)) {
+        obj.forEach(item => {
+          if (typeof item === "object" && item !== null) traverse(item, prefix);
         });
-        return tree;
+      } else if (obj !== null && typeof obj === "object") {
+        Object.keys(obj).forEach(key => {
+          const fullKey = prefix ? `${prefix}.${key}` : key;
+          fields.add(fullKey);
+          if (typeof obj[key] === "object" && obj[key] !== null) traverse(obj[key], fullKey);
+        });
+      }
     };
+    traverse(data);
+    setAvailableFields(Array.from(fields).sort());
+  };
 
-    const extractKeysValues = () => {
-        setExtractionError('');
-        setExtractedData(null);
-        if (!parsedJson) return;
-
-        try {
-            let output: any;
-
-            if (keysMode === 'keys') {
-                const keysSet = getAllKeysForExtraction(parsedJson);
-                let keys = Array.from(keysSet);
-                if (keysOptions.sortKeys) keys.sort();
-
-                switch (keysOptions.outputFormat) {
-                    case 'list': output = keys.join('\n'); break;
-                    case 'tree': output = createTreeStructure(keys); break;
-                    case 'array': default: output = keys; break;
-                }
-            } else {
-                const values = getAllValuesForExtraction(parsedJson);
-                // Unique values
-                const uniqueValues = Array.from(new Set(values));
-                if (keysOptions.sortKeys) uniqueValues.sort();
-
-                switch (keysOptions.outputFormat) {
-                    case 'list': output = uniqueValues.join('\n'); break;
-                    case 'array': default: output = uniqueValues; break;
-                    // Tree not supported for values really, fallback to array
-                }
-            }
-            setExtractedData(output);
-        } catch (err: any) {
-            setExtractionError(err.message);
-        }
-    };
-
-    // -------------------------------------------------------------------------
-    // Output Formatting
-    // -------------------------------------------------------------------------
-
-    const formattedOutput = useMemo(() => {
-        if (extractedData === null || extractedData === undefined) return '';
-        if (typeof extractedData === 'string') return extractedData; // For 'list' format
-        try {
-            return JSON.stringify(extractedData, null, 2);
-        } catch {
-            return String(extractedData);
-        }
-    }, [extractedData]);
-
-    // -------------------------------------------------------------------------
-    // Actions common
-    // -------------------------------------------------------------------------
-
-    const handleLoadExample = (type: 'array' | 'object') => {
-        const exampleData = type === 'array' ? [
-            { id: 1, name: 'John Doe', address: { city: 'NY' }, tags: ['dev'] },
-            { id: 2, name: 'Jane Smith', address: { city: 'SF' }, tags: ['lead'] }
-        ] : {
-            id: 1, name: 'John Doe', address: { city: 'NY' }, tags: ['dev']
+  const extractFields = () => {
+    if (!parsedJson) return;
+    const dataArray = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
+    const result = dataArray.map((item: any) => {
+      const extracted: any = {};
+      selectedFields.forEach(field => {
+        const getNestedValue = (obj: any, keys: string[]): any => {
+          if (keys.length === 0) return obj;
+          const [head, ...rest] = keys;
+          if (obj === null || obj === undefined) return undefined;
+          if (Array.isArray(obj)) {
+            const results = obj.map(el => getNestedValue(el, keys)).filter(v => v !== undefined);
+            return results.length > 0 ? results : undefined;
+          }
+          return getNestedValue(obj[head], rest);
         };
-        const str = JSON.stringify(exampleData, null, 2);
-        setInputJson(str);
-        if (type === 'array') setJsonPath('$[*].name');
-        else setJsonPath('$.name');
-        // setMode('path');
-    };
+        const value = getNestedValue(item, field.split("."));
+        if (removeEmpty && (value === null || value === undefined || value === "")) return;
+        if (preserveStructure) {
+          const keys = field.split(".");
+          let current = extracted;
+          for (let i = 0; i < keys.length - 1; i++) {
+            current[keys[i]] = current[keys[i]] || {};
+            current = current[keys[i]];
+          }
+          current[keys[keys.length - 1]] = value;
+        } else {
+          extracted[field] = value;
+        }
+      });
+      return extracted;
+    });
+    setExtractedData(Array.isArray(parsedJson) ? result : result[0]);
+  };
 
-    const handleDownload = () => {
-        if (!formattedOutput) return;
-        const blob = new Blob([formattedOutput], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `extracted_${mode}_${Date.now()}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
+  const extractKeysValues = () => {
+    if (!parsedJson) return;
+    if (keysMode === "keys") {
+      const keys = new Set<string>();
+      const traverse = (obj: any, path = "") => {
+        if (Array.isArray(obj)) {
+          obj.forEach(item => {
+            if (typeof item === "object" && item !== null) traverse(item, path);
+          });
+        } else if (obj !== null && typeof obj === "object") {
+          Object.keys(obj).forEach(key => {
+            const fullPath = includeNested && path ? `${path}.${key}` : key;
+            keys.add(fullPath);
+            if (typeof obj[key] === "object" && obj[key] !== null) traverse(obj[key], fullPath);
+          });
+        }
+      };
+      traverse(parsedJson);
+      let keysArray = Array.from(keys);
+      if (sortResults) keysArray.sort();
+      setExtractedData(outputFormat === "list" ? keysArray.join("\n") : keysArray);
+    } else {
+      const values: any[] = [];
+      const traverse = (obj: any) => {
+        if (Array.isArray(obj)) {
+          obj.forEach(item => {
+            if (typeof item === "object" && item !== null) traverse(item);
+            else values.push(item);
+          });
+        } else if (obj !== null && typeof obj === "object") {
+          Object.values(obj).forEach(value => {
+            if (typeof value === "object" && value !== null) traverse(value);
+            else values.push(value);
+          });
+        }
+      };
+      traverse(parsedJson);
+      const uniqueValues = Array.from(new Set(values));
+      if (sortResults) uniqueValues.sort();
+      setExtractedData(outputFormat === "list" ? uniqueValues.join("\n") : uniqueValues);
+    }
+  };
 
-    // -------------------------------------------------------------------------
-    // Render
-    // -------------------------------------------------------------------------
+  const formattedOutput = useMemo(() => {
+    if (extractedData === null || extractedData === undefined) return "";
+    if (typeof extractedData === "string") return extractedData;
+    try {
+      return JSON.stringify(extractedData, null, 2);
+    } catch {
+      return String(extractedData);
+    }
+  }, [extractedData]);
 
-    return (
-        <div className="max-w-7xl mx-auto px-4">
-            {/* Header */}
-            <div className="text-center mb-10">
-                <Title level={1} className="text-white mb-2">
-                    <FormattedMessage id="tools.jsonExtractor.name" />
-                </Title>
-                <Text className="text-slate-400 text-lg">
-                    <FormattedMessage id="tools.jsonExtractor.description" />
-                </Text>
+  const loadExample = () => {
+    const example = [
+      { id: 1, name: "John Doe", email: "john@example.com", address: { city: "New York", country: "USA" } },
+      { id: 2, name: "Jane Smith", email: "jane@example.com", address: { city: "London", country: "UK" } },
+      { id: 3, name: "Bob Johnson", email: "bob@example.com", address: { city: "Tokyo", country: "Japan" } },
+    ];
+    setInputJson(JSON.stringify(example, null, 2));
+    setJsonPath("$[*].name");
+  };
+
+  const handleDownload = () => {
+    if (!formattedOutput) return;
+    const blob = new Blob([formattedOutput], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `extracted_${mode}_${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const tabItems = [
+    {
+      key: "path",
+      label: <span className="flex items-center gap-1.5"><AppstoreOutlined />Path</span>,
+      children: (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">JSONPath Expression</label>
+            <Input
+              value={jsonPath}
+              onChange={(e) => setJsonPath(e.target.value)}
+              placeholder="$.store.book[*].author"
+              className="font-mono"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-gray-400">Quick Paths</label>
+            <div className="flex flex-wrap gap-2">
+              {quickPaths.map((qp) => (
+                <Button key={qp.label} size="small" onClick={() => setJsonPath(qp.label)} className="font-mono text-xs">
+                  {qp.label}<span className="ml-1.5 text-gray-400">· {qp.desc}</span>
+                </Button>
+              ))}
             </div>
-            <Row gutter={[24, 24]}>
-
-                {/* ------------------- LEFT COLUMN: INPUT ------------------- */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonExtractor.inputSection.title" defaultMessage="Input" />}
-                        extra={
-                            <Space>
-                                <Button size="small" onClick={() => handleLoadExample('array')} className="border-none hover:text-white">
-                                    <FormattedMessage id="common.exampleArray" defaultMessage="Array Ex." />
-                                </Button>
-                                <Button size="small" onClick={() => handleLoadExample('object')} className="border-none hover:text-white">
-                                    <FormattedMessage id="common.exampleObject" defaultMessage="Object Ex." />
-                                </Button>
-                                <Button size="small" onClick={() => { setInputJson(''); setParsedJson(null); setExtractedData(null); }} icon={<DeleteOutlined />} className="border-none hover:text-white">
-                                    <FormattedMessage id="common.clear" defaultMessage="Clear" />
-                                </Button>
-                            </Space>
-                        }
-                    >
-                        {/* Mode Switcher */}
-                        <div className="mb-4">
-                            <Radio.Group
-                                value={mode}
-                                onChange={(e) => setMode(e.target.value)}
-                                buttonStyle="solid"
-                                className="w-full"
-                            >
-                                <Radio.Button value="path" className="w-1/3 text-center border-slate-700 hover:text-white">
-                                    <span className="text-sm"><FormattedMessage id="tools.jsonExtractor.mode.path" defaultMessage="Path" /></span>
-                                </Radio.Button>
-                                <Radio.Button value="field" className="w-1/3 text-center border-slate-700 hover:text-white">
-                                    <span className="text-sm"><FormattedMessage id="tools.jsonExtractor.mode.field" defaultMessage="Fields" /></span>
-                                </Radio.Button>
-                                <Radio.Button value="keys" className="w-1/3 text-center border-slate-700 hover:text-white">
-                                    <span className="text-sm"><FormattedMessage id="tools.jsonExtractor.mode.keys" defaultMessage="Keys/Values" /></span>
-                                </Radio.Button>
-                            </Radio.Group>
-                        </div>
-
-                        {/* JSON Input */}
-                        <div className="mb-4">
-                            <Text strong className="mb-1 block"><FormattedMessage id="tools.jsonExtractor.jsonData" defaultMessage="JSON Data" /></Text>
-                            <TextArea
-                                value={inputJson}
-                                onChange={(e) => setInputJson(e.target.value)}
-                                placeholder={intl.formatMessage({ id: 'tools.jsonExtractor.jsonPlaceholder', defaultMessage: 'Paste your JSON here...' })}
-                                className="font-mono text-sm border-slate-700/50 text-slate-100 placeholder-slate-500 rounded-lg"
-                                style={{ minHeight: '200px', resize: 'vertical' }}
-                                spellCheck={false}
-                            />
-                            {/* Validation Status */}
-                            {inputJson.trim() && (
-                                <div className="mt-2">
-                                    {isValidJson ? (
-                                        <Tag color="success" icon={<CheckCircleOutlined />}><FormattedMessage id="tools.jsonExtractor.validJson" defaultMessage="Valid JSON" /></Tag>
-                                    ) : (
-                                        <Alert
-                                            type="error"
-                                            showIcon
-                                            message={<FormattedMessage id="tools.jsonExtractor.invalidJson" defaultMessage="Invalid JSON" />}
-                                            description={jsonError}
-                                            className="bg-red-500/10 border-red-500/30 text-red-200"
-                                        />
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* ---------------- MODE SPECIFIC INPUTS ---------------- */}
-
-                        {/* PATH MODE */}
-                        {mode === 'path' && (
-                            <div className="animate-fade-in">
-                                <Text strong className="mb-1 block"><FormattedMessage id="tools.jsonExtractor.jsonPathExpression" defaultMessage="JSONPath Expression" /></Text>
-                                <Input
-                                    value={jsonPath}
-                                    onChange={(e) => setJsonPath(e.target.value)}
-                                    placeholder="$.store.book[*].author"
-                                    className="border-slate-700/50 text-slate-100 placeholder-slate-500 rounded-lg mb-4 font-mono"
-                                    suffix={
-                                        jsonPath && <CloseCircleOutlined className="text-slate-500 cursor-pointer hover:text-white" onClick={() => setJsonPath('')} />
-                                    }
-                                />
-
-                                <div className="mb-4">
-                                    <Text type="secondary" className="text-xs mb-2 block"><FormattedMessage id="tools.jsonExtractor.quickPaths" defaultMessage="Quick Paths:" /></Text>
-                                    <div className="flex flex-wrap gap-2">
-                                        {quickPaths.map(qp => (
-                                            <Button
-                                                key={qp.key}
-                                                size="small"
-                                                onClick={() => handleQuickPath(qp.path)}
-                                                className="border-slate-700 text-slate-400 hover:text-blue-400 hover:border-blue-400 text-xs font-mono"
-                                            >
-                                                {qp.label}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <Collapse ghost className="border border-slate-700/30 rounded-lg">
-                                    <Panel header={<span className="text-slate-400"><FormattedMessage id="tools.jsonExtractor.syntaxGuide" defaultMessage="Syntax Guide" /></span>} key="1">
-                                        <div className="text-slate-400 text-sm space-y-1">
-                                            <p><code className="text-blue-300">$</code> : Root object/element</p>
-                                            <p><code className="text-blue-300">@</code> : Current object/element</p>
-                                            <p><code className="text-blue-300">. or []</code> : Child operator</p>
-                                            <p><code className="text-blue-300">..</code> : Recursive descent</p>
-                                            <p><code className="text-blue-300">*</code> : Wildcard</p>
-                                            <p><code className="text-blue-300">[start:end:step]</code> : Array slice</p>
-                                            <p><code className="text-blue-300">[?(expr)]</code> : Filter expression</p>
-                                        </div>
-                                    </Panel>
-                                </Collapse>
-                            </div>
-                        )}
-
-                        {/* FIELD MODE */}
-                        {mode === 'field' && (
-                            <div className="animate-fade-in">
-                                <div className="flex justify-between items-center mb-2">
-                                    <Text strong className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.availableFields" defaultMessage="Available Fields" /></Text>
-                                    <Space size="small">
-                                        <Button type="link" size="small" onClick={() => { setSelectedFields([...availableFields]); }} className="text-blue-400 p-0"><FormattedMessage id="common.all" defaultMessage="All" /></Button>
-                                        <Button type="link" size="small" onClick={() => { setSelectedFields([]); }} className="text-slate-400 p-0"><FormattedMessage id="common.none" defaultMessage="None" /></Button>
-                                    </Space>
-                                </div>
-                                <div className="max-h-48 overflow-y-auto border border-slate-700/30 rounded-lg p-3 mb-4">
-                                    {availableFields.length > 0 ? (
-                                        <Checkbox.Group
-                                            className="w-full"
-                                            value={selectedFields}
-                                            onChange={(checked) => setSelectedFields(checked as string[])}
-                                        >
-                                            <Row gutter={[8, 8]}>
-                                                {availableFields.map(f => (
-                                                    <Col span={12} key={f}>
-                                                        <Checkbox value={f} className="text-xs w-full truncate"><span title={f}>{f}</span></Checkbox>
-                                                    </Col>
-                                                ))}
-                                            </Row>
-                                        </Checkbox.Group>
-                                    ) : (
-                                        <div className="text-slate-500 text-center py-4"><FormattedMessage id="tools.jsonExtractor.noFieldsDetected" defaultMessage="No fields detected" /></div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Checkbox checked={fieldOptions.preserveStructure} onChange={(e) => setFieldOptions({ ...fieldOptions, preserveStructure: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.preserveStructure" defaultMessage="Preserve Structure" /></Checkbox>
-                                    <Checkbox checked={fieldOptions.removeEmpty} onChange={(e) => setFieldOptions({ ...fieldOptions, removeEmpty: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.removeEmpty" defaultMessage="Remove Empty" /></Checkbox>
-                                    <Checkbox checked={fieldOptions.flattenNested} onChange={(e) => setFieldOptions({ ...fieldOptions, flattenNested: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.flattenNested" defaultMessage="Flatten Nested" /></Checkbox>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* KEYS MODE */}
-                        {mode === 'keys' && (
-                            <div className="animate-fade-in">
-                                <Radio.Group value={keysMode} onChange={(e) => setKeysMode(e.target.value)} className="mb-4 w-full" buttonStyle="solid">
-                                    <Radio.Button value="keys" className="w-1/2 text-center"><FormattedMessage id="tools.jsonExtractor.keysMode.keys" defaultMessage="Keys" /></Radio.Button>
-                                    <Radio.Button value="values" className="w-1/2 text-center"><FormattedMessage id="tools.jsonExtractor.keysMode.values" defaultMessage="Values" /></Radio.Button>
-                                </Radio.Group>
-
-                                <div className="grid grid-cols-2 gap-4 mb-4">
-                                    <div className="flex flex-col gap-2">
-                                        {keysMode === 'keys' && (
-                                            <>
-                                                <Checkbox checked={keysOptions.includeNested} onChange={(e) => setKeysOptions({ ...keysOptions, includeNested: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.includeNested" defaultMessage="Include Nested" /></Checkbox>
-                                                <Checkbox checked={keysOptions.includeArrayIndices} onChange={(e) => setKeysOptions({ ...keysOptions, includeArrayIndices: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.includeArrayIndices" defaultMessage="Include Indices" /></Checkbox>
-                                            </>
-                                        )}
-                                        <Checkbox checked={keysOptions.sortKeys} onChange={(e) => setKeysOptions({ ...keysOptions, sortKeys: e.target.checked })} className="text-slate-300"><FormattedMessage id="tools.jsonExtractor.options.sortResults" defaultMessage="Sort Results" /></Checkbox>
-                                    </div>
-                                    <div>
-                                        <Text className="text-xs mb-1 block"><FormattedMessage id="tools.jsonExtractor.outputFormat" defaultMessage="Output Format" /></Text>
-                                        <Select
-                                            value={keysOptions.outputFormat}
-                                            onChange={(val) => setKeysOptions({ ...keysOptions, outputFormat: val })}
-                                            className="w-full"
-                                            popupClassName=""
-                                        >
-                                            <Option value="array"><FormattedMessage id="tools.jsonExtractor.outputFormat.array" defaultMessage="Array" /></Option>
-                                            <Option value="list"><FormattedMessage id="tools.jsonExtractor.outputFormat.list" defaultMessage="List" /></Option>
-                                            {keysMode === 'keys' && <Option value="tree"><FormattedMessage id="tools.jsonExtractor.outputFormat.tree" defaultMessage="Tree" /></Option>}
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                    </Card>
-                </Col>
-
-                {/* ------------------- RIGHT COLUMN: OUTPUT ------------------- */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonExtractor.outputSection.title" defaultMessage="Results" />}
-                        extra={
-                            <Space>
-                                {extractedData && (
-                                    <>
-                                        <Button size="small" onClick={() => copy(formattedOutput)} icon={<CopyOutlined />} type="dashed"><FormattedMessage id="common.copy" defaultMessage="Copy" /></Button>
-                                        <Button size="small" onClick={handleDownload} icon={<DownloadOutlined />} type="dashed"><FormattedMessage id="common.download" defaultMessage="Download" /></Button>
-                                    </>
-                                )}
-                            </Space>
-                        }
-                    >
-                        {!isValidJson ? (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/30 rounded-xl">
-                                <div className="text-4xl mb-4">⌨️</div>
-                                <p><FormattedMessage id="tools.jsonExtractor.waitingInput" defaultMessage="Waiting for valid JSON..." /></p>
-                            </div>
-                        ) : extractionError ? (
-                            <Alert
-                                message={<FormattedMessage id="tools.jsonExtractor.extractionError" defaultMessage="Extraction Error" />}
-                                description={extractionError}
-                                type="error"
-                                showIcon
-                                className="bg-red-500/10 border-red-500/30 text-red-200"
-                            />
-                        ) : !extractedData ? (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/30 rounded-xl">
-                                <div className="text-4xl mb-4">🎯</div>
-                                <p><FormattedMessage id="tools.jsonExtractor.noResults" defaultMessage="No results yet" /></p>
-                            </div>
-                        ) : (
-                            <div className="animate-fade-in relative">
-                                <div className="absolute top-2 right-2 z-10">
-                                    <Tag color="green">{Array.isArray(extractedData) ? `${extractedData.length} items` : 'Object'}</Tag>
-                                </div>
-                                <TextArea
-                                    value={formattedOutput}
-                                    readOnly
-                                    className="font-mono text-sm border-slate-700 text-green-400 rounded-lg"
-                                    style={{ height: 'calc(100vh - 400px)', minHeight: '400px', resize: 'none' }}
-                                />
-                            </div>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
+          </div>
         </div>
-    );
+      ),
+    },
+    {
+      key: "field",
+      label: <span className="flex items-center gap-1.5"><FilterOutlined />Fields</span>,
+      children: (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Available Fields ({availableFields.length})</label>
+              <Space size="small">
+                <Button size="small" type="link" onClick={() => setSelectedFields([...availableFields])}>All</Button>
+                <Button size="small" type="link" onClick={() => setSelectedFields([])}>None</Button>
+              </Space>
+            </div>
+            <div className="h-48 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+              {availableFields.length > 0 ? (
+                <div className="space-y-2">
+                  {availableFields.map((field) => (
+                    <div key={field} className="flex items-center gap-2">
+                      <Checkbox
+                        checked={selectedFields.includes(field)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedFields([...selectedFields, field]);
+                          } else {
+                            setSelectedFields(selectedFields.filter(f => f !== field));
+                          }
+                        }}
+                      />
+                      <span className="text-sm font-mono cursor-pointer flex-1">{field}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                  No fields detected
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Text className="text-sm">Preserve Structure</Text>
+              <Switch checked={preserveStructure} onChange={setPreserveStructure} size="small" />
+            </div>
+            <div className="flex items-center justify-between">
+              <Text className="text-sm">Remove Empty Values</Text>
+              <Switch checked={removeEmpty} onChange={setRemoveEmpty} size="small" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "keys",
+      label: <span className="flex items-center gap-1.5"><KeyOutlined />Keys</span>,
+      children: (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Extract</label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button type={keysMode === "keys" ? "primary" : "default"} onClick={() => setKeysMode("keys")} block>Keys</Button>
+              <Button type={keysMode === "values" ? "primary" : "default"} onClick={() => setKeysMode("values")} block>Values</Button>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {keysMode === "keys" && (
+              <div className="flex items-center justify-between">
+                <Text className="text-sm">Include Nested Paths</Text>
+                <Switch checked={includeNested} onChange={setIncludeNested} size="small" />
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <Text className="text-sm">Sort Results</Text>
+              <Switch checked={sortResults} onChange={setSortResults} size="small" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Output Format</label>
+              <Select
+                value={outputFormat}
+                onChange={(v) => setOutputFormat(v as OutputFormat)}
+                className="w-full"
+                options={[
+                  { value: "array", label: "Array" },
+                  { value: "list", label: "List (Line-separated)" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="mx-auto max-w-7xl space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2 h-[calc(100vh-10rem)]">
+        {/* Left: Input */}
+        <Card
+          className="rounded-2xl flex flex-col"
+          styles={{ body: { display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", padding: "16px 24px 24px" } }}
+        >
+          <div className="flex items-center justify-between mb-4 shrink-0">
+            <div className="flex items-center gap-2">
+              <FileTextOutlined className="text-primary text-lg" />
+              <span className="text-lg font-semibold">
+                <FormattedMessage id="tools.jsonExtractor.inputSection.title" />
+              </span>
+            </div>
+            <Space>
+              <Button size="small" icon={<StarOutlined />} onClick={loadExample}>Example</Button>
+              <Button size="small" onClick={() => { setInputJson(""); setExtractedData(null); }}>Clear</Button>
+            </Space>
+          </div>
+
+          <div className="flex-1 flex flex-col min-h-0 space-y-2">
+            <label className="text-sm font-medium">JSON Data</label>
+            <TextArea
+              value={inputJson}
+              onChange={(e) => setInputJson(e.target.value)}
+              placeholder='{"name": "John", "age": 30}'
+              className="font-mono text-sm resize-none"
+              spellCheck={false}
+              style={{ flex: 1, minHeight: 0 }}
+            />
+            {inputJson.trim() && (
+              <div className="flex items-center gap-2">
+                {isValidJson ? (
+                  <Tag color="success" icon={<CheckOutlined />}>Valid JSON</Tag>
+                ) : (
+                  <div className="flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
+                    <ExclamationCircleOutlined className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-medium">Invalid JSON</p>
+                      <p className="text-xs mt-1 opacity-90">{jsonError}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <Divider className="my-3" />
+
+          <div className="shrink-0">
+            <Tabs activeKey={mode} onChange={(v) => setMode(v as Mode)} items={tabItems} size="small" />
+          </div>
+        </Card>
+
+        {/* Right: Output */}
+        <Card
+          className="rounded-2xl flex flex-col"
+          styles={{ body: { display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", padding: "16px 24px 24px" } }}
+        >
+          <div className="flex items-center justify-between mb-2 shrink-0">
+            <span className="text-lg font-semibold">
+              <FormattedMessage id="tools.jsonExtractor.outputSection.title" />
+            </span>
+            {extractedData && (
+              <Space>
+                <Button size="small" icon={<CopyOutlined />} onClick={() => copy(formattedOutput)}>Copy</Button>
+                <Button size="small" icon={<DownloadOutlined />} onClick={handleDownload}>Download</Button>
+              </Space>
+            )}
+          </div>
+          {extractedData && (
+            <div className="mb-3 shrink-0">
+              <Text type="secondary" className="text-sm">
+                {Array.isArray(extractedData) ? `${extractedData.length} items extracted` : "Object extracted"}
+              </Text>
+            </div>
+          )}
+
+          <div className="flex-1 min-h-0">
+            {!isValidJson ? (
+              <div className="flex flex-1 h-full flex-col items-center justify-center rounded-lg border-2 border-dashed text-gray-400">
+                <FileTextOutlined style={{ fontSize: 48 }} className="mb-4 opacity-50" />
+                <p className="text-sm">Waiting for valid JSON...</p>
+              </div>
+            ) : extractionError ? (
+              <div className="flex items-start gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-600 dark:text-red-400">
+                <ExclamationCircleOutlined className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">Extraction Error</p>
+                  <p className="text-sm mt-1 opacity-90">{extractionError}</p>
+                </div>
+              </div>
+            ) : !extractedData ? (
+              <div className="flex flex-1 h-full flex-col items-center justify-center rounded-lg border-2 border-dashed text-gray-400">
+                <FilterOutlined style={{ fontSize: 48 }} className="mb-4 opacity-50" />
+                <p className="text-sm">Configure extraction settings</p>
+              </div>
+            ) : (
+              <TextArea
+                value={formattedOutput}
+                readOnly
+                className="font-mono text-sm resize-none h-full"
+                style={{ flex: 1, minHeight: 0, height: "100%", backgroundColor: "var(--color-muted)" }}
+              />
+            )}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
 };
 
-export default PathExtractor;
+export default JsonExtractor;

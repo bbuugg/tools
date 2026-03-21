@@ -1,82 +1,146 @@
-import React from 'react';
-import { Card, Input, Typography, Row, Col, Tag } from 'antd';
-import { allTools } from '@/utils/toolList';
-import { useNavigate } from 'react-router-dom';
-import { SearchOutlined } from '@ant-design/icons';
-import type { ToolConfig } from '@/types/tool';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Search, Sparkles } from "lucide-react";
 
-const { Title, Text } = Typography;
+import { allTools } from "@/utils/toolList";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const HomePage: React.FC = () => {
-    const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = React.useState('');
-    const intl = useIntl();
+  const navigate = useNavigate();
+  const intl = useIntl();
+  const [searchTerm, setSearchTerm] = useState("");
 
-    const filteredTools = allTools
-        .map(tool => ({
-            ...tool,
-            translatedName: intl.formatMessage({ id: `tools.${tool.id}.name`, defaultMessage: tool.name }),
-            translatedDesc: intl.formatMessage({ id: `tools.${tool.id}.description`, defaultMessage: tool.description }),
-            translatedCategory: intl.formatMessage({ id: `common.category.${tool.category}`, defaultMessage: tool.category })
-        }))
-        .filter(tool =>
-            tool.translatedName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tool.translatedDesc.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tool.translatedCategory.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-    return (
-        <div className="max-w-7xl mx-auto py-10 px-4">
-            <div className="mb-12 text-center">
-                <Title level={1} className="text-4xl font-bold mb-4">
-                    <FormattedMessage id="home.title" />
-                </Title>
-                <Text type="secondary" className="text-lg">
-                    <FormattedMessage id="home.subtitle" />
-                </Text>
-                <div className="max-w-2xl mx-auto mt-8">
-                    <Input
-                        size="large"
-                        placeholder={intl.formatMessage({ id: 'home.searchPlaceholder' })}
-                        prefix={<SearchOutlined />}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="rounded-full"
-                    />
-                </div>
-            </div>
-
-            <Row gutter={[24, 24]}>
-                {filteredTools.map((tool: ToolConfig) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={tool.id}>
-                        <Card
-                            hoverable
-                            className="h-full transition-all duration-300 hover:-translate-y-1 hover:border-none bg-white/5"
-                            onClick={() => navigate(tool.path)}
-                        >
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-green-500/10 text-green-500 rounded-xl text-2xl">
-                                    {tool.icon}
-                                </div>
-                                <div>
-                                    <Title level={5} className="mb-1 !mt-0">
-                                        <FormattedMessage id={`tools.${tool.id}.name`} defaultMessage={tool.name} />
-                                    </Title>
-                                    <Tag variant={'filled'} color="green" className="mb-2">
-                                        <FormattedMessage id={`common.category.${tool.category}`} defaultMessage={tool.category} />
-                                    </Tag>
-
-                                    <p className="text-gray-500 text-sm line-clamp-2 m-0">
-                                        <FormattedMessage id={`tools.${tool.id}.description`} defaultMessage={tool.description} />
-                                    </p>
-                                </div>
-                            </div>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-        </div>
+  const searchLower = searchTerm.toLowerCase();
+  const filteredTools = allTools
+    .map((tool) => ({
+      ...tool,
+      translatedName: intl.formatMessage({ id: `tools.${tool.id}.name`, defaultMessage: tool.name }),
+      translatedDesc: intl.formatMessage({ id: `tools.${tool.id}.description`, defaultMessage: tool.description }),
+      translatedCategory: intl.formatMessage({ id: `common.category.${tool.category}`, defaultMessage: tool.category }),
+    }))
+    .filter(
+      (tool) =>
+        tool.translatedName.toLowerCase().includes(searchLower) ||
+        tool.translatedDesc.toLowerCase().includes(searchLower) ||
+        tool.translatedCategory.toLowerCase().includes(searchLower)
     );
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      {/* Hero Section */}
+      <div className="mb-12 text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="flex size-16 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-[0_10px_40px_rgba(16,185,129,0.25)]">
+            <Sparkles className="size-8" />
+          </div>
+        </div>
+        
+        <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
+          <FormattedMessage id="home.title" />
+        </h1>
+        
+        <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
+          <FormattedMessage id="home.subtitle" />
+        </p>
+
+        {/* Search Bar */}
+        <div className="mx-auto max-w-2xl">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={intl.formatMessage({ 
+                id: "home.searchPlaceholder",
+                defaultMessage: "搜索工具..."
+              })}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="h-14 rounded-2xl border-border/60 bg-background/80 pl-12 pr-4 text-base shadow-sm transition-shadow focus-visible:shadow-md"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tools Grid */}
+      <div className="grid gap-5 grid-cols-2 lg:grid-cols-3">
+        {filteredTools.map((tool) => (
+          <Card
+            key={tool.id}
+            className={cn(
+              "group cursor-pointer overflow-hidden rounded-2xl border-border/60 transition-all duration-200",
+              "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5",
+              "active:scale-[0.98]"
+            )}
+            onClick={() => navigate(tool.path)}
+          >
+            <CardHeader className="space-y-3 pb-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary text-2xl transition-transform group-hover:scale-110">
+                  {tool.icon}
+                </div>
+                <Badge 
+                  variant="secondary" 
+                  className="shrink-0 rounded-lg bg-primary/8 text-xs font-medium text-foreground"
+                >
+                  <FormattedMessage
+                    id={`common.category.${tool.category}`}
+                    defaultMessage={tool.category}
+                  />
+                </Badge>
+              </div>
+              
+              <CardTitle className="text-lg font-semibold tracking-tight">
+                <FormattedMessage
+                  id={`tools.${tool.id}.name`}
+                  defaultMessage={tool.name}
+                />
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="pb-5">
+              <CardDescription className="line-clamp-2 text-sm leading-relaxed">
+                <FormattedMessage
+                  id={`tools.${tool.id}.description`}
+                  defaultMessage={tool.description}
+                />
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {filteredTools.length === 0 && (
+        <div className="py-20 text-center">
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted">
+            <Search className="size-8 text-muted-foreground" />
+          </div>
+          <h3 className="mb-2 text-lg font-semibold">
+            {intl.formatMessage({
+              id: "home.noResults",
+              defaultMessage: "未找到工具",
+            })}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {intl.formatMessage({
+              id: "home.noResultsDesc",
+              defaultMessage: "尝试使用其他关键词搜索",
+            })}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default HomePage;

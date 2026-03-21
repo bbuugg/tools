@@ -257,7 +257,7 @@ const excelToJson: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto px-4">
             {/* Header */}
-            <div className="text-center mb-10">
+            <div className="text-center mb-2">
                 <Title level={1} className="text-white mb-2">
                     <FormattedMessage id="tools.excelToJson.name" />
                 </Title>

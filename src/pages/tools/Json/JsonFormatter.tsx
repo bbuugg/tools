@@ -1,415 +1,588 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Card, Input, Button, Select, Checkbox, Typography, Space, Row, Col, Alert, Tag } from 'antd';
+import { useState, useCallback } from "react";
+import { useIntl } from "react-intl";
 import {
-    CopyOutlined,
-    DownloadOutlined,
-    DeleteOutlined,
-    CheckCircleOutlined,
-    FormatPainterOutlined
-} from '@ant-design/icons';
-import { useCopy } from '@/hooks/useCopy';
-import { FormattedMessage, useIntl } from 'react-intl';
+  Copy,
+  Download,
+  AlertCircle,
+  CheckCircle2,
+  Trash2,
+  RotateCcw,
+  History,
+  Braces,
+  ArrowRightLeft,
+} from "lucide-react";
 
-const { TextArea } = Input;
-const { Title, Text } = Typography;
-const { Option } = Select;
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useCopy } from "@/hooks/useCopy";
 
-interface FormatOptions {
-    indent: number | 'tab';
-    sortKeys: boolean;
-    compact: boolean;
-    escapeUnicode: boolean;
-    keyCase: 'preserve' | 'upper' | 'lower';
-    valueCase: 'preserve' | 'upper' | 'lower';
+const EXAMPLE_JSON = `{
+  "name": "As Tools",
+  "version": "1.0.0",
+  "description": "开发者工具集",
+  "features": ["JSON格式化", "JSON提取", "Excel转换"],
+  "config": {
+    "theme": "dark",
+    "language": "zh-CN",
+    "indent": 2
+  },
+  "active": true,
+  "count": 42
+}`;
+
+const HISTORY_KEY = "json_formatter_history";
+
+type HistoryItem = {
+  id: string;
+  input: string;
+  timestamp: number;
+  size: number;
+};
+
+function getStats(json: string, parsed: any) {
+  const lines = json.split("\n").length;
+  const size = new Blob([json]).size;
+  const depth = getDepth(parsed);
+  const keys = countKeys(parsed);
+  return { lines, size, depth, keys };
 }
 
-const JsonFormatter: React.FC = () => {
-    const intl = useIntl();
-    const copy = useCopy();
+function getDepth(obj: any, d = 0): number {
+  if (typeof obj !== "object" || obj === null) return d;
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return d + 1;
+    return Math.max(...obj.map((item) => getDepth(item, d + 1)));
+  }
+  const vals = Object.values(obj);
+  if (vals.length === 0) return d + 1;
+  return Math.max(...vals.map((v) => getDepth(v, d + 1)));
+}
 
-    // State
-    const [inputJson, setInputJson] = useState('');
-    const [formattedJson, setFormattedJson] = useState('');
-    const [validationError, setValidationError] = useState('');
-    const [isValid, setIsValid] = useState(false);
+function countKeys(obj: any): number {
+  if (typeof obj !== "object" || obj === null) return 0;
+  if (Array.isArray(obj)) return obj.reduce((acc, v) => acc + countKeys(v), 0);
+  return (
+    Object.keys(obj).length +
+    Object.values(obj).reduce((acc: number, v) => acc + countKeys(v), 0)
+  );
+}
 
-    const [options, setOptions] = useState<FormatOptions>({
-        indent: 2,
-        sortKeys: false,
-        compact: false,
-        escapeUnicode: false,
-        keyCase: 'preserve',
-        valueCase: 'preserve',
-    });
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
 
-    // Helper Functions
-    const countKeys = (obj: any): number => {
-        if (typeof obj !== 'object' || obj === null) return 0;
-        if (Array.isArray(obj)) {
-            return obj.reduce((count: number, item) => count + countKeys(item), 0);
+function processJson(
+  parsed: any,
+  opts: { sortKeys: boolean }
+): any {
+  if (typeof parsed !== "object" || parsed === null) return parsed;
+  if (Array.isArray(parsed)) return parsed.map((v) => processJson(v, opts));
+  let entries = Object.entries(parsed).map(([k, v]) => [k, processJson(v, opts)]);
+  if (opts.sortKeys) entries = entries.sort(([a], [b]) => a.localeCompare(b));
+  return Object.fromEntries(entries);
+}
+
+const JsonFormatter = () => {
+  const intl = useIntl();
+  const copy = useCopy();
+
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [parsed, setParsed] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+
+  const [indent, setIndent] = useState("2");
+  const [compact, setCompact] = useState(false);
+  const [sortKeys, setSortKeys] = useState(false);
+  const [escapeUnicode, setEscapeUnicode] = useState(false);
+
+  const [history, setHistory] = useState<HistoryItem[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const saveHistory = useCallback(
+    (inputJson: string) => {
+      const item: HistoryItem = {
+        id: Date.now().toString(),
+        input: inputJson,
+        timestamp: Date.now(),
+        size: new Blob([inputJson]).size,
+      };
+      const next = [item, ...history].slice(0, 20);
+      setHistory(next);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    },
+    [history]
+  );
+
+  const format = useCallback(
+    (
+      raw: string,
+      opts?: {
+        compact?: boolean;
+        sortKeys?: boolean;
+        escapeUnicode?: boolean;
+        indent?: string;
+      }
+    ) => {
+      const o = {
+        compact: opts?.compact ?? compact,
+        sortKeys: opts?.sortKeys ?? sortKeys,
+        escapeUnicode: opts?.escapeUnicode ?? escapeUnicode,
+        indent: opts?.indent ?? indent,
+      };
+      if (!raw.trim()) {
+        setOutput("");
+        setParsed(null);
+        setIsValid(null);
+        setError("");
+        return;
+      }
+      try {
+        let p = JSON.parse(raw);
+        p = processJson(p, { sortKeys: o.sortKeys });
+        const indentVal = o.compact ? 0 : parseInt(o.indent);
+        let result = JSON.stringify(p, null, indentVal);
+        if (o.escapeUnicode) {
+          result = result.replace(
+            /[\u0080-\uffff]/g,
+            (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`
+          );
         }
-        return (
-            Object.keys(obj).length +
-            Object.values(obj).reduce((count: number, value) => count + countKeys(value), 0)
-        );
-    };
-
-    const getMaxDepth = (obj: any, currentDepth = 0): number => {
-        if (typeof obj !== 'object' || obj === null) return currentDepth;
-        if (Array.isArray(obj)) {
-            return Math.max(currentDepth, ...obj.map((item) => getMaxDepth(item, currentDepth + 1)));
-        }
-        return Math.max(
-            currentDepth,
-            ...Object.values(obj).map((value) => getMaxDepth(value, currentDepth + 1)),
-        );
-    };
-
-    const sortObjectKeys = (obj: unknown): unknown => {
-        if (Array.isArray(obj)) {
-            return obj.map(sortObjectKeys);
-        } else if (obj !== null && typeof obj === 'object') {
-            const sortedObj: Record<string, unknown> = {};
-            Object.keys(obj as Record<string, unknown>)
-                .sort()
-                .forEach((key) => {
-                    sortedObj[key] = sortObjectKeys((obj as Record<string, unknown>)[key]);
-                });
-            return sortedObj;
-        }
-        return obj;
-    };
-
-    const convertCase = (obj: unknown): unknown => {
-        if (Array.isArray(obj)) {
-            return obj.map((item) => convertCase(item));
-        } else if (obj !== null && typeof obj === 'object') {
-            const convertedObj: Record<string, unknown> = {};
-
-            Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
-                // Convert key case
-                let convertedKey = key;
-                if (options.keyCase === 'upper') {
-                    convertedKey = key.toUpperCase();
-                } else if (options.keyCase === 'lower') {
-                    convertedKey = key.toLowerCase();
-                }
-
-                // Convert value case if it's a string, else recurse
-                let convertedValue = value;
-                if (typeof value === 'string' && options.valueCase !== 'preserve') {
-                    if (options.valueCase === 'upper') {
-                        convertedValue = value.toUpperCase();
-                    } else if (options.valueCase === 'lower') {
-                        convertedValue = value.toLowerCase();
-                    }
-                } else if (typeof value === 'object' && value !== null) {
-                    convertedValue = convertCase(value);
-                }
-
-                convertedObj[convertedKey] = convertedValue;
-            });
-
-            return convertedObj;
-        }
-
-        // Handle primitive values (strings)
-        if (typeof obj === 'string' && options.valueCase !== 'preserve') {
-            if (options.valueCase === 'upper') {
-                return obj.toUpperCase();
-            } else if (options.valueCase === 'lower') {
-                return obj.toLowerCase();
-            }
-        }
-
-        return obj;
-    };
-
-    const formatJson = useCallback(() => {
-        if (!inputJson.trim()) {
-            setFormattedJson('');
-            setValidationError('');
-            setIsValid(false);
-            return;
-        }
-
-        try {
-            let data = JSON.parse(inputJson);
-            setIsValid(true);
-            setValidationError('');
-
-            if (options.sortKeys) {
-                data = sortObjectKeys(data);
-            }
-
-            if (options.keyCase !== 'preserve' || options.valueCase !== 'preserve') {
-                data = convertCase(data);
-            }
-
-            let formatted: string;
-            const indent = options.indent === 'tab' ? '\t' : Number(options.indent);
-
-            if (options.compact) {
-                formatted = JSON.stringify(data);
-            } else {
-                formatted = JSON.stringify(data, null, indent);
-            }
-
-            if (options.escapeUnicode) {
-                formatted = formatted.replace(/[\u0080-\uFFFF]/g, function (match) {
-                    return '\\u' + ('0000' + match.charCodeAt(0).toString(16)).slice(-4);
-                });
-            }
-
-            setFormattedJson(formatted);
-
-        } catch (error: any) {
-            setValidationError(error.message || String(error));
-            setIsValid(false);
-            setFormattedJson('');
-        }
-    }, [inputJson, options]);
-
-    // Effects
-    useEffect(() => {
-        formatJson();
-    }, [formatJson]);
-
-    // Stats
-    const jsonStats = useMemo(() => {
-        if (!formattedJson) return { size: 0, lines: 0, keys: 0, depth: 0 };
-
-        try {
-            const parsed = JSON.parse(inputJson); // Parse original input to get logic stats
-            return {
-                size: formattedJson.length,
-                lines: formattedJson.split('\n').length,
-                keys: countKeys(parsed),
-                depth: getMaxDepth(parsed)
-            };
-        } catch {
-            return { size: 0, lines: 0, keys: 0, depth: 0 };
-        }
-    }, [formattedJson]);
-
-
-    // Actions
-    const handleLoadExample = () => {
-        const example = {
-            name: "John Doe",
-            age: 30,
-            city: "New York",
-            hobbies: ["reading", "swimming", "coding"],
-            address: { street: "123 Main St", zip: "10001" },
-            active: true,
-            metadata: null
-        };
-        setInputJson(JSON.stringify(example, null, 2));
-    };
-
-    const handleClear = () => {
-        setInputJson('');
-        setFormattedJson('');
-        setValidationError('');
+        setOutput(result);
+        setParsed(p);
+        setIsValid(true);
+        setError("");
+      } catch (e: any) {
         setIsValid(false);
-    };
+        setError(e.message);
+        setOutput("");
+        setParsed(null);
+      }
+    },
+    [compact, sortKeys, escapeUnicode, indent]
+  );
 
-    const handleDownload = () => {
-        if (!formattedJson) return;
-        const blob = new Blob([formattedJson], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `formatted_${Date.now()}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
+  const handleInput = useCallback(
+    (val: string) => {
+      setInput(val);
+      format(val);
+    },
+    [format]
+  );
 
-    return (
-        <div className="max-w-7xl mx-auto px-4">
-            {/* Header */}
-            <div className="text-center mb-10">
-                <Title level={1} className="text-white mb-2">
-                    <FormattedMessage id="tools.jsonFormatter.name" />
-                </Title>
-                <Text className="text-slate-400 text-lg">
-                    <FormattedMessage id="tools.jsonFormatter.description" />
-                </Text>
-            </div>
-            <Row gutter={[24, 24]}>
-                {/* Input Section */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonFormatter.inputTitle" defaultMessage="Input JSON" />}
-                        extra={
-                            <Space>
-                                <Button size="small" onClick={handleLoadExample} className="border-none hover:text-white">
-                                    <FormattedMessage id="common.loadExample" defaultMessage="Load Example" />
-                                </Button>
-                                <Button size="small" onClick={handleClear} icon={<DeleteOutlined />} className="border-none hover:text-white">
-                                    <FormattedMessage id="common.clear" defaultMessage="Clear" />
-                                </Button>
-                            </Space>
-                        }
-                    >
-                        <TextArea
-                            value={inputJson}
-                            onChange={(e) => setInputJson(e.target.value)}
-                            placeholder={intl.formatMessage({ id: 'tools.jsonFormatter.placeholder', defaultMessage: 'Paste your JSON here...' })}
-                            className="font-mono text-sm border-slate-700/50 text-slate-100 placeholder-slate-500 rounded-lg mb-4"
-                            style={{ minHeight: '300px', resize: 'vertical' }}
-                            spellCheck={false}
-                        />
+  const handleFormat = () => {
+    format(input);
+    if (input.trim()) saveHistory(input);
+  };
 
-                        {/* Validation Status */}
-                        {inputJson.trim() && (
-                            <div className="mb-4">
-                                {isValid ? (
-                                    <Tag color="success" icon={<CheckCircleOutlined />}><FormattedMessage id="tools.jsonExtractor.validJson" defaultMessage="Valid JSON" /></Tag>
-                                ) : (
-                                    <Alert
-                                        type="error"
-                                        showIcon
-                                        message={<FormattedMessage id="tools.jsonExtractor.invalidJson" defaultMessage="Invalid JSON" />}
-                                        description={validationError}
-                                        className="bg-red-500/10 border-red-500/30 text-red-200"
-                                    />
-                                )}
-                            </div>
-                        )}
+  const handleClear = () => {
+    setInput("");
+    setOutput("");
+    setParsed(null);
+    setIsValid(null);
+    setError("");
+  };
 
-                        {/* Options */}
-                        <div className="p-4 rounded-lg border border-slate-700/30">
-                            <Text strong className="mb-2 block"><FormattedMessage id="tools.jsonFormatter.options" defaultMessage="Format Options" /></Text>
-                            <Row gutter={[16, 16]}>
-                                <Col span={12}>
-                                    <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonFormatter.indent" defaultMessage="Indent" /></Text>
-                                    <Select
-                                        value={options.indent}
-                                        onChange={(val) => setOptions({ ...options, indent: val })}
-                                        className="w-full"
-                                        popupClassName=""
-                                    >
-                                        <Option value={2}>2 Spaces</Option>
-                                        <Option value={4}>4 Spaces</Option>
-                                        <Option value="tab"><FormattedMessage id="tools.jsonFormatter.tab" defaultMessage="Tab" /></Option>
-                                    </Select>
-                                </Col>
-                                <Col span={12}>
-                                    <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonFormatter.mode" defaultMessage="Mode" /></Text>
-                                    <Select
-                                        value={options.compact}
-                                        onChange={(val) => setOptions({ ...options, compact: val })}
-                                        className="w-full"
-                                        popupClassName=""
-                                    >
-                                        <Option value={false}><FormattedMessage id="tools.jsonFormatter.pretty" defaultMessage="Pretty Print" /></Option>
-                                        <Option value={true}><FormattedMessage id="tools.jsonFormatter.compact" defaultMessage="Compact" /></Option>
-                                    </Select>
-                                </Col>
-                                <Col span={12}>
-                                    <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonFormatter.keyCase" defaultMessage="Key Case" /></Text>
-                                    <Select
-                                        value={options.keyCase}
-                                        onChange={(val) => setOptions({ ...options, keyCase: val })}
-                                        className="w-full"
-                                        popupClassName=""
-                                    >
-                                        <Option value="preserve"><FormattedMessage id="tools.jsonFormatter.preserve" defaultMessage="Preserve" /></Option>
-                                        <Option value="upper"><FormattedMessage id="tools.jsonFormatter.uppercase" defaultMessage="UPPERCASE" /></Option>
-                                        <Option value="lower"><FormattedMessage id="tools.jsonFormatter.lowercase" defaultMessage="lowercase" /></Option>
-                                    </Select>
-                                </Col>
-                                <Col span={12}>
-                                    <Text className="text-slate-400 text-xs mb-1 block"><FormattedMessage id="tools.jsonFormatter.valueCase" defaultMessage="Value Case" /></Text>
-                                    <Select
-                                        value={options.valueCase}
-                                        onChange={(val) => setOptions({ ...options, valueCase: val })}
-                                        className="w-full"
-                                        popupClassName=""
-                                    >
-                                        <Option value="preserve"><FormattedMessage id="tools.jsonFormatter.preserve" defaultMessage="Preserve" /></Option>
-                                        <Option value="upper"><FormattedMessage id="tools.jsonFormatter.uppercase" defaultMessage="UPPERCASE" /></Option>
-                                        <Option value="lower"><FormattedMessage id="tools.jsonFormatter.lowercase" defaultMessage="lowercase" /></Option>
-                                    </Select>
-                                </Col>
-                            </Row>
-                            <div className="mt-4 space-x-4">
-                                <Checkbox
-                                    checked={options.sortKeys}
-                                    onChange={(e) => setOptions({ ...options, sortKeys: e.target.checked })}
-                                    className="text-slate-300"
-                                >
-                                    <FormattedMessage id="tools.jsonFormatter.sortKeys" defaultMessage="Sort Keys" />
-                                </Checkbox>
-                                <Checkbox
-                                    checked={options.escapeUnicode}
-                                    onChange={(e) => setOptions({ ...options, escapeUnicode: e.target.checked })}
-                                    className="text-slate-300"
-                                >
-                                    <FormattedMessage id="tools.jsonFormatter.escapeUnicode" defaultMessage="Escape Unicode" />
-                                </Checkbox>
-                            </div>
-                        </div>
-                    </Card>
-                </Col>
+  const handleLoadExample = () => {
+    setInput(EXAMPLE_JSON);
+    format(EXAMPLE_JSON);
+  };
 
-                {/* Output Section */}
-                <Col xs={24} lg={12}>
-                    <Card
-                        className="border-none bg-white/5 h-full"
-                        title={<FormattedMessage id="tools.jsonFormatter.outputTitle" defaultMessage="Formatted Output" />}
-                        extra={
-                            <Space>
-                                <Button size="small" onClick={() => copy(formattedJson)} disabled={!formattedJson} icon={<CopyOutlined />} type="dashed">
-                                    <FormattedMessage id="common.copy" defaultMessage="Copy" />
-                                </Button>
-                                <Button size="small" onClick={handleDownload} disabled={!formattedJson} icon={<DownloadOutlined />} type="dashed">
-                                    <FormattedMessage id="common.download" defaultMessage="Download" />
-                                </Button>
-                            </Space>
-                        }
-                    >
-                        {/* Stats */}
-                        {formattedJson && (
-                            <Row gutter={[8, 8]} className="mb-4">
-                                {[
-                                    { label: 'Size', value: jsonStats.size, color: 'text-blue-400' },
-                                    { label: 'Lines', value: jsonStats.lines, color: 'text-green-400' },
-                                    { label: 'Keys', value: jsonStats.keys, color: 'text-orange-400' },
-                                    { label: 'Depth', value: jsonStats.depth, color: 'text-purple-400' },
-                                ].map(stat => (
-                                    <Col span={6} key={stat.label}>
-                                        <div className="rounded-lg p-2 text-center">
-                                            <div className={`text-lg font-bold ${stat.color}`}>{stat.value}</div>
-                                            <div className="text-xs text-slate-500"><FormattedMessage id={`tools.jsonFormatter.stats.${stat.label.toLowerCase()}`} defaultMessage={stat.label} /></div>
-                                        </div>
-                                    </Col>
-                                ))}
-                            </Row>
-                        )}
+  const handleEscape = () => {
+    if (!input.trim()) return;
+    setOutput(JSON.stringify(input));
+    setIsValid(null);
+  };
 
-                        {!formattedJson ? (
-                            <div className="h-96 flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/30 rounded-xl">
-                                <FormatPainterOutlined className="text-4xl mb-4 opacity-50" />
-                                <p><FormattedMessage id="tools.jsonFormatter.waitingInput" defaultMessage="Formatted JSON will appear here" /></p>
-                            </div>
-                        ) : (
-                            <TextArea
-                                value={formattedJson}
-                                readOnly
-                                className="font-mono text-sm border-slate-700 text-green-400 rounded-lg"
-                                style={{ height: 'calc(100vh - 450px)', minHeight: '400px', resize: 'none' }}
-                            />
-                        )}
-                    </Card>
-                </Col>
-            </Row>
-        </div>
+  const handleUnescape = () => {
+    if (!input.trim()) return;
+    try {
+      const unescaped = JSON.parse(input);
+      if (typeof unescaped === "string") {
+        setOutput(unescaped);
+        setIsValid(null);
+        return;
+      }
+    } catch {}
+    setOutput(
+      input
+        .replace(/\\\\/g, "\\")
+        .replace(/\\"/g, '"')
+        .replace(/\\n/g, "\n")
+        .replace(/\\t/g, "\t")
+        .replace(/\\r/g, "\r")
     );
+  };
+
+  const handleDownload = () => {
+    if (!output) return;
+    const blob = new Blob([output], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "formatted.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const stats = parsed !== null && output ? getStats(output, parsed) : null;
+
+  const indentOptions = [
+    { value: "2", label: "2 spaces" },
+    { value: "4", label: "4 spaces" },
+    { value: "8", label: "8 spaces" },
+    { value: "1", label: "1 space" },
+  ];
+
+  return (
+    <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm">
+              <History className="mr-1.5 size-4" />
+              {intl.formatMessage({ id: "tools.jsonFormatter.history" })}
+              {history.length > 0 && (
+                <Badge variant="secondary" className="ml-1.5">
+                  {history.length}
+                </Badge>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>
+                {intl.formatMessage({ id: "tools.jsonFormatter.history" })}
+              </SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="mt-4 h-[calc(100vh-8rem)]">
+              {history.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  暂无历史记录
+                </p>
+              ) : (
+                <div className="space-y-2 pr-4">
+                  {history.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setInput(item.input);
+                        format(item.input);
+                      }}
+                      className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(item.timestamp).toLocaleString()}
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {formatSize(item.size)}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 truncate font-mono text-sm">
+                        {item.input.slice(0, 60)}
+                        {item.input.length > 60 ? "..." : ""}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Options */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium">
+            {intl.formatMessage({ id: "tools.jsonFormatter.options" })}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Label className="text-sm">
+                {intl.formatMessage({ id: "tools.jsonFormatter.indent" })}
+              </Label>
+              <Select
+                value={indent}
+                onValueChange={(v) => {
+                  setIndent(v);
+                  format(input, { indent: v });
+                }}
+                disabled={compact}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {indentOptions.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Separator orientation="vertical" className="h-6" />
+
+            <div className="flex items-center gap-2">
+              <Switch
+                id="compact"
+                checked={compact}
+                onCheckedChange={(v) => {
+                  setCompact(v);
+                  format(input, { compact: v });
+                }}
+              />
+              <Label htmlFor="compact" className="cursor-pointer text-sm">
+                {intl.formatMessage({ id: "tools.jsonFormatter.compact" })}
+              </Label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                id="sort-keys"
+                checked={sortKeys}
+                onCheckedChange={(v) => {
+                  setSortKeys(v);
+                  format(input, { sortKeys: v });
+                }}
+              />
+              <Label htmlFor="sort-keys" className="cursor-pointer text-sm">
+                {intl.formatMessage({ id: "tools.jsonFormatter.sortKeys" })}
+              </Label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                id="escape-unicode"
+                checked={escapeUnicode}
+                onCheckedChange={(v) => {
+                  setEscapeUnicode(v);
+                  format(input, { escapeUnicode: v });
+                }}
+              />
+              <Label htmlFor="escape-unicode" className="cursor-pointer text-sm">
+                {intl.formatMessage({ id: "tools.jsonFormatter.escapeUnicode" })}
+              </Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Editor Area */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Input */}
+        <Card className="flex flex-col">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">
+                {intl.formatMessage({ id: "tools.jsonFormatter.inputTitle" })}
+              </CardTitle>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLoadExample}
+                  className="h-7 text-xs"
+                >
+                  <RotateCcw className="mr-1 size-3" />
+                  {intl.formatMessage({ id: "tools.jsonFormatter.load_example" })}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClear}
+                  disabled={!input}
+                  className="h-7 text-xs"
+                >
+                  <Trash2 className="mr-1 size-3" />
+                  {intl.formatMessage({ id: "tools.jsonFormatter.clear" })}
+                </Button>
+              </div>
+            </div>
+            {isValid !== null && (
+              <div className="mt-1">
+                {isValid ? (
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  >
+                    <CheckCircle2 className="mr-1 size-3" />
+                    {intl.formatMessage({ id: "tools.jsonFormatter.json_valid" })}
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400"
+                  >
+                    <AlertCircle className="mr-1 size-3" />
+                    {intl.formatMessage({ id: "tools.jsonFormatter.json_invalid" })}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <Textarea
+              value={input}
+              onChange={(e) => handleInput(e.target.value)}
+              placeholder={intl.formatMessage({
+                id: "tools.jsonFormatter.placeholder",
+              })}
+              className="min-h-[360px] flex-1 resize-none font-mono text-sm"
+            />
+            {error && (
+              <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-500" />
+                <p className="break-all font-mono text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleEscape}
+                disabled={!input.trim()}
+              >
+                <ArrowRightLeft className="mr-1.5 size-3.5" />
+                {intl.formatMessage({ id: "tools.jsonFormatter.escape_string" })}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleUnescape}
+                disabled={!input.trim()}
+              >
+                <ArrowRightLeft className="mr-1.5 size-3.5" />
+                {intl.formatMessage({
+                  id: "tools.jsonFormatter.unescape_string",
+                })}
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleFormat}
+                disabled={!input.trim()}
+                className="ml-auto"
+              >
+                <Braces className="mr-1.5 size-4" />
+                {intl.formatMessage({ id: "tools.jsonFormatter.reformat" })}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Output */}
+        <Card className="flex flex-col">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">
+                {intl.formatMessage({ id: "tools.jsonFormatter.outputTitle" })}
+              </CardTitle>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copy(output)}
+                  disabled={!output}
+                  className="h-7 text-xs"
+                >
+                  <Copy className="mr-1 size-3" />
+                  {intl.formatMessage({ id: "tools.jsonFormatter.copy" })}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDownload}
+                  disabled={!output}
+                  className="h-7 text-xs"
+                >
+                  <Download className="mr-1 size-3" />
+                  下载
+                </Button>
+              </div>
+            </div>
+            {stats && (
+              <div className="mt-1 flex flex-wrap gap-2">
+                <Badge variant="secondary" className="text-xs">
+                  {intl.formatMessage({ id: "tools.jsonFormatter.stats.size" })}:{" "}
+                  {formatSize(stats.size)}
+                </Badge>
+                <Badge variant="secondary" className="text-xs">
+                  {intl.formatMessage({ id: "tools.jsonFormatter.stats.lines" })}:{" "}
+                  {stats.lines}
+                </Badge>
+                <Badge variant="secondary" className="text-xs">
+                  {intl.formatMessage({ id: "tools.jsonFormatter.stats.keys" })}:{" "}
+                  {stats.keys}
+                </Badge>
+                <Badge variant="secondary" className="text-xs">
+                  {intl.formatMessage({ id: "tools.jsonFormatter.stats.depth" })}:{" "}
+                  {stats.depth}
+                </Badge>
+              </div>
+            )}
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col">
+            {output ? (
+              <Textarea
+                value={output}
+                readOnly
+                className="min-h-[360px] flex-1 resize-none font-mono text-sm"
+              />
+            ) : (
+              <div className="flex min-h-[360px] flex-1 items-center justify-center rounded-md border border-dashed">
+                <p className="text-sm text-muted-foreground">
+                  {intl.formatMessage({
+                    id: "tools.jsonFormatter.waitingInput",
+                  })}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 };
 
 export default JsonFormatter;

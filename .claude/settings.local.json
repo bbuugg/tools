@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit --skipLibCheck 2>&1 | grep -i 'JsonFormatter' | head -20)",
+      "Bash(cat >> /dev/null << 'CHECKEOF'\ncheck\nCHECKEOF\ntail -5 /Users/chengyao/Workspace/web/owner/tools/src/pages/tools/Json/JsonToExcel.tsx)",
+      "Bash(python3 -c \"\nimport textwrap\n\ncontent = open\\('/Users/chengyao/Workspace/web/owner/tools/src/pages/tools/Json/JsonToExcel.tsx'\\).read\\(\\)\nprint\\(repr\\(content[:200]\\)\\)\n\" 2>&1 | head -5)",
+      "Bash(python3 /tmp/write_json_to_excel.py 2>&1 || echo 'script not found')",
+      "Bash(python3 - << 'PYEOF'\ncode = open\\('/Users/chengyao/Workspace/web/owner/tools/src/pages/tools/Json/JsonToExcel.tsx'\\).read\\(\\)\nlines = code.split\\('\\\\n'\\)\nprint\\(f'Lines: {len\\(lines\\)}'\\)\nprint\\('First import:', lines[0]\\)\nprint\\('Last 3 lines:', lines[-3:]\\)\nPYEOF)",
+      "Bash(python3 - << 'PYEOF'\ncode = open\\('/Users/chengyao/Workspace/web/owner/tools/src/pages/tools/Json/JsonToExcel.tsx'\\).read\\(\\)\nlines = code.split\\('\\\\n'\\)\nprint\\(f'Lines: {len\\(lines\\)}'\\)\nprint\\('First import:', lines[0]\\)\nprint\\('Last lines:', lines[-5:]\\)\nPYEOF)",
+      "Bash(python3 -c \"\ncode = open\\('/Users/chengyao/Workspace/web/owner/tools/src/pages/tools/Json/JsonToExcel.tsx'\\).read\\(\\)\nlines = code.split\\('\\\\n'\\)\nprint\\(f'Lines: {len\\(lines\\)}'\\)\nprint\\('First:', lines[0]\\)\nprint\\('Last:', lines[-3:]\\)\n\")",
+      "mcp__ide__getDiagnostics",
+      "Bash(npx tsc --noEmit 2>&1 | head -60)",
+      "Bash(npx tsc --noEmit 2>&1 | grep -v 'npm warn' | head -40)",
+      "Bash(npx tsc --noEmit 2>&1 | grep -v 'npm warn' | grep -v '^$')",
+      "Bash(npx tsc --noEmit 2>&1 | grep -E 'error TS' | head -20)",
+      "Bash(cd D:/Workspace/web/owner/as_tools && pnpm add mpegts.js)"
+    ]
+  }
+}

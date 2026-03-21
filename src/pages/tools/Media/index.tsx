@@ -1,5 +1,5 @@
 import React from 'react';
-import { PictureOutlined, QrcodeOutlined, BgColorsOutlined, FileTextOutlined, CompressOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { PictureOutlined, QrcodeOutlined, BgColorsOutlined, FileTextOutlined, CompressOutlined, FileImageOutlined, VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { type ToolConfig } from '@/types/tool';
 
 const tools: ToolConfig[] = [
@@ -10,7 +10,7 @@ const tools: ToolConfig[] = [
         icon: <PictureOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./ImageListProcessor')),
-        path: '/media/image-list-processor',
+        path: '/tools/image-list-processor',
     },
     {
         id: 'qrCodeTool',
@@ -19,7 +19,7 @@ const tools: ToolConfig[] = [
         icon: <QrcodeOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./QrCodeTool')),
-        path: '/media/qr-code',
+        path: '/tools/qr-code',
     },
     {
         id: 'colorPicker',
@@ -28,7 +28,7 @@ const tools: ToolConfig[] = [
         icon: <BgColorsOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./ColorPickerTool')),
-        path: '/media/color-picker',
+        path: '/tools/color-picker',
     },
     {
         id: 'fileRenamer',
@@ -37,7 +37,16 @@ const tools: ToolConfig[] = [
         icon: <FileTextOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./FileRenamer')),
-        path: '/media/file-renamer',
+        path: '/tools/file-renamer',
+    },
+    {
+        id: "livePhoto",
+        name: "Live Photo Utility",
+        description: "Extract or create Live Photos (MVIMG, Motion Photos) from images and videos",
+        icon: <VideoCameraOutlined />,
+        category: "Media",
+        component: React.lazy(() => import("../Media/LivePhotoUtility")),
+        path: "/tools/live-photo-utility",
     },
     {
         id: 'imageCompressor',
@@ -46,7 +55,7 @@ const tools: ToolConfig[] = [
         icon: <CompressOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./ImageCompressor')),
-        path: '/media/image-compressor',
+        path: '/tools/image-compressor',
     },
     {
         id: 'imageWatermark',
@@ -55,7 +64,7 @@ const tools: ToolConfig[] = [
         icon: <FileImageOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./ImageWatermark')),
-        path: '/media/image-watermark',
+        path: '/tools/image-watermark',
     },
     {
         id: 'imageToGifConverter',
@@ -64,34 +73,25 @@ const tools: ToolConfig[] = [
         icon: <FileImageOutlined />,
         category: 'Media',
         component: React.lazy(() => import('./ImageToGifConverter')),
-        path: '/media/image-to-gif-converter',
+        path: '/tools/image-to-gif-converter',
     },
     {
-        id: 'gifEditor',
-        name: 'GIF Editor',
-        description: 'Edit and customize animated GIFs by manipulating frames and delays',
+        id: 'universalVideoPlayer',
+        name: 'Universal Video Player',
+        description: 'Professional video player supporting HLS, DASH, and local files',
+        icon: <PlayCircleOutlined />,
+        category: 'Media',
+        component: React.lazy(() => import('./UniversalVideoPlayer')),
+        path: '/tools/universal-video-player',
+    },
+    {
+        id: 'imageBase64Converter',
+        name: 'Image Base64 Converter',
+        description: 'Convert images to base64 strings and vice versa',
         icon: <FileImageOutlined />,
         category: 'Media',
-        component: React.lazy(() => import('./GifEditor')),
-        path: '/media/gif-editor',
-    },
-    {
-        id: 'videoImageConverter',
-        name: 'Video Image Converter',
-        description: 'Convert videos to images and images to videos with customizable settings',
-        icon: <VideoCameraOutlined />,
-        category: 'Media',
-        component: React.lazy(() => import('./VideoImageConverter')),
-        path: '/media/video-image-converter',
-    },
-    {
-        id: 'videoToGifConverter',
-        name: 'Video to GIF Converter',
-        description: 'Convert videos to animated GIFs with time range selection and text overlay',
-        icon: <VideoCameraOutlined />,
-        category: 'Media',
-        component: React.lazy(() => import('./VideoToGifConverter')),
-        path: '/media/video-to-gif-converter',
+        component: React.lazy(() => import('./ImageBase64Converter')),
+        path: '/tools/image-base64-converter',
     }
 ];
 

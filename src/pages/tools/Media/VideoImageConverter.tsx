@@ -1,12 +1,10 @@
 import {
-  AudioOutlined,
   DownOutlined,
   DownloadOutlined,
   PlayCircleOutlined,
   ReloadOutlined,
   SwapOutlined,
   UpOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Alert,
@@ -18,6 +16,7 @@ import {
   Space,
   Tag,
   Typography,
+  Upload,
   message,
 } from "antd";
 import JSZip from "jszip";
@@ -63,23 +62,17 @@ const VideoImageConverter: React.FC = () => {
   );
 
   // Video to Image state
-  const videoInputRef = useRef<HTMLInputElement>(null);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [selectedVideo, setSelectedVideo] = useState<SelectedVideo | null>(
     null
   );
   const [videoUrl, setVideoUrl] = useState("");
   const [videoDuration, setVideoDuration] = useState(0);
-  const [isVideoDragging, setIsVideoDragging] = useState(false);
   const [extractedImages, setExtractedImages] = useState<ExtractedImage[]>([]);
 
   // Image to Video state
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const audioInputRef = useRef<HTMLInputElement>(null);
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [selectedAudio, setSelectedAudio] = useState<File | null>(null);
-  const [isImageDragging, setIsImageDragging] = useState(false);
-  const [isAudioDragging, setIsAudioDragging] = useState(false);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState("");
 
   // Processing state
@@ -125,28 +118,7 @@ const VideoImageConverter: React.FC = () => {
     };
   }, [videoUrl, extractedImages, selectedImages, generatedVideoUrl]);
 
-  // Video handling
-  const handleVideoDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsVideoDragging(false);
 
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleVideoFile(files[0]);
-    }
-  };
-
-  const handleVideoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      handleVideoFile(files[0]);
-    }
-
-    // Reset input to allow selecting the same file again
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
 
   const handleVideoFile = (file: File) => {
     if (!file.type.startsWith("video/")) {
@@ -186,28 +158,7 @@ const VideoImageConverter: React.FC = () => {
     }
   };
 
-  // Image handling
-  const handleImageDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsImageDragging(false);
 
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      handleImageFiles(Array.from(files));
-    }
-  };
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      handleImageFiles(Array.from(files));
-    }
-
-    // Reset input to allow selecting the same files again
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
 
   const handleImageFiles = (files: File[]) => {
     const validImages = files.filter((file) => file.type.startsWith("image/"));
@@ -270,28 +221,7 @@ const VideoImageConverter: React.FC = () => {
     setSelectedImages((prev) => [...prev].sort(() => Math.random() - 0.5));
   };
 
-  // Audio handling
-  const handleAudioDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsAudioDragging(false);
 
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      handleAudioFile(files[0]);
-    }
-  };
-
-  const handleAudioSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      handleAudioFile(files[0]);
-    }
-
-    // Reset input to allow selecting the same file again
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
 
   const handleAudioFile = (file: File) => {
     if (!file.type.startsWith("audio/")) {
@@ -642,42 +572,26 @@ const VideoImageConverter: React.FC = () => {
           >
             {/* File Upload */}
             <div className="mb-6">
-              <div
-                onDrop={handleVideoDrop}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsVideoDragging(true);
+              <Upload.Dragger
+                accept="video/*"
+                showUploadList={false}
+                customRequest={({ file, onSuccess }) => {
+                  handleVideoFile(file as File);
+                  setTimeout(() => onSuccess?.("ok"), 0);
                 }}
-                onDragEnter={(e) => {
-                  e.preventDefault();
-                  setIsVideoDragging(true);
-                }}
-                onDragLeave={() => setIsVideoDragging(false)}
-                onClick={() => videoInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
-                  isVideoDragging
-                    ? "border-primary-500 bg-primary-500/10"
-                    : "border-slate-600 hover:border-primary-500"
-                }`}
+                className="bg-transparent border-slate-600 hover:border-primary-500"
+                style={{ padding: "40px 0" }}
               >
-                <div className="text-slate-400 text-4xl mb-4">📹</div>
-                <p className="mb-4">
+                <p className="ant-upload-drag-icon">
+                  <span className="text-4xl">📹</span>
+                </p>
+                <p className="ant-upload-text text-xl font-medium mt-4">
                   <FormattedMessage id="tools.videoImageConverter.videoToImage.dragDrop" />
                 </p>
-                <input
-                  type="file"
-                  ref={videoInputRef}
-                  onChange={handleVideoSelect}
-                  accept="video/*"
-                  className="hidden"
-                />
-                <Button icon={<UploadOutlined />} className="px-6 py-2">
-                  <FormattedMessage id="tools.videoImageConverter.videoToImage.selectFile" />
-                </Button>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="ant-upload-hint text-slate-400 mt-2">
                   <FormattedMessage id="tools.videoImageConverter.videoToImage.supportedFormats" />
                 </p>
-              </div>
+              </Upload.Dragger>
             </div>
 
             {/* Video Settings */}
@@ -847,43 +761,27 @@ const VideoImageConverter: React.FC = () => {
           >
             {/* File Upload */}
             <div className="mb-6">
-              <div
-                onDrop={handleImageDrop}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsImageDragging(true);
+              <Upload.Dragger
+                accept="image/*"
+                showUploadList={false}
+                multiple
+                customRequest={({ file, onSuccess }) => {
+                  handleImageFiles([file as File]);
+                  setTimeout(() => onSuccess?.("ok"), 0);
                 }}
-                onDragEnter={(e) => {
-                  e.preventDefault();
-                  setIsImageDragging(true);
-                }}
-                onDragLeave={() => setIsImageDragging(false)}
-                onClick={() => imageInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
-                  isImageDragging
-                    ? "border-primary-500 bg-primary-500/10"
-                    : "border-slate-600 hover:border-primary-500"
-                }`}
+                className="bg-transparent border-slate-600 hover:border-primary-500"
+                style={{ padding: "40px 0" }}
               >
-                <div className="text-slate-400 text-4xl mb-4">🖼️</div>
-                <p className="mb-4">
+                <p className="ant-upload-drag-icon">
+                  <span className="text-4xl">🖼️</span>
+                </p>
+                <p className="ant-upload-text text-xl font-medium mt-4">
                   <FormattedMessage id="tools.videoImageConverter.imageToVideo.dragDrop" />
                 </p>
-                <input
-                  type="file"
-                  ref={imageInputRef}
-                  onChange={handleImageSelect}
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                />
-                <Button icon={<UploadOutlined />} className="px-6 py-2">
-                  <FormattedMessage id="tools.videoImageConverter.imageToVideo.selectFiles" />
-                </Button>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="ant-upload-hint text-slate-400 mt-2">
                   <FormattedMessage id="tools.videoImageConverter.imageToVideo.supportedFormats" />
                 </p>
-              </div>
+              </Upload.Dragger>
             </div>
 
             {/* Audio Upload */}
@@ -891,39 +789,26 @@ const VideoImageConverter: React.FC = () => {
               <h4 className="text-md font-semibold text-slate-100 mb-3">
                 <FormattedMessage id="tools.videoImageConverter.imageToVideo.audio.title" />
               </h4>
-              <div
-                onDrop={handleAudioDrop}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsAudioDragging(true);
+              <Upload.Dragger
+                accept="audio/*"
+                showUploadList={false}
+                customRequest={({ file, onSuccess }) => {
+                  handleAudioFile(file as File);
+                  setTimeout(() => onSuccess?.("ok"), 0);
                 }}
-                onDragEnter={(e) => {
-                  e.preventDefault();
-                  setIsAudioDragging(true);
-                }}
-                onDragLeave={() => setIsAudioDragging(false)}
-                onClick={() => audioInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${
-                  isAudioDragging
-                    ? "border-primary-500 bg-primary-500/10"
-                    : "border-slate-600 hover:border-primary-500"
-                }`}
+                className="bg-transparent border-slate-600 hover:border-primary-500"
+                style={{ padding: "30px 0" }}
               >
-                <div className="text-slate-400 text-2xl mb-2">🎵</div>
+                <p className="ant-upload-drag-icon">
+                  <span className="text-2xl">🎵</span>
+                </p>
                 {selectedAudio ? (
-                  <p className="mb-2">{selectedAudio.name}</p>
+                  <p className="ant-upload-text mb-2">{selectedAudio.name}</p>
                 ) : (
-                  <p className="mb-2">
+                  <p className="ant-upload-text">
                     <FormattedMessage id="tools.videoImageConverter.imageToVideo.audio.dragDrop" />
                   </p>
                 )}
-                <input
-                  type="file"
-                  ref={audioInputRef}
-                  onChange={handleAudioSelect}
-                  accept="audio/*"
-                  className="hidden"
-                />
                 {selectedAudio && (
                   <Button
                     onClick={(e) => {
@@ -937,13 +822,10 @@ const VideoImageConverter: React.FC = () => {
                     <FormattedMessage id="common.remove" />
                   </Button>
                 )}
-                <Button icon={<AudioOutlined />} className="px-4 py-1">
-                  <FormattedMessage id="tools.videoImageConverter.imageToVideo.audio.selectFile" />
-                </Button>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="ant-upload-hint text-slate-400 mt-2">
                   <FormattedMessage id="tools.videoImageConverter.imageToVideo.audio.supportedFormats" />
                 </p>
-              </div>
+              </Upload.Dragger>
             </div>
 
             {/* Image Settings */}
