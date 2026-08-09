@@ -20,7 +20,7 @@ export default function ToolsPage() {
                     <Link
                       key={tool.href}
                       to={tool.href}
-                      className="group relative rounded-xl bg-white! p-6 transition-all hover:bg-gray-100!"
+                      className="group relative rounded-xl bg-gray-50 p-6 transition-all hover:bg-gray-100"
                     >
                       <div className="flex items-start gap-4">
                         <div

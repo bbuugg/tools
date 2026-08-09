@@ -11,8 +11,6 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -278,7 +276,7 @@ export default function WechatChatPage({ title, description }: SiteDefination) {
 
   return (
     <>
-            <div className="overflow-x-hidden">
+      <div className="overflow-x-hidden">
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4 overflow-x-hidden">
           {/* Title */}
           <div className="flex items-center gap-3">
@@ -391,19 +389,17 @@ export default function WechatChatPage({ title, description }: SiteDefination) {
                               ) : (
                                 /* Text bubble */
                                 <div
-                                  className={`relative px-3 py-2 text-[15px] leading-[1.4] break-words ${
-                                    isMe
+                                  className={`relative px-3 py-2 text-[15px] leading-[1.4] break-words ${isMe
                                       ? "bg-[#95ec69] text-black rounded-[6px]"
                                       : "bg-white text-black rounded-[6px]"
-                                  }`}
+                                    }`}
                                 >
                                   {/* Bubble tail */}
                                   <div
-                                    className={`absolute top-3 w-0 h-0 border-[6px] border-transparent ${
-                                      isMe
+                                    className={`absolute top-3 w-0 h-0 border-[6px] border-transparent ${isMe
                                         ? "right-[-10px] border-l-[#95ec69]"
                                         : "left-[-10px] border-r-white"
-                                    }`}
+                                      }`}
                                   />
                                   <span className="whitespace-pre-wrap">{msg.text}</span>
                                 </div>
@@ -748,6 +744,6 @@ export default function WechatChatPage({ title, description }: SiteDefination) {
           </div>
         </div>
       </div>
-          </>
+    </>
   );
 }
