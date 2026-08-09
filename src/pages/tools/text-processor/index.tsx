@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Toaster } from "@/components/ui/sonner";
 import { Switch } from "@/components/ui/switch";
 import {
   Tabs,
@@ -43,7 +42,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import MonacoEditor from "@/components/MonacoEditor"
+import MonacoEditor from "@/components/MonacoEditor";
 
 // ─── Types ───────────────────────────────────────────────────────
 
@@ -757,7 +756,6 @@ export default function TextProcessorPage({ title, description }: SiteDefination
   // ── Render ─────────────────────────────────────────────────────
   return (
     <>
-      <Toaster />
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
           {/* Title */}

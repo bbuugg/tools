@@ -3,6 +3,7 @@ import NotFound from '@/pages/not-found'
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/layout/Layout'
+import { Toaster } from './components/ui/sonner'
 import { TOOL_ROUTES } from './lib/routes'
 
 const Home = lazy(() => import('./pages/home'))
@@ -43,7 +44,10 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  return <RouterProvider router={router} />
+  return <>
+    <RouterProvider router={router} />
+    <Toaster />
+  </>
 }
 
 export default App

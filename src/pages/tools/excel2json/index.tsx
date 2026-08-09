@@ -1,3 +1,20 @@
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { type SiteDefination } from "@/lib/site";
 import {
   Check,
   Copy,
@@ -13,26 +30,8 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Toaster } from "@/components/ui/sonner";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { type SiteDefination } from "@/lib/site";
 
-import MonacoEditor from "@/components/MonacoEditor"
+import MonacoEditor from "@/components/MonacoEditor";
 
 // ─── Types ───────────────────────────────────────────────────────
 
@@ -312,7 +311,6 @@ export default function ExcelToJsonPage({ title, description }: SiteDefination) 
   // ── Render ─────────────────────────────────────────────────────
   return (
     <>
-      <Toaster />
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
           {/* Title */}
@@ -366,8 +364,8 @@ export default function ExcelToJsonPage({ title, description }: SiteDefination) 
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     className={`flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${isDragging
-                        ? "border-primary bg-primary/5"
-                        : "border-gray-300 bg-white hover:border-primary/50 hover:bg-gray-50"
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-300 bg-white hover:border-primary/50 hover:bg-gray-50"
                       }`}
                   >
                     {file ? (

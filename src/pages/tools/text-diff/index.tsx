@@ -1,4 +1,3 @@
-import { Fragment, useMemo, useState } from "react";
 import {
   ArrowLeftRight,
   Copy,
@@ -9,14 +8,12 @@ import {
   Star,
   TriangleAlert,
 } from "lucide-react";
+import { Fragment, useMemo, useState } from "react";
 
 
 
-import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -24,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { type SiteDefination } from "@/lib/site";
 
 // ─── Types ───────────────────────────────────────────────────────
@@ -375,7 +374,6 @@ export default function TextDiffPage({ title, description }: SiteDefination) {
 
   return (
     <>
-            <Toaster />
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
           {/* Title */}
@@ -546,6 +544,6 @@ export default function TextDiffPage({ title, description }: SiteDefination) {
           </div>
         </div>
       </div>
-          </>
+    </>
   );
 }

@@ -1,13 +1,3 @@
-import { useMemo, useState, type CSSProperties } from "react";
-import {
-  FileEdit,
-  Upload,
-  Download,
-  Eraser,
-  Code2,
-  GripVertical,
-  Trash2,
-} from "lucide-react";
 import {
   closestCenter,
   DndContext,
@@ -25,15 +15,30 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  Code2,
+  Download,
+  Eraser,
+  FileEdit,
+  GripVertical,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { toast } from "sonner";
 
 
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -41,15 +46,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import JSZip from "jszip";
-import { Toaster } from "@/components/ui/sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type SiteDefination } from "@/lib/site";
+import JSZip from "jszip";
 
 interface FileInfo {
   id: string; file: File; originalName: string; size: number; lastModified: number;
@@ -197,7 +196,7 @@ export default function FileRenamerPage({ title, description }: SiteDefination) 
 
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-amber-600 flex items-center justify-center text-white">
@@ -333,7 +332,6 @@ export default function FileRenamerPage({ title, description }: SiteDefination) 
           </Dialog>
         </div>
       </div>
-            <Toaster />
     </>
   );
 }

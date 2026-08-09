@@ -1,7 +1,12 @@
 import { useEffect } from "react";
 import { Outlet, ScrollRestoration, useMatches } from "react-router-dom";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { AppSidebar } from "@/components/app-sidebar";
 import { pageTitle } from "@/lib/site";
 import { type RouteHandle } from "@/lib/routes";
 
@@ -26,15 +31,17 @@ export default function Layout() {
   useDocumentTitle();
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar />
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="sticky top-0 bg-white flex h-14 shrink-0 items-center gap-2 px-4">
+          <SidebarTrigger />
+        </header>
         <main className="flex-1 overflow-x-hidden">
           <Outlet />
         </main>
-      </div>
+      </SidebarInset>
       <ScrollRestoration />
-    </div>
+    </SidebarProvider>
   );
 }
