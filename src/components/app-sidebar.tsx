@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Wrench } from "lucide-react"
+import { Wrench, ChevronDown, Search } from "lucide-react"
 import { TOOL_CATEGORIES } from "@/lib/routes"
 import {
   Sidebar,
@@ -14,6 +14,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 
 export function AppSidebar() {
   const location = useLocation()
@@ -49,45 +54,58 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        {/* 搜索框 - 放在 Header 中始终置顶，折叠为图标时隐藏 */}
+        <div className="relative group-data-[collapsible=icon]:hidden">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <SidebarInput
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="搜索工具…"
+            className="pl-8"
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        {/* 搜索框 - 折叠为图标时隐藏 */}
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupContent>
-            <SidebarInput
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="搜索工具…"
-            />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {/* 工具分类列表 */}
+        {/* 工具分类列表 - 每组支持折叠 */}
         {filteredCategories.map((category) => (
-          <SidebarGroup key={category.name}>
-            <SidebarGroupLabel>{category.name}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {category.tools.map((tool) => {
-                  const Icon = tool.icon
-                  const active = location.pathname === tool.href
-                  return (
-                    <SidebarMenuItem key={tool.href}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={active}
-                        tooltip={tool.title}
-                      >
-                        <Link to={tool.href}>
-                          <Icon />
-                          <span>{tool.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <Collapsible
+            key={category.name}
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger>
+                  {category.name}
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {category.tools.map((tool) => {
+                      const Icon = tool.icon
+                      const active = location.pathname === tool.href
+                      return (
+                        <SidebarMenuItem key={tool.href}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={active}
+                            tooltip={tool.title}
+                          >
+                            <Link to={tool.href}>
+                              <Icon />
+                              <span>{tool.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      )
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
         ))}
       </SidebarContent>
     </Sidebar>
