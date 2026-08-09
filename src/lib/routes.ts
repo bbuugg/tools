@@ -133,7 +133,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/regex-tester",
     lazy: () => import("@/pages/tools/regex-tester"),
     meta: {
-      title: "正则表达式测试器",
+      title: "正则表达式测试",
       description: "实时测试正则表达式，高亮匹配结果，显示捕获组详情",
       category: "开发调试",
       icon: Regex,
@@ -144,7 +144,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/cron-generator",
     lazy: () => import("@/pages/tools/cron-generator"),
     meta: {
-      title: "Cron 表达式生成器",
+      title: "Cron 表达式生成",
       description: "可视化生成和解析 Cron 表达式，支持预设模板和下次执行时间预览",
       category: "开发调试",
       icon: CalendarClock,
@@ -155,7 +155,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/string-generator",
     lazy: () => import("@/pages/tools/string-generator"),
     meta: {
-      title: "字符串生成器",
+      title: "字符串生成",
       description: "UUID/ULID 生成、随机字符串、密码生成，支持字符集自定义和批量导出",
       category: "开发调试",
       icon: Shuffle,
@@ -265,7 +265,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/css-gradient-generator",
     lazy: () => import("@/pages/tools/css-gradient-generator"),
     meta: {
-      title: "CSS 渐变生成器",
+      title: "CSS 渐变生成",
       description: "可视化生成线性/径向渐变，支持自定义角度、颜色控制点和预设方案",
       category: "文本与转换",
       icon: Palette,
@@ -331,7 +331,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/favicon-generator",
     lazy: () => import("@/pages/tools/favicon-generator"),
     meta: {
-      title: "Favicon 生成器",
+      title: "Favicon 生成",
       description: "上传图片裁剪并生成多种尺寸的 Favicon，支持 ICO/PNG/JPG 格式",
       category: "图像处理",
       icon: AppWindow,
@@ -364,7 +364,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/live-photo",
     lazy: () => import("@/pages/tools/live-photo"),
     meta: {
-      title: "Live Photo 工具",
+      title: "Live Photo",
       description: "拆解或制作 Google Motion Photo / Android Live Photo",
       category: "视频与动图",
       icon: Images,
@@ -441,7 +441,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/wechat-chat",
     lazy: () => import("@/pages/tools/wechat-chat"),
     meta: {
-      title: "微信聊天模拟器",
+      title: "微信聊天模拟",
       description: "在线制作微信聊天截图，支持自定义头像、昵称、消息内容、红包、时间等，实时预览并导出图片",
       category: "社交模拟",
       icon: MessageCircle,

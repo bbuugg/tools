@@ -369,8 +369,8 @@ export default function WechatChatPage() {
                                     alt="微信红包"
                                     className="w-full h-auto block"
                                   />
-                                  <div className="absolute inset-0 flex items-center pl-14 pr-4">
-                                    <span className="text-white text-[15px] font-medium leading-tight drop-shadow-sm">
+                                  <div className="absolute inset-0 flex items-start p-3 pl-14">
+                                    <span className="text-white text-[14px] font-medium leading-tight drop-shadow-sm">
                                       {msg.greeting || "恭喜发财，大吉大利"}
                                     </span>
                                   </div>
