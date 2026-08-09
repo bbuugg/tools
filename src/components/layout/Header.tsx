@@ -10,7 +10,7 @@ export default function Header() {
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
             <Wrench className="size-4" />
           </div>
-          <span className="text-lg font-bold text-gray-900">工具站</span>
+          <span className="text-lg font-bold text-gray-900">开发者工具</span>
         </Link>
       </div>
     </header>

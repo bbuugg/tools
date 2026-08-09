@@ -1,14 +1,13 @@
-import { useEffect, useMemo } from "react";
-import { Outlet, ScrollRestoration, useMatches } from "react-router-dom";
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import { AppSidebar } from "@/components/app-sidebar";
-import { pageTitle } from "@/lib/site";
 import { type RouteHandle } from "@/lib/routes";
+import { pageTitle } from "@/lib/site";
+import { useEffect, useMemo } from "react";
+import { Outlet, ScrollRestoration, useMatches } from "react-router-dom";
 
 /** 从当前路由 handle.meta 获取标题和描述 */
 function useRouteMeta() {
@@ -23,7 +22,7 @@ function useRouteMeta() {
     if (lastMatch.pathname === "/") {
       return { title: "工具", description: "在线工具合集" };
     }
-    return { title: "工具站", description: "" };
+    return { title: "开发者工具", description: "" };
   }, [meta, lastMatch.pathname]);
 }
 
@@ -45,7 +44,7 @@ export default function Layout() {
         <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2 bg-background/80 px-4 backdrop-blur-sm">
           <SidebarTrigger />
           <div className="flex min-w-0 items-baseline gap-0.5 ml-2 flex-col">
-            <h1 className="truncate text-sm font-semibold">{title}</h1>
+            <h1 className="truncate font-semibold">{title}</h1>
             {description && (
               <p className="hidden truncate text-xs text-muted-foreground sm:block">
                 {description}
