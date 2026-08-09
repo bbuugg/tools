@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Sun,
   Type,
-  Image as ImageIcon,
   FlipHorizontal2,
   FlipVertical2,
   RotateCw,
@@ -16,6 +15,9 @@ import {
   Move,
   Square,
   Loader2,
+  Crop as CropIcon,
+  Scaling,
+  Frame,
 } from "lucide-react";
 
 
@@ -25,8 +27,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ColorPickerField } from "@/components/ui/color-picker-field";
 import { UploadDropZone } from "@/components/ui/upload-dropzone";
 
 // ─────────────────────────────────────────────────────────────
@@ -53,6 +56,7 @@ interface Geometry {
   mirrorH: boolean;
   flipV: boolean;
   crop: CropFrac | null;
+  borderRadius: number; // 0..100 (percentage of min(W,H)/2)
 }
 
 interface CropFrac {
@@ -121,6 +125,7 @@ const DEFAULT_GEO: Geometry = {
   mirrorH: false,
   flipV: false,
   crop: null,
+  borderRadius: 0,
 };
 
 const DEFAULT_CR: ColorReplace = {
@@ -507,6 +512,29 @@ function renderToCanvas(
     const c = canvas.getContext("2d");
     if (c) c.drawImage(temp, 0, 0);
   }
+
+  // Apply rounded corners (transparent background)
+  if (geo.borderRadius > 0) {
+    const w = canvas.width;
+    const h = canvas.height;
+    const r = Math.min(w, h) / 2 * (geo.borderRadius / 100);
+    const tmp2 = document.createElement("canvas");
+    tmp2.width = w;
+    tmp2.height = h;
+    const t2ctx = tmp2.getContext("2d");
+    if (t2ctx) {
+      t2ctx.beginPath();
+      t2ctx.roundRect(0, 0, w, h, r);
+      t2ctx.clip();
+      t2ctx.drawImage(canvas, 0, 0);
+      const fctx = canvas.getContext("2d");
+      if (fctx) {
+        fctx.clearRect(0, 0, w, h);
+        fctx.drawImage(tmp2, 0, 0);
+      }
+    }
+  }
+
   return { width: canvas.width, height: canvas.height };
 }
 
@@ -601,6 +629,9 @@ export default function ImageEditorPage() {
   const [exporting, setExporting] = useState(false);
   const [format, setFormat] = useState<"png" | "jpeg" | "webp">("png");
   const [quality, setQuality] = useState(0.92);
+
+  // Active panel (Photoshop-style tool selection)
+  const [activePanel, setActivePanel] = useState<"adjust" | "text" | "mosaic">("adjust");
 
   // Interaction modes
   const [cropMode, setCropMode] = useState(false);
@@ -856,784 +887,349 @@ export default function ImageEditorPage() {
   const hasImage = !!imgRef.current;
 
   return (
-    <>
-            <div>
-        <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-            {/* ── Left: Preview ── */}
-            <div className="lg:sticky lg:top-22 self-start space-y-3">
-              <div className="rounded-xl border border-gray-200 bg-white p-4 flex justify-center items-center">
-                {!hasImage ? (
-                  <div className="min-h-[420px] w-full flex items-center justify-center">
-                    <UploadDropZone
-                      onFiles={(files) => files[0] && loadFile(files[0])}
-                      accept="image/*"
-                      className="w-full max-w-md min-h-[360px]"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    ref={wrapRef}
-                    className="relative inline-block max-w-full mx-auto overflow-hidden"
-                    style={{
-                      backgroundImage:
-                        "repeating-conic-gradient(#e5e7eb 0% 25%, #ffffff 0% 50%)",
-                      backgroundSize: "20px 20px",
-                      touchAction: "none",
-                    }}
-                    onPointerDown={onWrapperPointerDown}
-                  >
-                    <canvas
-                      ref={canvasRef}
-                      className="block max-w-full max-h-[68vh] w-auto h-auto rounded-md shadow-sm"
-                    />
-
-                    {/* Crop overlay */}
-                    {cropMode && (
-                      <div
-                        className="absolute cursor-move"
-                        style={{
-                          left: `${cropDraft.x * 100}%`,
-                          top: `${cropDraft.y * 100}%`,
-                          width: `${cropDraft.w * 100}%`,
-                          height: `${cropDraft.h * 100}%`,
-                          boxShadow: "0 0 0 9999px rgba(0,0,0,0.45)",
-                          outline: "1px solid #fff",
-                        }}
-                        onPointerDown={startCropMove}
-                      >
-                        <div
-                          onPointerDown={startCropResize}
-                          className="absolute -bottom-1 -right-1 size-4 bg-white border border-indigo-500 rounded-sm cursor-se-resize"
-                        />
-                      </div>
-                    )}
-
-                    {/* Mosaic draw preview */}
-                    {mosaicDraw && cropDraft.w > 0 && (
-                      <div
-                        className="absolute pointer-events-none border border-dashed border-indigo-500 bg-indigo-500/10"
-                        style={{
-                          left: `${cropDraft.x * 100}%`,
-                          top: `${cropDraft.y * 100}%`,
-                          width: `${cropDraft.w * 100}%`,
-                          height: `${cropDraft.h * 100}%`,
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {hasImage && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs text-gray-500 truncate max-w-[180px]" title={fileName}>
-                    {fileName}
-                  </span>
-                  <span className="text-xs text-gray-300">·</span>
-                  <span className="text-xs text-gray-400">
-                    原图 {naturalSize.w}×{naturalSize.h}
-                  </span>
-                  <span className="text-xs text-gray-300">·</span>
-                  <span className="text-xs text-gray-400">
-                    输出 {exportSize.w}×{exportSize.h}
-                  </span>
-                  <div className="flex-1" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if (objectUrlRef.current)
-                        URL.revokeObjectURL(objectUrlRef.current);
-                      imgRef.current = null;
-                      setFileName("");
-                    }}
-                  >
-                    <Trash2 className="size-3.5" /> 清除
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={resetAll}>
-                    <RotateCcw className="size-3.5" /> 重置全部
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* ── Right: Controls ── */}
-            <div className="space-y-4">
-              {!hasImage && (
-                <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-400">
-                  先上传一张图片，即可开始编辑。
-                </div>
-              )}
-
-              {hasImage && (
-                <Tabs defaultValue="adjust" className="space-y-3">
-                  <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
-                    <TabsTrigger value="adjust">
-                      <Sun className="size-3.5" /> 调整
-                    </TabsTrigger>
-                    <TabsTrigger value="transform">
-                      <RotateCw className="size-3.5" /> 变换
-                    </TabsTrigger>
-                    <TabsTrigger value="text">
-                      <Type className="size-3.5" /> 文字水印
-                    </TabsTrigger>
-                    <TabsTrigger value="mosaic">
-                      <Eraser className="size-3.5" /> 马赛克
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/* ── Adjust ── */}
-                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
-                    <TabsContent value="adjust" className="space-y-4 mt-0">
-                      <SliderRow
-                        label="亮度"
-                        value={adj.brightness}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, brightness: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, brightness: 0 }))}
-                      />
-                      <SliderRow
-                        label="对比度"
-                        value={adj.contrast}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, contrast: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, contrast: 0 }))}
-                      />
-                      <SliderRow
-                        label="饱和度"
-                        value={adj.saturation}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, saturation: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, saturation: 0 }))}
-                      />
-                      <SliderRow
-                        label="冷暖色调"
-                        value={adj.warmth}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, warmth: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, warmth: 0 }))}
-                      />
-                      <SliderRow
-                        label="高光"
-                        value={adj.highlight}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, highlight: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, highlight: 0 }))}
-                      />
-                      <SliderRow
-                        label="色彩淡化"
-                        value={adj.fade}
-                        min={0}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, fade: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, fade: 0 }))}
-                      />
-                      <SliderRow
-                        label="锐化"
-                        value={adj.sharpen}
-                        min={0}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, sharpen: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, sharpen: 0 }))}
-                      />
-                      <SliderRow
-                        label="虚化"
-                        value={adj.blur}
-                        min={0}
-                        max={20}
-                        step={0.5}
-                        defaultValue={0}
-                        suffix="px"
-                        onChange={(v) => setAdj((a) => ({ ...a, blur: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, blur: 0 }))}
-                      />
-                      <Separator className="my-2" />
-                      <SectionTitle>HSL 色彩调整</SectionTitle>
-                      <SliderRow
-                        label="色相 H"
-                        value={adj.hslH}
-                        min={-180}
-                        max={180}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, hslH: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, hslH: 0 }))}
-                      />
-                      <SliderRow
-                        label="饱和度 S"
-                        value={adj.hslS}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, hslS: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, hslS: 0 }))}
-                      />
-                      <SliderRow
-                        label="明度 L"
-                        value={adj.hslL}
-                        min={-100}
-                        max={100}
-                        defaultValue={0}
-                        onChange={(v) => setAdj((a) => ({ ...a, hslL: v }))}
-                        onReset={() => setAdj((a) => ({ ...a, hslL: 0 }))}
-                      />
-
-                      <Separator className="my-2" />
-                      <SectionTitle>颜色替换</SectionTitle>
-                      <div className="flex items-center justify-between">
-                        <Label className="text-xs text-gray-600">启用替换</Label>
-                        <Switch
-                          checked={cr.enabled}
-                          onCheckedChange={(v) =>
-                            setCr((c) => ({ ...c, enabled: v }))
-                          }
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs text-gray-500">原颜色</Label>
-                          <input
-                            type="color"
-                            value={cr.from}
-                            onChange={(e) =>
-                              setCr((c) => ({ ...c, from: e.target.value }))
-                            }
-                            className="h-9 w-full cursor-pointer rounded-md border border-gray-200 bg-white"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs text-gray-500">目标颜色</Label>
-                          <input
-                            type="color"
-                            value={cr.to}
-                            onChange={(e) =>
-                              setCr((c) => ({ ...c, to: e.target.value }))
-                            }
-                            className="h-9 w-full cursor-pointer rounded-md border border-gray-200 bg-white"
-                          />
-                        </div>
-                      </div>
-                      <SliderRow
-                        label="容差"
-                        value={cr.tolerance}
-                        min={0}
-                        max={200}
-                        defaultValue={40}
-                        onChange={(v) => setCr((c) => ({ ...c, tolerance: v }))}
-                        onReset={() => setCr((c) => ({ ...c, tolerance: 40 }))}
-                      />
-                    </TabsContent>
-
-                    {/* ── Transform ── */}
-                    <TabsContent value="transform" className="space-y-4 mt-0">
-                      <SliderRow
-                        label="缩放"
-                        value={geo.scale}
-                        min={0.1}
-                        max={3}
-                        step={0.01}
-                        defaultValue={1}
-                        suffix="x"
-                        onChange={(v) => setGeo((g) => ({ ...g, scale: v }))}
-                        onReset={() => setGeo((g) => ({ ...g, scale: 1 }))}
-                      />
-                      <div className="flex gap-2">
-                        {[0.5, 1, 2].map((s) => (
-                          <Button
-                            key={s}
-                            variant={geo.scale === s ? "default" : "outline"}
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => setGeo((g) => ({ ...g, scale: s }))}
-                          >
-                            {s}x
-                          </Button>
-                        ))}
-                      </div>
-
-                      <SliderRow
-                        label="旋转"
-                        value={geo.rotate}
-                        min={-180}
-                        max={180}
-                        defaultValue={0}
-                        suffix="°"
-                        onChange={(v) => setGeo((g) => ({ ...g, rotate: v }))}
-                        onReset={() => setGeo((g) => ({ ...g, rotate: 0 }))}
-                      />
-                      <div className="flex gap-2">
-                        {[90, 180, 270].map((r) => (
-                          <Button
-                            key={r}
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() =>
-                              setGeo((g) => ({
-                                ...g,
-                                rotate: ((g.rotate + r + 180) % 360) - 180,
-                              }))
-                            }
-                          >
-                            <RotateRounded r={r} />
-                          </Button>
-                        ))}
-                      </div>
-
-                      <Separator className="my-1" />
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setGeo((g) => ({ ...g, mirrorH: !g.mirrorH }))
-                          }
-                          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm transition-colors ${
-                            geo.mirrorH
-                              ? "border-indigo-500 bg-indigo-50 text-indigo-600"
-                              : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                          }`}
-                        >
-                          <FlipHorizontal2 className="size-4" /> 镜像
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-3.5rem)] overflow-hidden">
+      {/* ── Center: Canvas Area ── */}
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        {/* Top mini-toolbar */}
+        {hasImage && (
+          <div className="flex flex-wrap items-center gap-1.5 border-b bg-white px-3 py-1.5 shrink-0">
+            <span className="text-xs text-gray-500 truncate max-w-[120px]" title={fileName}>{fileName}</span>
+            <span className="text-xs text-gray-400">{naturalSize.w}×{naturalSize.h}</span>
+            {exportSize.w > 0 && <span className="text-xs text-gray-400">→ {exportSize.w}×{exportSize.h}</span>}
+            <Separator orientation="vertical" className="h-5" />
+            <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, rotate: ((g.rotate + 270 + 180) % 360) - 180 }))} title="左转90°">
+              <RotateCcw className="size-3.5" />
+            </Button>
+            <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, rotate: ((g.rotate + 90 + 180) % 360) - 180 }))} title="右转90°">
+              <RotateCw className="size-3.5" />
+            </Button>
+            <Button variant={geo.mirrorH ? "secondary" : "ghost"} size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, mirrorH: !g.mirrorH }))} title="水平镜像">
+              <FlipHorizontal2 className="size-3.5" />
+            </Button>
+            <Button variant={geo.flipV ? "secondary" : "ghost"} size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, flipV: !g.flipV }))} title="垂直翻转">
+              <FlipVertical2 className="size-3.5" />
+            </Button>
+            <Separator orientation="vertical" className="h-5" />
+            {/* Scale popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={geo.scale !== 1 ? "secondary" : "ghost"} size="sm" className="size-7 p-0" title="缩放">
+                  <Scaling className="size-3.5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-3" align="start">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs text-gray-600">缩放</Label>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs tabular-nums text-gray-400">{geo.scale}x</span>
+                      {geo.scale !== 1 && (
+                        <button type="button" onClick={() => setGeo((g) => ({ ...g, scale: 1 }))} title="重置" className="text-gray-300 hover:text-gray-500">
+                          <RotateCcw className="size-3" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setGeo((g) => ({ ...g, flipV: !g.flipV }))
-                          }
-                          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm transition-colors ${
-                            geo.flipV
-                              ? "border-indigo-500 bg-indigo-50 text-indigo-600"
-                              : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                          }`}
-                        >
-                          <FlipVertical2 className="size-4" /> 翻转
-                        </button>
-                      </div>
-
-                      <Separator className="my-1" />
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs text-gray-600">裁剪</Label>
-                          <Switch
-                            checked={cropMode}
-                            onCheckedChange={(v) => {
-                              if (v) {
-                                setCropDraft(
-                                  geo.crop ?? { x: 0.1, y: 0.1, w: 0.8, h: 0.8 },
-                                );
-                              }
-                              setCropMode(v);
-                            }}
-                          />
-                        </div>
-                        {cropMode && (
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              className="flex-1"
-                              onClick={applyCrop}
-                            >
-                              <Check className="size-3.5" /> 应用
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1"
-                              onClick={cancelCrop}
-                            >
-                              <X className="size-3.5" /> 取消
-                            </Button>
-                          </div>
-                        )}
-                        {geo.crop && !cropMode && (
-                          <button
-                            type="button"
-                            onClick={() => setGeo((g) => ({ ...g, crop: null }))}
-                            className="text-xs text-gray-400 hover:text-red-500"
-                          >
-                            清除已应用的裁剪
-                          </button>
-                        )}
-                        {cropMode && (
-                          <p className="text-xs text-gray-400">
-                            在左侧图片上拖动选框与右下角手柄调整裁剪范围。
-                          </p>
-                        )}
-                      </div>
-                    </TabsContent>
-
-                    {/* ── Text & Watermark ── */}
-                    <TabsContent value="text" className="space-y-4 mt-0">
-                      <SectionTitle>文字</SectionTitle>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => {
-                          const id = uid();
-                          setTexts((prev) => [
-                            ...prev,
-                            {
-                              id,
-                              text: "双击修改文字",
-                              x: 0.5,
-                              y: 0.5,
-                              size: 0.06,
-                              color: "#ffffff",
-                              bold: true,
-                              font: "sans-serif",
-                            },
-                          ]);
-                          setSelectedTextId(id);
-                        }}
-                      >
-                        <Plus className="size-3.5" /> 添加文字
-                      </Button>
-
-                      <div className="space-y-2">
-                        {texts.map((t) => (
-                          <div
-                            key={t.id}
-                            className={`rounded-lg border p-2.5 space-y-2 ${
-                              selectedTextId === t.id
-                                ? "border-indigo-400 bg-indigo-50/40"
-                                : "border-gray-100"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setSelectedTextId((id) =>
-                                    id === t.id ? null : t.id,
-                                  )
-                                }
-                                className="text-xs text-gray-500 hover:text-indigo-600"
-                                title="选中后在画布上拖拽定位"
-                              >
-                                <Move className="size-3.5" />
-                              </button>
-                              <Input
-                                value={t.text}
-                                onChange={(e) =>
-                                  setTexts((prev) =>
-                                    prev.map((x) =>
-                                      x.id === t.id
-                                        ? { ...x, text: e.target.value }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="h-8 text-sm flex-1"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setTexts((prev) =>
-                                    prev.filter((x) => x.id !== t.id),
-                                  );
-                                  if (selectedTextId === t.id)
-                                    setSelectedTextId(null);
-                                }}
-                                className="text-gray-300 hover:text-red-500"
-                              >
-                                <Trash2 className="size-3.5" />
-                              </button>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="space-y-1">
-                                <Label className="text-[11px] text-gray-500">
-                                  大小 {Math.round(t.size * 100)}%
-                                </Label>
-                                <Slider
-                                  value={[t.size * 100]}
-                                  min={2}
-                                  max={30}
-                                  step={0.5}
-                                  onValueChange={(v) =>
-                                    setTexts((prev) =>
-                                      prev.map((x) =>
-                                        x.id === t.id
-                                          ? { ...x, size: v[0] / 100 }
-                                          : x,
-                                      ),
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div className="flex items-end justify-between gap-2">
-                                <div className="space-y-1">
-                                  <Label className="text-[11px] text-gray-500">
-                                    颜色
-                                  </Label>
-                                  <input
-                                    type="color"
-                                    value={t.color}
-                                    onChange={(e) =>
-                                      setTexts((prev) =>
-                                        prev.map((x) =>
-                                          x.id === t.id
-                                            ? { ...x, color: e.target.value }
-                                            : x,
-                                        ),
-                                      )
-                                    }
-                                    className="h-8 w-full cursor-pointer rounded-md border border-gray-200 bg-white"
-                                  />
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setTexts((prev) =>
-                                      prev.map((x) =>
-                                        x.id === t.id
-                                          ? { ...x, bold: !x.bold }
-                                          : x,
-                                      ),
-                                    )
-                                  }
-                                  className={`rounded-md border px-2 py-1.5 text-xs ${
-                                    t.bold
-                                      ? "border-indigo-500 bg-indigo-50 text-indigo-600"
-                                      : "border-gray-200 text-gray-600"
-                                  }`}
-                                >
-                                  B
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        {texts.length === 0 && (
-                          <p className="text-xs text-gray-400">
-                            还没有文字。点击「添加文字」后，可在画布上拖拽定位。
-                          </p>
-                        )}
-                      </div>
-
-                      <Separator className="my-2" />
-                      <SectionTitle>水印</SectionTitle>
-                      <div className="flex items-center justify-between">
-                        <Label className="text-xs text-gray-600">启用水印</Label>
-                        <Switch
-                          checked={wm.enabled}
-                          onCheckedChange={(v) =>
-                            setWm((w) => ({ ...w, enabled: v }))
-                          }
-                        />
-                      </div>
-                      <Input
-                        value={wm.text}
-                        onChange={(e) =>
-                          setWm((w) => ({ ...w, text: e.target.value }))
-                        }
-                        placeholder="水印文字"
-                        className="h-8 text-sm"
-                      />
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs text-gray-500">颜色</Label>
-                          <input
-                            type="color"
-                            value={wm.color}
-                            onChange={(e) =>
-                              setWm((w) => ({ ...w, color: e.target.value }))
-                            }
-                            className="h-9 w-full cursor-pointer rounded-md border border-gray-200 bg-white"
-                          />
-                        </div>
-                        <div className="flex items-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setWm((w) => ({ ...w, tiled: !w.tiled }))
-                            }
-                            className={`rounded-md border px-2 py-1.5 text-xs ${
-                              wm.tiled
-                                ? "border-indigo-500 bg-indigo-50 text-indigo-600"
-                                : "border-gray-200 text-gray-600"
-                            }`}
-                          >
-                            {wm.tiled ? "平铺" : "单个"}
-                          </button>
-                        </div>
-                      </div>
-                      <SliderRow
-                        label="不透明度"
-                        value={Math.round(wm.opacity * 100)}
-                        min={5}
-                        max={100}
-                        defaultValue={35}
-                        suffix="%"
-                        onChange={(v) =>
-                          setWm((w) => ({ ...w, opacity: v / 100 }))
-                        }
-                        onReset={() => setWm((w) => ({ ...w, opacity: 0.35 }))}
-                      />
-                      <SliderRow
-                        label="大小"
-                        value={Math.round(wm.size * 100)}
-                        min={2}
-                        max={20}
-                        defaultValue={4}
-                        suffix="%"
-                        onChange={(v) =>
-                          setWm((w) => ({ ...w, size: v / 100 }))
-                        }
-                        onReset={() => setWm((w) => ({ ...w, size: 0.04 }))}
-                      />
-                      {!wm.tiled && (
-                        <SliderRow
-                          label="位置 X"
-                          value={Math.round(wm.x * 100)}
-                          min={0}
-                          max={100}
-                          defaultValue={50}
-                          suffix="%"
-                          onChange={(v) => setWm((w) => ({ ...w, x: v / 100 }))}
-                          onReset={() => setWm((w) => ({ ...w, x: 0.5 }))}
-                        />
                       )}
-                    </TabsContent>
-
-                    {/* ── Mosaic ── */}
-                    <TabsContent value="mosaic" className="space-y-4 mt-0">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant={mosaicDraw ? "default" : "outline"}
-                          onClick={() => setMosaicDraw((v) => !v)}
-                          className="flex-1"
-                        >
-                          <Square className="size-3.5" />
-                          {mosaicDraw ? "绘制中…取消" : "在图上框选"}
-                        </Button>
-                      </div>
-                      <p className="text-xs text-gray-400">
-                        开启后在左侧图片上按住拖动，框选区域将打码。
-                      </p>
-                      <div className="space-y-2">
-                        {mosaics.map((m, i) => (
-                          <div
-                            key={m.id}
-                            className="flex items-center gap-2 rounded-lg border border-gray-100 p-2"
-                          >
-                            <span className="text-xs text-gray-500 flex-1">
-                              马赛克 {i + 1}
-                            </span>
-                            <div className="flex items-center gap-1 w-28">
-                              <Slider
-                                value={[m.block]}
-                                min={4}
-                                max={40}
-                                step={1}
-                                onValueChange={(v) =>
-                                  setMosaics((prev) =>
-                                    prev.map((x) =>
-                                      x.id === m.id ? { ...x, block: v[0] } : x,
-                                    ),
-                                  )
-                                }
-                              />
-                              <span className="text-[11px] text-gray-400 w-6 text-right">
-                                {m.block}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setMosaics((prev) =>
-                                  prev.filter((x) => x.id !== m.id),
-                                )
-                              }
-                              className="text-gray-300 hover:text-red-500"
-                            >
-                              <Trash2 className="size-3.5" />
-                            </button>
-                          </div>
-                        ))}
-                        {mosaics.length === 0 && (
-                          <p className="text-xs text-gray-400">
-                            暂无马赛克区域。
-                          </p>
-                        )}
-                      </div>
-                    </TabsContent>
+                    </div>
                   </div>
-                </Tabs>
-              )}
-
-              {/* ── Export ── */}
-              {hasImage && (
-                <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
-                  <SectionTitle>导出</SectionTitle>
+                  <Slider value={[geo.scale]} min={0.1} max={3} step={0.01} onValueChange={(v) => setGeo((g) => ({ ...g, scale: v[0] }))} />
+                  <div className="flex gap-2">
+                    {[0.5, 1, 2].map((s) => (
+                      <Button key={s} variant={geo.scale === s ? "default" : "outline"} size="sm" className="flex-1" onClick={() => setGeo((g) => ({ ...g, scale: s }))}>{s}x</Button>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+            {/* Border radius popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={geo.borderRadius > 0 ? "secondary" : "ghost"} size="sm" className="size-7 p-0" title="圆角">
+                  <Frame className="size-3.5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-3" align="start">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs text-gray-600">圆角</Label>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs tabular-nums text-gray-400">{geo.borderRadius}%</span>
+                      {geo.borderRadius > 0 && (
+                        <button type="button" onClick={() => setGeo((g) => ({ ...g, borderRadius: 0 }))} title="重置" className="text-gray-300 hover:text-gray-500">
+                          <RotateCcw className="size-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <Slider value={[geo.borderRadius]} min={0} max={50} step={1} onValueChange={(v) => setGeo((g) => ({ ...g, borderRadius: v[0] }))} />
+                </div>
+              </PopoverContent>
+            </Popover>
+            {/* Crop (immediate) */}
+            <Button
+              variant={cropMode || !!geo.crop ? "secondary" : "ghost"}
+              size="sm"
+              className="size-7 p-0"
+              onClick={() => {
+                if (cropMode) {
+                  cancelCrop();
+                } else {
+                  setCropDraft(geo.crop ?? { x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
+                  setCropMode(true);
+                }
+              }}
+              title={cropMode ? "取消裁剪" : "裁剪"}
+            >
+              <CropIcon className="size-3.5" />
+            </Button>
+            {cropMode && (
+              <Button variant="ghost" size="sm" className="size-7 p-0" onClick={applyCrop} title="应用裁剪">
+                <Check className="size-3.5 text-green-600" />
+              </Button>
+            )}
+            {!!geo.crop && !cropMode && (
+              <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, crop: null }))} title="清除裁剪">
+                <X className="size-3.5" />
+              </Button>
+            )}
+            <Separator orientation="vertical" className="h-5" />
+            {/* Panel toggles */}
+            <Button variant={activePanel === "adjust" ? "secondary" : "ghost"} size="sm" className="size-7 p-0" onClick={() => setActivePanel("adjust")} title="调整">
+              <Sun className="size-3.5" />
+            </Button>
+            <Button variant={activePanel === "text" ? "secondary" : "ghost"} size="sm" className="size-7 p-0" onClick={() => setActivePanel("text")} title="文字">
+              <Type className="size-3.5" />
+            </Button>
+            <Button variant={activePanel === "mosaic" ? "secondary" : "ghost"} size="sm" className="size-7 p-0" onClick={() => setActivePanel("mosaic")} title="马赛克">
+              <Eraser className="size-3.5" />
+            </Button>
+            <div className="flex-1" />
+            <Button variant="ghost" size="sm" onClick={resetAll} title="重置全部">
+              <RotateCcw className="size-3.5" /> 重置
+            </Button>
+            <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => { if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current); imgRef.current = null; setFileName(""); }} title="清除图片">
+              <Trash2 className="size-3.5" />
+            </Button>
+            {/* Export popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="sm" className="size-7 p-0" title="导出">
+                  <Download className="size-3.5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-3" align="end">
+                <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-2">
                     {(["png", "jpeg", "webp"] as const).map((f) => (
-                      <Button
-                        key={f}
-                        size="sm"
-                        variant={format === f ? "default" : "outline"}
-                        onClick={() => setFormat(f)}
-                        className="uppercase"
-                      >
-                        {f}
-                      </Button>
+                      <Button key={f} size="sm" variant={format === f ? "default" : "outline"} onClick={() => setFormat(f)} className="uppercase">{f}</Button>
                     ))}
                   </div>
                   {format !== "png" && (
-                    <SliderRow
-                      label="质量"
-                      value={Math.round(quality * 100)}
-                      min={10}
-                      max={100}
-                      defaultValue={92}
-                      suffix="%"
-                      onChange={(v) => setQuality(v / 100)}
-                      onReset={() => setQuality(0.92)}
-                    />
+                    <SliderRow label="质量" value={Math.round(quality * 100)} min={10} max={100} defaultValue={92} suffix="%" onChange={(v) => setQuality(v / 100)} onReset={() => setQuality(0.92)} />
                   )}
-                  <Button
-                    className="w-full"
-                    size="lg"
-                    onClick={handleExport}
-                    disabled={exporting}
-                  >
-                    {exporting ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Download className="size-4" />
-                    )}
+                  <Button className="w-full" size="sm" onClick={handleExport} disabled={exporting}>
+                    {exporting ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
                     {exporting ? "生成中…" : "生成并下载"}
                   </Button>
+                  {geo.borderRadius > 0 && format !== "png" && (
+                    <p className="text-xs text-amber-500">圆角效果仅在 PNG 格式下保持透明背景。</p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
+
+        {/* Canvas / Upload zone */}
+        <div className="flex flex-1 items-center justify-center overflow-auto p-4">
+          {!hasImage ? (
+            <div className="w-full max-w-md">
+              <UploadDropZone
+                onFiles={(files) => files[0] && loadFile(files[0])}
+                accept="image/*"
+              />
+            </div>
+          ) : (
+            <div
+              ref={wrapRef}
+              className="relative inline-block max-w-full max-h-full overflow-hidden"
+              style={{
+                backgroundImage: "repeating-conic-gradient(#3f3f46 0% 25%, #27272a 0% 50%)",
+                backgroundSize: "20px 20px",
+                touchAction: "none",
+              }}
+              onPointerDown={onWrapperPointerDown}
+            >
+              <canvas
+                ref={canvasRef}
+                className="block max-w-full max-h-[calc(100vh-8rem)] w-auto h-auto"
+              />
+
+              {/* Crop overlay */}
+              {cropMode && (
+                <div
+                  className="absolute cursor-move"
+                  style={{
+                    left: `${cropDraft.x * 100}%`,
+                    top: `${cropDraft.y * 100}%`,
+                    width: `${cropDraft.w * 100}%`,
+                    height: `${cropDraft.h * 100}%`,
+                    boxShadow: "0 0 0 9999px rgba(0,0,0,0.5)",
+                    outline: "2px solid #fff",
+                  }}
+                  onPointerDown={startCropMove}
+                >
+                  <div
+                    onPointerDown={startCropResize}
+                    className="absolute -bottom-1.5 -right-1.5 size-4 bg-white border-2 border-indigo-400 rounded-sm cursor-se-resize"
+                  />
                 </div>
               )}
+
+              {/* Mosaic draw preview */}
+              {mosaicDraw && cropDraft.w > 0 && (
+                <div
+                  className="absolute pointer-events-none border border-dashed border-indigo-400 bg-indigo-500/10"
+                  style={{
+                    left: `${cropDraft.x * 100}%`,
+                    top: `${cropDraft.y * 100}%`,
+                    width: `${cropDraft.w * 100}%`,
+                    height: `${cropDraft.h * 100}%`,
+                  }}
+                />
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
-          </>
-  );
-}
 
-// small inline helper to render rotate button label
-function RotateRounded({ r }: { r: number }) {
-  return (
-    <span className="flex items-center gap-1">
-      <RotateCw className="size-3.5" />
-      {r}°
-    </span>
+      {/* ── Right: Properties Panel ── */}
+      {hasImage && (
+        <div className="lg:w-80 max-h-[50vh] lg:max-h-none overflow-y-auto border-t lg:border-t-0 lg:border-l bg-white shrink-0">
+          <div className="p-4 space-y-4">
+
+            {/* ── Adjust ── */}
+            {activePanel === "adjust" && (
+              <>
+                <SectionTitle>调整</SectionTitle>
+                <SliderRow label="亮度" value={adj.brightness} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, brightness: v }))} onReset={() => setAdj((a) => ({ ...a, brightness: 0 }))} />
+                <SliderRow label="对比度" value={adj.contrast} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, contrast: v }))} onReset={() => setAdj((a) => ({ ...a, contrast: 0 }))} />
+                <SliderRow label="饱和度" value={adj.saturation} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, saturation: v }))} onReset={() => setAdj((a) => ({ ...a, saturation: 0 }))} />
+                <SliderRow label="冷暖色调" value={adj.warmth} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, warmth: v }))} onReset={() => setAdj((a) => ({ ...a, warmth: 0 }))} />
+                <SliderRow label="高光" value={adj.highlight} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, highlight: v }))} onReset={() => setAdj((a) => ({ ...a, highlight: 0 }))} />
+                <SliderRow label="色彩淡化" value={adj.fade} min={0} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, fade: v }))} onReset={() => setAdj((a) => ({ ...a, fade: 0 }))} />
+                <SliderRow label="锐化" value={adj.sharpen} min={0} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, sharpen: v }))} onReset={() => setAdj((a) => ({ ...a, sharpen: 0 }))} />
+                <SliderRow label="虚化" value={adj.blur} min={0} max={20} step={0.5} defaultValue={0} suffix="px" onChange={(v) => setAdj((a) => ({ ...a, blur: v }))} onReset={() => setAdj((a) => ({ ...a, blur: 0 }))} />
+                <Separator className="my-2" />
+                <SectionTitle>HSL 色彩调整</SectionTitle>
+                <SliderRow label="色相 H" value={adj.hslH} min={-180} max={180} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, hslH: v }))} onReset={() => setAdj((a) => ({ ...a, hslH: 0 }))} />
+                <SliderRow label="饱和度 S" value={adj.hslS} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, hslS: v }))} onReset={() => setAdj((a) => ({ ...a, hslS: 0 }))} />
+                <SliderRow label="明度 L" value={adj.hslL} min={-100} max={100} defaultValue={0} onChange={(v) => setAdj((a) => ({ ...a, hslL: v }))} onReset={() => setAdj((a) => ({ ...a, hslL: 0 }))} />
+                <Separator className="my-2" />
+                <SectionTitle>颜色替换</SectionTitle>
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs text-gray-600">启用替换</Label>
+                  <Switch checked={cr.enabled} onCheckedChange={(v) => setCr((c) => ({ ...c, enabled: v }))} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-gray-500">原颜色</Label>
+                    <ColorPickerField value={cr.from} onChange={(v) => setCr((c) => ({ ...c, from: v }))} showHexInput={false} swatchClassName="w-full h-9" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-gray-500">目标颜色</Label>
+                    <ColorPickerField value={cr.to} onChange={(v) => setCr((c) => ({ ...c, to: v }))} showHexInput={false} swatchClassName="w-full h-9" />
+                  </div>
+                </div>
+                <SliderRow label="容差" value={cr.tolerance} min={0} max={200} defaultValue={40} onChange={(v) => setCr((c) => ({ ...c, tolerance: v }))} onReset={() => setCr((c) => ({ ...c, tolerance: 40 }))} />
+              </>
+            )}
+
+            {/* ── Text & Watermark ── */}
+            {activePanel === "text" && (
+              <>
+                <SectionTitle>文字</SectionTitle>
+                <Button size="sm" variant="outline" className="w-full" onClick={() => { const id = uid(); setTexts((prev) => [...prev, { id, text: "双击修改文字", x: 0.5, y: 0.5, size: 0.06, color: "#ffffff", bold: true, font: "sans-serif" }]); setSelectedTextId(id); }}>
+                  <Plus className="size-3.5" /> 添加文字
+                </Button>
+                <div className="space-y-2">
+                  {texts.map((t) => (
+                    <div key={t.id} className={`rounded-lg border p-2.5 space-y-2 ${selectedTextId === t.id ? "border-indigo-400 bg-indigo-50/40" : "border-gray-100"}`}>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setSelectedTextId((id) => id === t.id ? null : t.id)} className="text-xs text-gray-500 hover:text-indigo-600" title="选中后在画布上拖拽定位">
+                          <Move className="size-3.5" />
+                        </button>
+                        <Input value={t.text} onChange={(e) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, text: e.target.value } : x))} className="h-8 text-sm flex-1" />
+                        <button type="button" onClick={() => { setTexts((prev) => prev.filter((x) => x.id !== t.id)); if (selectedTextId === t.id) setSelectedTextId(null); }} className="text-gray-300 hover:text-red-500">
+                          <Trash2 className="size-3.5" />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-gray-500">大小 {Math.round(t.size * 100)}%</Label>
+                          <Slider value={[t.size * 100]} min={2} max={30} step={0.5} onValueChange={(v) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, size: v[0] / 100 } : x))} />
+                        </div>
+                        <div className="flex items-end justify-between gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-[11px] text-gray-500">颜色</Label>
+                            <ColorPickerField value={t.color} onChange={(v) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, color: v } : x))} showHexInput={false} swatchClassName="w-full h-8" />
+                          </div>
+                          <button type="button" onClick={() => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, bold: !x.bold } : x))} className={`rounded-md border px-2 py-1.5 text-xs ${t.bold ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 text-gray-600"}`}>B</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {texts.length === 0 && <p className="text-xs text-gray-400">还没有文字。点击「添加文字」后，可在画布上拖拽定位。</p>}
+                </div>
+                <Separator className="my-2" />
+                <SectionTitle>水印</SectionTitle>
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs text-gray-600">启用水印</Label>
+                  <Switch checked={wm.enabled} onCheckedChange={(v) => setWm((w) => ({ ...w, enabled: v }))} />
+                </div>
+                <Input value={wm.text} onChange={(e) => setWm((w) => ({ ...w, text: e.target.value }))} placeholder="水印文字" className="h-8 text-sm" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-gray-500">颜色</Label>
+                    <ColorPickerField value={wm.color} onChange={(v) => setWm((w) => ({ ...w, color: v }))} showHexInput={false} swatchClassName="w-full h-9" />
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <button type="button" onClick={() => setWm((w) => ({ ...w, tiled: !w.tiled }))} className={`rounded-md border px-2 py-1.5 text-xs ${wm.tiled ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 text-gray-600"}`}>{wm.tiled ? "平铺" : "单个"}</button>
+                  </div>
+                </div>
+                <SliderRow label="不透明度" value={Math.round(wm.opacity * 100)} min={5} max={100} defaultValue={35} suffix="%" onChange={(v) => setWm((w) => ({ ...w, opacity: v / 100 }))} onReset={() => setWm((w) => ({ ...w, opacity: 0.35 }))} />
+                <SliderRow label="大小" value={Math.round(wm.size * 100)} min={2} max={20} defaultValue={4} suffix="%" onChange={(v) => setWm((w) => ({ ...w, size: v / 100 }))} onReset={() => setWm((w) => ({ ...w, size: 0.04 }))} />
+                {!wm.tiled && <SliderRow label="位置 X" value={Math.round(wm.x * 100)} min={0} max={100} defaultValue={50} suffix="%" onChange={(v) => setWm((w) => ({ ...w, x: v / 100 }))} onReset={() => setWm((w) => ({ ...w, x: 0.5 }))} />}
+              </>
+            )}
+
+            {/* ── Mosaic ── */}
+            {activePanel === "mosaic" && (
+              <>
+                <SectionTitle>马赛克</SectionTitle>
+                <Button size="sm" variant={mosaicDraw ? "default" : "outline"} className="w-full" onClick={() => setMosaicDraw((v) => !v)}>
+                  <Square className="size-3.5" />{mosaicDraw ? "绘制中…点击取消" : "在画布上框选区域"}
+                </Button>
+                <p className="text-xs text-gray-400">开启后在画布上按住拖动，框选区域将打码。</p>
+                <div className="space-y-2">
+                  {mosaics.map((m, i) => (
+                    <div key={m.id} className="flex items-center gap-2 rounded-lg border border-gray-100 p-2">
+                      <span className="text-xs text-gray-500 flex-1">马赛克 {i + 1}</span>
+                      <div className="flex items-center gap-1 w-28">
+                        <Slider value={[m.block]} min={4} max={40} step={1} onValueChange={(v) => setMosaics((prev) => prev.map((x) => x.id === m.id ? { ...x, block: v[0] } : x))} />
+                        <span className="text-[11px] text-gray-400 w-6 text-right">{m.block}</span>
+                      </div>
+                      <button type="button" onClick={() => setMosaics((prev) => prev.filter((x) => x.id !== m.id))} className="text-gray-300 hover:text-red-500">
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  {mosaics.length === 0 && <p className="text-xs text-gray-400">暂无马赛克区域。</p>}
+                </div>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
