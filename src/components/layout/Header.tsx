@@ -15,7 +15,7 @@ export default function Header() {
           <span className="text-lg font-bold text-gray-900">工具站</span>
         </Link>
 
-        <nav className="ml-auto flex items-center gap-1">
+        <nav className="flex items-center gap-1">
           <Link
             to="/"
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${

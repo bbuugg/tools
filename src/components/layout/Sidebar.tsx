@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, ChevronDown } from "lucide-react";
-import { TOOL_CATEGORIES } from "@/lib/tool-categories";
+import { TOOL_CATEGORIES } from "@/lib/routes";
 
 export default function Sidebar() {
   const location = useLocation();
