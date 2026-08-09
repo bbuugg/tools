@@ -681,7 +681,7 @@ export default function JsonToolsPage() {
                 <TabsTrigger value="format" className="flex-1"><Braces className="size-4" /> 格式化</TabsTrigger>
                 <TabsTrigger value="convert" className="flex-1"><ArrowLeftRight className="size-4" /> 格式转换</TabsTrigger>
                 <TabsTrigger value="excel" className="flex-1"><FileSpreadsheet className="size-4" /> 转 Excel</TabsTrigger>
-                <TabsTrigger value="extract" className="flex-1"><Filter className="size-4" /> 提取器</TabsTrigger>
+                <TabsTrigger value="extract" className="flex-1"><Filter className="size-4" /> 提取</TabsTrigger>
               </TabsList>
 
               {/* ── Formatter Options ───────────────────────────── */}

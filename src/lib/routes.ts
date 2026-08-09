@@ -177,7 +177,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/number-base-converter",
     lazy: () => import("@/pages/tools/number-base-converter"),
     meta: {
-      title: "进制转换器",
+      title: "进制转换",
       description: "支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项",
       category: "开发调试",
       icon: Hash,
@@ -254,7 +254,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/html-extractor",
     lazy: () => import("@/pages/tools/html-extractor"),
     meta: {
-      title: "HTML 提取器",
+      title: "HTML 提取",
       description: "从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源",
       category: "文本与转换",
       icon: Code2,
@@ -298,7 +298,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/image-list-processor",
     lazy: () => import("@/pages/tools/image-list-processor"),
     meta: {
-      title: "图片列表处理器",
+      title: "图片列表处理",
       description: "批量下载图片、生成下载脚本，支持 URL 去重和预览",
       category: "图像处理",
       icon: Images,
@@ -320,7 +320,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/image-editor",
     lazy: () => import("@/pages/tools/image-editor"),
     meta: {
-      title: "图片编辑器",
+      title: "图片编辑",
       description: "在线图片编辑器，支持亮度、对比度、饱和度、冷暖、HSL、锐化、虚化、裁剪、马赛克、文字、水印、旋转、镜像等调整",
       category: "图像处理",
       icon: ImageIcon,
@@ -353,7 +353,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/color-picker",
     lazy: () => import("@/pages/tools/color-picker"),
     meta: {
-      title: "颜色选择器",
+      title: "颜色选择",
       description: "HEX / RGB / CMYK 互转、图片取色与颜色预览工具",
       category: "图像处理",
       icon: Palette,
@@ -375,7 +375,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/gif-editor",
     lazy: () => import("@/pages/tools/gif-editor"),
     meta: {
-      title: "GIF 编辑器",
+      title: "GIF 编辑",
       description: "上传 GIF 解析帧序列，编辑延迟、删除帧、调整顺序后重新生成",
       category: "视频与动图",
       icon: Film,

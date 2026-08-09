@@ -47,7 +47,7 @@ import MonacoEditor from "@/components/MonacoEditor";
 
 type ToolId = "encode" | "crypto" | "strip" | "ymlprops";
 
-type EncodeType = "url" | "base64" | "unicode" | "htmlEntity" | "htmlEscape" | "quotedPrintable";
+type EncodeType = "url" | "base64" | "base64url" | "unicode" | "htmlEntity" | "htmlEscape" | "quotedPrintable";
 type EncodeDir = "encode" | "decode";
 
 type CryptoType = "md5" | "sha1" | "sha256" | "sha512" | "aes";
@@ -212,6 +212,8 @@ function encodeText(type: EncodeType, input: string): string {
       return encodeURIComponent(input);
     case "base64":
       return btoa(unescape(encodeURIComponent(input)));
+    case "base64url":
+      return btoa(unescape(encodeURIComponent(input))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     case "unicode":
       return Array.from(input)
         .map((char) => {
@@ -240,6 +242,11 @@ function decodeText(type: EncodeType, input: string): string {
       return decodeURIComponent(input);
     case "base64":
       return decodeURIComponent(escape(atob(input)));
+    case "base64url": {
+      let b64 = input.replace(/-/g, "+").replace(/_/g, "/");
+      while (b64.length % 4) b64 += "=";
+      return decodeURIComponent(escape(atob(b64)));
+    }
     case "unicode":
       return input.replace(/\\u([0-9a-fA-F]{4})/g, (_, g) =>
         String.fromCharCode(parseInt(g, 16)),
@@ -511,6 +518,7 @@ logging.level.org.springframework=WARN`;
 const ENCODE_TYPES: { value: EncodeType; label: string }[] = [
   { value: "url", label: "URL 编码" },
   { value: "base64", label: "Base64" },
+  { value: "base64url", label: "Base64URL" },
   { value: "unicode", label: "Unicode" },
   { value: "htmlEntity", label: "HTML 实体" },
   { value: "htmlEscape", label: "HTML 转义" },
