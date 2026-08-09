@@ -223,7 +223,7 @@ export default function PhpSerializePage() {
                     </div>
                   ) : (
                     <Textarea
-                      className="w-full flex-1 rounded-lg border border-gray-200 bg-white! p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px]"
+                      className="w-full flex-1 rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px]"
                       value={serializedOutput}
                       readOnly
                       placeholder="输入 JSON 后自动生成 PHP 序列化字符串..."

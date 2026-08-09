@@ -145,7 +145,7 @@ export default function JwtPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <div className="col-span-2">
                       <Label className="text-xs text-gray-500 mb-1 block">密钥</Label>
-                      <Input className="bg-white" value={secret} onChange={(e) => setSecret(e.target.value)} />
+                      <Input value={secret} onChange={(e) => setSecret(e.target.value)} />
                     </div>
                     <div>
                       <Label className="text-xs text-gray-500 mb-1 block">算法</Label>
@@ -185,14 +185,14 @@ export default function JwtPage() {
                 <div className="flex flex-col gap-2">
                   <Label className="text-sm font-medium">JWT Token</Label>
                   <Textarea
-                    className="w-full rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+                    className="w-full rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     rows={4}
                     value={decodeToken}
                     onChange={(e) => setDecodeToken(e.target.value)}
                     placeholder="粘贴 JWT Token..."
                   />
                   <div className="flex items-center gap-3">
-                    <Input className="flex-1 bg-white" placeholder="密钥（可选，用于验证签名）" value={decodeSecret} onChange={(e) => setDecodeSecret(e.target.value)} />
+                    <Input className="flex-1" placeholder="密钥（可选，用于验证签名）" value={decodeSecret} onChange={(e) => setDecodeSecret(e.target.value)} />
                     <Button onClick={handleDecode} disabled={!decodeToken}><Eye className="size-4" /> 解码</Button>
                   </div>
                 </div>

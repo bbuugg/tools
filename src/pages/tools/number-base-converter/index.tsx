@@ -220,7 +220,7 @@ export default function NumberBaseConverterPage() {
                   </Button>
                 )}
               </div>
-              <Textarea value={output} readOnly placeholder="转换结果" rows={4} className="bg-gray-50 font-mono" />
+              <Textarea value={output} readOnly placeholder="转换结果" rows={4} className="font-mono" />
             </div>
           </div>
         </div>

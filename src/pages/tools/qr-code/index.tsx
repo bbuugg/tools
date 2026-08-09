@@ -149,7 +149,7 @@ export default function QrCodePage() {
                         <Button variant="outline" size="sm" onClick={() => { setText(""); setGenerated([]); }}><Eraser className="size-3.5" /> 清空</Button>
                       </div>
                     </div>
-                    <Textarea className="w-full h-24 rounded-lg border border-gray-200 p-3 text-sm" value={text} onChange={(e) => setText(e.target.value)} placeholder="输入要生成二维码的内容..." />
+                    <Textarea className="w-full h-24 rounded-lg p-3 text-sm" value={text} onChange={(e) => setText(e.target.value)} placeholder="输入要生成二维码的内容..." />
                     <div className="flex items-center justify-between mt-3">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <Checkbox checked={batchMode} onCheckedChange={(c) => setBatchMode(c === true)} />

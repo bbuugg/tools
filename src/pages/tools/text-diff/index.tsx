@@ -391,7 +391,7 @@ export default function TextDiffPage() {
                 value={left}
                 onChange={(e) => setLeft(e.target.value)}
                 placeholder="在此粘贴原始文本…"
-                className="bg-white h-64 font-mono text-sm resize-y"
+                className="h-64 font-mono text-sm resize-y"
                 spellCheck={false}
               />
               <p className="text-xs text-gray-400 text-right">{left.length} 字符</p>
@@ -410,7 +410,7 @@ export default function TextDiffPage() {
                 value={right}
                 onChange={(e) => setRight(e.target.value)}
                 placeholder="在此粘贴修改后的文本…"
-                className="bg-white h-64 font-mono text-sm resize-y"
+                className="h-64 font-mono text-sm resize-y"
                 spellCheck={false}
               />
               <p className="text-xs text-gray-400 text-right">{right.length} 字符</p>

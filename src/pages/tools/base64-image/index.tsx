@@ -128,7 +128,7 @@ export default function Base64ImagePage() {
                                         </div>
                                     </div>
                                     <Textarea
-                                        className="w-full bg-white! h-[340px] rounded-lg border border-gray-200 p-3 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                                        className="w-full h-[340px] rounded-lg p-3 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary"
                                         value={base64Input}
                                         onChange={(e) => setBase64Input(e.target.value)}
                                         placeholder="粘贴 Base64 字符串..."
