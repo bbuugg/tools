@@ -141,7 +141,7 @@ export default function HtmlExtractorPage() {
                   <Button variant="outline" size="sm" onClick={() => { setHtmlInput(""); setResults([]); }} disabled={!htmlInput}><Eraser className="size-3.5" /> 清空</Button>
                 </div>
               </div>
-              <Input placeholder="Base URL (可选，用于将相对路径转为绝对路径)" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} className="mb-2 bg-white" />
+              <Input placeholder="Base URL (可选，用于将相对路径转为绝对路径)" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} className="mb-2" />
               <div className="h-[300px]">
                 <MonacoEditor value={htmlInput} onChange={setHtmlInput} language="html" height="100%" showLineNumbersToggle showWordWrapToggle />
               </div>
