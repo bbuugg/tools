@@ -18,7 +18,7 @@
 | 6 | Cron 表达式生成 | 可视化生成和解析 Cron 表达式，支持预设模板和下次执行时间预览 | <https://tools.codeemo.cn/tools/cron-generator> |
 | 7 | 字符串生成 | UUID/ULID 生成、随机字符串、密码生成，支持字符集自定义和批量导出 | <https://tools.codeemo.cn/tools/string-generator> |
 | 8 | 时间工具箱 | 时间戳转换、日期差值与加减计算、时区转换，开发常用的时间工具合集 | <https://tools.codeemo.cn/tools/time-tools> |
-| 9 | 进制转换器 | 支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项 | <https://tools.codeemo.cn/tools/number-base-converter> |
+| 9 | 进制转换 | 支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项 | <https://tools.codeemo.cn/tools/number-base-converter> |
 | 10 | PHP Serialize | PHP serialize/unserialize 在线工具，支持 JSON 与 PHP 序列化格式互转，附带格式说明 | <https://tools.codeemo.cn/tools/php-serialize> |
 
 ---
@@ -28,11 +28,11 @@
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
 | 1 | 文本对比 | 逐行或逐词对比两段文本的差异，支持并排与统一视图，可忽略空白与大小写 | <https://tools.codeemo.cn/tools/text-diff> |
-| 2 | 文本处理工具 | 编码转换、加密哈希、空格清理、YML/Properties 互转，附带文本统计 | <https://tools.codeemo.cn/tools/text-processor> |
+| 2 | 文本处理工具 | 编码转换（Base64、Base64URL、Unicode、HTML实体、HTML转义、Quoted-Printable）、加密哈希（MD5、SHA1、SHA256、SHA512、AES）、空格清理、YML/Properties 互转，附带文本统计 | <https://tools.codeemo.cn/tools/text-processor> |
 | 3 | HTML / Markdown 互转 | Markdown 与 HTML 双向实时转换，支持示例加载和结果复制 | <https://tools.codeemo.cn/tools/html-markdown-converter> |
 | 4 | Markdown / Word 互转 | Markdown 和 Word（.docx）双向互转，支持实时预览和导出 | <https://tools.codeemo.cn/tools/markdown-word-converter> |
 | 5 | Markdown / PDF 互转 | Markdown 与 PDF 双向转换，支持实时预览、PDF 导出与 PDF 文本提取 | <https://tools.codeemo.cn/tools/markdown-pdf-converter> |
-| 6 | HTML 提取器 | 从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源 | <https://tools.codeemo.cn/tools/html-extractor> |
+| 6 | HTML 提取 | 从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源 | <https://tools.codeemo.cn/tools/html-extractor> |
 | 7 | CSS 渐变生成 | 可视化生成线性/径向渐变，支持自定义角度、颜色控制点和预设方案 | <https://tools.codeemo.cn/tools/css-gradient-generator> |
 
 ---
@@ -43,12 +43,12 @@
 |---|---------|------|-----|
 | 1 | Base64 图片转换 | Base64 字符串与图片互转，支持自动识别 MIME 类型和批量处理 | <https://tools.codeemo.cn/tools/base64-image> |
 | 2 | 图片压缩 | 批量压缩图片，调整质量、尺寸和格式，支持 JPG/PNG/WebP 输出 | <https://tools.codeemo.cn/tools/image-compressor> |
-| 3 | 图片列表处理器 | 批量下载图片、生成下载脚本，支持 URL 去重和预览 | <https://tools.codeemo.cn/tools/image-list-processor> |
+| 3 | 图片列表处理 | 批量下载图片、生成下载脚本，支持 URL 去重和预览 | <https://tools.codeemo.cn/tools/image-list-processor> |
 | 4 | 图片水印 | 为图片添加文字或图片水印，支持位置、透明度、旋转等设置和批量处理 | <https://tools.codeemo.cn/tools/image-watermark> |
-| 5 | 图片编辑器 | 在线图片编辑器，支持亮度、对比度、饱和度、冷暖、HSL、锐化、虚化、裁剪、马赛克、文字、水印、旋转、镜像等调整 | <https://tools.codeemo.cn/tools/image-editor> |
+| 5 | 图片编辑 | 在线图片编辑器，支持亮度、对比度、饱和度、冷暖、HSL、锐化、虚化、裁剪、马赛克、文字、水印、旋转、镜像等调整 | <https://tools.codeemo.cn/tools/image-editor> |
 | 6 | Favicon 生成 | 上传图片裁剪并生成多种尺寸的 Favicon，支持 ICO/PNG/JPG 格式 | <https://tools.codeemo.cn/tools/favicon-generator> |
 | 7 | 二维码工具 | 生成和识别二维码，支持自定义颜色、样式、Logo 和批量生成 | <https://tools.codeemo.cn/tools/qr-code> |
-| 8 | 颜色选择器 | HEX / RGB / CMYK 互转、图片取色与颜色预览工具 | <https://tools.codeemo.cn/tools/color-picker> |
+| 8 | 颜色选择 | HEX / RGB / CMYK 互转、图片取色与颜色预览工具 | <https://tools.codeemo.cn/tools/color-picker> |
 
 ---
 
@@ -57,7 +57,7 @@
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
 | 1 | Live Photo | 拆解或制作 Google Motion Photo / Android Live Photo | <https://tools.codeemo.cn/tools/live-photo> |
-| 2 | GIF 编辑器 | 上传 GIF 解析帧序列，编辑延迟、删除帧、调整顺序后重新生成 | <https://tools.codeemo.cn/tools/gif-editor> |
+| 2 | GIF 编辑 | 上传 GIF 解析帧序列，编辑延迟、删除帧、调整顺序后重新生成 | <https://tools.codeemo.cn/tools/gif-editor> |
 | 3 | 图片转 GIF | 将多张图片合成为 GIF 动画，支持设置宽度、质量、循环次数和每帧延迟 | <https://tools.codeemo.cn/tools/image-to-gif> |
 | 4 | 视频图片互转 | 视频提取帧为图片（PNG/JPEG/WebP），或将多张图片合成为 WebM 视频 | <https://tools.codeemo.cn/tools/video-image-converter> |
 | 5 | 视频转 GIF | 从视频中截取片段生成 GIF，支持时间范围选择和文字叠加 | <https://tools.codeemo.cn/tools/video-to-gif> |
