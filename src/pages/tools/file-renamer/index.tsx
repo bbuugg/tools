@@ -47,7 +47,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type SiteDefination } from "@/lib/site";
 import JSZip from "jszip";
 
 interface FileInfo {
@@ -87,7 +86,7 @@ function SortableFileRow({ file, onRemove }: { file: ProcessedFile; onRemove: ()
   );
 }
 
-export default function FileRenamerPage({ title, description }: SiteDefination) {
+export default function FileRenamerPage() {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [activeTab, setActiveTab] = useState("sequential");
   const [showScript, setShowScript] = useState(false);
@@ -198,15 +197,6 @@ export default function FileRenamerPage({ title, description }: SiteDefination) 
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-600 flex items-center justify-center text-white">
-              <FileEdit className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Upload */}
           <div

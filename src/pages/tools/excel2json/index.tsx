@@ -14,7 +14,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { type SiteDefination } from "@/lib/site";
 import {
   Check,
   Copy,
@@ -92,7 +91,7 @@ function CopyButton({ text, disabled }: { text: string; disabled?: boolean }) {
 // Main Page
 // ═════════════════════════════════════════════════════════════════
 
-export default function ExcelToJsonPage({ title, description }: SiteDefination) {
+export default function ExcelToJsonPage() {
   // ── Mode ───────────────────────────────────────────────────────
   const [mode, setMode] = useState<Mode>("file");
 
@@ -313,16 +312,6 @@ export default function ExcelToJsonPage({ title, description }: SiteDefination) 
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <FileSpreadsheet className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Mode Tabs */}
           <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)}>

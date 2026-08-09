@@ -24,7 +24,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { type SiteDefination } from "@/lib/site";
 
 interface GeneratedQR { text: string; dataUrl: string }
 interface RecognizedResult { fileName: string; preview?: string; data?: string; error?: string; status: "success" | "error" }
@@ -40,7 +39,7 @@ const COLOR_PRESETS = [
   { bg: "#FFEDD5", fg: "#7C2D12", label: "暖棕" },
 ];
 
-export default function QrCodePage({ title, description }: SiteDefination) {
+export default function QrCodePage() {
   const [mode, setMode] = useState("generate");
 
   // Generate
@@ -131,15 +130,6 @@ export default function QrCodePage({ title, description }: SiteDefination) {
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <QrCode className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <Tabs value={mode} onValueChange={setMode}>
             <TabsList className="w-full max-w-xs">

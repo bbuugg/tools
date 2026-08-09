@@ -26,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type SiteDefination } from "@/lib/site";
 
 interface TextOverlay {
   content: string;
@@ -39,7 +38,7 @@ interface TextOverlay {
 
 const QUALITY_MAP: Record<string, number> = { high: 1, medium: 10, low: 20 };
 
-export default function VideoToGifPage({ title, description }: SiteDefination) {
+export default function VideoToGifPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -196,15 +195,6 @@ export default function VideoToGifPage({ title, description }: SiteDefination) {
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center text-white">
-              <Film className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Upload */}
           <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">

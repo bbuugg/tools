@@ -15,7 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { type SiteDefination } from "@/lib/site";
 
 type MatchArray = RegExpExecArray[];
 
@@ -43,7 +42,7 @@ function escapeHtml(text: string) {
     .replace(/'/g, "&#039;");
 }
 
-export default function RegexTesterPage({ title, description }: SiteDefination) {
+export default function RegexTesterPage() {
   const [pattern, setPattern] = useState("");
   const [flags, setFlags] = useState("g");
   const [testStr, setTestStr] = useState("");
@@ -115,15 +114,6 @@ export default function RegexTesterPage({ title, description }: SiteDefination) 
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Regex className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
             {/* Left sidebar */}

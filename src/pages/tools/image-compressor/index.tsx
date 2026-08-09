@@ -29,7 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { type SiteDefination } from "@/lib/site";
 
 interface ImageItem {
   id: string; file: File; name: string; preview: string;
@@ -48,7 +47,7 @@ const formatSize = (b: number) => {
 const getDims = (file: File): Promise<{ width: number; height: number }> =>
   new Promise((res, rej) => { const img = new Image(); img.onload = () => res({ width: img.width, height: img.height }); img.onerror = rej; img.src = URL.createObjectURL(file); });
 
-export default function ImageCompressorPage({ title, description }: SiteDefination) {
+export default function ImageCompressorPage() {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [quality, setQuality] = useState(80);
   const [outputFormat, setOutputFormat] = useState("original");
@@ -126,15 +125,6 @@ export default function ImageCompressorPage({ title, description }: SiteDefinati
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <ImageDown className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Upload */}
           <UploadDropZone

@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { type SiteDefination } from "@/lib/site";
 
 // ─── Types ───────────────────────────────────────────────────────
 
@@ -334,7 +333,7 @@ const EXAMPLE_RIGHT = `小禾笔记是一个面向开发者的在线工具集合
 
 // ─── Page ────────────────────────────────────────────────────────
 
-export default function TextDiffPage({ title, description }: SiteDefination) {
+export default function TextDiffPage() {
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
   const [mode, setMode] = useState<Mode>("line");
@@ -376,16 +375,6 @@ export default function TextDiffPage({ title, description }: SiteDefination) {
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center text-white">
-              <FileDiff className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Two inputs */}
           <div className="grid gap-4 lg:grid-cols-2">

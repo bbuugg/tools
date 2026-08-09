@@ -36,7 +36,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { type SiteDefination } from "@/lib/site";
 
 interface ExtractedImage { url: string; blob: Blob }
 interface SelectedImage { file: File; url: string; name: string }
@@ -432,20 +431,11 @@ function ImageToVideo() {
 
 /* ─── Page ─── */
 
-export default function VideoImageConverterPage({ title, description }: SiteDefination) {
+export default function VideoImageConverterPage() {
   return (
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Film className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <Tabs defaultValue="v2i">
             <TabsList className="w-full max-w-xs">

@@ -26,7 +26,6 @@ import {
   ColorPickerOutput,
   ColorPickerFormat,
 } from "@/components/ui/color-picker";
-import { type SiteDefination } from "@/lib/site";
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -197,10 +196,7 @@ function ValueRow({
 
 // ─── Main tool ────────────────────────────────────────────────────
 
-export default function ColorPickerTool({
-  title,
-  description,
-}: SiteDefination) {
+export default function ColorPickerTool() {
   const [rgb, setRgb] = useState({ r: 22, g: 119, b: 255, a: 1 });
 
   // Image picker
@@ -302,15 +298,6 @@ export default function ColorPickerTool({
       <div>
         <div className="max-w-6xl mx-auto space-y-4 px-4 py-6">
           {/* Header */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-              <Palette className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
             {/* LEFT COLUMN */}

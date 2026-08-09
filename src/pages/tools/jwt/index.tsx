@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { type SiteDefination } from "@/lib/site";
 import {
   CheckCircle2,
   Copy,
@@ -63,7 +62,7 @@ const verifyJWT = async (token: string, secret: string) => {
   return window.crypto.subtle.verify("HMAC", key, base64UrlDecode(s).buffer as ArrayBuffer, textEncoder.encode(`${h}.${p}`));
 };
 
-export default function JwtPage({ title, description }: SiteDefination) {
+export default function JwtPage() {
   const [mode, setMode] = useState("encode");
 
   // Encode
@@ -125,15 +124,6 @@ export default function JwtPage({ title, description }: SiteDefination) {
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <KeyRound className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <Tabs value={mode} onValueChange={setMode}>
             <TabsList className="w-full max-w-xs">

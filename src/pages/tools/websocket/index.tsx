@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { type SiteDefination } from "@/lib/site";
 import {
   Bug,
   LogIn,
@@ -25,7 +24,7 @@ const getTime = () => {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
 };
 
-export default function WsToolPage({ title, description }: SiteDefination) {
+export default function WsToolPage() {
   const [address, setAddress] = useState("ws://127.0.0.1:9501");
   const [isConnected, setIsConnected] = useState(false);
   const [readyState, setReadyState] = useState(0);
@@ -137,15 +136,6 @@ export default function WsToolPage({ title, description }: SiteDefination) {
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Radio className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Left: Config */}

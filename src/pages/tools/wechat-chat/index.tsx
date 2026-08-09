@@ -26,7 +26,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { type SiteDefination } from "@/lib/site";
 import phoneFrameImg from "@/assets/images/wechat-box.png";
 import luckyMeImg from "@/assets/images/wechat-lucky.png";
 import luckyThemImg from "@/assets/images/wechat-lucky2.png";
@@ -130,7 +129,7 @@ function BatteryIcon({ level }: { level: number }) {
 
 // ── Main component ──────────────────────────────────────────────
 
-export default function WechatChatPage({ title, description }: SiteDefination) {
+export default function WechatChatPage() {
   const [messages, setMessages] = useState<ChatItem[]>(DEFAULT_MESSAGES);
   const [phoneTime, setPhoneTime] = useState("13:17");
   const [signalStrength, setSignalStrength] = useState(4);
@@ -278,16 +277,6 @@ export default function WechatChatPage({ title, description }: SiteDefination) {
     <>
       <div className="overflow-x-hidden">
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4 overflow-x-hidden">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center text-white">
-              <MessageCircle className="size-5" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
             {/* ── Left: Preview ── */}

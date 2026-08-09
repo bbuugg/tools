@@ -18,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { type SiteDefination } from "@/lib/site";
 
 const BASE_OPTIONS = [
   { id: "2", name: "二进制" },
@@ -35,7 +34,7 @@ const EXAMPLES: Record<string, string> = {
   "16": "FF",
 };
 
-export default function NumberBaseConverterPage({ title, description }: SiteDefination) {
+export default function NumberBaseConverterPage() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [fromBase, setFromBase] = useState("10");
@@ -101,15 +100,6 @@ export default function NumberBaseConverterPage({ title, description }: SiteDefi
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Hash className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
             {/* Base selectors */}

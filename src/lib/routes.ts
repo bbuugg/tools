@@ -27,7 +27,6 @@ import {
   Type,
   type LucideIcon,
 } from "lucide-react";
-import { type SiteDefination } from "@/lib/site";
 
 /** 路由元信息（存放在 route.handle.meta） */
 export interface RouteMeta {
@@ -68,7 +67,7 @@ export interface ToolRouteDef {
   /** 路由路径，如 /tools/json */
   path: string;
   /** 懒加载导入函数 */
-  lazy: () => Promise<{ default: React.ComponentType<SiteDefination> }>;
+  lazy: () => Promise<{ default: React.ComponentType }>;
   /** 路由元信息 */
   meta: RouteMeta;
 }

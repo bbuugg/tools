@@ -22,7 +22,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { type SiteDefination } from "@/lib/site";
 
 // ── Audio format conversion utilities ────────────────────────────
 
@@ -390,7 +389,7 @@ function formatSize(bytes: number): string {
 
 type FormatType = "wav" | "mp3" | "flac" | "ogg";
 
-export default function AudioStudioPage({ title, description }: SiteDefination) {
+export default function AudioStudioPage() {
   // Audio state
   const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
   const [audioUrl, setAudioUrl] = useState<string>("");
@@ -840,16 +839,6 @@ export default function AudioStudioPage({ title, description }: SiteDefination) 
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center text-white">
-              <AudioWaveform className="size-5" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">

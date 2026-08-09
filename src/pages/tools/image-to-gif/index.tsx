@@ -29,7 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type SiteDefination } from "@/lib/site";
 
 interface SelectedImage {
   id: string;
@@ -49,7 +48,7 @@ const formatFileSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
-export default function ImageToGifPage({ title, description }: SiteDefination) {
+export default function ImageToGifPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [generatedGif, setGeneratedGif] = useState("");
@@ -167,15 +166,6 @@ export default function ImageToGifPage({ title, description }: SiteDefination) {
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <ImagePlus className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {/* Upload & Settings */}
           <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">

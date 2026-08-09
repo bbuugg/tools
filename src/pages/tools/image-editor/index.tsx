@@ -28,7 +28,6 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { UploadDropZone } from "@/components/ui/upload-dropzone";
-import { type SiteDefination } from "@/lib/site";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -582,10 +581,7 @@ const uid = () => `id_${Date.now()}_${idSeq++}`;
 // Main component
 // ─────────────────────────────────────────────────────────────
 
-export default function ImageEditorPage({
-  title,
-  description,
-}: SiteDefination) {
+export default function ImageEditorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -863,16 +859,6 @@ export default function ImageEditorPage({
     <>
             <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
-              <ImageIcon className="size-5" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
             {/* ── Left: Preview ── */}

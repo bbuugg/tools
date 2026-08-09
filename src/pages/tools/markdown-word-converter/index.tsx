@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { type SiteDefination } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { asBlob } from "html-docx-js-typescript";
 import {
@@ -69,7 +68,7 @@ const WORD_STYLES = `
 
 const EDITOR_HEIGHT = 460;
 
-export default function MarkdownWordConverterPage({ title, description }: SiteDefination) {
+export default function MarkdownWordConverterPage() {
   const [mode, setMode] = useState<Mode>("md2word");
   // md → word
   const [mdInput, setMdInput] = useState("");
@@ -240,15 +239,6 @@ export default function MarkdownWordConverterPage({ title, description }: SiteDe
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <FileText className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           {error && (
             <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">

@@ -33,7 +33,7 @@ const router = createBrowserRouter([
         path,
         element: (
           <Suspense fallback={<Loading />}>
-            <Component title={meta.title} description={meta.description} />
+            <Component />
           </Suspense>
         ),
         handle: { meta },

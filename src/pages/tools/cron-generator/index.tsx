@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type SiteDefination } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 type ExprType = "every" | "specific" | "range" | "interval" | "not_specified";
@@ -69,7 +68,7 @@ function describeCron(expr: string): string {
   return desc.length > 0 ? `在 ${desc.join("、")} 执行` : "自定义计划";
 }
 
-export default function CronGeneratorPage({ title, description }: SiteDefination) {
+export default function CronGeneratorPage() {
   const [minute, setMinute] = useState<Field>({ type: "specific", value: 0 });
   const [hour, setHour] = useState<Field>({ type: "specific", value: 0 });
   const [day, setDay] = useState<Field>({ type: "every" });
@@ -192,15 +191,6 @@ export default function CronGeneratorPage({ title, description }: SiteDefination
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-            <CalendarClock className="size-5" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-            <p className="text-sm text-gray-500">{description}</p>
-          </div>
-        </div>
 
         {/* Presets */}
         <div className="flex flex-wrap gap-2">

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { type SiteDefination } from "@/lib/site";
 import {
   ArrowLeftRight,
   Braces,
@@ -44,7 +43,7 @@ const SAMPLE_JSON = JSON.stringify(
 
 const SAMPLE_PHP = `a:6:{s:4:"name";s:12:"测试用户";s:3:"age";i:28;s:6:"active";b:1;s:4:"tags";a:2:{i:0;s:5:"admin";i:1;s:3:"vip";}s:7:"address";N;s:7:"balance";d:99.95;}`;
 
-export default function PhpSerializePage({ title, description }: SiteDefination) {
+export default function PhpSerializePage() {
   const [mode, setMode] = useState("serialize");
 
   // Serialize state
@@ -151,16 +150,6 @@ export default function PhpSerializePage({ title, description }: SiteDefination)
     <>
       <div className="overflow-x-hidden">
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4 overflow-x-hidden">
-          {/* Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Braces className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <Tabs value={mode} onValueChange={setMode}>
             <div className="flex items-center justify-between">

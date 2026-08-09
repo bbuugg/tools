@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { type SiteDefination } from "@/lib/site";
 import JSZip from "jszip";
 import {
   Copy,
@@ -21,7 +20,7 @@ const extractFilename = (url: string): string => {
   catch { return url.split("/").pop() || url; }
 };
 
-export default function ImageListProcessorPage({ title, description }: SiteDefination) {
+export default function ImageListProcessorPage() {
   const [input, setInput] = useState("");
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -77,15 +76,6 @@ export default function ImageListProcessorPage({ title, description }: SiteDefin
     <>
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Images className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-          </div>
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between h-10">
