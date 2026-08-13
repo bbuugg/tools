@@ -11,6 +11,7 @@ import {
   FileEdit,
   FileText,
   Film,
+  HardDrive,
   Hash,
   ImageDown,
   Image as ImageIcon,
@@ -192,6 +193,17 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: Hash,
       color: "bg-indigo-500",
+    },
+  },
+  {
+    path: "/tools/byte-converter",
+    lazy: () => import("@/pages/tools/byte-converter"),
+    meta: {
+      title: "字节转换",
+      description: "比特、字节、KB、MB、GB、TB 之间的相互转换，支持十进制 (1000) 和二进制 (1024) 两种进位制",
+      category: "开发调试",
+      icon: HardDrive,
+      color: "bg-cyan-600",
     },
   },
   {
