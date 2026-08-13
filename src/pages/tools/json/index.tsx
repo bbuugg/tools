@@ -25,38 +25,29 @@ import {
   Copy,
   Download,
   Eraser,
-  FileSpreadsheet,
   FileText,
   Filter,
   KeyRound,
-  Settings2,
   Star,
   TriangleAlert,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import * as XLSX from "xlsx";
 
 import MonacoEditor from "@/components/MonacoEditor"
 
 // ─── Types ───────────────────────────────────────────────────────
 
-type ToolId = "format" | "convert" | "excel" | "extract";
+type ToolId = "format" | "extract";
 
 interface ComputeResult {
   output: string;
   error: string;
-  excelBlob: Blob | null;
-  previewData: Record<string, unknown>[];
-  previewHeaders: string[];
   stats: { size: number; lines: number; keys: number; depth: number } | null;
 }
 
 const EMPTY_RESULT: ComputeResult = {
   output: "",
   error: "",
-  excelBlob: null,
-  previewData: [],
-  previewHeaders: [],
   stats: null,
 };
 
@@ -66,8 +57,8 @@ function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
 }
 
-function downloadFile(content: string | Blob, filename: string, mime = "text/plain") {
-  const blob = typeof content === "string" ? new Blob([content], { type: mime }) : content;
+function downloadFile(content: string, filename: string, mime = "text/plain") {
+  const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -104,7 +95,7 @@ function CopyButton({ text, disabled }: { text: string; disabled?: boolean }) {
 }
 
 // ═════════════════════════════════════════════════════════════════
-// Pure conversion functions
+// Pure helper functions
 // ═════════════════════════════════════════════════════════════════
 
 function getDepth(obj: any, d = 0): number {
@@ -132,199 +123,9 @@ function processJson(parsed: any, opts: { sortKeys: boolean }): any {
   return Object.fromEntries(entries);
 }
 
-function escapeXml(unsafe: string): string {
-  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
-}
-function escapeCSV(value: string): string {
-  if (value.includes(",") || value.includes('"') || value.includes("\n")) return `"${value.replace(/"/g, '""')}"`;
-  return value;
-}
-function escapeYaml(value: string): string {
-  if (/^[-:?!,[\\]{}#&*!|>'"%@`]|^[0-9]/.test(value) || /^(true|false|null|y|n|yes|no|on|off)$/i.test(value) || value.includes("\n") || value.includes(" ")) return `'${value.replace(/'/g, "''")}'`;
-  return value;
-}
-
-function jsonToXml(jsonString: string, rootName = "root"): string {
-  const jsonObj = JSON.parse(jsonString);
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  const convert = (obj: unknown, nodeName: string, indent = ""): string => {
-    if (obj === null || obj === undefined) return `${indent}<${nodeName}></${nodeName}>\n`;
-    if (typeof obj !== "object") return `${indent}<${nodeName}>${escapeXml(String(obj))}</${nodeName}>\n`;
-    if (Array.isArray(obj)) return obj.map((item) => convert(item, nodeName, indent)).join("");
-    let result = `${indent}<${nodeName}>\n`;
-    for (const key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) result += convert((obj as any)[key], key, indent + "  "); }
-    return result + `${indent}</${nodeName}>\n`;
-  };
-  return xml + convert(jsonObj, rootName);
-}
-
-function xmlToJson(xmlString: string): string {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-  if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("XML 解析错误");
-  const processNode = (node: Element): unknown => {
-    if (node.childNodes.length === 0 || (node.childNodes.length === 1 && node.childNodes[0].nodeType === 3)) {
-      const text = node.textContent || "";
-      if (text === "true") return true;
-      if (text === "false") return false;
-      if (!isNaN(Number(text)) && text.trim() !== "") return Number(text);
-      return text;
-    }
-    const result: Record<string, unknown> = {};
-    const counts: Record<string, Element[]> = {};
-    Array.from(node.children).forEach((child) => { (counts[child.nodeName] ||= []).push(child); });
-    for (const [name, els] of Object.entries(counts)) result[name] = els.length === 1 ? processNode(els[0]) : els.map(processNode);
-    return result;
-  };
-  return JSON.stringify(processNode(xmlDoc.documentElement), null, 2);
-}
-
-function jsonToCsv(jsonString: string, delimiter = ","): string {
-  const jsonObj = JSON.parse(jsonString);
-  const arr = Array.isArray(jsonObj) ? jsonObj : [jsonObj];
-  if (arr.length === 0) return "";
-  const fields = Array.from(new Set(arr.flatMap((item: any) => typeof item === "object" && item ? Object.keys(item) : [])));
-  let csv = fields.map(escapeCSV).join(delimiter) + "\n";
-  arr.forEach((item: any) => { csv += fields.map((f) => { const v = item?.[f]; return v !== null && typeof v === "object" ? escapeCSV(JSON.stringify(v)) : escapeCSV(String(v ?? "")); }).join(delimiter) + "\n"; });
-  return csv;
-}
-
-function csvToJson(csvString: string, delimiter = ","): string {
-  const lines = csvString.trim().split(/\r?\n/);
-  if (lines.length === 0) return "[]";
-  const parseLine = (line: string): string[] => {
-    const result: string[] = []; let current = ""; let inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') { if (i + 1 < line.length && line[i + 1] === '"') { current += '"'; i++; } else inQ = !inQ; }
-      else if (c === delimiter && !inQ) { result.push(current); current = ""; }
-      else current += c;
-    }
-    result.push(current); return result;
-  };
-  const headers = parseLine(lines[0]);
-  const result: Record<string, unknown>[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    const values = parseLine(lines[i]);
-    const obj: Record<string, unknown> = {};
-    headers.forEach((h, j) => { const v = (values[j] || "").trim(); obj[h] = v === "true" ? true : v === "false" ? false : !isNaN(Number(v)) && v !== "" ? Number(v) : v; });
-    result.push(obj);
-  }
-  return JSON.stringify(result, null, 2);
-}
-
-function jsonToYaml(jsonString: string): string {
-  const jsonObj = JSON.parse(jsonString);
-  const convert = (obj: unknown, indent = 0): string => {
-    if (obj === null || obj === undefined) return "null";
-    const sp = " ".repeat(indent);
-    if (typeof obj !== "object") return typeof obj === "string" ? escapeYaml(obj) : String(obj);
-    if (Array.isArray(obj)) { if (obj.length === 0) return "[]"; return obj.map((item) => typeof item === "object" && item !== null ? `${sp}- ${convert(item, indent + 2).trimStart()}` : `${sp}- ${convert(item, indent)}`).join("\n"); }
-    if (Object.keys(obj).length === 0) return "{}";
-    return Object.entries(obj).map(([k, v]) => { const yk = /^[a-zA-Z0-9_]+$/.test(k) ? k : `'${k}'`; return typeof v === "object" && v !== null ? `${sp}${yk}:\n${convert(v, indent + 2)}` : `${sp}${yk}: ${convert(v, indent)}`; }).join("\n");
-  };
-  return convert(jsonObj);
-}
-
-function yamlToJson(yamlString: string): string {
-  const lines = yamlString.split(/\r?\n/);
-  const getIndent = (line: string) => { let i = 0; while (i < line.length && line[i] === " ") i++; return i; };
-  const parseScalar = (v: string): unknown => {
-    if ((v.startsWith("'") && v.endsWith("'")) || (v.startsWith('"') && v.endsWith('"'))) return v.substring(1, v.length - 1);
-    if (v === "null" || v === "~" || v === "") return null;
-    if (v === "true" || v === "yes" || v === "on") return true;
-    if (v === "false" || v === "no" || v === "off") return false;
-    if (!isNaN(Number(v))) return Number(v);
-    return v;
-  };
-  const splitKV = (line: string): [string, string] => { const ci = line.indexOf(":"); if (ci === -1) return [line, ""]; let key = line.substring(0, ci).trim(); if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith('"') && key.endsWith('"'))) key = key.substring(1, key.length - 1); return [key, line.substring(ci + 1)]; };
-  const parse = (idx: number, minIndent: number): [unknown, number] => {
-    let result: any = null; let i = idx; const curIndent = getIndent(lines[i]); let isArr = lines[i].trimStart().startsWith("-");
-    if (isArr) {
-      result = [];
-      while (i < lines.length) { const line = lines[i]; if (!line.trim()) { i++; continue; } const li = getIndent(line); if (li < minIndent) break; if (line.trimStart().startsWith("-")) { const txt = line.trim().substring(1).trimStart(); if (txt.includes(":")) { const [k, vp] = splitKV(txt); const item: any = {}; if (vp.trim()) item[k] = parseScalar(vp.trim()); else if (i + 1 < lines.length && getIndent(lines[i + 1]) > li) { const [n, ni] = parse(i + 1, li + 2); item[k] = n; i = ni - 1; } else item[k] = null; result.push(item); } else if (txt) result.push(parseScalar(txt)); else if (i + 1 < lines.length && getIndent(lines[i + 1]) > li) { const [n, ni] = parse(i + 1, li + 2); result.push(n); i = ni - 1; } else result.push(null); } else if (li === curIndent) break; i++; }
-    } else {
-      result = {};
-      while (i < lines.length) { const line = lines[i]; if (!line.trim()) { i++; continue; } const li = getIndent(line); if (li < minIndent) break; if (li === minIndent) { if (line.trimStart().startsWith("-")) break; if (line.includes(":")) { const [k, vp] = splitKV(line.trim()); if (vp.trim()) result[k] = parseScalar(vp.trim()); else if (i + 1 < lines.length && getIndent(lines[i + 1]) > li) { const [n, ni] = parse(i + 1, li + 2); result[k] = n; i = ni - 1; } else result[k] = null; } } i++; }
-    }
-    return [result, i];
-  };
-  return JSON.stringify(parse(0, 0)[0], null, 2);
-}
-
-/** Serialize non-primitive values (objects/arrays) to JSON strings for display/export. */
-function serializeValue(v: unknown): unknown {
-  if (v !== null && typeof v === "object") return JSON.stringify(v);
-  return v;
-}
-
-function flattenObject(obj: Record<string, unknown>, prefix = ""): Record<string, unknown> {
-  return Object.entries(obj).reduce((acc, [key, val]) => {
-    const nk = prefix ? `${prefix}.${key}` : key;
-    if (val && typeof val === "object" && !Array.isArray(val)) Object.assign(acc, flattenObject(val as Record<string, unknown>, nk));
-    else acc[nk] = serializeValue(val);
-    return acc;
-  }, {} as Record<string, unknown>);
-}
-
-function parseInputForExcel(input: string, flatten: boolean): { data: Record<string, unknown>[]; headers: string[] } | null {
-  try {
-    const parsed = JSON.parse(input);
-    let arr: Record<string, unknown>[] = Array.isArray(parsed) ? parsed.filter((i) => typeof i === "object" && i !== null) : typeof parsed === "object" && parsed !== null ? [parsed] : [];
-    if (arr.length === 0) return null;
-    const data = flatten
-      ? arr.map((r) => flattenObject(r))
-      : arr.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, serializeValue(v)])));
-    const headers = Array.from(new Set(data.flatMap((r) => Object.keys(r))));
-    return { data, headers };
-  } catch { return null; }
-}
-
-function toCSV2(data: Record<string, unknown>[], headers: string[], delimiter: string, includeHeaders: boolean): string {
-  const esc = (v: unknown) => { const s = String(v ?? ""); return s.includes(delimiter) || s.includes('"') || s.includes("\n") ? `"${s.replace(/"/g, '""')}"` : s; };
-  const rows: string[] = [];
-  if (includeHeaders) rows.push(headers.map(esc).join(delimiter));
-  for (const row of data) rows.push(headers.map((h) => esc(row[h])).join(delimiter));
-  return rows.join("\n");
-}
-
-function toSQL(data: Record<string, unknown>[], headers: string[], tableName: string, sqlType: "INSERT" | "CREATE_TABLE", batch: boolean): string {
-  const escVal = (v: unknown) => { if (v === null || v === undefined) return "NULL"; if (typeof v === "number" || typeof v === "boolean") return String(v); return `'${String(v).replace(/'/g, "''")}'`; };
-  const cols = headers.map((h) => `\`${h}\``).join(", ");
-  if (sqlType === "CREATE_TABLE") {
-    const colDefs = headers.map((h) => { const sample = data.find((r) => r[h] !== null && r[h] !== undefined)?.[h]; const type = typeof sample === "number" ? "DECIMAL(10,2)" : typeof sample === "boolean" ? "BOOLEAN" : "VARCHAR(255)"; return `  \`${h}\` ${type}`; }).join(",\n");
-    const inserts = data.map((row) => `INSERT INTO \`${tableName}\` (${cols}) VALUES (${headers.map((h) => escVal(row[h])).join(", ")});`).join("\n");
-    return `CREATE TABLE \`${tableName}\` (\n${colDefs}\n);\n\n${inserts}`;
-  }
-  if (batch) { const values = data.map((row) => `  (${headers.map((h) => escVal(row[h])).join(", ")})`).join(",\n"); return `INSERT INTO \`${tableName}\` (${cols}) VALUES\n${values};`; }
-  return data.map((row) => `INSERT INTO \`${tableName}\` (${cols}) VALUES (${headers.map((h) => escVal(row[h])).join(", ")});`).join("\n");
-}
-
 // ─── Examples ────────────────────────────────────────────────────
 
 const FORMATTER_EXAMPLE = `{"name":"Tools","version":"1.0.0","description":"开发者工具集","features":["JSON格式化","JSON提取","Excel转换"],"config":{"theme":"dark","language":"zh-CN","indent":2},"active":true,"count":42}`;
-
-const CONVERTER_EXAMPLES: Record<string, { jsonTo: string; formatTo: string }> = {
-  xml: {
-    jsonTo: `{"person":{"name":"张三","age":28,"isStudent":false,"address":{"city":"北京","district":"海淀区"},"hobbies":["读书","旅游"]}}`,
-    formatTo: `<?xml version="1.0" encoding="UTF-8"?>\n<root>\n  <person>\n    <name>张三</name>\n    <age>28</age>\n    <isStudent>false</isStudent>\n    <address>\n      <city>北京</city>\n      <district>海淀区</district>\n    </address>\n    <hobbies>读书</hobbies>\n    <hobbies>旅游</hobbies>\n  </person>\n</root>`,
-  },
-  csv: {
-    jsonTo: `[{"name":"张三","age":28},{"name":"李四","age":34}]`,
-    formatTo: `name,age\n张三,28\n李四,34`,
-  },
-  yaml: {
-    jsonTo: `{"person":{"name":"张三","age":28,"hobbies":["读书","编程"]}}`,
-    formatTo: `person:\n  name: 张三\n  age: 28\n  hobbies:\n    - 读书\n    - 编程`,
-  },
-};
-
-const EXCEL_EXAMPLE = `[
-  { "id": 1, "name": "Alice", "age": 28, "city": "Beijing" },
-  { "id": 2, "name": "Bob", "age": 34, "city": "Shanghai" },
-  { "id": 3, "name": "Charlie", "age": 22, "city": "Guangzhou" }
-]`;
 
 const EXTRACTOR_EXAMPLE = JSON.stringify([
   { id: 1, name: "John Doe", email: "john@example.com", address: { city: "New York", country: "USA" } },
@@ -352,24 +153,6 @@ export default function JsonToolsPage() {
   const [compact, setCompact] = useState(false);
   const [sortKeys, setSortKeys] = useState(false);
   const [escapeUnicode, setEscapeUnicode] = useState(false);
-
-  // ── Converter state ────────────────────────────────────────────
-  const [formatType, setFormatType] = useState("xml");
-  const [direction, setDirection] = useState<"json_to" | "format_to">("json_to");
-  const [csvDelimiter, setCsvDelimiter] = useState(",");
-  const [xmlRoot, setXmlRoot] = useState("root");
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
-  // ── Excel state ────────────────────────────────────────────────
-  const [convType, setConvType] = useState<"excel" | "csv" | "sql">("excel");
-  const [includeHeaders, setIncludeHeaders] = useState(true);
-  const [flattenNested, setFlattenNested] = useState(true);
-  const [autoFit, setAutoFit] = useState(true);
-  const [sheetName, setSheetName] = useState("Sheet1");
-  const [delimiter, setDelimiter] = useState(",");
-  const [tableName, setTableName] = useState("my_table");
-  const [sqlType, setSqlType] = useState<"INSERT" | "CREATE_TABLE">("INSERT");
-  const [batchInsert, setBatchInsert] = useState(false);
 
   // ── Extractor state ────────────────────────────────────────────
   const [mode, setMode] = useState<"path" | "field" | "keys">("path");
@@ -418,58 +201,11 @@ export default function JsonToolsPage() {
       const indentVal = compact ? 0 : parseInt(indent);
       let out = JSON.stringify(p, null, indentVal);
       if (escapeUnicode) out = out.replace(/[\u0080-\uffff]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`);
-      return { output: out, error: "", excelBlob: null, previewData: [], previewHeaders: [], stats: { size: new Blob([out]).size, lines: out.split("\n").length, keys: countKeys(p), depth: getDepth(p) } };
+      return { output: out, error: "", stats: { size: new Blob([out]).size, lines: out.split("\n").length, keys: countKeys(p), depth: getDepth(p) } };
     } catch (e: any) {
       return { ...EMPTY_RESULT, error: e.message };
     }
   }, [activeTool, input, indent, compact, sortKeys, escapeUnicode]);
-
-  // ── Compute: Converter ─────────────────────────────────────────
-  const convertResult = useMemo<ComputeResult | null>(() => {
-    if (activeTool !== "convert") return null;
-    if (!input.trim()) return EMPTY_RESULT;
-    try {
-      let out = "";
-      if (direction === "json_to") {
-        JSON.parse(input);
-        if (formatType === "xml") out = jsonToXml(input, xmlRoot);
-        else if (formatType === "csv") out = jsonToCsv(input, csvDelimiter);
-        else if (formatType === "yaml") out = jsonToYaml(input);
-      } else {
-        if (formatType === "xml") out = xmlToJson(input);
-        else if (formatType === "csv") out = csvToJson(input, csvDelimiter);
-        else if (formatType === "yaml") out = yamlToJson(input);
-      }
-      return { output: out, error: "", excelBlob: null, previewData: [], previewHeaders: [], stats: null };
-    } catch (e: any) {
-      return { ...EMPTY_RESULT, error: e.message || "转换失败" };
-    }
-  }, [activeTool, input, formatType, direction, csvDelimiter, xmlRoot]);
-
-  // ── Compute: Excel ─────────────────────────────────────────────
-  const excelResult = useMemo<ComputeResult | null>(() => {
-    if (activeTool !== "excel") return null;
-    if (!input.trim()) return EMPTY_RESULT;
-    try {
-      const parsed = parseInputForExcel(input, flattenNested);
-      if (!parsed) throw new Error("无效的 JSON，请输入 JSON 数组或对象");
-      const { data, headers } = parsed;
-      if (convType === "excel") {
-        const ws = XLSX.utils.json_to_sheet(data, { header: headers, skipHeader: !includeHeaders });
-        if (autoFit) ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, ...data.map((r) => String(r[h] ?? "").length)) }));
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, sheetName || "Sheet1");
-        const blob = new Blob([XLSX.write(wb, { bookType: "xlsx", type: "array" })], { type: "application/octet-stream" });
-        return { output: "", error: "", excelBlob: blob, previewData: data, previewHeaders: headers, stats: null };
-      } else if (convType === "csv") {
-        return { output: toCSV2(data, headers, delimiter, includeHeaders), error: "", excelBlob: null, previewData: data, previewHeaders: headers, stats: null };
-      } else {
-        return { output: toSQL(data, headers, tableName || "my_table", sqlType, batchInsert), error: "", excelBlob: null, previewData: data, previewHeaders: headers, stats: null };
-      }
-    } catch (e: any) {
-      return { ...EMPTY_RESULT, error: e.message };
-    }
-  }, [activeTool, input, convType, includeHeaders, flattenNested, autoFit, sheetName, delimiter, tableName, sqlType, batchInsert]);
 
   // ── Compute: Extractor ─────────────────────────────────────────
   const extractResult = useMemo<ComputeResult | null>(() => {
@@ -516,42 +252,20 @@ export default function JsonToolsPage() {
       if (extracted !== null && extracted !== undefined) {
         out = typeof extracted === "string" ? extracted : JSON.stringify(extracted, null, 2);
       }
-      return { output: out, error: "", excelBlob: null, previewData: [], previewHeaders: [], stats: null };
+      return { output: out, error: "", stats: null };
     } catch (e: any) {
       return { ...EMPTY_RESULT, error: e.message };
     }
   }, [activeTool, input, mode, jsonPath, selectedFields, preserveStructure, removeEmpty, keysMode, includeNested, sortResults, outputFormat]);
 
   // ── Active result ──────────────────────────────────────────────
-  const result = formatResult ?? convertResult ?? excelResult ?? extractResult ?? EMPTY_RESULT;
+  const result = formatResult ?? extractResult ?? EMPTY_RESULT;
   const displayOutput = overrideOutput ?? result.output;
-
-  // ── Derived values ─────────────────────────────────────────────
-  const inputLang = activeTool === "convert" && direction === "format_to" ? formatType : "json";
-  const outputLang = activeTool === "convert"
-    ? (direction === "json_to" ? formatType : "json")
-    : activeTool === "excel"
-      ? (convType === "sql" ? "sql" : "plaintext")
-      : "json";
-
-  const inputLabel = activeTool === "convert" && direction === "format_to" ? formatType.toUpperCase() : "JSON";
-  const outputLabel = activeTool === "convert"
-    ? (direction === "json_to" ? formatType.toUpperCase() : "JSON")
-    : activeTool === "excel"
-      ? (convType === "excel" ? "Excel 预览" : convType.toUpperCase())
-      : "输出";
-
-  const hasExcelOutput = !!result.excelBlob;
-  const hasTextOutput = !hasExcelOutput && !!displayOutput;
 
   // ── Handlers ───────────────────────────────────────────────────
   const handleExample = () => {
     setOverrideOutput(null);
     if (activeTool === "format") setInput(FORMATTER_EXAMPLE);
-    else if (activeTool === "convert") {
-      const ex = CONVERTER_EXAMPLES[formatType];
-      setInput(direction === "json_to" ? ex.jsonTo : ex.formatTo);
-    } else if (activeTool === "excel") setInput(EXCEL_EXAMPLE);
     else if (activeTool === "extract") { setInput(EXTRACTOR_EXAMPLE); setJsonPath("$[*].name"); }
   };
 
@@ -560,20 +274,8 @@ export default function JsonToolsPage() {
     setInput("");
   };
 
-  const handleSwap = () => {
-    setOverrideOutput(null);
-    // 仅在转换成功且存在结果时才把输出带到另一侧；
-    // 空输入或转换失败时仍应允许切换方向，且不能覆盖用户当前输入。
-    if (result.output) setInput(result.output);
-    setDirection(direction === "json_to" ? "format_to" : "json_to");
-  };
-
   const handleDownload = () => {
-    if (activeTool === "excel" && result.excelBlob) downloadFile(result.excelBlob, `${sheetName || "data"}.xlsx`);
-    else if (activeTool === "excel" && convType === "csv") downloadFile(displayOutput, "data.csv", "text/csv");
-    else if (activeTool === "excel" && convType === "sql") downloadFile(displayOutput, "data.sql");
-    else if (activeTool === "convert") downloadFile(displayOutput, `converted.${direction === "json_to" ? formatType : "json"}`);
-    else if (activeTool === "extract") downloadFile(displayOutput, "extracted.json", "application/json");
+    if (activeTool === "extract") downloadFile(displayOutput, "extracted.json", "application/json");
     else downloadFile(displayOutput, "formatted.json", "application/json");
   };
 
@@ -588,14 +290,14 @@ export default function JsonToolsPage() {
             {/* Input */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between h-10">
-                <Label className="text-sm font-medium">输入 ({inputLabel})</Label>
+                <Label className="text-sm font-medium">输入 (JSON)</Label>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={handleExample}><Star className="size-3.5" /> 示例</Button>
                   <Button variant="outline" size="sm" onClick={handleClear} disabled={!input}><Eraser className="size-3.5" /> 清空</Button>
                 </div>
               </div>
               <div className="h-[340px]">
-                <MonacoEditor value={input} onChange={handleInputChange} language={inputLang} height="100%" showLineNumbersToggle showWordWrapToggle />
+                <MonacoEditor value={input} onChange={handleInputChange} language="json" height="100%" showLineNumbersToggle showWordWrapToggle />
               </div>
             </div>
 
@@ -603,7 +305,7 @@ export default function JsonToolsPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between h-10">
                 <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium">{outputLabel}</Label>
+                  <Label className="text-sm font-medium">输出</Label>
                   {/* Stats (Formatter only) */}
                   {result.stats && (
                     <div className="flex flex-wrap gap-1">
@@ -617,14 +319,10 @@ export default function JsonToolsPage() {
                       ))}
                     </div>
                   )}
-                  {/* Excel row/col count */}
-                  {hasExcelOutput && result.previewHeaders.length > 0 && (
-                    <span className="text-xs text-green-600">{result.previewData.length} 行 · {result.previewHeaders.length} 列</span>
-                  )}
                 </div>
                 <div className="flex gap-2">
-                  {hasTextOutput && <CopyButton text={displayOutput} />}
-                  {(hasTextOutput || hasExcelOutput) && (
+                  {displayOutput && <CopyButton text={displayOutput} />}
+                  {displayOutput && (
                     <Button variant="outline" size="sm" onClick={handleDownload}>
                       <Download className="size-3.5" /> 下载
                     </Button>
@@ -640,30 +338,8 @@ export default function JsonToolsPage() {
                       <p className="text-xs mt-1 opacity-90 break-all">{result.error}</p>
                     </div>
                   </div>
-                ) : hasExcelOutput ? (
-                  <div className="h-full overflow-auto rounded-lg border border-gray-200 bg-white p-2">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b bg-gray-50 sticky top-0">
-                          {result.previewHeaders.map((h) => (
-                            <th key={h} className="px-3 py-2 text-left font-medium whitespace-nowrap">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {result.previewData.slice(0, 50).map((row, i) => (
-                          <tr key={i} className="border-b last:border-0 hover:bg-gray-50">
-                            {result.previewHeaders.map((h) => (
-                              <td key={h} className="px-3 py-2 whitespace-nowrap">{String(row[h] ?? "")}</td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {result.previewData.length > 50 && <p className="text-xs text-gray-400 mt-2">仅预览前 50 行</p>}
-                  </div>
-                ) : hasTextOutput ? (
-                  <MonacoEditor value={displayOutput} readOnly language={outputLang} height="100%" showCopyButton showDownloadButton showWordWrapToggle onDownload={handleDownload} />
+                ) : displayOutput ? (
+                  <MonacoEditor value={displayOutput} readOnly language="json" height="100%" showCopyButton showDownloadButton showWordWrapToggle onDownload={handleDownload} />
                 ) : (
                   <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
                     <FileText className="size-10 opacity-30 mb-3" />
@@ -679,8 +355,6 @@ export default function JsonToolsPage() {
             <Tabs value={activeTool} onValueChange={handleToolChange}>
               <TabsList className="w-full rounded-none border-b border-gray-100 bg-gray-50/50">
                 <TabsTrigger value="format" className="flex-1"><Braces className="size-4" /> 格式化</TabsTrigger>
-                <TabsTrigger value="convert" className="flex-1"><ArrowLeftRight className="size-4" /> 格式转换</TabsTrigger>
-                <TabsTrigger value="excel" className="flex-1"><FileSpreadsheet className="size-4" /> 转 Excel</TabsTrigger>
                 <TabsTrigger value="extract" className="flex-1"><Filter className="size-4" /> 提取</TabsTrigger>
               </TabsList>
 
@@ -728,128 +402,6 @@ export default function JsonToolsPage() {
                       <ArrowLeftRight className="size-3.5" /> 反转义字符串
                     </Button>
                   </div>
-                </div>
-              </TabsContent>
-
-              {/* ── Converter Options ───────────────────────────── */}
-              <TabsContent value="convert" className="p-5">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">格式</Label>
-                    <Select value={formatType} onValueChange={setFormatType}>
-                      <SelectTrigger className="w-24 h-8"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="xml">XML</SelectItem>
-                        <SelectItem value="csv">CSV</SelectItem>
-                        <SelectItem value="yaml">YAML</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className={direction === "json_to" ? "text-primary font-medium" : "text-gray-400"}>JSON → {formatType.toUpperCase()}</span>
-                    <Button variant="ghost" size="icon-sm" onClick={handleSwap} title="对调转换方向"><ArrowLeftRight className="size-4" /></Button>
-                    <span className={direction === "format_to" ? "text-primary font-medium" : "text-gray-400"}>{formatType.toUpperCase()} → JSON</span>
-                  </div>
-                  <Button variant="link" size="sm" className="ml-auto px-0 h-auto" onClick={() => setShowAdvanced(!showAdvanced)}>
-                    <Settings2 className="size-3.5" /> {showAdvanced ? "收起" : "展开"}高级选项
-                  </Button>
-                </div>
-                {showAdvanced && (
-                  <div className="mt-3 flex flex-wrap items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                    {formatType === "csv" && (
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">分隔符</Label>
-                        <Select value={csvDelimiter} onValueChange={setCsvDelimiter}>
-                          <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value=",">逗号 (,)</SelectItem>
-                            <SelectItem value=";">分号 (;)</SelectItem>
-                            <SelectItem value={"\t"}>Tab</SelectItem>
-                            <SelectItem value="|">管道 (|)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-                    {formatType === "xml" && (
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">根元素</Label>
-                        <Input className="w-32 h-8" value={xmlRoot} onChange={(e) => setXmlRoot(e.target.value)} placeholder="root" />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </TabsContent>
-
-              {/* ── Excel Options ────────────────────────────────── */}
-              <TabsContent value="excel" className="p-5">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">输出格式</Label>
-                    <Select value={convType} onValueChange={(v) => setConvType(v as "excel" | "csv" | "sql")}>
-                      <SelectTrigger className="w-32 h-8"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="excel">Excel (.xlsx)</SelectItem>
-                        <SelectItem value="csv">CSV</SelectItem>
-                        <SelectItem value="sql">SQL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={includeHeaders} onCheckedChange={setIncludeHeaders} />
-                    <Label className="text-xs cursor-pointer" onClick={() => setIncludeHeaders(!includeHeaders)}>包含表头</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={flattenNested} onCheckedChange={setFlattenNested} />
-                    <Label className="text-xs cursor-pointer" onClick={() => setFlattenNested(!flattenNested)}>展开嵌套</Label>
-                  </div>
-                  {convType === "excel" && (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">Sheet 名</Label>
-                        <Input className="w-28 h-8" value={sheetName} onChange={(e) => setSheetName(e.target.value)} placeholder="Sheet1" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch checked={autoFit} onCheckedChange={setAutoFit} />
-                        <Label className="text-xs cursor-pointer" onClick={() => setAutoFit(!autoFit)}>自动列宽</Label>
-                      </div>
-                    </>
-                  )}
-                  {convType === "csv" && (
-                    <div className="flex items-center gap-2">
-                      <Label className="text-xs text-gray-500">分隔符</Label>
-                      <Select value={delimiter} onValueChange={setDelimiter}>
-                        <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value=",">逗号 (,)</SelectItem>
-                          <SelectItem value=";">分号 (;)</SelectItem>
-                          <SelectItem value={"\t"}>Tab</SelectItem>
-                          <SelectItem value="|">管道 (|)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  {convType === "sql" && (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">表名</Label>
-                        <Input className="w-28 h-8" value={tableName} onChange={(e) => setTableName(e.target.value)} placeholder="my_table" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">类型</Label>
-                        <Select value={sqlType} onValueChange={(v) => setSqlType(v as "INSERT" | "CREATE_TABLE")}>
-                          <SelectTrigger className="w-40 h-8"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="INSERT">INSERT</SelectItem>
-                            <SelectItem value="CREATE_TABLE">CREATE + INSERT</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch checked={batchInsert} onCheckedChange={setBatchInsert} />
-                        <Label className="text-xs cursor-pointer" onClick={() => setBatchInsert(!batchInsert)}>批量插入</Label>
-                      </div>
-                    </>
-                  )}
                 </div>
               </TabsContent>
 

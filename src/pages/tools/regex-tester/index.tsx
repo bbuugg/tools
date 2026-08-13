@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react";
-import {
-  Regex,
-  Copy,
-  Check,
-  Trash2,
-  Info,
-} from "lucide-react";
-
-
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import {
+  Check,
+  Copy,
+  Info,
+  Trash2
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 type MatchArray = RegExpExecArray[];
 
@@ -112,7 +108,7 @@ export default function RegexTesterPage() {
 
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           <div className="grid gap-4 lg:grid-cols-3">
@@ -266,6 +262,6 @@ export default function RegexTesterPage() {
           </div>
         </div>
       </div>
-          </>
+    </>
   );
 }

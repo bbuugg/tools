@@ -1,20 +1,15 @@
+import MonacoEditor from "@/components/MonacoEditor";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Code2,
   Copy,
   Eraser,
   FileText,
   Star
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import MonacoEditor from "@/components/MonacoEditor"
 
 interface ExtractedItem { type: string; url: string; text?: string; attributes?: Record<string, string> }
 interface ExtractionOptions {

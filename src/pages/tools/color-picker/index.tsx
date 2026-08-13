@@ -1,31 +1,29 @@
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
-import type { ColorLike } from "color";
-import {
-  Palette,
-  Pipette,
-  Image as ImageIcon,
-  Copy,
-  Check,
-} from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "@/components/ui/card";
-import { UploadDropZone } from "@/components/ui/upload-dropzone";
 import {
   ColorPicker,
-  ColorPickerSelection,
-  ColorPickerHue,
   ColorPickerAlpha,
   ColorPickerEyeDropper,
-  ColorPickerOutput,
   ColorPickerFormat,
+  ColorPickerHue,
+  ColorPickerOutput,
+  ColorPickerSelection,
 } from "@/components/ui/color-picker";
+import { Input } from "@/components/ui/input";
+import { UploadDropZone } from "@/components/ui/upload-dropzone";
+import type { ColorLike } from "color";
+import {
+  Check,
+  Copy,
+  Image as ImageIcon,
+  Pipette
+} from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 
 // ─── Helpers ──────────────────────────────────────────────────────
 

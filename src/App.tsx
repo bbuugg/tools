@@ -18,7 +18,7 @@ const lazyComponents = TOOL_ROUTES.map((route) => ({
 
 function Loading() {
   return (
-    <div className="flex h-full items-center justify-center">
+    <div className="flex min-h-[calc(100svh-3.5rem)] items-center justify-center">
       <Spinner className='size-8' />
     </div>
   )

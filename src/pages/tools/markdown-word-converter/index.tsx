@@ -19,7 +19,7 @@ import { marked } from "marked";
 import { useEffect, useRef, useState } from "react";
 import TurndownService from "turndown";
 
-import MonacoEditor from "@/components/MonacoEditor"
+import MonacoEditor from "@/components/MonacoEditor";
 
 type Mode = "md2word" | "word2md";
 
@@ -163,7 +163,9 @@ export default function MarkdownWordConverterPage() {
     setWordFileName(file.name);
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const mammoth = (await import("mammoth")).default;
+      const mammothModule = await import("mammoth");
+      // @ts-ignore
+      const mammoth = mammothModule.default?.convertToHtml ? mammothModule.default : mammothModule;
       const result = await mammoth.convertToHtml({ arrayBuffer });
       const td = new TurndownService({
         headingStyle: "atx",
@@ -171,8 +173,8 @@ export default function MarkdownWordConverterPage() {
       });
       const markdown = td.turndown(result.value);
       setMdOutput(markdown);
-    } catch {
-      setError("Word 文档解析失败，请确认文件为有效的 .docx 格式");
+    } catch (e) {
+      setError(`Word 文档解析失败: ${e instanceof Error ? e.message : String(e)}`);
       setMdOutput("");
       setWordFileName(null);
     } finally {
@@ -433,7 +435,7 @@ export default function MarkdownWordConverterPage() {
 
               {mode === "md2word" ? (
                 <div
-                  className="prose prose-sm max-w-none overflow-auto rounded-lg border border-gray-200 bg-white p-4"
+                  className="markdown-body max-w-none overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200 bg-white p-4"
                   style={{ height: EDITOR_HEIGHT }}
                   dangerouslySetInnerHTML={{
                     __html:

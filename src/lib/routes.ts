@@ -1,6 +1,7 @@
 import {
   AppWindow,
   AudioWaveform,
+  ArrowLeftRight,
   Braces,
   CalendarClock,
   Clock,
@@ -8,7 +9,6 @@ import {
   FileCode2,
   FileDiff,
   FileEdit,
-  FileSpreadsheet,
   FileText,
   Film,
   Hash,
@@ -78,7 +78,6 @@ const CATEGORY_ORDER = [
   "文本与转换",
   "图像处理",
   "视频与动图",
-  "文件与数据",
   "社交模拟",
   "音频工具",
 ];
@@ -89,11 +88,22 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/json",
     lazy: () => import("@/pages/tools/json"),
     meta: {
-      title: "JSON 工具箱",
-      description: "格式化、转换、提取 JSON 数据的集成工具",
+      title: "JSON 格式化与提取",
+      description: "JSON 格式化、压缩、排序、转义，以及 JSONPath、字段提取和键值提取",
       category: "开发调试",
       icon: Code2,
       color: "bg-blue-500",
+    },
+  },
+  {
+    path: "/tools/format-converter",
+    lazy: () => import("@/pages/tools/format-converter"),
+    meta: {
+      title: "JSON 格式转换",
+      description: "JSON、Excel、XML、YAML、CSV、SQL 格式之间互转，支持文件上传和多种输出选项",
+      category: "开发调试",
+      icon: ArrowLeftRight,
+      color: "bg-green-500",
     },
   },
   {
@@ -298,7 +308,7 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/image-list-processor",
     lazy: () => import("@/pages/tools/image-list-processor"),
     meta: {
-      title: "图片列表处理",
+      title: "图片列表",
       description: "批量下载图片、生成下载脚本，支持 URL 去重和预览",
       category: "图像处理",
       icon: Images,
@@ -416,23 +426,12 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     },
   },
   {
-    path: "/tools/excel2json",
-    lazy: () => import("@/pages/tools/excel2json"),
-    meta: {
-      title: "Excel 转 JSON",
-      description: "将 Excel/CSV 文件或表格文本快速转换为 JSON，支持表头识别、类型推断和多种输出格式",
-      category: "文件与数据",
-      icon: FileSpreadsheet,
-      color: "bg-green-500",
-    },
-  },
-  {
     path: "/tools/file-renamer",
     lazy: () => import("@/pages/tools/file-renamer"),
     meta: {
       title: "批量文件重命名",
       description: "序号、替换、大小写、插入、截取等多种重命名方式，支持生成重命名脚本",
-      category: "文件与数据",
+      category: "文本与转换",
       icon: FileEdit,
       color: "bg-amber-500",
     },

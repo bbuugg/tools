@@ -1,21 +1,12 @@
-import { useMemo, useState } from "react";
-import {
-  ImageDown,
-  Download,
-  Eraser,
-  Zap,
-  Eye,
-  Trash2,
-} from "lucide-react";
-import JSZip from "jszip";
-
-
-
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { UploadDropZone } from "@/components/ui/upload-dropzone";
 import {
   Select,
   SelectContent,
@@ -23,12 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { UploadDropZone } from "@/components/ui/upload-dropzone";
+import JSZip from "jszip";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Download,
+  Eraser,
+  Eye,
+  Trash2,
+  Zap
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface ImageItem {
   id: string; file: File; name: string; preview: string;
@@ -123,7 +119,7 @@ export default function ImageCompressorPage() {
 
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           {/* Upload */}
@@ -217,6 +213,6 @@ export default function ImageCompressorPage() {
           </Dialog>
         </div>
       </div>
-          </>
+    </>
   );
 }

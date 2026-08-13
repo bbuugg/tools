@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import './index.css'
+import './assets/github-markdown.less'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

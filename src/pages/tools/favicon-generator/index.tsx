@@ -1,21 +1,6 @@
-import { useRef, useState } from "react";
-import {
-  AppWindow,
-  Download,
-  Eraser,
-  Scissors,
-  Loader2,
-} from "lucide-react";
-import "cropperjs/dist/cropper.css";
-import JSZip from "jszip";
-import Cropper, { type ReactCropperElement } from "react-cropper";
-
-
-
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { UploadDropZone } from "@/components/ui/upload-dropzone";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -23,6 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UploadDropZone } from "@/components/ui/upload-dropzone";
+import "cropperjs/dist/cropper.css";
+import JSZip from "jszip";
+import {
+  Download,
+  Eraser,
+  Loader2,
+  Scissors
+} from "lucide-react";
+import { useRef, useState } from "react";
+import Cropper, { type ReactCropperElement } from "react-cropper";
 
 interface FaviconResult { size: number; format: string; dataUrl: string; blob: Blob; filename: string }
 
@@ -81,7 +77,7 @@ export default function FaviconGeneratorPage() {
 
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           {!imageSrc ? (
@@ -152,6 +148,6 @@ export default function FaviconGeneratorPage() {
           )}
         </div>
       </div>
-          </>
+    </>
   );
 }

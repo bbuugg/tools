@@ -8,13 +8,12 @@ import {
   LogOut,
   Pause,
   Play,
-  Radio,
   Send,
   Trash2
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import MonacoEditor from "@/components/MonacoEditor"
+import MonacoEditor from "@/components/MonacoEditor";
 
 interface LogMessage { type: "success" | "danger" | "info"; content: string; time: string }
 interface WSMessage { direction: 0 | 1; content: string; time: string }

@@ -1,34 +1,32 @@
-import {
-  Check,
-  Copy,
-  Palette,
-  Plus,
-  Shuffle,
-  Trash2,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import {
   ColorPicker,
-  ColorPickerSelection,
-  ColorPickerHue,
   ColorPickerEyeDropper,
-  ColorPickerOutput,
   ColorPickerFormat,
+  ColorPickerHue,
+  ColorPickerOutput,
+  ColorPickerSelection,
   type ColorPickerProps,
 } from "@/components/ui/color-picker";
-
-type ColorPickerOnChangeValue = Parameters<NonNullable<ColorPickerProps["onChange"]>>[0];
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import {
+  Check,
+  Copy,
+  Plus,
+  Shuffle,
+  Trash2
+} from "lucide-react";
+import { useCallback, useState } from "react";
+
+type ColorPickerOnChangeValue = Parameters<NonNullable<ColorPickerProps["onChange"]>>[0];
 
 type GradientType = "linear" | "radial";
 type LinearDir = "0deg" | "45deg" | "90deg" | "135deg" | "180deg" | "225deg" | "270deg" | "315deg" | "custom";

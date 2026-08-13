@@ -1,3 +1,4 @@
+import MonacoEditor from "@/components/MonacoEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import JSZip from "jszip";
@@ -6,12 +7,9 @@ import {
   DownloadCloud,
   Eraser,
   FileText,
-  Images,
   Star
 } from "lucide-react";
 import { useCallback, useState } from "react";
-
-import MonacoEditor from "@/components/MonacoEditor"
 
 interface ImageInfo { url: string; filename: string }
 

@@ -1,34 +1,3 @@
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
-  Code2,
-  Download,
-  Eraser,
-  FileEdit,
-  GripVertical,
-  Trash2,
-  Upload,
-} from "lucide-react";
-import { useMemo, useState, type CSSProperties } from "react";
-import { toast } from "sonner";
-
-
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -47,7 +16,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import JSZip from "jszip";
+import {
+  Code2,
+  Download,
+  Eraser,
+  GripVertical,
+  Trash2,
+  Upload
+} from "lucide-react";
+import { useMemo, useState, type CSSProperties } from "react";
+import { toast } from "sonner";
 
 interface FileInfo {
   id: string; file: File; originalName: string; size: number; lastModified: number;

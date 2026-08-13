@@ -1,27 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  Hash,
-  KeyRound,
-  Fingerprint,
-  Shuffle,
-  Copy,
-  Check,
-  Download,
-  Eraser,
-  RefreshCw,
-  Type,
-} from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
-import { ulid } from "ulid";
-
-
-
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Check,
+  Copy,
+  Download,
+  Eraser,
+  Fingerprint,
+  Hash,
+  KeyRound,
+  RefreshCw,
+  Type
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ulid } from "ulid";
+import { v4 as uuidv4 } from "uuid";
 
 /* ============================================================
  * Copy Button
@@ -620,7 +616,7 @@ function PasswordGenerator() {
 export default function StringToolsPage() {
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           <Tabs defaultValue="uuid">
@@ -658,6 +654,6 @@ export default function StringToolsPage() {
           </Tabs>
         </div>
       </div>
-          </>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+import MonacoEditor from "@/components/MonacoEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -5,15 +6,12 @@ import {
   ArrowLeftRight,
   Check,
   Copy,
-  FileCode2,
   Star,
-  Trash2,
+  Trash2
 } from "lucide-react";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
 import TurndownService from "turndown";
-
-import MonacoEditor from "@/components/MonacoEditor"
 
 type Mode = "md2html" | "html2md";
 

@@ -234,8 +234,9 @@ export default function MarkdownPdfConverterPage() {
     setPdfFileName(file.name);
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      // 使用 public/ 下与依赖版本一致的 worker
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+      // 使用 Vite 的 ?url 导入来获取 worker URL，避免 public/ 下 .mjs 文件的 MIME type 问题
+      const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
       const data = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data }).promise;
@@ -255,8 +256,8 @@ export default function MarkdownPdfConverterPage() {
 
       const markdown = pdfToMarkdown(pages);
       setMdOutput(markdown);
-    } catch {
-      setError("PDF 解析失败，请确认文件为有效的 PDF 格式");
+    } catch (e) {
+      setError(`PDF 解析失败: ${e instanceof Error ? e.message : String(e)}`);
       setMdOutput("");
       setPdfFileName(null);
     } finally {
@@ -588,7 +589,7 @@ export default function MarkdownPdfConverterPage() {
 
               {mode === "md2pdf" ? (
                 <div
-                  className="prose prose-sm max-w-none overflow-auto rounded-lg border border-gray-200 bg-white p-4"
+                  className="markdown-body max-w-none overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200 bg-white p-4"
                   style={{ height: EDITOR_HEIGHT }}
                   dangerouslySetInnerHTML={{
                     __html:

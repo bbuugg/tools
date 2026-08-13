@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
-  Hash,
-  Copy,
   Check,
-  Trash2,
-  Star,
-  Settings,
   ChevronDown,
   ChevronUp,
+  Copy,
+  Settings,
+  Star,
+  Trash2
 } from "lucide-react";
-
-
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const BASE_OPTIONS = [
   { id: "2", name: "二进制" },
@@ -98,7 +94,7 @@ export default function NumberBaseConverterPage() {
 
   return (
     <>
-            <div>
+      <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
@@ -225,6 +221,6 @@ export default function NumberBaseConverterPage() {
           </div>
         </div>
       </div>
-          </>
+    </>
   );
 }
