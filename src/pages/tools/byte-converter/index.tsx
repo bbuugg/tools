@@ -70,7 +70,7 @@ function useCopy() {
 export default function ByteConverterPage() {
   const [inputValue, setInputValue] = useState("1");
   const [fromUnit, setFromUnit] = useState("mb");
-  const [binary, setBinary] = useState(false); // false = decimal (1000), true = binary (1024)
+  const [binary, setBinary] = useState(true); // false = decimal (1000), true = binary (1024)
 
   const { copiedId, copy } = useCopy();
 
