@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { Spinner } from "@/components/ui/spinner";
 import {
   SidebarInset,
   SidebarProvider,
@@ -7,7 +8,7 @@ import {
 import { type RouteHandle } from "@/lib/routes";
 import { pageTitle } from "@/lib/site";
 import { useEffect, useMemo } from "react";
-import { Outlet, ScrollRestoration, useMatches } from "react-router-dom";
+import { Outlet, ScrollRestoration, useMatches, useNavigation } from "react-router-dom";
 
 /** 从当前路由 handle.meta 获取标题和描述 */
 function useRouteMeta() {
@@ -37,6 +38,10 @@ export default function Layout() {
   const { title, description } = useRouteMeta();
   useDocumentTitle(title);
 
+  // 路由级 lazy 加载 chunk 期间，navigation.location 为真（底层 useSyncExternalStore 强制同步渲染）
+  const navigation = useNavigation();
+  const isNavigating = Boolean(navigation.location);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -52,8 +57,13 @@ export default function Layout() {
             )}
           </div>
         </header>
-        <main className="flex-1 overflow-x-hidden">
+        <main className="flex-1 overflow-x-hidden relative">
           <Outlet />
+          {isNavigating && (
+            <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/70 backdrop-blur-sm">
+              <Spinner className="size-8" />
+            </div>
+          )}
         </main>
       </SidebarInset>
       <ScrollRestoration />
