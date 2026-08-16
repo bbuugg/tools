@@ -3,6 +3,7 @@ import {
   AudioWaveform,
   ArrowLeftRight,
   Braces,
+  Calculator,
   CalendarClock,
   Clock,
   Code2,
@@ -11,7 +12,6 @@ import {
   FileEdit,
   FileText,
   Film,
-  HardDrive,
   Hash,
   ImageDown,
   Image as ImageIcon,
@@ -196,14 +196,15 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     },
   },
   {
-    path: "/tools/byte-converter",
-    lazy: () => import("@/pages/tools/byte-converter"),
+    path: "/tools/unit-converter",
+    lazy: () => import("@/pages/tools/unit-converter"),
     meta: {
-      title: "字节转换",
-      description: "比特、字节、KB、MB、GB、TB 之间的相互转换，支持十进制 (1000) 和二进制 (1024) 两种进位制",
+      title: "通用单位换算",
+      description:
+        "长度（px/rem/cm/m/km/in/ft/yd/mi）、温度（°C/°F/K）、重量（mg/g/kg/t/oz/lb）、数据大小（bit/B/KB/MB/GB/TB，支持十进制 1000 与二进制 1024）之间的实时换算",
       category: "开发调试",
-      icon: HardDrive,
-      color: "bg-cyan-600",
+      icon: Calculator,
+      color: "bg-teal-600",
     },
   },
   {
