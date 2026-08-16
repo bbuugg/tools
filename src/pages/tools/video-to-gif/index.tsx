@@ -197,35 +197,35 @@ export default function VideoToGifPage() {
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           {/* Upload */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <div
-              className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"}`}
+              className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-accent"}`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
             >
-              <Upload className="size-10 mx-auto text-gray-400 mb-3" />
-              <p className="text-sm font-medium text-gray-600">点击或拖拽上传视频文件</p>
-              <p className="text-xs text-gray-400 mt-1">支持最大 100MB</p>
+              <Upload className="size-10 mx-auto text-muted-foreground mb-3" />
+              <p className="text-sm font-medium text-muted-foreground">点击或拖拽上传视频文件</p>
+              <p className="text-xs text-muted-foreground mt-1">支持最大 100MB</p>
               <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleVideoFile(f); }} />
             </div>
 
             {/* GIF Settings */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">宽度 (px)</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">宽度 (px)</Label>
                 <Input type="number" value={width} onChange={(e) => { const v = e.target.value; setWidth(v === "" ? 0 : Number(v)); }} onBlur={() => { if (!width || width < 100) setWidth(100); if (width > 800) setWidth(800); }} min={100} max={800} className="h-9" />
               </div>
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">质量</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">质量</Label>
                 <Select value={quality} onValueChange={setQuality}>
                   <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent><SelectItem value="high">高</SelectItem><SelectItem value="medium">中</SelectItem><SelectItem value="low">低</SelectItem></SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">帧率 (FPS)</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">帧率 (FPS)</Label>
                 <Input type="number" value={fps} onChange={(e) => { const v = e.target.value; setFps(v === "" ? 0 : Number(v)); }} onBlur={() => { if (!fps || fps < 5) setFps(5); if (fps > 30) setFps(30); }} min={5} max={30} className="h-9" />
               </div>
             </div>
@@ -236,7 +236,7 @@ export default function VideoToGifPage() {
           {/* Video Preview & Controls */}
           {videoUrl && (
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+              <div className="rounded-xl border border-border bg-card p-4 space-y-4">
                 <video ref={videoRef} src={videoUrl} controls className="w-full rounded-lg" onLoadedMetadata={onVideoLoaded} onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)} />
 
                 {/* Time Range */}
@@ -245,12 +245,12 @@ export default function VideoToGifPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-1">
                       <Input type="number" value={timeRange.start} onChange={(e) => setTimeRange((p) => ({ ...p, start: Number(e.target.value) }))} min={0} max={videoDuration} step={0.1} className="h-8 w-20" />
-                      <span className="text-xs text-gray-400">s</span>
+                      <span className="text-xs text-muted-foreground">s</span>
                     </div>
-                    <span className="text-xs text-gray-400">~</span>
+                    <span className="text-xs text-muted-foreground">~</span>
                     <div className="flex items-center gap-1">
                       <Input type="number" value={timeRange.end} onChange={(e) => setTimeRange((p) => ({ ...p, end: Number(e.target.value) }))} min={timeRange.start} max={videoDuration} step={0.1} className="h-8 w-20" />
-                      <span className="text-xs text-gray-400">s</span>
+                      <span className="text-xs text-muted-foreground">s</span>
                     </div>
                     <Button variant="outline" size="sm" onClick={setStartFromCurrent}>设为当前</Button>
                     <Button variant="outline" size="sm" onClick={setEndFromCurrent}>设为当前</Button>
@@ -271,7 +271,7 @@ export default function VideoToGifPage() {
               </div>
 
               {/* Text Overlays */}
-              <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-sm font-medium">文字叠加</Label>
                   <Button variant="outline" size="sm" onClick={addTextOverlay}><Plus className="size-3.5" /> 添加</Button>
@@ -279,7 +279,7 @@ export default function VideoToGifPage() {
 
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                   {textOverlays.map((text, i) => (
-                    <div key={i} className="border border-gray-100 rounded-lg p-3 space-y-2">
+                    <div key={i} className="border border-border rounded-lg p-3 space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-medium">文字 {i + 1}</span>
                         <Button variant="ghost" size="sm" onClick={() => removeTextOverlay(i)} className="text-red-500 h-6 px-2"><Trash2 className="size-3" /></Button>
@@ -287,25 +287,25 @@ export default function VideoToGifPage() {
                       <Input value={text.content} onChange={(e) => updateTextOverlay(i, "content", e.target.value)} placeholder="输入文字内容" className="h-8 text-sm" />
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <Label className="text-xs text-gray-400">开始 (s)</Label>
+                          <Label className="text-xs text-muted-foreground">开始 (s)</Label>
                           <Input type="number" value={text.startTime} onChange={(e) => updateTextOverlay(i, "startTime", Number(e.target.value))} min={0} max={videoDuration} step={0.1} className="h-8 text-xs" />
                         </div>
                         <div>
-                          <Label className="text-xs text-gray-400">结束 (s)</Label>
+                          <Label className="text-xs text-muted-foreground">结束 (s)</Label>
                           <Input type="number" value={text.endTime} onChange={(e) => updateTextOverlay(i, "endTime", Number(e.target.value))} min={text.startTime} max={videoDuration} step={0.1} className="h-8 text-xs" />
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div>
-                          <Label className="text-xs text-gray-400">字号</Label>
+                          <Label className="text-xs text-muted-foreground">字号</Label>
                           <Input type="number" value={text.fontSize} onChange={(e) => updateTextOverlay(i, "fontSize", Number(e.target.value))} min={12} max={48} className="h-8 text-xs" />
                         </div>
                         <div>
-                          <Label className="text-xs text-gray-400">颜色</Label>
+                          <Label className="text-xs text-muted-foreground">颜色</Label>
                           <input type="color" value={text.color} onChange={(e) => updateTextOverlay(i, "color", e.target.value)} className="w-full h-8 border border-input rounded-md cursor-pointer" />
                         </div>
                         <div>
-                          <Label className="text-xs text-gray-400">位置</Label>
+                          <Label className="text-xs text-muted-foreground">位置</Label>
                           <Select value={text.position} onValueChange={(v) => updateTextOverlay(i, "position", v)}>
                             <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                             <SelectContent><SelectItem value="top">顶部</SelectItem><SelectItem value="center">居中</SelectItem><SelectItem value="bottom">底部</SelectItem></SelectContent>
@@ -314,7 +314,7 @@ export default function VideoToGifPage() {
                       </div>
                     </div>
                   ))}
-                  {textOverlays.length === 0 && <p className="text-xs text-gray-400 text-center py-4">点击添加按钮添加文字叠加</p>}
+                  {textOverlays.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">点击添加按钮添加文字叠加</p>}
                 </div>
               </div>
             </div>
@@ -322,10 +322,10 @@ export default function VideoToGifPage() {
 
           {/* Progress */}
           {isProcessing && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5 text-center">
+            <div className="rounded-xl border border-border bg-card p-5 text-center">
               <Loader2 className="size-8 animate-spin mx-auto mb-3 text-primary" />
-              <p className="text-sm text-gray-500">正在生成 GIF... {progress}%</p>
-              <div className="mt-3 h-2 rounded-full bg-gray-100">
+              <p className="text-sm text-muted-foreground">正在生成 GIF... {progress}%</p>
+              <div className="mt-3 h-2 rounded-full bg-muted">
                 <div className="h-2 rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
@@ -333,7 +333,7 @@ export default function VideoToGifPage() {
 
           {/* Result */}
           {generatedGif && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <Label className="text-sm font-medium mb-3 block">生成结果</Label>
               <div className="text-center">
                 <img src={generatedGif} alt="生成的 GIF" className="max-w-full h-auto mx-auto rounded-lg mb-4" style={{ maxHeight: "400px" }} />
@@ -346,12 +346,12 @@ export default function VideoToGifPage() {
           )}
 
           {/* Tips */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Info className="size-4 text-gray-400" />
+              <Info className="size-4 text-muted-foreground" />
               <Label className="text-sm font-medium">使用说明</Label>
             </div>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
               <li>上传视频文件（最大 100MB）</li>
               <li>设置 GIF 宽度、质量和帧率</li>
               <li>选择截取的时间范围</li>

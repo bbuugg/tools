@@ -93,7 +93,7 @@ function LivePhotoUnpacker() {
   return (
     <div className="space-y-4">
       <div
-        className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-gray-300 bg-white hover:border-primary/50 hover:bg-gray-50"}`}
+        className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50 hover:bg-accent"}`}
         onClick={() => fileInputRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
@@ -102,13 +102,13 @@ function LivePhotoUnpacker() {
         {loading ? (
           <div className="flex flex-col items-center gap-2 py-4">
             <Loader2 className="size-8 animate-spin text-primary" />
-            <p className="text-sm text-gray-500">正在处理...</p>
+            <p className="text-sm text-muted-foreground">正在处理...</p>
           </div>
         ) : (
           <>
-            <Upload className="size-10 mx-auto text-gray-400 mb-3" />
-            <p className="text-sm font-medium text-gray-600">点击或拖拽上传 Live Photo 文件</p>
-            <p className="text-xs text-gray-400 mt-1">支持 Google Motion Photo / Android Live Photo（.jpg）</p>
+            <Upload className="size-10 mx-auto text-muted-foreground mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">点击或拖拽上传 Live Photo 文件</p>
+            <p className="text-xs text-muted-foreground mt-1">支持 Google Motion Photo / Android Live Photo（.jpg）</p>
           </>
         )}
         <input
@@ -128,7 +128,7 @@ function LivePhotoUnpacker() {
 
       {result && (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Images className="size-4 text-primary" />
@@ -141,7 +141,7 @@ function LivePhotoUnpacker() {
             <img src={result.imageUrl} alt="提取的图片" className="w-full h-auto rounded-lg" style={{ maxHeight: "400px", objectFit: "contain" }} />
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Film className="size-4 text-primary" />
@@ -157,20 +157,20 @@ function LivePhotoUnpacker() {
       )}
 
       {!loading && !result && !error && (
-        <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
           <Scissors className="size-10 opacity-30 mb-2" />
           <p className="text-sm">上传 Live Photo 文件后在此显示结果</p>
         </div>
       )}
 
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <div className="rounded-xl border border-border bg-muted p-5">
         <Label className="text-sm font-medium mb-3 block">使用说明</Label>
-        <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+        <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
           <li>将 Google Motion Photo 或 Android Live Photo（.jpg 格式）上传到上方区域</li>
           <li>工具会自动识别并拆分文件中的图片和视频</li>
           <li>分别下载提取的图片和视频文件</li>
         </ol>
-        <p className="text-xs text-gray-400 mt-3">仅支持 Google Motion Photo 和 Android Live Photo 格式，不支持 Apple Live Photo（HEIC）</p>
+        <p className="text-xs text-muted-foreground mt-3">仅支持 Google Motion Photo 和 Android Live Photo 格式，不支持 Apple Live Photo（HEIC）</p>
       </div>
     </div>
   );

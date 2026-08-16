@@ -142,9 +142,9 @@ export default function HtmlExtractorPage() {
               </div>
 
               {/* Options */}
-              <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <Label className="text-xs font-medium text-gray-500">提取内容类型</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">提取内容类型</Label>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="sm" className="text-xs" onClick={() => setOptions((p) => ({ ...p, images: true, videos: true, audios: true, links: true, css: true, js: true, iframes: true, metadata: true, forms: true }))}>全选</Button>
                     <Button variant="ghost" size="sm" className="text-xs" onClick={() => setOptions((p) => ({ ...p, images: false, videos: false, audios: false, links: false, css: false, js: false, iframes: false, metadata: false, forms: false }))}>全不选</Button>
@@ -158,7 +158,7 @@ export default function HtmlExtractorPage() {
                     </label>
                   ))}
                 </div>
-                <div className="flex gap-4 pt-3 border-t border-gray-100">
+                <div className="flex gap-4 pt-3 border-t border-border">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <Checkbox checked={options.uniqueOnly} onCheckedChange={(c) => setOptions({ ...options, uniqueOnly: c === true })} />
                     <span className="text-xs">仅保留唯一项</span>
@@ -184,29 +184,29 @@ export default function HtmlExtractorPage() {
                   </Button>
                 )}
               </div>
-              <div className="h-[460px] overflow-y-auto rounded-lg border border-gray-200 bg-white">
+              <div className="h-[460px] overflow-y-auto rounded-lg border border-border bg-card">
                 {results.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center text-gray-400">
+                  <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
                     <FileText className="size-10 opacity-30 mb-3" /> 输入 HTML 后自动提取
                   </div>
                 ) : (
                   <div className="p-4 space-y-3">
                     {Object.entries(grouped).map(([type, items]) => (
-                      <div key={type} className="rounded-lg border border-gray-100 overflow-hidden">
-                        <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                      <div key={type} className="rounded-lg border border-border overflow-hidden">
+                        <div className="px-3 py-2 bg-muted border-b border-border flex items-center gap-2">
                           <span>{TYPE_EMOJIS[type] || "📄"}</span>
                           <span className="text-xs font-medium uppercase">{type}</span>
-                          <span className="text-xs text-gray-400">{items.length}</span>
+                          <span className="text-xs text-muted-foreground">{items.length}</span>
                         </div>
                         <div className="divide-y divide-gray-50">
                           {items.map((item, i) => (
-                            <div key={i} className="p-3 hover:bg-gray-50">
+                            <div key={i} className="p-3 hover:bg-accent">
                               <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline break-all font-mono">{item.url}</a>
-                              {item.text && <p className="text-xs text-gray-400 mt-1">{item.text}</p>}
+                              {item.text && <p className="text-xs text-muted-foreground mt-1">{item.text}</p>}
                               {item.attributes && Object.keys(item.attributes).length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-1">
                                   {Object.entries(item.attributes).filter(([, v]) => v).map(([k, v]) => (
-                                    <span key={k} className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{k}: {v}</span>
+                                    <span key={k} className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{k}: {v}</span>
                                   ))}
                                 </div>
                               )}

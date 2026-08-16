@@ -843,19 +843,19 @@ export default function AudioStudioPage() {
           )}
 
           {/* ── Audio Input Section ── */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Mic2 className="size-4" /> 音频输入
             </h3>
 
             <div className="grid gap-4 sm:grid-cols-2 items-stretch">
               {/* Upload */}
               <div className="space-y-2 flex flex-col">
-                <Label className="text-xs text-gray-500">上传音频文件</Label>
-                <label className="flex-1 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg py-8 cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-colors">
-                  <Upload className="size-8 text-gray-400" />
-                  <span className="text-sm text-gray-500">点击选择音频文件</span>
-                  <span className="text-xs text-gray-400">支持 MP3, WAV, OGG, FLAC, M4A, WebM</span>
+                <Label className="text-xs text-muted-foreground">上传音频文件</Label>
+                <label className="flex-1 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-lg py-8 cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-colors">
+                  <Upload className="size-8 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">点击选择音频文件</span>
+                  <span className="text-xs text-muted-foreground">支持 MP3, WAV, OGG, FLAC, M4A, WebM</span>
                   <input
                     type="file"
                     accept="audio/*"
@@ -867,8 +867,8 @@ export default function AudioStudioPage() {
 
               {/* Record */}
               <div className="space-y-2 flex flex-col">
-                <Label className="text-xs text-gray-500">使用麦克风录音</Label>
-                <div className="flex-1 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-lg py-8">
+                <Label className="text-xs text-muted-foreground">使用麦克风录音</Label>
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-lg py-8">
                   {recording ? (
                     <>
                       <div className="flex items-center gap-2 text-red-500">
@@ -884,8 +884,8 @@ export default function AudioStudioPage() {
                     </>
                   ) : (
                     <>
-                      <Mic className="size-8 text-gray-400" />
-                      <span className="text-sm text-gray-500">点击开始录音</span>
+                      <Mic className="size-8 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">点击开始录音</span>
                       <Button variant="outline" size="sm" onClick={startRecording}>
                         <Mic className="size-4" /> 开始录音
                       </Button>
@@ -896,16 +896,16 @@ export default function AudioStudioPage() {
             </div>
 
             {loading && (
-              <div className="text-center text-sm text-gray-500 py-2 flex items-center justify-center gap-2">
+              <div className="text-center text-sm text-muted-foreground py-2 flex items-center justify-center gap-2">
                 <Spinner className="size-4" /> 音频加载中…
               </div>
             )}
 
             {audioName && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                <Music className="size-4 text-gray-400" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted rounded-lg px-3 py-2">
+                <Music className="size-4 text-muted-foreground" />
                 <span className="flex-1 truncate">{audioName}</span>
-                {audioBlob && <span className="text-xs text-gray-400">{formatSize(audioBlob.size)}</span>}
+                {audioBlob && <span className="text-xs text-muted-foreground">{formatSize(audioBlob.size)}</span>}
                 <button
                   onClick={() => {
                     setAudioBuffer(null);
@@ -916,7 +916,7 @@ export default function AudioStudioPage() {
                     setConvertedBlob(null);
                     if (audioUrl) URL.revokeObjectURL(audioUrl);
                   }}
-                  className="p-1 text-gray-400 hover:text-red-500"
+                  className="p-1 text-muted-foreground hover:text-red-500"
                   title="清除"
                 >
                   <Trash2 className="size-4" />
@@ -927,46 +927,46 @@ export default function AudioStudioPage() {
 
           {/* ── Audio Analysis & Playback ── */}
           {audioBuffer && analysis && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Settings2 className="size-4" /> 音频分析与播放
               </h3>
 
               {/* Analysis stats */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">时长</div>
-                  <div className="text-lg font-semibold text-gray-900">{formatDuration(analysis.duration)}</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">时长</div>
+                  <div className="text-lg font-semibold text-foreground">{formatDuration(analysis.duration)}</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">采样率</div>
-                  <div className="text-lg font-semibold text-gray-900">{(analysis.sampleRate / 1000).toFixed(1)} kHz</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">采样率</div>
+                  <div className="text-lg font-semibold text-foreground">{(analysis.sampleRate / 1000).toFixed(1)} kHz</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">声道数</div>
-                  <div className="text-lg font-semibold text-gray-900">{analysis.channels === 1 ? "单声道" : "立体声"}</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">声道数</div>
+                  <div className="text-lg font-semibold text-foreground">{analysis.channels === 1 ? "单声道" : "立体声"}</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">平均分贝</div>
-                  <div className="text-lg font-semibold text-gray-900">{formatDb(analysis.avgDb)}</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">平均分贝</div>
+                  <div className="text-lg font-semibold text-foreground">{formatDb(analysis.avgDb)}</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">最低分贝</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">最低分贝</div>
                   <div className="text-lg font-semibold text-green-600">{formatDb(analysis.minDb)}</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">最高分贝</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">最高分贝</div>
                   <div className="text-lg font-semibold text-red-600">{formatDb(analysis.maxDb)}</div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">动态范围</div>
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">动态范围</div>
                   <div className="text-lg font-semibold text-purple-600">
                     {formatDb(analysis.maxDb - analysis.minDb)}
                   </div>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <div className="text-xs text-gray-500">采样数</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                <div className="rounded-lg bg-muted p-3">
+                  <div className="text-xs text-muted-foreground">采样数</div>
+                  <div className="text-lg font-semibold text-foreground">
                     {(analysis.sampleRate * analysis.duration).toLocaleString()}
                   </div>
                 </div>
@@ -974,12 +974,12 @@ export default function AudioStudioPage() {
 
               {/* Waveform display */}
               <div>
-                <Label className="text-xs text-gray-500 mb-2 block">实时分贝波形图</Label>
+                <Label className="text-xs text-muted-foreground mb-2 block">实时分贝波形图</Label>
                 <canvas
                   ref={waveformCanvasRef}
                   width={800}
                   height={120}
-                  className="w-full rounded-lg border border-gray-200"
+                  className="w-full rounded-lg border border-border"
                   style={{ height: 120 }}
                 />
               </div>
@@ -994,10 +994,10 @@ export default function AudioStudioPage() {
                 >
                   {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
                 </Button>
-                <div className="flex-1 text-sm text-gray-500 tabular-nums">
+                <div className="flex-1 text-sm text-muted-foreground tabular-nums">
                   {formatDuration(playTime)} / {formatDuration(analysis.duration)}
                 </div>
-                <Volume2 className="size-5 text-gray-400" />
+                <Volume2 className="size-5 text-muted-foreground" />
               </div>
 
               {/* Seek bar */}
@@ -1025,14 +1025,14 @@ export default function AudioStudioPage() {
 
           {/* ── Format Conversion ── */}
           {audioBuffer && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Download className="size-4" /> 格式转换
               </h3>
 
               <div className="flex flex-wrap items-end gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">目标格式</Label>
+                  <Label className="text-xs text-muted-foreground">目标格式</Label>
                   <Select value={convertFormat} onValueChange={(v) => setConvertFormat(v as FormatType)}>
                     <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
                     <SelectContent position="popper" sideOffset={4}>
@@ -1067,7 +1067,7 @@ export default function AudioStudioPage() {
                 </div>
               )}
 
-              <div className="text-xs text-gray-400 space-y-1">
+              <div className="text-xs text-muted-foreground space-y-1">
                 <p>• MP3: 使用 lamejs 编码，128kbps，兼容性最好</p>
                 <p>• WAV: 16-bit PCM，无损但文件较大</p>
                 <p>• FLAC: 无损压缩，需要加载 WASM 编码器</p>
@@ -1077,8 +1077,8 @@ export default function AudioStudioPage() {
           )}
 
           {/* ── Text to Speech ── */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Volume2 className="size-4" /> 语音合成 (TTS)
             </h3>
 
@@ -1092,7 +1092,7 @@ export default function AudioStudioPage() {
 
             <div className="grid gap-3 sm:grid-cols-2 [&>*]:min-w-0">
               <div className="space-y-1">
-                <Label className="text-xs text-gray-500">语音</Label>
+                <Label className="text-xs text-muted-foreground">语音</Label>
                 <Select value={ttsVoice} onValueChange={setTtsVoice}>
                   <SelectTrigger className="h-9 w-full"><SelectValue /></SelectTrigger>
                   <SelectContent position="popper" sideOffset={4} className="max-h-[200px]">
@@ -1105,7 +1105,7 @@ export default function AudioStudioPage() {
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-gray-500">语速: {ttsRate.toFixed(1)}x</Label>
+                <Label className="text-xs text-muted-foreground">语速: {ttsRate.toFixed(1)}x</Label>
                 <Slider
                   value={[ttsRate]}
                   min={0.5}
@@ -1115,7 +1115,7 @@ export default function AudioStudioPage() {
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-gray-500">音调: {ttsPitch.toFixed(1)}</Label>
+                <Label className="text-xs text-muted-foreground">音调: {ttsPitch.toFixed(1)}</Label>
                 <Slider
                   value={[ttsPitch]}
                   min={0}
@@ -1125,7 +1125,7 @@ export default function AudioStudioPage() {
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-gray-500">音量: {Math.round(ttsVolume * 100)}%</Label>
+                <Label className="text-xs text-muted-foreground">音量: {Math.round(ttsVolume * 100)}%</Label>
                 <Slider
                   value={[ttsVolume]}
                   min={0}

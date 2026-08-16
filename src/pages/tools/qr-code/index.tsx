@@ -141,7 +141,7 @@ export default function QrCodePage() {
             <TabsContent value="generate" className="mt-4">
               <div className="grid gap-4 lg:grid-cols-2">
                 <div className="space-y-4">
-                  <div className="rounded-xl border border-gray-200 bg-white p-5">
+                  <div className="rounded-xl border border-border bg-card p-5">
                     <div className="flex items-center justify-between mb-3 h-8">
                       <Label className="text-sm font-medium">输入文本</Label>
                       <div className="flex gap-2">
@@ -159,28 +159,28 @@ export default function QrCodePage() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+                  <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                     <div>
-                      <Label className="text-xs text-gray-500 mb-2 block">尺寸: {qrSize}px</Label>
+                      <Label className="text-xs text-muted-foreground mb-2 block">尺寸: {qrSize}px</Label>
                       <Slider min={100} max={500} step={10} value={[qrSize]} onValueChange={(v) => setQrSize(v[0])} />
                     </div>
                     <div>
-                      <Label className="text-xs text-gray-500 mb-2 block">边距: {qrMargin}px</Label>
+                      <Label className="text-xs text-muted-foreground mb-2 block">边距: {qrMargin}px</Label>
                       <Slider min={0} max={50} value={[qrMargin]} onValueChange={(v) => setQrMargin(v[0])} />
                     </div>
                     <div>
-                      <Label className="text-xs text-gray-500 mb-2 block">点阵样式</Label>
+                      <Label className="text-xs text-muted-foreground mb-2 block">点阵样式</Label>
                       <div className="flex gap-2">
                         <Button variant={qrStyle === "squares" ? "default" : "outline"} size="sm" onClick={() => setQrStyle("squares")}>方块</Button>
                         <Button variant={qrStyle === "dots" ? "default" : "outline"} size="sm" onClick={() => setQrStyle("dots")}>圆点</Button>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div><Label className="text-xs text-gray-500 mb-1 block">背景色</Label><ColorPickerField value={qrBgColor} onChange={setQrBgColor} /></div>
-                      <div><Label className="text-xs text-gray-500 mb-1 block">前景色</Label><ColorPickerField value={qrFgColor} onChange={setQrFgColor} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">背景色</Label><ColorPickerField value={qrBgColor} onChange={setQrBgColor} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">前景色</Label><ColorPickerField value={qrFgColor} onChange={setQrFgColor} /></div>
                     </div>
                     <div>
-                      <Label className="text-xs text-gray-500 mb-2 block">配色预设</Label>
+                      <Label className="text-xs text-muted-foreground mb-2 block">配色预设</Label>
                       <div className="grid grid-cols-4 gap-2">
                         {COLOR_PRESETS.map((p, i) => (
                           <button key={i} className="p-2 border rounded-md hover:border-slate-500 transition-all" onClick={() => { setQrBgColor(p.bg); setQrFgColor(p.fg); }}>
@@ -191,7 +191,7 @@ export default function QrCodePage() {
                       </div>
                     </div>
                     {/* Logo */}
-                    <div className="pt-3 border-t border-gray-100">
+                    <div className="pt-3 border-t border-border">
                       <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                       <div className="flex items-center gap-2 mb-2">
                         <Button variant="outline" size="sm" onClick={() => logoInputRef.current?.click()}>上传 Logo</Button>
@@ -199,12 +199,12 @@ export default function QrCodePage() {
                       </div>
                       {logoImage && (
                         <>
-                          <div className="bg-gray-50 rounded p-2 mb-3 flex justify-center"><img src={logoImage} alt="" className="max-h-16" /></div>
+                          <div className="bg-muted rounded p-2 mb-3 flex justify-center"><img src={logoImage} alt="" className="max-h-16" /></div>
                           <div className="grid grid-cols-2 gap-3">
-                            <div><Label className="text-xs text-gray-500 mb-1 block">Logo 宽: {logoWidth}px</Label><Slider min={20} max={150} value={[logoWidth]} onValueChange={(v) => setLogoWidth(v[0])} /></div>
-                            <div><Label className="text-xs text-gray-500 mb-1 block">Logo 高: {logoHeight}px</Label><Slider min={20} max={150} value={[logoHeight]} onValueChange={(v) => setLogoHeight(v[0])} /></div>
+                            <div><Label className="text-xs text-muted-foreground mb-1 block">Logo 宽: {logoWidth}px</Label><Slider min={20} max={150} value={[logoWidth]} onValueChange={(v) => setLogoWidth(v[0])} /></div>
+                            <div><Label className="text-xs text-muted-foreground mb-1 block">Logo 高: {logoHeight}px</Label><Slider min={20} max={150} value={[logoHeight]} onValueChange={(v) => setLogoHeight(v[0])} /></div>
                           </div>
-                          <div className="mt-2"><Label className="text-xs text-gray-500 mb-1 block">不透明度: {Math.round(logoOpacity * 100)}%</Label><Slider min={0} max={1} step={0.1} value={[logoOpacity]} onValueChange={(v) => setLogoOpacity(v[0])} /></div>
+                          <div className="mt-2"><Label className="text-xs text-muted-foreground mb-1 block">不透明度: {Math.round(logoOpacity * 100)}%</Label><Slider min={0} max={1} step={0.1} value={[logoOpacity]} onValueChange={(v) => setLogoOpacity(v[0])} /></div>
                           <label className="flex items-center gap-2 mt-2 cursor-pointer"><Checkbox checked={removeQrCodeBehindLogo} onCheckedChange={(c) => setRemoveQrCodeBehindLogo(c === true)} /><span className="text-xs">Logo 后方去除二维码</span></label>
                         </>
                       )}
@@ -212,18 +212,18 @@ export default function QrCodePage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5">
+                <div className="rounded-xl border border-border bg-card p-5">
                   <div className="flex items-center justify-between mb-3 h-8">
                     <Label className="text-sm font-medium">生成结果 {generated.length > 0 && `(${generated.length})`}</Label>
                     {generated.length > 0 && <Button size="sm" onClick={downloadAll}><Download className="size-3.5" /> 下载全部</Button>}
                   </div>
                   {generated.length === 0 ? (
-                    <div className="flex h-64 items-center justify-center text-gray-400"><QrCode className="size-12 opacity-20" /></div>
+                    <div className="flex h-64 items-center justify-center text-muted-foreground"><QrCode className="size-12 opacity-20" /></div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4 max-h-[500px] overflow-y-auto">
                       {generated.map((qr, i) => (
-                        <div key={i} className="text-center border border-gray-100 rounded-lg p-3">
-                          <div className="bg-white p-2 rounded mb-2 flex justify-center">
+                        <div key={i} className="text-center border border-border rounded-lg p-3">
+                          <div className="bg-card p-2 rounded mb-2 flex justify-center">
                             <ReactQRCodeLogo value={qr.text} size={Math.min(qrSize, 200)} bgColor={qrBgColor} fgColor={qrFgColor} logoImage={logoImage || undefined} logoWidth={logoWidth} logoHeight={logoHeight} logoOpacity={logoOpacity} removeQrCodeBehindLogo={removeQrCodeBehindLogo} qrStyle={qrStyle === "dots" ? "dots" : "squares"} quietZone={qrMargin} ecLevel="H" />
                           </div>
                           <p className="text-xs truncate mb-2" title={qr.text}>{qr.text}</p>
@@ -252,7 +252,7 @@ export default function QrCodePage() {
                 />
 
                 {results.length > 0 && (
-                  <div className="rounded-xl border border-gray-200 bg-white p-5">
+                  <div className="rounded-xl border border-border bg-card p-5">
                     <div className="flex items-center justify-between mb-4">
                       <Label className="text-sm font-medium">识别结果 ({results.length})</Label>
                       <div className="flex gap-2">
@@ -265,7 +265,7 @@ export default function QrCodePage() {
                         <div key={i} className={`flex items-start gap-3 p-3 rounded-lg border ${r.status === "success" ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
                           {r.preview && <img src={r.preview} alt="" className="w-12 h-12 object-cover rounded shrink-0" />}
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-700">{r.fileName}</p>
+                            <p className="text-xs font-medium text-foreground">{r.fileName}</p>
                             {r.status === "success" ? <p className="text-sm text-green-700 font-mono break-all mt-1">{r.data}</p> : <p className="text-xs text-red-500 mt-1">{r.error}</p>}
                           </div>
                         </div>

@@ -566,9 +566,9 @@ function SliderRow({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <Label className="text-xs text-gray-600">{label}</Label>
+        <Label className="text-xs text-muted-foreground">{label}</Label>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs tabular-nums text-gray-400">
+          <span className="text-xs tabular-nums text-muted-foreground">
             {value > 0 ? "+" : ""}
             {value}
             {suffix}
@@ -578,7 +578,7 @@ function SliderRow({
               type="button"
               onClick={onReset}
               title="重置"
-              className="text-gray-300 hover:text-gray-500"
+              className="text-muted-foreground hover:text-muted-foreground"
             >
               <RotateCcw className="size-3" />
             </button>
@@ -598,7 +598,7 @@ function SliderRow({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-sm font-semibold text-gray-900 mb-3">{children}</h3>
+    <h3 className="text-sm font-semibold text-foreground mb-3">{children}</h3>
   );
 }
 
@@ -892,10 +892,10 @@ export default function ImageEditorPage() {
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top mini-toolbar */}
         {hasImage && (
-          <div className="flex flex-wrap items-center gap-1.5 border-b bg-white px-3 py-1.5 shrink-0">
-            <span className="text-xs text-gray-500 truncate max-w-[120px]" title={fileName}>{fileName}</span>
-            <span className="text-xs text-gray-400">{naturalSize.w}×{naturalSize.h}</span>
-            {exportSize.w > 0 && <span className="text-xs text-gray-400">→ {exportSize.w}×{exportSize.h}</span>}
+          <div className="flex flex-wrap items-center gap-1.5 border-b bg-card px-3 py-1.5 shrink-0">
+            <span className="text-xs text-muted-foreground truncate max-w-[120px]" title={fileName}>{fileName}</span>
+            <span className="text-xs text-muted-foreground">{naturalSize.w}×{naturalSize.h}</span>
+            {exportSize.w > 0 && <span className="text-xs text-muted-foreground">→ {exportSize.w}×{exportSize.h}</span>}
             <Separator orientation="vertical" className="h-5" />
             <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => setGeo((g) => ({ ...g, rotate: ((g.rotate + 270 + 180) % 360) - 180 }))} title="左转90°">
               <RotateCcw className="size-3.5" />
@@ -920,11 +920,11 @@ export default function ImageEditorPage() {
               <PopoverContent className="w-56 p-3" align="start">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs text-gray-600">缩放</Label>
+                    <Label className="text-xs text-muted-foreground">缩放</Label>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs tabular-nums text-gray-400">{geo.scale}x</span>
+                      <span className="text-xs tabular-nums text-muted-foreground">{geo.scale}x</span>
                       {geo.scale !== 1 && (
-                        <button type="button" onClick={() => setGeo((g) => ({ ...g, scale: 1 }))} title="重置" className="text-gray-300 hover:text-gray-500">
+                        <button type="button" onClick={() => setGeo((g) => ({ ...g, scale: 1 }))} title="重置" className="text-muted-foreground hover:text-muted-foreground">
                           <RotateCcw className="size-3" />
                         </button>
                       )}
@@ -949,11 +949,11 @@ export default function ImageEditorPage() {
               <PopoverContent className="w-56 p-3" align="start">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs text-gray-600">圆角</Label>
+                    <Label className="text-xs text-muted-foreground">圆角</Label>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs tabular-nums text-gray-400">{geo.borderRadius}%</span>
+                      <span className="text-xs tabular-nums text-muted-foreground">{geo.borderRadius}%</span>
                       {geo.borderRadius > 0 && (
-                        <button type="button" onClick={() => setGeo((g) => ({ ...g, borderRadius: 0 }))} title="重置" className="text-gray-300 hover:text-gray-500">
+                        <button type="button" onClick={() => setGeo((g) => ({ ...g, borderRadius: 0 }))} title="重置" className="text-muted-foreground hover:text-muted-foreground">
                           <RotateCcw className="size-3" />
                         </button>
                       )}
@@ -1079,7 +1079,7 @@ export default function ImageEditorPage() {
                 >
                   <div
                     onPointerDown={startCropResize}
-                    className="absolute -bottom-1.5 -right-1.5 size-4 bg-white border-2 border-indigo-400 rounded-sm cursor-se-resize"
+                    className="absolute -bottom-1.5 -right-1.5 size-4 bg-card border-2 border-indigo-400 rounded-sm cursor-se-resize"
                   />
                 </div>
               )}
@@ -1103,7 +1103,7 @@ export default function ImageEditorPage() {
 
       {/* ── Right: Properties Panel ── */}
       {hasImage && (
-        <div className="lg:w-80 max-h-[50vh] lg:max-h-none overflow-y-auto border-t lg:border-t-0 lg:border-l bg-white shrink-0">
+        <div className="lg:w-80 max-h-[50vh] lg:max-h-none overflow-y-auto border-t lg:border-t-0 lg:border-l bg-card shrink-0">
           <div className="p-4 space-y-4">
 
             {/* ── Adjust ── */}
@@ -1126,16 +1126,16 @@ export default function ImageEditorPage() {
                 <Separator className="my-2" />
                 <SectionTitle>颜色替换</SectionTitle>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-gray-600">启用替换</Label>
+                  <Label className="text-xs text-muted-foreground">启用替换</Label>
                   <Switch checked={cr.enabled} onCheckedChange={(v) => setCr((c) => ({ ...c, enabled: v }))} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-gray-500">原颜色</Label>
+                    <Label className="text-xs text-muted-foreground">原颜色</Label>
                     <ColorPickerField value={cr.from} onChange={(v) => setCr((c) => ({ ...c, from: v }))} showHexInput={false} swatchClassName="w-full h-9" />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-gray-500">目标颜色</Label>
+                    <Label className="text-xs text-muted-foreground">目标颜色</Label>
                     <ColorPickerField value={cr.to} onChange={(v) => setCr((c) => ({ ...c, to: v }))} showHexInput={false} swatchClassName="w-full h-9" />
                   </div>
                 </div>
@@ -1152,47 +1152,47 @@ export default function ImageEditorPage() {
                 </Button>
                 <div className="space-y-2">
                   {texts.map((t) => (
-                    <div key={t.id} className={`rounded-lg border p-2.5 space-y-2 ${selectedTextId === t.id ? "border-indigo-400 bg-indigo-50/40" : "border-gray-100"}`}>
+                    <div key={t.id} className={`rounded-lg border p-2.5 space-y-2 ${selectedTextId === t.id ? "border-indigo-400 bg-indigo-50/40" : "border-border"}`}>
                       <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => setSelectedTextId((id) => id === t.id ? null : t.id)} className="text-xs text-gray-500 hover:text-indigo-600" title="选中后在画布上拖拽定位">
+                        <button type="button" onClick={() => setSelectedTextId((id) => id === t.id ? null : t.id)} className="text-xs text-muted-foreground hover:text-indigo-600" title="选中后在画布上拖拽定位">
                           <Move className="size-3.5" />
                         </button>
                         <Input value={t.text} onChange={(e) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, text: e.target.value } : x))} className="h-8 text-sm flex-1" />
-                        <button type="button" onClick={() => { setTexts((prev) => prev.filter((x) => x.id !== t.id)); if (selectedTextId === t.id) setSelectedTextId(null); }} className="text-gray-300 hover:text-red-500">
+                        <button type="button" onClick={() => { setTexts((prev) => prev.filter((x) => x.id !== t.id)); if (selectedTextId === t.id) setSelectedTextId(null); }} className="text-muted-foreground hover:text-red-500">
                           <Trash2 className="size-3.5" />
                         </button>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-1">
-                          <Label className="text-[11px] text-gray-500">大小 {Math.round(t.size * 100)}%</Label>
+                          <Label className="text-[11px] text-muted-foreground">大小 {Math.round(t.size * 100)}%</Label>
                           <Slider value={[t.size * 100]} min={2} max={30} step={0.5} onValueChange={(v) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, size: v[0] / 100 } : x))} />
                         </div>
                         <div className="flex items-end justify-between gap-2">
                           <div className="space-y-1">
-                            <Label className="text-[11px] text-gray-500">颜色</Label>
+                            <Label className="text-[11px] text-muted-foreground">颜色</Label>
                             <ColorPickerField value={t.color} onChange={(v) => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, color: v } : x))} showHexInput={false} swatchClassName="w-full h-8" />
                           </div>
-                          <button type="button" onClick={() => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, bold: !x.bold } : x))} className={`rounded-md border px-2 py-1.5 text-xs ${t.bold ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 text-gray-600"}`}>B</button>
+                          <button type="button" onClick={() => setTexts((prev) => prev.map((x) => x.id === t.id ? { ...x, bold: !x.bold } : x))} className={`rounded-md border px-2 py-1.5 text-xs ${t.bold ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-border text-muted-foreground"}`}>B</button>
                         </div>
                       </div>
                     </div>
                   ))}
-                  {texts.length === 0 && <p className="text-xs text-gray-400">还没有文字。点击「添加文字」后，可在画布上拖拽定位。</p>}
+                  {texts.length === 0 && <p className="text-xs text-muted-foreground">还没有文字。点击「添加文字」后，可在画布上拖拽定位。</p>}
                 </div>
                 <Separator className="my-2" />
                 <SectionTitle>水印</SectionTitle>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-gray-600">启用水印</Label>
+                  <Label className="text-xs text-muted-foreground">启用水印</Label>
                   <Switch checked={wm.enabled} onCheckedChange={(v) => setWm((w) => ({ ...w, enabled: v }))} />
                 </div>
                 <Input value={wm.text} onChange={(e) => setWm((w) => ({ ...w, text: e.target.value }))} placeholder="水印文字" className="h-8 text-sm" />
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-gray-500">颜色</Label>
+                    <Label className="text-xs text-muted-foreground">颜色</Label>
                     <ColorPickerField value={wm.color} onChange={(v) => setWm((w) => ({ ...w, color: v }))} showHexInput={false} swatchClassName="w-full h-9" />
                   </div>
                   <div className="flex items-end gap-2">
-                    <button type="button" onClick={() => setWm((w) => ({ ...w, tiled: !w.tiled }))} className={`rounded-md border px-2 py-1.5 text-xs ${wm.tiled ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 text-gray-600"}`}>{wm.tiled ? "平铺" : "单个"}</button>
+                    <button type="button" onClick={() => setWm((w) => ({ ...w, tiled: !w.tiled }))} className={`rounded-md border px-2 py-1.5 text-xs ${wm.tiled ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-border text-muted-foreground"}`}>{wm.tiled ? "平铺" : "单个"}</button>
                   </div>
                 </div>
                 <SliderRow label="不透明度" value={Math.round(wm.opacity * 100)} min={5} max={100} defaultValue={35} suffix="%" onChange={(v) => setWm((w) => ({ ...w, opacity: v / 100 }))} onReset={() => setWm((w) => ({ ...w, opacity: 0.35 }))} />
@@ -1208,21 +1208,21 @@ export default function ImageEditorPage() {
                 <Button size="sm" variant={mosaicDraw ? "default" : "outline"} className="w-full" onClick={() => setMosaicDraw((v) => !v)}>
                   <Square className="size-3.5" />{mosaicDraw ? "绘制中…点击取消" : "在画布上框选区域"}
                 </Button>
-                <p className="text-xs text-gray-400">开启后在画布上按住拖动，框选区域将打码。</p>
+                <p className="text-xs text-muted-foreground">开启后在画布上按住拖动，框选区域将打码。</p>
                 <div className="space-y-2">
                   {mosaics.map((m, i) => (
-                    <div key={m.id} className="flex items-center gap-2 rounded-lg border border-gray-100 p-2">
-                      <span className="text-xs text-gray-500 flex-1">马赛克 {i + 1}</span>
+                    <div key={m.id} className="flex items-center gap-2 rounded-lg border border-border p-2">
+                      <span className="text-xs text-muted-foreground flex-1">马赛克 {i + 1}</span>
                       <div className="flex items-center gap-1 w-28">
                         <Slider value={[m.block]} min={4} max={40} step={1} onValueChange={(v) => setMosaics((prev) => prev.map((x) => x.id === m.id ? { ...x, block: v[0] } : x))} />
-                        <span className="text-[11px] text-gray-400 w-6 text-right">{m.block}</span>
+                        <span className="text-[11px] text-muted-foreground w-6 text-right">{m.block}</span>
                       </div>
-                      <button type="button" onClick={() => setMosaics((prev) => prev.filter((x) => x.id !== m.id))} className="text-gray-300 hover:text-red-500">
+                      <button type="button" onClick={() => setMosaics((prev) => prev.filter((x) => x.id !== m.id))} className="text-muted-foreground hover:text-red-500">
                         <Trash2 className="size-3.5" />
                       </button>
                     </div>
                   ))}
-                  {mosaics.length === 0 && <p className="text-xs text-gray-400">暂无马赛克区域。</p>}
+                  {mosaics.length === 0 && <p className="text-xs text-muted-foreground">暂无马赛克区域。</p>}
                 </div>
               </>
             )}

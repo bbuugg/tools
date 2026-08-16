@@ -90,7 +90,7 @@ export default function FaviconGeneratorPage() {
             />
           ) : (
             <div className="grid gap-4 lg:grid-cols-3">
-              <div className="lg:col-span-2 rounded-xl border border-gray-200 bg-white p-4">
+              <div className="lg:col-span-2 rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-sm font-medium">裁剪区域 (1:1)</Label>
                   <Button variant="outline" size="sm" onClick={() => { setImageSrc(null); setResults([]); setFileName("favicon"); }}><Eraser className="size-3.5" /> 重置</Button>
@@ -100,16 +100,16 @@ export default function FaviconGeneratorPage() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+              <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                 <div>
-                  <Label className="text-xs text-gray-500 mb-2 block">输出格式</Label>
+                  <Label className="text-xs text-muted-foreground mb-2 block">输出格式</Label>
                   <Select value={outputFormat} onValueChange={setOutputFormat}>
                     <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                     <SelectContent><SelectItem value="ico">ICO (标准)</SelectItem><SelectItem value="png">PNG</SelectItem><SelectItem value="jpg">JPG</SelectItem></SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500 mb-2 block">尺寸</Label>
+                  <Label className="text-xs text-muted-foreground mb-2 block">尺寸</Label>
                   <div className="space-y-2">
                     {SIZES.map((s) => (
                       <label key={s} className="flex items-center gap-2 cursor-pointer">
@@ -127,19 +127,19 @@ export default function FaviconGeneratorPage() {
           )}
 
           {results.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-4">
                 <Label className="text-sm font-medium">生成结果 ({results.length})</Label>
                 <Button size="sm" onClick={downloadAll}><Download className="size-3.5" /> 下载全部 ZIP</Button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {results.map((fav, i) => (
-                  <div key={i} className="flex flex-col items-center border border-gray-100 rounded-lg p-3">
+                  <div key={i} className="flex flex-col items-center border border-border rounded-lg p-3">
                     <div className="w-16 h-16 flex items-center justify-center mb-2">
                       <img src={fav.dataUrl} alt="" style={{ width: Math.min(fav.size, 48), height: Math.min(fav.size, 48) }} className="image-render-pixelated" />
                     </div>
                     <p className="text-xs font-mono">{fav.size}×{fav.size}</p>
-                    <p className="text-[10px] text-gray-400 uppercase">{fav.format}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{fav.format}</p>
                     <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => downloadSingle(fav)}><Download className="size-3" /> 保存</Button>
                   </div>
                 ))}

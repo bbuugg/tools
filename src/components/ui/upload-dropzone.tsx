@@ -112,10 +112,10 @@ export function UploadDropZone({
   return (
     <div
       className={cn(
-        "relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white text-center transition-colors",
+        "relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-card text-center transition-colors",
         dragOver
           ? "border-primary bg-primary/5"
-          : "border-gray-300 hover:border-primary/50 hover:bg-gray-50",
+          : "border-border hover:border-primary/50 hover:bg-accent",
         hovered && !dragOver && "border-primary/60 ring-2 ring-primary/15",
         className,
       )}
@@ -140,9 +140,9 @@ export function UploadDropZone({
       }}
     >
       {showDefault ? (
-        <div className="pointer-events-none flex flex-col items-center gap-2 px-4 py-6 text-gray-400">
+        <div className="pointer-events-none flex flex-col items-center gap-2 px-4 py-6 text-muted-foreground">
           {icon ?? <Upload className="size-8 opacity-50" />}
-          <p className="text-sm font-medium text-gray-600">{emptyHint}</p>
+          <p className="text-sm font-medium text-muted-foreground">{emptyHint}</p>
           {emptySubHint && <p className="text-xs">{emptySubHint}</p>}
           <p
             className={cn(

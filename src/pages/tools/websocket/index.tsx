@@ -139,7 +139,7 @@ export default function WsToolPage() {
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Left: Config */}
             <div className="space-y-4">
-              <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+              <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${statusColor}`} />
                   <span className="text-sm font-medium">{statusText}</span>
@@ -154,10 +154,10 @@ export default function WsToolPage() {
                 </div>
                 {/* Heartbeat */}
                 <div>
-                  <Label className="text-xs text-gray-500 mb-1 block">自动心跳</Label>
+                  <Label className="text-xs text-muted-foreground mb-1 block">自动心跳</Label>
                   <div className="flex gap-2">
                     <Input type="number" className="w-20" value={heartbeatInterval} onChange={(e) => setHeartbeatInterval(Number(e.target.value))} disabled={!isConnected} />
-                    <span className="flex items-center text-xs text-gray-400">秒</span>
+                    <span className="flex items-center text-xs text-muted-foreground">秒</span>
                     <Input className="flex-1" value={heartbeatContent} onChange={(e) => { setHeartbeatContent(e.target.value); localStorage.setItem("tools.ws.heart_beat_content", e.target.value); }} disabled={!isConnected} />
                     <Button variant={isAutoSending ? "destructive" : "outline"} onClick={() => isAutoSending ? stopHeartbeat() : startHeartbeat()} disabled={!isConnected}>
                       {isAutoSending ? <Pause className="size-4" /> : <Play className="size-4" />} {isAutoSending ? "停止" : "启动"}
@@ -170,7 +170,7 @@ export default function WsToolPage() {
                   <div className="flex justify-between items-center mt-2">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <Switch checked={clearAfterSend} onCheckedChange={setClearAfterSend} />
-                      <span className="text-xs text-gray-500">发送后清空</span>
+                      <span className="text-xs text-muted-foreground">发送后清空</span>
                     </label>
                     <Button onClick={handleSend} disabled={!isConnected || !manualContent}><Send className="size-4" /> 发送</Button>
                   </div>
@@ -178,14 +178,14 @@ export default function WsToolPage() {
               </div>
 
               {/* Console */}
-              <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-sm font-medium">控制台日志</Label>
                   <Button variant="ghost" size="sm" onClick={() => setConsoleLogs([])} disabled={!consoleLogs.length}><Trash2 className="size-3.5" /> 清空</Button>
                 </div>
                 <div ref={consoleRef} className="h-40 overflow-y-auto rounded bg-gray-900 p-2 font-mono text-xs">
                   {consoleLogs.length === 0 ? (
-                    <div className="text-gray-500 text-center mt-12">暂无日志</div>
+                    <div className="text-muted-foreground text-center mt-12">暂无日志</div>
                   ) : consoleLogs.map((log, i) => (
                     <div key={i} className={`mb-1 ${log.type === "danger" ? "text-red-400" : "text-green-400"}`}>
                       <span className="opacity-50 mr-2">[{log.time}]</span>{log.content}
@@ -196,36 +196,36 @@ export default function WsToolPage() {
             </div>
 
             {/* Right: Messages */}
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <Label className="text-sm font-medium">消息记录</Label>
                 <Button variant="ghost" size="sm" onClick={() => setMessages([])} disabled={!messages.length}><Trash2 className="size-3.5" /> 清空</Button>
               </div>
-              <div className="flex flex-wrap gap-4 mb-4 pb-3 border-b border-gray-100">
+              <div className="flex flex-wrap gap-4 mb-4 pb-3 border-b border-border">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <Switch checked={clearAfterReceive} onCheckedChange={setClearAfterReceive} />
-                  <span className="text-xs text-gray-500">接收时清空</span>
+                  <span className="text-xs text-muted-foreground">接收时清空</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <Switch checked={isJsonDecode} onCheckedChange={setIsJsonDecode} />
-                  <span className="text-xs text-gray-500">JSON 美化</span>
+                  <span className="text-xs text-muted-foreground">JSON 美化</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <Switch checked={isPaused} onCheckedChange={setIsPaused} />
-                  <span className="text-xs text-gray-500">暂停接收</span>
+                  <span className="text-xs text-muted-foreground">暂停接收</span>
                 </label>
               </div>
               <div ref={msgRef} className="overflow-y-auto rounded-lg p-4 font-mono text-sm" style={{ minHeight: "300px", maxHeight: "500px" }}>
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-400 py-20">
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-20">
                     <Bug className="size-8 opacity-30 mb-2" />
                     <p className="text-sm">暂无消息</p>
                   </div>
                 ) : messages.map((msg, i) => (
                   <div key={i} className={`mb-3 flex flex-col ${msg.direction === 1 ? "items-end" : "items-start"}`}>
                     <div className="flex items-center gap-1 mb-1">
-                      <span className="text-xs text-gray-400">{msg.direction === 1 ? "已发送" : "已接收"}</span>
-                      <span className="text-xs text-gray-300">{msg.time}</span>
+                      <span className="text-xs text-muted-foreground">{msg.direction === 1 ? "已发送" : "已接收"}</span>
+                      <span className="text-xs text-muted-foreground">{msg.time}</span>
                     </div>
                     <div className={`p-2 rounded-lg max-w-[90%] break-words whitespace-pre-wrap text-xs ${msg.direction === 1 ? "bg-blue-50 text-blue-900 rounded-tr-none" : "bg-green-50 text-green-900 rounded-tl-none"}`}>
                       {msg.content}

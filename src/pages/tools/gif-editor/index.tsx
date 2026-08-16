@@ -242,7 +242,7 @@ export default function GifEditorPage() {
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           {/* Upload */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <UploadDropZone
               accept="image/gif"
               maxSize={50 * 1024 * 1024}
@@ -256,7 +256,7 @@ export default function GifEditorPage() {
             {/* Settings */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-gray-500">质量</Label>
+                <Label className="text-xs text-muted-foreground">质量</Label>
                 <Select value={quality} onValueChange={setQuality}>
                   <SelectTrigger className="h-8 w-28"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -267,7 +267,7 @@ export default function GifEditorPage() {
                 </Select>
               </div>
               {selectedGif && (
-                <span className="text-xs text-gray-400">原始尺寸: {selectedGif.width}×{selectedGif.height}</span>
+                <span className="text-xs text-muted-foreground">原始尺寸: {selectedGif.width}×{selectedGif.height}</span>
               )}
             </div>
           </div>
@@ -281,14 +281,14 @@ export default function GifEditorPage() {
           {/* Preview & Frames */}
           {selectedGif && (
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <Label className="text-sm font-medium mb-3 block">原始 GIF</Label>
-                <div className="flex items-center justify-center h-64 rounded-lg border border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-center h-64 rounded-lg border border-border bg-muted">
                   <img src={selectedGif.url} alt={selectedGif.name} className="max-h-full max-w-full object-contain" />
                 </div>
               </div>
 
-              <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-sm font-medium">帧列表 ({frames.length})</Label>
                   <div className="flex flex-wrap gap-1">
@@ -301,14 +301,14 @@ export default function GifEditorPage() {
 
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {frames.map((frame, index) => (
-                    <div key={index} className="flex items-center gap-3 p-2 border border-gray-100 rounded-lg">
-                      <div className="w-12 h-12 shrink-0 rounded overflow-hidden border border-gray-200">
+                    <div key={index} className="flex items-center gap-3 p-2 border border-border rounded-lg">
+                      <div className="w-12 h-12 shrink-0 rounded overflow-hidden border border-border">
                         <img src={frame.dataUrl} alt={`帧 ${index + 1}`} className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-xs text-gray-500 w-12">帧 {index + 1}</span>
+                      <span className="text-xs text-muted-foreground w-12">帧 {index + 1}</span>
                       <div className="flex items-center gap-1">
                         <Input type="number" value={frame.delay} onChange={(e) => updateFrameDelay(index, Number(e.target.value))} min={20} max={5000} step={10} className="h-8 w-16 text-xs" />
-                        <span className="text-xs text-gray-400">ms</span>
+                        <span className="text-xs text-muted-foreground">ms</span>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => removeFrame(index)} className="ml-auto text-red-500 hover:text-red-600"><Trash2 className="size-3.5" /></Button>
                     </div>
@@ -327,7 +327,7 @@ export default function GifEditorPage() {
 
           {/* Result */}
           {generatedGif && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <Label className="text-sm font-medium mb-3 block">生成结果</Label>
               <div className="text-center">
                 <img src={generatedGif} alt="生成的 GIF" className="max-w-full h-auto mx-auto rounded-lg mb-4" style={{ maxHeight: "400px" }} />
@@ -340,12 +340,12 @@ export default function GifEditorPage() {
           )}
 
           {/* How to use */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Info className="size-4 text-gray-400" />
+              <Info className="size-4 text-muted-foreground" />
               <Label className="text-sm font-medium">使用说明</Label>
             </div>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
               <li>上传一个 GIF 文件（支持拖拽和粘贴）</li>
               <li>查看解析出的所有帧，可调整每帧的延迟时间</li>
               <li>使用上移、下移、反转、打乱等操作调整帧顺序</li>

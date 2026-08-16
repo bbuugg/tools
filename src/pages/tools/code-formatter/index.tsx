@@ -150,7 +150,7 @@ export default function CodeFormatterPage() {
                                 <div className="flex items-center gap-2">
                                     <Label className="text-sm font-medium">输入</Label>
                                     <Select value={language} onValueChange={(v) => { setLanguage(v as CodeLanguage); setOutput(""); setError(""); }}>
-                                        <SelectTrigger className="h-7 w-auto gap-1 border-none bg-transparent px-1.5 text-xs shadow-none hover:bg-gray-100">
+                                        <SelectTrigger className="h-7 w-auto gap-1 border-none bg-transparent px-1.5 text-xs shadow-none hover:bg-accent">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -189,7 +189,7 @@ export default function CodeFormatterPage() {
                             </div>
                             <div className="h-[400px]">
                                 {loading ? (
-                                    <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+                                    <div className="flex h-full flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                                         <Loader2 className="size-6 animate-spin mb-2" /> 正在格式化...
                                     </div>
                                 ) : error ? (
@@ -203,7 +203,7 @@ export default function CodeFormatterPage() {
                                 ) : output ? (
                                     <MonacoEditor value={output} readOnly language={language} height="100%" showCopyButton showDownloadButton showWordWrapToggle onDownload={handleDownload} />
                                 ) : (
-                                    <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+                                    <div className="flex h-full flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                                         <Code2 className="size-10 opacity-30 mb-3" /> 输入代码后点击格式化
                                     </div>
                                 )}

@@ -142,11 +142,11 @@ export default function JwtPage() {
                   <Label className="text-sm font-medium">密钥与算法</Label>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="col-span-2">
-                      <Label className="text-xs text-gray-500 mb-1 block">密钥</Label>
+                      <Label className="text-xs text-muted-foreground mb-1 block">密钥</Label>
                       <Input value={secret} onChange={(e) => setSecret(e.target.value)} />
                     </div>
                     <div>
-                      <Label className="text-xs text-gray-500 mb-1 block">算法</Label>
+                      <Label className="text-xs text-muted-foreground mb-1 block">算法</Label>
                       <Select value={alg} onValueChange={setAlg}>
                         <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -183,7 +183,7 @@ export default function JwtPage() {
                 <div className="flex flex-col gap-2">
                   <Label className="text-sm font-medium">JWT Token</Label>
                   <Textarea
-                    className="w-full rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-lg border border-border p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     rows={4}
                     value={decodeToken}
                     onChange={(e) => setDecodeToken(e.target.value)}

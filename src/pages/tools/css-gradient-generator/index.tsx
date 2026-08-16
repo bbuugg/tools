@@ -142,7 +142,7 @@ function StopRow({
         onChange={(e) => onChange(stop.id, "position", parseInt(e.target.value) || 0)}
         className="h-9 w-16"
       />
-      <span className="text-sm text-gray-400">%</span>
+      <span className="text-sm text-muted-foreground">%</span>
       {canRemove && (
         <Button variant="outline" size="sm" onClick={() => onRemove(stop.id)} className="text-red-500">
           <Trash2 className="size-3.5" />
@@ -226,7 +226,7 @@ export default function CssGradientGeneratorPage() {
 
           <div className="grid gap-4 lg:grid-cols-2 overflow-x-hidden">
             {/* Left: Controls */}
-            <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5 min-w-0">
+            <div className="space-y-4 rounded-lg border border-border bg-card p-5 min-w-0">
               {/* Type */}
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">渐变类型</Label>
@@ -257,7 +257,7 @@ export default function CssGradientGeneratorPage() {
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3">
                     <Slider min={0} max={359} value={[customAngle]} onValueChange={(v) => { setCustomAngle(v[0]); setLinDir("custom"); }} className="flex-1" />
-                    <span className="w-8 sm:w-12 text-xs text-gray-500">{customAngle}°</span>
+                    <span className="w-8 sm:w-12 text-xs text-muted-foreground">{customAngle}°</span>
                     <Button variant={linDir === "custom" ? "default" : "outline"} size="sm" onClick={() => setLinDir("custom")}>应用</Button>
                   </div>
                 </div>
@@ -281,7 +281,7 @@ export default function CssGradientGeneratorPage() {
                           className="h-10"
                           onClick={() => setRadialPos(pos)}
                         >
-                          <div className={cn("size-3 rounded-full", radialPos === pos ? "bg-white" : "bg-current")} />
+                          <div className={cn("size-3 rounded-full", radialPos === pos ? "bg-card" : "bg-current")} />
                         </Button>
                       ))}
                     </div>
@@ -316,7 +316,7 @@ export default function CssGradientGeneratorPage() {
                   {PRESETS.map((colors, i) => (
                     <button
                       key={i}
-                      className="size-10 rounded-lg border border-gray-200 transition-transform hover:scale-105"
+                      className="size-10 rounded-lg border border-border transition-transform hover:scale-105"
                       style={{ background: `linear-gradient(to right, ${colors[0]}, ${colors[1]})` }}
                       onClick={() => applyPreset(colors)}
                     />
@@ -327,11 +327,11 @@ export default function CssGradientGeneratorPage() {
 
             {/* Right: Preview & Code - overflow-x-auto for mobile */}
             <div className="space-y-4 min-w-0">
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
+              <div className="rounded-lg border border-border bg-card p-5">
                 <Label className="text-sm font-semibold mb-3 block">预览</Label>
-                <div className="h-64 rounded-lg border border-gray-300 shadow-inner" style={{ background: gradientCss }} />
+                <div className="h-64 rounded-lg border border-border shadow-inner" style={{ background: gradientCss }} />
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
+              <div className="rounded-lg border border-border bg-card p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <Label className="text-sm font-semibold">CSS 代码</Label>
                   <Button

@@ -173,9 +173,9 @@ export default function ImageWatermarkPage() {
           />
 
           {/* Options */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <div>
-              <Label className="text-xs text-gray-500 mb-2 block">水印类型</Label>
+              <Label className="text-xs text-muted-foreground mb-2 block">水印类型</Label>
               <div className="flex gap-2">
                 <Button variant={wmType === "text" ? "default" : "outline"} size="sm" onClick={() => setWmType("text")}>文字水印</Button>
                 <Button variant={wmType === "image" ? "default" : "outline"} size="sm" onClick={() => setWmType("image")}>图片水印</Button>
@@ -184,10 +184,10 @@ export default function ImageWatermarkPage() {
 
             {wmType === "text" && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="col-span-2"><Label className="text-xs text-gray-500 mb-1 block">文字内容</Label><Input value={wmText} onChange={(e) => setWmText(e.target.value)} /></div>
-                <div><Label className="text-xs text-gray-500 mb-1 block">字号</Label><Input type="number" min={10} max={200} value={fontSize} onChange={(e) => setFontSize(Number(e.target.value))} /></div>
-                <div><Label className="text-xs text-gray-500 mb-1 block">颜色</Label><ColorPickerField value={color} onChange={setColor} /></div>
-                <div className="col-span-2"><Label className="text-xs text-gray-500 mb-1 block">字体</Label><Select value={fontFamily} onValueChange={setFontFamily}><SelectTrigger className="h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Arial">Arial</SelectItem><SelectItem value="Verdana">Verdana</SelectItem><SelectItem value="Times New Roman">Times New Roman</SelectItem><SelectItem value="Courier New">Courier New</SelectItem></SelectContent></Select></div>
+                <div className="col-span-2"><Label className="text-xs text-muted-foreground mb-1 block">文字内容</Label><Input value={wmText} onChange={(e) => setWmText(e.target.value)} /></div>
+                <div><Label className="text-xs text-muted-foreground mb-1 block">字号</Label><Input type="number" min={10} max={200} value={fontSize} onChange={(e) => setFontSize(Number(e.target.value))} /></div>
+                <div><Label className="text-xs text-muted-foreground mb-1 block">颜色</Label><ColorPickerField value={color} onChange={setColor} /></div>
+                <div className="col-span-2"><Label className="text-xs text-muted-foreground mb-1 block">字体</Label><Select value={fontFamily} onValueChange={setFontFamily}><SelectTrigger className="h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Arial">Arial</SelectItem><SelectItem value="Verdana">Verdana</SelectItem><SelectItem value="Times New Roman">Times New Roman</SelectItem><SelectItem value="Courier New">Courier New</SelectItem></SelectContent></Select></div>
               </div>
             )}
 
@@ -198,17 +198,17 @@ export default function ImageWatermarkPage() {
                   <Button variant="outline" size="sm" onClick={() => wmFileRef.current?.click()}><Upload className="size-3.5" /> 选择水印图片</Button>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <img src={wmImage} alt="" className="h-16 object-contain rounded border border-gray-200" />
+                    <img src={wmImage} alt="" className="h-16 object-contain rounded border border-border" />
                     <Button variant="ghost" size="sm" onClick={() => setWmImage("")}><X className="size-3" /> 移除</Button>
-                    <div className="flex-1"><Label className="text-xs text-gray-500 mb-1 block">宽度 (px)</Label><Input type="number" min={20} max={1000} value={wmWidth} onChange={(e) => setWmWidth(Number(e.target.value))} /></div>
+                    <div className="flex-1"><Label className="text-xs text-muted-foreground mb-1 block">宽度 (px)</Label><Input type="number" min={20} max={1000} value={wmWidth} onChange={(e) => setWmWidth(Number(e.target.value))} /></div>
                   </div>
                 )}
               </div>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-gray-100">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-border">
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">位置</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">位置</Label>
                 <Select value={position} onValueChange={setPosition}>
                   <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -218,14 +218,14 @@ export default function ImageWatermarkPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label className="text-xs text-gray-500 mb-1 block">边距 (px)</Label><Input type="number" min={0} max={500} value={margin} onChange={(e) => setMargin(Number(e.target.value))} /></div>
-              <div><Label className="text-xs text-gray-500 mb-1 block">透明度: {opacity}%</Label><Slider min={0} max={100} value={[opacity]} onValueChange={(v) => setOpacity(v[0])} className="mt-2" /></div>
-              <div><Label className="text-xs text-gray-500 mb-1 block">旋转: {rotation}°</Label><Slider min={0} max={360} value={[rotation]} onValueChange={(v) => setRotation(v[0])} className="mt-2" /></div>
+              <div><Label className="text-xs text-muted-foreground mb-1 block">边距 (px)</Label><Input type="number" min={0} max={500} value={margin} onChange={(e) => setMargin(Number(e.target.value))} /></div>
+              <div><Label className="text-xs text-muted-foreground mb-1 block">透明度: {opacity}%</Label><Slider min={0} max={100} value={[opacity]} onValueChange={(v) => setOpacity(v[0])} className="mt-2" /></div>
+              <div><Label className="text-xs text-muted-foreground mb-1 block">旋转: {rotation}°</Label><Slider min={0} max={360} value={[rotation]} onValueChange={(v) => setRotation(v[0])} className="mt-2" /></div>
             </div>
           </div>
 
           {images.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium">{images.length} 张图片</span>
                 <div className="flex gap-2">
@@ -236,11 +236,11 @@ export default function ImageWatermarkPage() {
               </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {images.map((img) => (
-                  <div key={img.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100">
+                  <div key={img.id} className="flex items-center gap-3 p-3 rounded-lg border border-border">
                     <img src={img.preview} alt="" className="w-14 h-14 object-cover rounded shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{img.name}</p>
-                      <p className="text-xs text-gray-400">{img.dimensions.width}×{img.dimensions.height} · {formatSize(img.originalSize)}</p>
+                      <p className="text-xs text-muted-foreground">{img.dimensions.width}×{img.dimensions.height} · {formatSize(img.originalSize)}</p>
                       {img.status === "completed" && <p className="text-xs text-green-600 mt-0.5">已完成</p>}
                     </div>
                     <div className="flex gap-1 shrink-0">
@@ -259,7 +259,7 @@ export default function ImageWatermarkPage() {
             <DialogContent className="max-w-2xl">
               <DialogHeader><DialogTitle>预览</DialogTitle></DialogHeader>
               {previewItem?.processedUrl && (
-                <div className="flex justify-center bg-gray-50 rounded-lg border p-4">
+                <div className="flex justify-center bg-muted rounded-lg border p-4">
                   <img src={previewItem.processedUrl} alt="" className="max-w-full max-h-[60vh] object-contain" />
                 </div>
               )}

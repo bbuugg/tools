@@ -168,7 +168,7 @@ export default function ImageToGifPage() {
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
           {/* Upload & Settings */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <UploadDropZone
               multiple
               accept="image/*"
@@ -181,11 +181,11 @@ export default function ImageToGifPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">宽度 (px)</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">宽度 (px)</Label>
                 <Input type="number" value={width} onChange={(e) => { const v = e.target.value; setWidth(v === "" ? 0 : Number(v)); }} onBlur={() => { if (!width || width < 100) setWidth(100); if (width > 800) setWidth(800); }} min={100} max={800} className="h-9" />
               </div>
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">质量</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">质量</Label>
                 <Select value={quality} onValueChange={setQuality}>
                   <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -196,7 +196,7 @@ export default function ImageToGifPage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs text-gray-500 mb-1 block">循环次数 (0=无限)</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">循环次数 (0=无限)</Label>
                 <Input type="number" value={loopCount} onChange={(e) => setLoopCount(Number(e.target.value))} min={0} max={100} className="h-9" />
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function ImageToGifPage() {
 
           {/* Image List */}
           {images.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <Label className="text-sm font-medium">已选图片 ({images.length})</Label>
                 <div className="flex flex-wrap gap-1">
@@ -223,17 +223,17 @@ export default function ImageToGifPage() {
 
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {images.map((img) => (
-                  <div key={img.id} className="flex items-center gap-3 p-2 border border-gray-100 rounded-lg">
-                    <div className="w-12 h-12 shrink-0 rounded overflow-hidden border border-gray-200">
+                  <div key={img.id} className="flex items-center gap-3 p-2 border border-border rounded-lg">
+                    <div className="w-12 h-12 shrink-0 rounded overflow-hidden border border-border">
                       <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{img.name}</p>
-                      <p className="text-xs text-gray-400">{formatFileSize(img.file.size)}</p>
+                      <p className="text-xs text-muted-foreground">{formatFileSize(img.file.size)}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <Input type="number" value={img.delay} onChange={(e) => { const v = e.target.value; updateDelay(img.id, v === "" ? 0 : Number(v)); }} onBlur={() => { if (!img.delay || img.delay <= 0) updateDelay(img.id, 0.1); if (img.delay > 10) updateDelay(img.id, 10); }} min={0.1} max={10} step={0.1} className="h-8 w-16 text-xs" />
-                      <span className="text-xs text-gray-400">s</span>
+                      <span className="text-xs text-muted-foreground">s</span>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => removeImage(img.id)} className="text-red-500 hover:text-red-600"><Trash2 className="size-3.5" /></Button>
                   </div>
@@ -251,7 +251,7 @@ export default function ImageToGifPage() {
 
           {/* Result */}
           {generatedGif && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <Label className="text-sm font-medium mb-3 block">生成结果</Label>
               <div className="text-center">
                 <img src={generatedGif} alt="生成的 GIF" className="max-w-full h-auto mx-auto rounded-lg mb-4" style={{ maxHeight: "400px" }} />
@@ -264,12 +264,12 @@ export default function ImageToGifPage() {
           )}
 
           {/* Tips */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Info className="size-4 text-gray-400" />
+              <Info className="size-4 text-muted-foreground" />
               <Label className="text-sm font-medium">使用说明</Label>
             </div>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
               <li>上传多张图片（支持拖拽、粘贴、多选）</li>
               <li>设置 GIF 宽度、质量和循环次数</li>
               <li>调整每张图片的显示时间（秒）</li>

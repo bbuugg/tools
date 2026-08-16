@@ -570,7 +570,7 @@ export default function FormatConverterPage() {
       {/* Source → Target selector */}
       <div className="flex items-center justify-center gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-500">源格式</Label>
+          <Label className="text-xs text-muted-foreground">源格式</Label>
           <Select value={sourceFormat} onValueChange={handleSourceChange}>
             <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -586,7 +586,7 @@ export default function FormatConverterPage() {
           <ArrowLeftRight className="size-4" />
         </Button>
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-500">目标格式</Label>
+          <Label className="text-xs text-muted-foreground">目标格式</Label>
           <Select value={targetFormat} onValueChange={handleTargetChange}>
             <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -624,18 +624,18 @@ export default function FormatConverterPage() {
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`flex h-[80px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${isDragging ? "border-primary bg-primary/5" : "border-gray-300 bg-white hover:border-primary/50 hover:bg-gray-50"}`}
+                className={`flex h-[80px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${isDragging ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50 hover:bg-accent"}`}
               >
                 {file ? (
                   <div className="flex items-center gap-2">
                     <FileSpreadsheet className="size-5 text-green-600" />
-                    <span className="text-sm font-medium text-gray-700">{file.name}</span>
-                    <button onClick={(e) => { e.stopPropagation(); handleClear(); }} className="ml-1 rounded p-0.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600">
+                    <span className="text-sm font-medium text-foreground">{file.name}</span>
+                    <button onClick={(e) => { e.stopPropagation(); handleClear(); }} className="ml-1 rounded p-0.5 text-muted-foreground hover:bg-accent hover:text-muted-foreground">
                       <X className="size-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-gray-400">
+                  <div className="flex items-center gap-2 text-muted-foreground">
                     <Upload className="size-5 opacity-50" />
                     <p className="text-sm font-medium">点击或拖拽 Excel 文件到此处</p>
                     <p className="text-xs">(.xlsx, .xls, .csv, .ods)</p>
@@ -649,7 +649,7 @@ export default function FormatConverterPage() {
                   <MonacoEditor value={excelJsonText} readOnly language="json" height="100%" showWordWrapToggle />
                 </div>
               ) : (
-                <div className="h-[248px] flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+                <div className="h-[248px] flex flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                   <FileSpreadsheet className="size-10 opacity-30 mb-3" />
                   {file ? "正在解析..." : "上传文件后自动解析为 JSON"}
                 </div>
@@ -688,10 +688,10 @@ export default function FormatConverterPage() {
                 </div>
               </div>
             ) : hasExcelOutput ? (
-              <div className="h-full overflow-auto rounded-lg border border-gray-200 bg-white p-2">
+              <div className="h-full overflow-auto rounded-lg border border-border bg-card p-2">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b bg-gray-50 sticky top-0">
+                    <tr className="border-b bg-muted sticky top-0">
                       {result.previewHeaders.map((h) => (
                         <th key={h} className="px-3 py-2 text-left font-medium whitespace-nowrap">{h}</th>
                       ))}
@@ -699,7 +699,7 @@ export default function FormatConverterPage() {
                   </thead>
                   <tbody>
                     {result.previewData.slice(0, 50).map((row, i) => (
-                      <tr key={i} className="border-b last:border-0 hover:bg-gray-50">
+                      <tr key={i} className="border-b last:border-0 hover:bg-accent">
                         {result.previewHeaders.map((h) => (
                           <td key={h} className="px-3 py-2 whitespace-nowrap">{String(row[h] ?? "")}</td>
                         ))}
@@ -707,12 +707,12 @@ export default function FormatConverterPage() {
                     ))}
                   </tbody>
                 </table>
-                {result.previewData.length > 50 && <p className="text-xs text-gray-400 mt-2">仅预览前 50 行</p>}
+                {result.previewData.length > 50 && <p className="text-xs text-muted-foreground mt-2">仅预览前 50 行</p>}
               </div>
             ) : hasTextOutput ? (
               <MonacoEditor value={result.output} readOnly language={outputLang} height="100%" showCopyButton showDownloadButton showWordWrapToggle onDownload={handleDownload} />
             ) : (
-              <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+              <div className="flex h-full flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                 <FileText className="size-10 opacity-30 mb-3" />
                 {hasInput ? "等待处理..." : "输入内容后自动转换"}
               </div>
@@ -722,20 +722,20 @@ export default function FormatConverterPage() {
       </div>
 
       {/* Options Panel */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         <button
-          className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium hover:bg-accent transition-colors"
           onClick={() => setShowOptions(!showOptions)}
         >
           <span className="flex items-center gap-2"><Settings2 className="size-4" /> 转换选项</span>
-          <span className="text-xs text-gray-400">{showOptions ? "收起" : "展开"}</span>
+          <span className="text-xs text-muted-foreground">{showOptions ? "收起" : "展开"}</span>
         </button>
         {showOptions && (
-          <div className="px-5 py-4 border-t border-gray-100 space-y-3">
+          <div className="px-5 py-4 border-t border-border space-y-3">
             {/* Source options */}
             {sourceFormat === "csv" && (
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-gray-500">源 CSV 分隔符</Label>
+                <Label className="text-xs text-muted-foreground">源 CSV 分隔符</Label>
                 <Select value={csvSourceDelimiter} onValueChange={setCsvSourceDelimiter}>
                   <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -751,7 +751,7 @@ export default function FormatConverterPage() {
               <div className="flex flex-wrap items-center gap-4">
                 {availableSheets.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">工作表</Label>
+                    <Label className="text-xs text-muted-foreground">工作表</Label>
                     <Select value={String(sheetIndex)} onValueChange={(v) => setSheetIndex(Number(v))}>
                       <SelectTrigger className="w-40 h-8"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -775,20 +775,20 @@ export default function FormatConverterPage() {
 
             {/* Separator between source and target options */}
             {((sourceFormat === "csv" || sourceFormat === "excel") && targetFormat !== "json" && targetFormat !== "xml" && targetFormat !== "yaml") && (
-              <div className="border-t border-gray-100 pt-3" />
+              <div className="border-t border-border pt-3" />
             )}
 
             {/* Target options */}
             {targetFormat === "xml" && (
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-gray-500">XML 根元素</Label>
+                <Label className="text-xs text-muted-foreground">XML 根元素</Label>
                 <Input className="w-32 h-8" value={xmlRoot} onChange={(e) => setXmlRoot(e.target.value)} placeholder="root" />
               </div>
             )}
             {targetFormat === "csv" && (
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs text-gray-500">CSV 分隔符</Label>
+                  <Label className="text-xs text-muted-foreground">CSV 分隔符</Label>
                   <Select value={csvDelimiter} onValueChange={setCsvDelimiter}>
                     <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -812,7 +812,7 @@ export default function FormatConverterPage() {
             {targetFormat === "excel" && (
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs text-gray-500">Sheet 名</Label>
+                  <Label className="text-xs text-muted-foreground">Sheet 名</Label>
                   <Input className="w-28 h-8" value={sheetName} onChange={(e) => setSheetName(e.target.value)} placeholder="Sheet1" />
                 </div>
                 <div className="flex items-center gap-2">
@@ -832,11 +832,11 @@ export default function FormatConverterPage() {
             {targetFormat === "sql" && (
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs text-gray-500">表名</Label>
+                  <Label className="text-xs text-muted-foreground">表名</Label>
                   <Input className="w-28 h-8" value={tableName} onChange={(e) => setTableName(e.target.value)} placeholder="my_table" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs text-gray-500">SQL 类型</Label>
+                  <Label className="text-xs text-muted-foreground">SQL 类型</Label>
                   <Select value={sqlType} onValueChange={(v) => setSqlType(v as "INSERT" | "CREATE_TABLE")}>
                     <SelectTrigger className="w-40 h-8"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -861,7 +861,7 @@ export default function FormatConverterPage() {
               (sourceFormat === "csv" || sourceFormat === "excel") ||
               (targetFormat === "xml" || targetFormat === "csv" || targetFormat === "excel" || targetFormat === "sql")
             ) && (
-              <p className="text-xs text-gray-400">当前格式组合没有可配置的选项</p>
+              <p className="text-xs text-muted-foreground">当前格式组合没有可配置的选项</p>
             )}
           </div>
         )}

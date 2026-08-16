@@ -61,7 +61,7 @@ function LivePhotoMaker() {
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         {/* Image */}
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <Label className="text-sm font-medium mb-3 block">选择图片</Label>
           <UploadDropZone
             accept=".jpg,.jpeg"
@@ -77,10 +77,10 @@ function LivePhotoMaker() {
         </div>
 
         {/* Video */}
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <Label className="text-sm font-medium mb-3 block">选择视频</Label>
           <div
-            className={`rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors ${videoDragOver ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"}`}
+            className={`rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors ${videoDragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-accent"}`}
             onClick={() => videoInputRef.current?.click()}
             onDragOver={(e) => { e.preventDefault(); setVideoDragOver(true); }}
             onDragLeave={() => setVideoDragOver(false)}
@@ -90,8 +90,8 @@ function LivePhotoMaker() {
               <video src={videoPreview} className="max-h-40 mx-auto rounded" controls />
             ) : (
               <>
-                <Film className="size-8 mx-auto text-gray-400 mb-2" />
-                <p className="text-xs text-gray-400">点击或拖拽上传 MP4 视频</p>
+                <Film className="size-8 mx-auto text-muted-foreground mb-2" />
+                <p className="text-xs text-muted-foreground">点击或拖拽上传 MP4 视频</p>
               </>
             )}
             <input ref={videoInputRef} type="file" accept=".mp4" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleVideoSelect(f); }} />
@@ -112,14 +112,14 @@ function LivePhotoMaker() {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <div className="rounded-xl border border-border bg-muted p-5">
         <Label className="text-sm font-medium mb-3 block">使用说明</Label>
-        <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+        <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
           <li>选择一张 JPEG 图片作为 Live Photo 的封面</li>
           <li>选择一段 MP4 视频作为动态部分</li>
           <li>点击制作按钮，生成的文件会自动下载</li>
         </ol>
-        <p className="text-xs text-gray-400 mt-3">生成的文件为 Google Motion Photo 格式（MVIMG_*.jpg）</p>
+        <p className="text-xs text-muted-foreground mt-3">生成的文件为 Google Motion Photo 格式（MVIMG_*.jpg）</p>
       </div>
     </div>
   );

@@ -10,8 +10,8 @@ export default function ToolsPage() {
           return (
             <div key={category.name}>
               <div className="mb-4 flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-gray-900">{category.name}</h1>
-                <span className="text-sm text-gray-400">({category.tools.length})</span>
+                <h1 className="text-2xl font-bold text-foreground">{category.name}</h1>
+                <span className="text-sm text-muted-foreground">({category.tools.length})</span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {category.tools.map((tool) => {
@@ -20,7 +20,7 @@ export default function ToolsPage() {
                     <Link
                       key={tool.href}
                       to={tool.href}
-                      className="group relative rounded-xl bg-gray-50 p-6 transition-all hover:bg-gray-100"
+                      className="group relative rounded-xl bg-muted p-6 transition-all hover:bg-accent"
                     >
                       <div className="flex items-start gap-4">
                         <div
@@ -30,12 +30,12 @@ export default function ToolsPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <h3 className="text-base font-semibold text-gray-900">
+                            <h3 className="text-base font-semibold text-foreground">
                               {tool.title}
                             </h3>
-                            <ArrowRight className="size-4 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
                           </div>
-                          <p className="mt-1.5 text-sm text-gray-500 leading-relaxed">
+                          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                             {tool.description}
                           </p>
                         </div>

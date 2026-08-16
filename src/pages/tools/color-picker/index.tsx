@@ -166,7 +166,7 @@ function ValueRow({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="w-12 shrink-0 font-mono text-xs text-gray-400">
+      <span className="w-12 shrink-0 font-mono text-xs text-muted-foreground">
         {label}
       </span>
       <Input
@@ -340,7 +340,7 @@ export default function ColorPickerTool() {
                           size="sm"
                           onClick={() => setIsPicking(!isPicking)}
                           className={
-                            isPicking ? "" : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                            isPicking ? "" : "bg-card text-foreground border border-border hover:bg-accent"
                           }
                           variant={isPicking ? "default" : "outline"}
                         >
@@ -355,7 +355,7 @@ export default function ColorPickerTool() {
                           清除图片
                         </Button>
                       </div>
-                      <div className="flex justify-center overflow-hidden rounded-lg border border-gray-200">
+                      <div className="flex justify-center overflow-hidden rounded-lg border border-border">
                         <img
                           ref={imageRef}
                           src={imageUrl}
@@ -367,7 +367,7 @@ export default function ColorPickerTool() {
                         />
                       </div>
                       {isPicking && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           点击图片任意位置即可取色
                         </p>
                       )}
@@ -448,13 +448,13 @@ export default function ColorPickerTool() {
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="flex h-24 items-center justify-center rounded-lg border border-gray-300 bg-white">
+                      <div className="flex h-24 items-center justify-center rounded-lg border border-border bg-card">
                         <div
                           className="h-16 w-16 rounded"
                           style={{ backgroundColor: rgbaString }}
                         />
                       </div>
-                      <p className="mt-2 text-center text-xs text-gray-400">
+                      <p className="mt-2 text-center text-xs text-muted-foreground">
                         浅色背景
                       </p>
                     </div>
@@ -465,7 +465,7 @@ export default function ColorPickerTool() {
                           style={{ backgroundColor: rgbaString }}
                         />
                       </div>
-                      <p className="mt-2 text-center text-xs text-gray-400">
+                      <p className="mt-2 text-center text-xs text-muted-foreground">
                         深色背景
                       </p>
                     </div>

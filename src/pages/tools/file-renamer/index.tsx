@@ -68,15 +68,15 @@ function SortableFileRow({ file, onRemove }: { file: ProcessedFile; onRemove: ()
     ...(isDragging ? { position: "relative", zIndex: 50, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" } : {}),
   };
   return (
-    <div ref={setNodeRef} style={style} className={`flex items-center gap-3 px-5 py-2.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 ${isDragging ? "bg-white opacity-90" : ""}`}>
-      <button type="button" className="cursor-grab active:cursor-grabbing touch-none shrink-0 text-gray-300 hover:text-gray-500" {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className={`flex items-center gap-3 px-5 py-2.5 border-b border-border last:border-0 hover:bg-accent ${isDragging ? "bg-card opacity-90" : ""}`}>
+      <button type="button" className="cursor-grab active:cursor-grabbing touch-none shrink-0 text-muted-foreground hover:text-muted-foreground" {...attributes} {...listeners}>
         <GripVertical className="size-4" />
       </button>
       <div className="flex-1 min-w-0 grid grid-cols-2 gap-2">
-        <span className="text-xs text-gray-500 truncate font-mono">{file.originalName}</span>
-        <span className={`text-xs truncate font-mono ${file.newName !== file.originalName ? "text-green-600 font-medium" : "text-gray-400"}`}>→ {file.newName}</span>
+        <span className="text-xs text-muted-foreground truncate font-mono">{file.originalName}</span>
+        <span className={`text-xs truncate font-mono ${file.newName !== file.originalName ? "text-green-600 font-medium" : "text-muted-foreground"}`}>→ {file.newName}</span>
       </div>
-      <span className="text-xs text-gray-400 shrink-0">{formatSize(file.size)}</span>
+      <span className="text-xs text-muted-foreground shrink-0">{formatSize(file.size)}</span>
       <Button variant="ghost" size="icon-xs" onClick={onRemove}><Trash2 className="size-3 text-red-400" /></Button>
     </div>
   );
@@ -196,19 +196,19 @@ export default function FileRenamerPage() {
 
           {/* Upload */}
           <div
-            className="rounded-xl border-2 border-dashed border-gray-300 bg-white p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-gray-50"
+            className="rounded-xl border-2 border-dashed border-border bg-card p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-accent"
             onClick={() => document.getElementById("file-renamer-input")?.click()}
           >
-            <Upload className="size-8 mx-auto text-gray-400 mb-2" />
-            <p className="text-sm font-medium text-gray-600">点击或拖拽文件到此处</p>
-            <p className="text-xs text-gray-400 mt-1">支持多文件选择</p>
+            <Upload className="size-8 mx-auto text-muted-foreground mb-2" />
+            <p className="text-sm font-medium text-muted-foreground">点击或拖拽文件到此处</p>
+            <p className="text-xs text-muted-foreground mt-1">支持多文件选择</p>
             <input id="file-renamer-input" type="file" multiple className="hidden" onChange={(e) => { if (e.target.files) addFiles(Array.from(e.target.files)); e.target.value = ""; }} />
           </div>
 
           {files.length > 0 && (
             <>
               {/* Options */}
-              <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                   <TabsList>
                     <TabsTrigger value="sequential">序号</TabsTrigger>
@@ -220,16 +220,16 @@ export default function FileRenamerPage() {
 
                   <TabsContent value="sequential" className="mt-4">
                     <div className="grid grid-cols-3 gap-4">
-                      <div><Label className="text-xs text-gray-500 mb-1 block">前缀</Label><Input value={seqPrefix} onChange={(e) => setSeqPrefix(e.target.value)} placeholder="Img_" /></div>
-                      <div><Label className="text-xs text-gray-500 mb-1 block">起始数字</Label><Input type="number" value={seqStart} onChange={(e) => setSeqStart(parseInt(e.target.value) || 1)} /></div>
-                      <div><Label className="text-xs text-gray-500 mb-1 block">补零位数</Label><Input type="number" value={seqPadding} onChange={(e) => setSeqPadding(parseInt(e.target.value) || 1)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">前缀</Label><Input value={seqPrefix} onChange={(e) => setSeqPrefix(e.target.value)} placeholder="Img_" /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">起始数字</Label><Input type="number" value={seqStart} onChange={(e) => setSeqStart(parseInt(e.target.value) || 1)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">补零位数</Label><Input type="number" value={seqPadding} onChange={(e) => setSeqPadding(parseInt(e.target.value) || 1)} /></div>
                     </div>
                   </TabsContent>
 
                   <TabsContent value="replace" className="mt-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div><Label className="text-xs text-gray-500 mb-1 block">查找</Label><Input value={findText} onChange={(e) => setFindText(e.target.value)} /></div>
-                      <div><Label className="text-xs text-gray-500 mb-1 block">替换为</Label><Input value={replaceText} onChange={(e) => setReplaceText(e.target.value)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">查找</Label><Input value={findText} onChange={(e) => setFindText(e.target.value)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">替换为</Label><Input value={replaceText} onChange={(e) => setReplaceText(e.target.value)} /></div>
                     </div>
                     <label className="flex items-center gap-2 mt-3 cursor-pointer"><Checkbox checked={caseSensitive} onCheckedChange={(c) => setCaseSensitive(c === true)} /><span className="text-xs">区分大小写</span></label>
                   </TabsContent>
@@ -246,30 +246,30 @@ export default function FileRenamerPage() {
 
                   <TabsContent value="insert" className="mt-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div><Label className="text-xs text-gray-500 mb-1 block">文本</Label><Input value={insertText} onChange={(e) => setInsertText(e.target.value)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">文本</Label><Input value={insertText} onChange={(e) => setInsertText(e.target.value)} /></div>
                       <div>
-                        <Label className="text-xs text-gray-500 mb-1 block">位置</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">位置</Label>
                         <Select value={insertPos} onValueChange={(v) => setInsertPos(v as any)}>
                           <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                           <SelectContent><SelectItem value="prefix">前缀</SelectItem><SelectItem value="suffix">后缀</SelectItem><SelectItem value="index">指定位置</SelectItem></SelectContent>
                         </Select>
                       </div>
                     </div>
-                    {insertPos === "index" && <div className="mt-3"><Label className="text-xs text-gray-500 mb-1 block">位置索引</Label><Input type="number" value={insertIndex} onChange={(e) => setInsertIndex(parseInt(e.target.value) || 0)} /></div>}
+                    {insertPos === "index" && <div className="mt-3"><Label className="text-xs text-muted-foreground mb-1 block">位置索引</Label><Input type="number" value={insertIndex} onChange={(e) => setInsertIndex(parseInt(e.target.value) || 0)} /></div>}
                   </TabsContent>
 
                   <TabsContent value="truncate" className="mt-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div><Label className="text-xs text-gray-500 mb-1 block">起始位置</Label><Input type="number" value={truncStart} onChange={(e) => setTruncStart(parseInt(e.target.value) || 0)} /></div>
-                      <div><Label className="text-xs text-gray-500 mb-1 block">结束位置 (0=末尾)</Label><Input type="number" value={truncEnd} onChange={(e) => setTruncEnd(parseInt(e.target.value) || 0)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">起始位置</Label><Input type="number" value={truncStart} onChange={(e) => setTruncStart(parseInt(e.target.value) || 0)} /></div>
+                      <div><Label className="text-xs text-muted-foreground mb-1 block">结束位置 (0=末尾)</Label><Input type="number" value={truncEnd} onChange={(e) => setTruncEnd(parseInt(e.target.value) || 0)} /></div>
                     </div>
                   </TabsContent>
                 </Tabs>
               </div>
 
               {/* File List */}
-              <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-wrap gap-2">
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-wrap gap-2">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium">{files.length} 个文件 · {formatSize(files.reduce((a, b) => a + b.size, 0))}</span>
                     <Select value={sortType} onValueChange={handleSort}>

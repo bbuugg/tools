@@ -139,7 +139,7 @@ export default function Base64ImagePage() {
                                     <div className="flex items-center h-10">
                                         <Label className="text-sm font-medium">图片预览{mimeType && ` (${mimeType})`}</Label>
                                     </div>
-                                    <div className="h-[340px] flex items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white">
+                                    <div className="h-[340px] flex items-center justify-center rounded-lg border-2 border-dashed border-border bg-card">
                                         {imageOutput ? <img src={imageOutput} alt="Preview" className="max-w-full max-h-full object-contain" /> : <ImageIcon className="size-12 opacity-20" />}
                                     </div>
                                     {imageOutput && (
@@ -170,7 +170,7 @@ export default function Base64ImagePage() {
                                         {uploadedImage ? (
                                             <div className="flex flex-col items-center gap-2">
                                                 <img src={uploadedImage} alt="" className="max-h-36 max-w-full object-contain" />
-                                                <span className="text-xs text-gray-500">{uploadedFile?.name}</span>
+                                                <span className="text-xs text-muted-foreground">{uploadedFile?.name}</span>
                                                 <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setUploadedFile(null); setUploadedImage(null); setBase64Output(""); }}><X className="size-3" /> 移除</Button>
                                             </div>
                                         ) : null}
@@ -182,19 +182,19 @@ export default function Base64ImagePage() {
                                         <Label className="text-sm font-medium">Base64 输出</Label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <Switch checked={withPrefix} onCheckedChange={togglePrefix} />
-                                            <span className="text-xs text-gray-500">包含 Data URL 前缀</span>
+                                            <span className="text-xs text-muted-foreground">包含 Data URL 前缀</span>
                                         </label>
                                     </div>
                                     {base64Output ? (
                                         <>
-                                            <Textarea className="w-full h-[280px] rounded-lg border border-gray-200 p-3 font-mono text-xs" value={base64Output} readOnly />
+                                            <Textarea className="w-full h-[280px] rounded-lg border border-border p-3 font-mono text-xs" value={base64Output} readOnly />
                                             <div className="flex gap-2">
                                                 <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(base64Output)}><Copy className="size-3.5" /> 复制</Button>
                                                 <Button variant="outline" size="sm" onClick={() => { const b = new Blob([base64Output], { type: "text/plain" }); const u = URL.createObjectURL(b); const a = document.createElement("a"); a.href = u; a.download = `${uploadedFile?.name || "image"}.txt`; a.click(); }}><Download className="size-3.5" /> 保存为文件</Button>
                                             </div>
                                         </>
                                     ) : (
-                                        <div className="h-[280px] flex items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white text-gray-400">
+                                        <div className="h-[280px] flex items-center justify-center rounded-lg border-2 border-dashed border-border bg-card text-muted-foreground">
                                             <FileText className="size-10 opacity-30" /> 上传图片后显示 Base64
                                         </div>
                                     )}

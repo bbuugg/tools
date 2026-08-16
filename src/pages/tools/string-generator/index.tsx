@@ -48,7 +48,7 @@ function ResultList({ results }: { results: string[] }) {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   if (results.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-gray-400">
+      <p className="py-8 text-center text-sm text-muted-foreground">
         点击生成按钮获取结果
       </p>
     );
@@ -58,7 +58,7 @@ function ResultList({ results }: { results: string[] }) {
       {results.map((item, idx) => (
         <div
           key={idx}
-          className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-3 py-1.5 hover:bg-gray-50"
+          className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 hover:bg-accent"
         >
           <code className="flex-1 truncate text-sm font-mono">{item}</code>
           <Button
@@ -74,7 +74,7 @@ function ResultList({ results }: { results: string[] }) {
             {copiedIdx === idx ? (
               <Check className="size-3.5 text-green-500" />
             ) : (
-              <Copy className="size-3.5 text-gray-400" />
+              <Copy className="size-3.5 text-muted-foreground" />
             )}
           </Button>
         </div>
@@ -100,7 +100,7 @@ function UuidGenerator() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
-          <Label className="text-xs text-gray-500">生成数量</Label>
+          <Label className="text-xs text-muted-foreground">生成数量</Label>
           <Input
             type="number"
             min={1}
@@ -153,7 +153,7 @@ function UlidGenerator() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
-          <Label className="text-xs text-gray-500">生成数量</Label>
+          <Label className="text-xs text-muted-foreground">生成数量</Label>
           <Input
             type="number"
             min={1}
@@ -249,10 +249,10 @@ function RandomStringGenerator() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Settings */}
-        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-4 rounded-lg border border-border bg-card p-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-xs text-gray-500">字符串长度</Label>
+              <Label className="text-xs text-muted-foreground">字符串长度</Label>
               <Input
                 type="number"
                 min={1}
@@ -263,7 +263,7 @@ function RandomStringGenerator() {
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs text-gray-500">生成数量</Label>
+              <Label className="text-xs text-muted-foreground">生成数量</Label>
               <Input
                 type="number"
                 min={1}
@@ -306,7 +306,7 @@ function RandomStringGenerator() {
         </div>
 
         {/* Results */}
-        <div className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="rounded-lg border border-border bg-card p-5">
           <div className="mb-3 flex items-center justify-between">
             <Label className="text-sm font-medium">
               结果 {results.length > 0 && `(${results.length})`}
@@ -450,7 +450,7 @@ function PasswordGenerator() {
 
   // Password strength estimation
   const strength = useMemo(() => {
-    if (results.length === 0) return { label: "-", color: "text-gray-400", bars: 0 };
+    if (results.length === 0) return { label: "-", color: "text-muted-foreground", bars: 0 };
     const poolSize = charset.length;
     const bits = Math.log2(poolSize) * length;
     if (bits >= 100) return { label: "极强", color: "text-green-600", bars: 4 };
@@ -462,7 +462,7 @@ function PasswordGenerator() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       {/* Settings */}
-      <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
+      <div className="space-y-4 rounded-lg border border-border bg-card p-5">
         {/* Length slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -565,7 +565,7 @@ function PasswordGenerator() {
       </div>
 
       {/* Results */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
+      <div className="rounded-lg border border-border bg-card p-5">
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Label className="text-sm font-medium">
@@ -577,7 +577,7 @@ function PasswordGenerator() {
                 {[1, 2, 3, 4].map((n) => (
                   <div
                     key={n}
-                    className={`h-3 w-1.5 rounded-full ${n <= strength.bars ? strength.color.replace("text-", "bg-") : "bg-gray-200"}`}
+                    className={`h-3 w-1.5 rounded-full ${n <= strength.bars ? strength.color.replace("text-", "bg-") : "bg-muted"}`}
                   />
                 ))}
               </div>
@@ -636,12 +636,12 @@ export default function StringToolsPage() {
             </TabsList>
 
             <TabsContent value="uuid" className="mt-4">
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
+              <div className="rounded-lg border border-border bg-card p-5">
                 <UuidGenerator />
               </div>
             </TabsContent>
             <TabsContent value="ulid" className="mt-4">
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
+              <div className="rounded-lg border border-border bg-card p-5">
                 <UlidGenerator />
               </div>
             </TabsContent>

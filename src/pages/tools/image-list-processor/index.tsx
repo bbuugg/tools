@@ -99,12 +99,12 @@ export default function ImageListProcessorPage() {
           {images.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {images.map((img, i) => (
-                <div key={i} className="rounded-lg border border-gray-200 bg-white p-2 hover:border-indigo-300 transition-colors">
-                  <div className="rounded overflow-hidden bg-gray-50 flex items-center justify-center mb-2 min-h-32">
+                <div key={i} className="rounded-lg border border-border bg-card p-2 hover:border-indigo-300 transition-colors">
+                  <div className="rounded overflow-hidden bg-muted flex items-center justify-center mb-2 min-h-32">
                     <img src={img.url} alt="" referrerPolicy="no-referrer" className="max-w-full max-h-48 object-contain" onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.2")} />
                   </div>
-                  <p className="text-xs truncate text-gray-600" title={img.filename}>{img.filename}</p>
-                  <p className="text-[10px] truncate text-gray-400" title={img.url}>{img.url}</p>
+                  <p className="text-xs truncate text-muted-foreground" title={img.filename}>{img.filename}</p>
+                  <p className="text-[10px] truncate text-muted-foreground" title={img.url}>{img.url}</p>
                 </div>
               ))}
             </div>

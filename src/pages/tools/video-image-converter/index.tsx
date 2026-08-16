@@ -176,37 +176,37 @@ function VideoToImage() {
   return (
     <div className="space-y-4">
       <div
-        className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"}`}
+        className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-accent"}`}
         onClick={() => fileInputRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) handleVideo(f); }}
       >
-        <Film className="size-10 mx-auto text-gray-400 mb-3" />
-        <p className="text-sm font-medium text-gray-600">点击或拖拽上传视频文件</p>
-        <p className="text-xs text-gray-400 mt-1">支持 MP4、WebM 等格式</p>
+        <Film className="size-10 mx-auto text-muted-foreground mb-3" />
+        <p className="text-sm font-medium text-muted-foreground">点击或拖拽上传视频文件</p>
+        <p className="text-xs text-muted-foreground mt-1">支持 MP4、WebM 等格式</p>
         <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleVideo(f); }} />
       </div>
 
       {videoUrl && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-4">
           <video ref={videoRef} src={videoUrl} controls className="w-full max-h-96 rounded-lg" onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} />
-          <p className="text-xs text-gray-400">视频时长: {formatDuration(duration)}</p>
+          <p className="text-xs text-muted-foreground">视频时长: {formatDuration(duration)}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">帧间隔 (秒)</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">帧间隔 (秒)</Label>
               <Input type="number" value={frameInterval} onChange={(e) => setFrameInterval(Number(e.target.value))} min={0.1} max={10} step={0.1} className="h-9" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">图片格式</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">图片格式</Label>
               <Select value={imageFormat} onValueChange={setImageFormat}>
                 <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="png">PNG</SelectItem><SelectItem value="jpg">JPEG</SelectItem><SelectItem value="webp">WebP</SelectItem></SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">质量 ({Math.round(quality * 100)}%)</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">质量 ({Math.round(quality * 100)}%)</Label>
               <Slider min={0.1} max={1} step={0.1} value={[quality]} onValueChange={(v) => setQuality(v[0])} className="mt-2" />
             </div>
           </div>
@@ -218,24 +218,24 @@ function VideoToImage() {
       )}
 
       {extracted.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-3">
             <Label className="text-sm font-medium">提取的帧 ({extracted.length})</Label>
             <Button size="sm" onClick={downloadAll}><Download className="size-3.5" /> 下载全部 ZIP</Button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {extracted.map((img, i) => (
-              <div key={i} className="rounded-lg overflow-hidden border border-gray-100">
+              <div key={i} className="rounded-lg overflow-hidden border border-border">
                 <button
                   type="button"
                   onClick={() => setPreviewIndex(i)}
-                  className="block w-full aspect-square flex items-center justify-center bg-gray-50 cursor-zoom-in"
+                  className="block w-full aspect-square flex items-center justify-center bg-muted cursor-zoom-in"
                   title="点击预览"
                 >
                   <img src={img.url} alt={`帧 ${i + 1}`} className="object-contain max-h-32" />
                 </button>
                 <div className="flex items-center justify-between gap-1 p-2">
-                  <span className="text-xs text-gray-400">帧 {i + 1}</span>
+                  <span className="text-xs text-muted-foreground">帧 {i + 1}</span>
                   <button
                     type="button"
                     onClick={() => downloadOne(img, i)}
@@ -257,7 +257,7 @@ function VideoToImage() {
             <DialogHeader className="pr-6">
               <DialogTitle className="text-sm">帧 {previewIndex + 1}</DialogTitle>
             </DialogHeader>
-            <div className="flex items-center justify-center bg-gray-50 rounded-md max-h-[70vh] overflow-auto p-2">
+            <div className="flex items-center justify-center bg-muted rounded-md max-h-[70vh] overflow-auto p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={extracted[previewIndex].url}
@@ -380,14 +380,14 @@ function ImageToVideo() {
 
       {/* Settings */}
       {images.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">每张图片时长 (秒)</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">每张图片时长 (秒)</Label>
               <Input type="number" value={durationPerImage} onChange={(e) => setDurationPerImage(Number(e.target.value))} min={0.1} max={10} step={0.1} className="h-9" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">分辨率</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">分辨率</Label>
               <Select value={resolution} onValueChange={setResolution}>
                 <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="720p">720p</SelectItem><SelectItem value="1080p">1080p</SelectItem><SelectItem value="4k">4K</SelectItem></SelectContent>
@@ -398,11 +398,11 @@ function ImageToVideo() {
           {/* Image grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {images.map((img, i) => (
-              <div key={i} className="relative rounded-lg overflow-hidden border border-gray-100 group">
-                <div className="aspect-square flex items-center justify-center bg-gray-50">
+              <div key={i} className="relative rounded-lg overflow-hidden border border-border group">
+                <div className="aspect-square flex items-center justify-center bg-muted">
                   <img src={img.url} alt={img.name} className="object-contain max-h-32" />
                 </div>
-                <p className="p-2 text-xs text-gray-400 truncate">{img.name}</p>
+                <p className="p-2 text-xs text-muted-foreground truncate">{img.name}</p>
                 <button onClick={() => removeImage(i)} className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="size-3" />
                 </button>
@@ -420,7 +420,7 @@ function ImageToVideo() {
           <Button onClick={generateVideo} disabled={isProcessing} className="w-full">
             {isProcessing ? <><Loader2 className="size-4 animate-spin" /> 生成中...</> : <><Film className="size-4" /> 生成视频 (WebM)</>}
           </Button>
-          <p className="text-xs text-gray-400 text-center">使用 Canvas + MediaRecorder 生成 WebM 格式视频</p>
+          <p className="text-xs text-muted-foreground text-center">使用 Canvas + MediaRecorder 生成 WebM 格式视频</p>
         </div>
       )}
 
@@ -447,12 +447,12 @@ export default function VideoImageConverterPage() {
             <TabsContent value="i2v" className="mt-4"><ImageToVideo /></TabsContent>
           </Tabs>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Info className="size-4 text-gray-400" />
+              <Info className="size-4 text-muted-foreground" />
               <Label className="text-sm font-medium">使用说明</Label>
             </div>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-gray-600">
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-muted-foreground">
               <li>视频转图片：上传视频，设置帧间隔和格式，提取帧并下载 ZIP</li>
               <li>图片转视频：上传多张图片，设置每张时长和分辨率，生成 WebM 视频并自动下载</li>
               <li>图片转视频使用浏览器原生 Canvas + MediaRecorder，无需后端</li>

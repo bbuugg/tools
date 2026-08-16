@@ -143,13 +143,13 @@ export default function HtmlMarkdownConverterPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="inline-flex rounded-md border border-gray-200 p-0.5">
+                  <div className="inline-flex rounded-md border border-border p-0.5">
                     <button
-                      className={cn("rounded px-2.5 py-0.5 text-xs font-medium transition-colors", mode === "md2html" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100")}
+                      className={cn("rounded px-2.5 py-0.5 text-xs font-medium transition-colors", mode === "md2html" ? "bg-primary text-white" : "text-muted-foreground hover:bg-accent")}
                       onClick={() => setMode("md2html")}
                     >MD → HTML</button>
                     <button
-                      className={cn("rounded px-2.5 py-0.5 text-xs font-medium transition-colors", mode === "html2md" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100")}
+                      className={cn("rounded px-2.5 py-0.5 text-xs font-medium transition-colors", mode === "html2md" ? "bg-primary text-white" : "text-muted-foreground hover:bg-accent")}
                       onClick={() => setMode("html2md")}
                     >HTML → MD</button>
                   </div>

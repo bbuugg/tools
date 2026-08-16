@@ -180,7 +180,7 @@ function TextStatsPopover({ text }: { text: string }) {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-64 p-3">
-        <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+        <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-foreground">
           <Type className="size-3.5" />
           文本统计
         </div>
@@ -188,12 +188,12 @@ function TextStatsPopover({ text }: { text: string }) {
           {items.map((item) => (
             <div
               key={item.label}
-              className="rounded-md bg-gray-50 px-2 py-1.5 text-center"
+              className="rounded-md bg-muted px-2 py-1.5 text-center"
             >
               <div className={`text-base font-bold ${item.color}`}>
                 {item.value}
               </div>
-              <div className="text-[10px] text-gray-500">{item.label}</div>
+              <div className="text-[10px] text-muted-foreground">{item.label}</div>
             </div>
           ))}
         </div>
@@ -843,7 +843,7 @@ export default function TextProcessorPage() {
                     onDownload={handleDownload}
                   />
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                     <FileText className="size-10 opacity-30 mb-3" />
                     {input ? "等待处理..." : "输入内容后自动处理"}
                   </div>
@@ -853,9 +853,9 @@ export default function TextProcessorPage() {
           </div>
 
           {/* Tool Tabs + Options */}
-          <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
             <Tabs value={activeTool} onValueChange={handleToolChange}>
-              <TabsList className="w-full rounded-none border-b border-gray-100 bg-gray-50/50">
+              <TabsList className="w-full rounded-none border-b border-border bg-muted/50">
                 <TabsTrigger value="encode" className="flex-1">
                   <Link2 className="size-4" /> 编码转换
                 </TabsTrigger>
@@ -874,7 +874,7 @@ export default function TextProcessorPage() {
               <TabsContent value="encode" className="p-5">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">类型</Label>
+                    <Label className="text-xs text-muted-foreground">类型</Label>
                     <Select
                       value={encodeType}
                       onValueChange={(v) => setEncodeType(v as EncodeType)}
@@ -898,7 +898,7 @@ export default function TextProcessorPage() {
                       className={
                         encodeDir === "encode"
                           ? "text-primary font-medium"
-                          : "text-gray-400"
+                          : "text-muted-foreground"
                       }
                     >
                       编码
@@ -914,14 +914,14 @@ export default function TextProcessorPage() {
                       className={
                         encodeDir === "decode"
                           ? "text-primary font-medium"
-                          : "text-gray-400"
+                          : "text-muted-foreground"
                       }
                     >
                       解码
                     </span>
                   </div>
 
-                  <p className="text-xs text-gray-400 ml-auto">
+                  <p className="text-xs text-muted-foreground ml-auto">
                     {ENCODE_TYPES.find((t) => t.value === encodeType)?.label} ·{" "}
                     {encodeDir === "encode" ? "编码" : "解码"}
                   </p>
@@ -932,7 +932,7 @@ export default function TextProcessorPage() {
               <TabsContent value="crypto" className="p-5">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">算法</Label>
+                    <Label className="text-xs text-muted-foreground">算法</Label>
                     <Select
                       value={cryptoType}
                       onValueChange={(v) => setCryptoType(v as CryptoType)}
@@ -958,7 +958,7 @@ export default function TextProcessorPage() {
                           className={
                             cryptoDir === "encrypt"
                               ? "text-primary font-medium"
-                              : "text-gray-400"
+                              : "text-muted-foreground"
                           }
                         >
                           加密
@@ -974,14 +974,14 @@ export default function TextProcessorPage() {
                           className={
                             cryptoDir === "decrypt"
                               ? "text-primary font-medium"
-                              : "text-gray-400"
+                              : "text-muted-foreground"
                           }
                         >
                           解密
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">密钥</Label>
+                        <Label className="text-xs text-muted-foreground">密钥</Label>
                         <Input
                           className="w-48 h-8"
                           type="password"
@@ -993,7 +993,7 @@ export default function TextProcessorPage() {
                     </>
                   )}
 
-                  <p className="text-xs text-gray-400 ml-auto">
+                  <p className="text-xs text-muted-foreground ml-auto">
                     {cryptoType === "aes"
                       ? `AES ${cryptoDir === "encrypt" ? "加密" : "解密"}`
                       : `${CRYPTO_TYPES.find((t) => t.value === cryptoType)?.label} 哈希（单向）`}
@@ -1004,7 +1004,7 @@ export default function TextProcessorPage() {
               {/* ── Strip Options (multi-select checkboxes) ──── */}
               <TabsContent value="strip" className="p-5">
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                  <Label className="text-xs text-gray-500">清理模式（可多选）</Label>
+                  <Label className="text-xs text-muted-foreground">清理模式（可多选）</Label>
                   {STRIP_OPTIONS.map((m) => (
                     <label
                       key={m.value}
@@ -1015,7 +1015,7 @@ export default function TextProcessorPage() {
                         checked={stripModes.has(m.value)}
                         onCheckedChange={() => toggleStripMode(m.value)}
                       />
-                      <span className={stripModes.has(m.value) ? "text-gray-900 font-medium" : "text-gray-500"}>
+                      <span className={stripModes.has(m.value) ? "text-foreground font-medium" : "text-muted-foreground"}>
                         {m.label}
                       </span>
                     </label>
@@ -1034,7 +1034,7 @@ export default function TextProcessorPage() {
                       className={
                         ymlDir === "yml_to_properties"
                           ? "text-primary font-medium"
-                          : "text-gray-400"
+                          : "text-muted-foreground"
                       }
                     >
                       YAML → Properties
@@ -1050,7 +1050,7 @@ export default function TextProcessorPage() {
                       className={
                         ymlDir === "properties_to_yml"
                           ? "text-primary font-medium"
-                          : "text-gray-400"
+                          : "text-muted-foreground"
                       }
                     >
                       Properties → YAML
@@ -1058,12 +1058,12 @@ export default function TextProcessorPage() {
                   </div>
                 </div>
                 {/* Advanced options */}
-                <div className="rounded-md bg-gray-50 p-4 space-y-3">
-                  <Label className="text-xs text-gray-500">高级选项</Label>
+                <div className="rounded-md bg-muted p-4 space-y-3">
+                  <Label className="text-xs text-muted-foreground">高级选项</Label>
                   {ymlDir === "yml_to_properties" ? (
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                       <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">分隔符</Label>
+                        <Label className="text-xs text-muted-foreground">分隔符</Label>
                         <Select value={propsDelimiter} onValueChange={setPropsDelimiter}>
                           <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -1074,26 +1074,26 @@ export default function TextProcessorPage() {
                       </div>
                       <label className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
                         <Checkbox checked={propsEscapeUnicode} onCheckedChange={(c) => setPropsEscapeUnicode(c === true)} />
-                        <span className="text-gray-600">Unicode 转义</span>
+                        <span className="text-muted-foreground">Unicode 转义</span>
                       </label>
                       <label className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
                         <Checkbox checked={propsSortKeys} onCheckedChange={(c) => setPropsSortKeys(c === true)} />
-                        <span className="text-gray-600">键名排序</span>
+                        <span className="text-muted-foreground">键名排序</span>
                       </label>
                     </div>
                   ) : (
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                       <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">缩进</Label>
+                        <Label className="text-xs text-muted-foreground">缩进</Label>
                         <Input type="number" min={1} max={8} value={ymlIndent} onChange={(e) => setYmlIndent(Number(e.target.value) || 2)} className="w-16 h-8" />
                       </div>
                       <label className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
                         <Checkbox checked={ymlQuoteStrings} onCheckedChange={(c) => setYmlQuoteStrings(c === true)} />
-                        <span className="text-gray-600">引号包裹字符串</span>
+                        <span className="text-muted-foreground">引号包裹字符串</span>
                       </label>
                       <label className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
                         <Checkbox checked={ymlSortKeys} onCheckedChange={(c) => setYmlSortKeys(c === true)} />
-                        <span className="text-gray-600">键名排序</span>
+                        <span className="text-muted-foreground">键名排序</span>
                       </label>
                     </div>
                   )}

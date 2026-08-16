@@ -223,7 +223,7 @@ export default function PhpSerializePage() {
                     </div>
                   ) : (
                     <Textarea
-                      className="w-full flex-1 rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px]"
+                      className="w-full flex-1 rounded-lg border border-border p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px]"
                       value={serializedOutput}
                       readOnly
                       placeholder="输入 JSON 后自动生成 PHP 序列化字符串..."
@@ -250,7 +250,7 @@ export default function PhpSerializePage() {
                     </Button>
                   </div>
                   <Textarea
-                    className="w-full rounded-lg border border-gray-200 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px] text-xs sm:text-xs break-all overflow-x-auto"
+                    className="w-full rounded-lg border border-border p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[300px] text-xs sm:text-xs break-all overflow-x-auto"
                     value={phpInput}
                     onChange={(e) => setPhpInput(e.target.value)}
                     placeholder={'粘贴 PHP serialize 格式的字符串，如 a:2:{s:4:"name";s:5:"admin";s:3:"age";i:28;}'}
@@ -311,7 +311,7 @@ export default function PhpSerializePage() {
                         />
                       )}
                       {!unserializedOutput && (
-                        <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-200 text-sm text-gray-400">
+                        <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
                           输入 PHP 序列化字符串后自动生成 JSON 结果
                         </div>
                       )}
@@ -323,47 +323,47 @@ export default function PhpSerializePage() {
           </Tabs>
 
           {/* Format reference */}
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <h3 className="mb-2 text-sm font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-card p-4">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">
               PHP Serialize 格式说明
             </h3>
-            <div className="grid gap-2 text-xs text-gray-600 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 lg:grid-cols-3">
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   N;
                 </code>{" "}
                 → null
               </div>
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   b:0;
                 </code>{" "}
                 /{" "}
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   b:1;
                 </code>{" "}
                 → false / true
               </div>
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   i:42;
                 </code>{" "}
                 → 整数
               </div>
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   d:3.14;
                 </code>{" "}
                 → 浮点数
               </div>
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   s:5:"hello";
                 </code>{" "}
                 → 字符串
               </div>
               <div>
-                <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">
                   {"a:2:{...}"}
                 </code>{" "}
                 → 数组

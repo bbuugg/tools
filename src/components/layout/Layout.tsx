@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import {
   SidebarInset,
@@ -55,6 +56,9 @@ export default function Layout() {
                 {description}
               </p>
             )}
+          </div>
+          <div className="ml-auto flex items-center">
+            <ModeToggle />
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden relative">

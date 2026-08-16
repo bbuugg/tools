@@ -100,7 +100,7 @@ export default function ByteConverterPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
       {/* Input section */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex flex-col gap-1.5 flex-1 min-w-[180px]">
             <Label className="text-sm font-medium">输入数值</Label>
@@ -128,10 +128,10 @@ export default function ByteConverterPage() {
           </div>
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm font-medium">进位制</Label>
-            <div className="flex items-center gap-2 h-10 rounded-md border border-gray-200 px-3">
-              <span className={`text-sm ${!binary ? "text-primary font-medium" : "text-gray-400"}`}>十进制 (1000)</span>
+            <div className="flex items-center gap-2 h-10 rounded-md border border-border px-3">
+              <span className={`text-sm ${!binary ? "text-primary font-medium" : "text-muted-foreground"}`}>十进制 (1000)</span>
               <Switch checked={binary} onCheckedChange={setBinary} />
-              <span className={`text-sm ${binary ? "text-primary font-medium" : "text-gray-400"}`}>二进制 (1024)</span>
+              <span className={`text-sm ${binary ? "text-primary font-medium" : "text-muted-foreground"}`}>二进制 (1024)</span>
             </div>
           </div>
           <Button variant="outline" size="icon" className="h-10 w-10" onClick={handleClear} disabled={!inputValue} title="清空">
@@ -144,7 +144,7 @@ export default function ByteConverterPage() {
           {["1", "8", "1024", "1048576"].map((v) => (
             <button
               key={v}
-              className="rounded-md border border-gray-200 px-2.5 py-1 text-xs font-mono text-gray-600 hover:border-primary/50 hover:bg-gray-50 transition-colors"
+              className="rounded-md border border-border px-2.5 py-1 text-xs font-mono text-muted-foreground hover:border-primary/50 hover:bg-accent transition-colors"
               onClick={() => setInputValue(v)}
             >
               {v}
@@ -155,10 +155,10 @@ export default function ByteConverterPage() {
 
       {/* Results */}
       {results ? (
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-          <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <span className="text-sm font-medium">转换结果</span>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               {binary ? "1 KB = 1024 B" : "1 KB = 1000 B"}
             </span>
           </div>
@@ -168,21 +168,21 @@ export default function ByteConverterPage() {
               return (
                 <div
                   key={r.id}
-                  className={`flex items-center justify-between px-5 py-3 transition-colors ${isSource ? "bg-primary/5" : "hover:bg-gray-50"}`}
+                  className={`flex items-center justify-between px-5 py-3 transition-colors ${isSource ? "bg-primary/5" : "hover:bg-accent"}`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-medium text-gray-900">{r.name}</span>
-                      <span className="text-xs text-gray-400 font-mono">({r.symbol})</span>
+                      <span className="text-sm font-medium text-foreground">{r.name}</span>
+                      <span className="text-xs text-muted-foreground font-mono">({r.symbol})</span>
                       {isSource && (
                         <span className="text-xs text-primary bg-primary/10 px-1.5 py-0.5 rounded">输入</span>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono text-gray-900 tabular-nums">{r.formatted}</span>
+                    <span className="text-sm font-mono text-foreground tabular-nums">{r.formatted}</span>
                     <button
-                      className="rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
+                      className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-muted-foreground transition-colors"
                       onClick={() => copy(r.formatted, r.id)}
                       title="复制"
                     >
@@ -199,15 +199,15 @@ export default function ByteConverterPage() {
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-sm text-gray-400">
+        <div className="rounded-xl border border-border bg-card p-12 flex flex-col items-center justify-center text-sm text-muted-foreground">
           请输入有效的数值
         </div>
       )}
 
       {/* Unit reference */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <div className="text-sm font-medium mb-3">单位换算参考</div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
           {(binary
             ? [
                 ["1 B", "8 b"],
@@ -225,8 +225,8 @@ export default function ByteConverterPage() {
               ]
           ).map(([left, right]) => (
             <div key={left} className="flex items-center gap-2 font-mono">
-              <span className="text-gray-900 font-medium">{left}</span>
-              <span className="text-gray-400">=</span>
+              <span className="text-foreground font-medium">{left}</span>
+              <span className="text-muted-foreground">=</span>
               <span>{right}</span>
             </div>
           ))}

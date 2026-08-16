@@ -92,7 +92,7 @@ export default function RegexTesterPage() {
 
   const renderHighlighted = () => {
     if (!testStr || matchCount === 0) {
-      return <span className="text-gray-400">无匹配</span>;
+      return <span className="text-muted-foreground">无匹配</span>;
     }
     let html = "";
     let lastIdx = 0;
@@ -115,7 +115,7 @@ export default function RegexTesterPage() {
             {/* Left sidebar */}
             <div className="space-y-4">
               {/* Examples */}
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="rounded-lg border border-border bg-card p-4">
                 <Label className="text-sm font-semibold mb-3 block">常用示例</Label>
                 <div className="space-y-1.5">
                   {EXAMPLES.map((ex) => (
@@ -133,7 +133,7 @@ export default function RegexTesterPage() {
               </div>
 
               {/* Options */}
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="rounded-lg border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <Label className="text-sm font-semibold">选项</Label>
                   <Button variant="outline" size="sm" onClick={clearAll} className="text-red-500">
@@ -141,14 +141,14 @@ export default function RegexTesterPage() {
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs text-gray-500">标志位</Label>
+                  <Label className="text-xs text-muted-foreground">标志位</Label>
                   <div className="flex flex-wrap gap-1.5">
                     {FLAGS.map((f) => (
                       <button
                         key={f.flag}
                         className={cn(
                           "rounded px-2 py-1 text-xs font-medium transition-colors",
-                          flags.includes(f.flag) ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          flags.includes(f.flag) ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-accent"
                         )}
                         onClick={() => toggleFlag(f.flag)}
                       >
@@ -167,7 +167,7 @@ export default function RegexTesterPage() {
             {/* Right: Test area */}
             <div className="space-y-4 lg:col-span-2">
               {/* Regex input */}
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="rounded-lg border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <Label className="text-sm font-semibold">正则表达式</Label>
                   <Button
@@ -185,14 +185,14 @@ export default function RegexTesterPage() {
                   </Button>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-gray-400">/</span>
+                  <span className="text-muted-foreground">/</span>
                   <Input
                     value={pattern}
                     onChange={(e) => setPattern(e.target.value)}
                     placeholder="输入正则表达式"
                     className="flex-1 border-0 font-mono focus-visible:ring-0"
                   />
-                  <span className="text-gray-400">/</span>
+                  <span className="text-muted-foreground">/</span>
                   <Input
                     value={flags}
                     onChange={(e) => setFlags(e.target.value)}
@@ -206,10 +206,10 @@ export default function RegexTesterPage() {
               </div>
 
               {/* Test text */}
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="rounded-lg border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <Label className="text-sm font-semibold">测试文本</Label>
-                  <span className="text-xs text-gray-400">{testStr.length} 字符</span>
+                  <span className="text-xs text-muted-foreground">{testStr.length} 字符</span>
                 </div>
                 <Textarea
                   value={testStr}
@@ -221,7 +221,7 @@ export default function RegexTesterPage() {
               </div>
 
               {/* Results */}
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="rounded-lg border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <Label className="text-sm font-semibold">匹配结果</Label>
                   <span className="rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-600">{matchCount} 个匹配</span>
@@ -231,18 +231,18 @@ export default function RegexTesterPage() {
                     <div className="rounded-md bg-gray-900 p-4">{renderHighlighted()}</div>
                     {showGroups && matchCount > 0 && (
                       <div className="space-y-2">
-                        <Label className="text-xs text-gray-500">捕获组详情</Label>
+                        <Label className="text-xs text-muted-foreground">捕获组详情</Label>
                         {matches.map((m, i) => (
-                          <div key={i} className="rounded-md border border-gray-100 p-3">
-                            <div className="mb-2 text-xs text-gray-400">匹配 #{i + 1}（位置：{m.index}）</div>
+                          <div key={i} className="rounded-md border border-border p-3">
+                            <div className="mb-2 text-xs text-muted-foreground">匹配 #{i + 1}（位置：{m.index}）</div>
                             <div className="space-y-1.5">
                               <div className="flex items-start gap-2">
-                                <span className="min-w-[40px] text-xs text-gray-400">完整:</span>
+                                <span className="min-w-[40px] text-xs text-muted-foreground">完整:</span>
                                 <code className="break-all rounded bg-purple-100 px-2 py-0.5 text-sm">{escapeHtml(m[0] || "")}</code>
                               </div>
                               {m.length > 1 && Array.from({ length: m.length - 1 }, (_, gi) => gi + 1).map((g) => (
                                 <div key={g} className="flex items-start gap-2">
-                                  <span className="min-w-[40px] text-xs text-gray-400">组 {g}:</span>
+                                  <span className="min-w-[40px] text-xs text-muted-foreground">组 {g}:</span>
                                   <code className="break-all rounded bg-purple-100 px-2 py-0.5 text-sm">{escapeHtml(m[g] || "")}</code>
                                 </div>
                               ))}
@@ -253,7 +253,7 @@ export default function RegexTesterPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center p-4 text-sm text-gray-400">
+                  <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
                     <Info className="mr-2 size-4" />请输入测试文本
                   </div>
                 )}

@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 // ── 本地化 Monaco Editor ─────────────────────────────────────────
@@ -102,6 +103,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   const [wordWrap, setWordWrap] = useState<"on" | "off">("on");
   const [copied, setCopied] = useState(false);
 
+  const { resolvedTheme } = useTheme();
+  const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "vs";
+
   const editorRef = useRef<any>(null);
 
   const handleEditorDidMount = (editor: any) => {
@@ -130,14 +134,14 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card">
       {/* Toolbar */}
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-100 bg-gray-50/80 px-3 py-1.5">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-muted/80 px-3 py-1.5">
         {/* Left side */}
         <div className="flex items-center gap-2">
           {showLanguageSelector ? (
             <Select value={currentLanguage} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="h-7 w-auto gap-1 border-none bg-transparent px-1.5 text-xs font-medium shadow-none hover:bg-gray-100">
+              <SelectTrigger className="h-7 w-auto gap-1 border-none bg-transparent px-1.5 text-xs font-medium shadow-none hover:bg-accent">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -149,7 +153,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
               </SelectContent>
             </Select>
           ) : (
-            <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-gray-500">
+            <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               <Braces className="size-3" />
               {currentLanguage.toUpperCase()}
             </span>
@@ -232,10 +236,11 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
         <Editor
           height={height}
           language={currentLanguage}
-          theme="vs"
+          theme={editorTheme}
           value={value}
           onMount={handleEditorDidMount}
           onChange={(v) => onChange && onChange(v || "")}
+          loading={<div className="h-full w-full bg-card" />}
           options={{
             fontSize: 13,
             mouseWheelZoom: true,

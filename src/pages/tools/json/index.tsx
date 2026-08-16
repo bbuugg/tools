@@ -315,7 +315,7 @@ export default function JsonToolsPage() {
                         { label: "键", value: result.stats.keys },
                         { label: "深", value: result.stats.depth },
                       ].map((s) => (
-                        <span key={s.label} className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{s.label}: {s.value}</span>
+                        <span key={s.label} className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">{s.label}: {s.value}</span>
                       ))}
                     </div>
                   )}
@@ -341,7 +341,7 @@ export default function JsonToolsPage() {
                 ) : displayOutput ? (
                   <MonacoEditor value={displayOutput} readOnly language="json" height="100%" showCopyButton showDownloadButton showWordWrapToggle onDownload={handleDownload} />
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-400">
+                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">
                     <FileText className="size-10 opacity-30 mb-3" />
                     {input.trim() ? "等待处理..." : "输入内容后自动处理"}
                   </div>
@@ -351,9 +351,9 @@ export default function JsonToolsPage() {
           </div>
 
           {/* Tool Tabs + Options */}
-          <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
             <Tabs value={activeTool} onValueChange={handleToolChange}>
-              <TabsList className="w-full rounded-none border-b border-gray-100 bg-gray-50/50">
+              <TabsList className="w-full rounded-none border-b border-border bg-muted/50">
                 <TabsTrigger value="format" className="flex-1"><Braces className="size-4" /> 格式化</TabsTrigger>
                 <TabsTrigger value="extract" className="flex-1"><Filter className="size-4" /> 提取</TabsTrigger>
               </TabsList>
@@ -362,7 +362,7 @@ export default function JsonToolsPage() {
               <TabsContent value="format" className="p-5">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-gray-500">缩进</Label>
+                    <Label className="text-xs text-muted-foreground">缩进</Label>
                     <Select value={indent} onValueChange={setIndent} disabled={compact}>
                       <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -421,7 +421,7 @@ export default function JsonToolsPage() {
                     <div className="flex flex-wrap gap-2">
                       {quickPaths.map((qp) => (
                         <Button key={qp.label} variant="outline" size="xs" className="font-mono" onClick={() => setJsonPath(qp.label)}>
-                          {qp.label}<span className="text-gray-400 ml-1">· {qp.desc}</span>
+                          {qp.label}<span className="text-muted-foreground ml-1">· {qp.desc}</span>
                         </Button>
                       ))}
                     </div>
@@ -429,13 +429,13 @@ export default function JsonToolsPage() {
 
                   <TabsContent value="field" className="mt-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs text-gray-500">可用字段 ({availableFields.length})</Label>
+                      <Label className="text-xs text-muted-foreground">可用字段 ({availableFields.length})</Label>
                       <div className="flex gap-1">
                         <Button variant="link" size="xs" onClick={() => setSelectedFields([...availableFields])}>全选</Button>
                         <Button variant="link" size="xs" onClick={() => setSelectedFields([])}>清空</Button>
                       </div>
                     </div>
-                    <div className="h-40 overflow-y-auto rounded-lg border border-gray-200 p-2 space-y-1">
+                    <div className="h-40 overflow-y-auto rounded-lg border border-border p-2 space-y-1">
                       {availableFields.length > 0 ? availableFields.map((field) => (
                         <div key={field} className="flex items-center gap-2">
                           <Checkbox
@@ -447,7 +447,7 @@ export default function JsonToolsPage() {
                           />
                           <span className="text-xs font-mono cursor-pointer flex-1">{field}</span>
                         </div>
-                      )) : <div className="flex h-full items-center justify-center text-xs text-gray-400">暂无字段</div>}
+                      )) : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">暂无字段</div>}
                     </div>
                     <div className="flex flex-wrap gap-4">
                       <div className="flex items-center gap-2">
@@ -478,7 +478,7 @@ export default function JsonToolsPage() {
                         <Label className="text-xs cursor-pointer" onClick={() => setSortResults(!sortResults)}>排序结果</Label>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Label className="text-xs text-gray-500">输出格式</Label>
+                        <Label className="text-xs text-muted-foreground">输出格式</Label>
                         <Select value={outputFormat} onValueChange={(v) => setOutputFormat(v as "array" | "list")}>
                           <SelectTrigger className="w-40 h-8"><SelectValue /></SelectTrigger>
                           <SelectContent>

@@ -431,13 +431,13 @@ export default function MarkdownPdfConverterPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="inline-flex rounded-md border border-gray-200 p-0.5">
+                  <div className="inline-flex rounded-md border border-border p-0.5">
                     <button
                       className={cn(
                         "rounded px-2.5 py-0.5 text-xs font-medium transition-colors",
                         mode === "md2pdf"
                           ? "bg-primary text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                          : "text-muted-foreground hover:bg-accent"
                       )}
                       onClick={() => setMode("md2pdf")}
                     >
@@ -448,7 +448,7 @@ export default function MarkdownPdfConverterPage() {
                         "rounded px-2.5 py-0.5 text-xs font-medium transition-colors",
                         mode === "pdf2md"
                           ? "bg-primary text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                          : "text-muted-foreground hover:bg-accent"
                       )}
                       onClick={() => setMode("pdf2md")}
                     >
@@ -507,7 +507,7 @@ export default function MarkdownPdfConverterPage() {
                 </div>
               ) : (
                 <div
-                  className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 bg-white p-6 text-center transition-colors hover:border-primary/50 hover:bg-gray-50 cursor-pointer"
+                  className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border bg-card p-6 text-center transition-colors hover:border-primary/50 hover:bg-accent cursor-pointer"
                   style={{ height: EDITOR_HEIGHT }}
                   onClick={() => pdfFileInputRef.current?.click()}
                   onDragOver={(e) => e.preventDefault()}
@@ -516,26 +516,26 @@ export default function MarkdownPdfConverterPage() {
                   {converting ? (
                     <>
                       <Loader2 className="size-8 animate-spin text-primary" />
-                      <p className="text-sm text-gray-500">正在解析 PDF 文档…</p>
+                      <p className="text-sm text-muted-foreground">正在解析 PDF 文档…</p>
                     </>
                   ) : pdfFileName ? (
                     <>
                       <FileText className="size-8 text-primary" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-foreground">
                           {pdfFileName}
                         </p>
-                        <p className="text-xs text-gray-500">点击重新选择文件</p>
+                        <p className="text-xs text-muted-foreground">点击重新选择文件</p>
                       </div>
                     </>
                   ) : (
                     <>
-                      <FileUp className="size-8 text-gray-400" />
+                      <FileUp className="size-8 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-foreground">
                           点击选择或拖拽 .pdf 文件
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                           仅提取文本内容（图片型 PDF 可能无法识别文字）
                         </p>
                       </div>
@@ -589,7 +589,7 @@ export default function MarkdownPdfConverterPage() {
 
               {mode === "md2pdf" ? (
                 <div
-                  className="markdown-body max-w-none overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200 bg-white p-4"
+                  className="markdown-body max-w-none overflow-y-auto overflow-x-hidden rounded-lg border border-border bg-card p-4"
                   style={{ height: EDITOR_HEIGHT }}
                   dangerouslySetInnerHTML={{
                     __html:
@@ -613,7 +613,7 @@ export default function MarkdownPdfConverterPage() {
           </div>
 
           {mode === "md2pdf" && (
-            <p className="-mt-1 text-center text-xs text-gray-400">
+            <p className="-mt-1 text-center text-xs text-muted-foreground">
               点击「导出 PDF」会打开浏览器打印窗口，在目标打印机中选择「另存为 PDF」即可保存。
             </p>
           )}

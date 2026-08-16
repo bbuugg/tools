@@ -141,6 +141,6 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: color-mix(in oklch, var(--foreground) 22%, transparent);
   border-radius: 5px;
 }

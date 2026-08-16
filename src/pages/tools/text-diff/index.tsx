@@ -197,7 +197,7 @@ function CopyButton({ text, disabled }: { text: string; disabled?: boolean }) {
 function gutterClass(type: OpType): string {
   if (type === "del") return "text-red-500";
   if (type === "ins") return "text-green-600";
-  return "text-gray-300";
+  return "text-muted-foreground";
 }
 
 function DiffUnified({ ops, mode }: { ops: Op[]; mode: Mode }) {
@@ -224,13 +224,13 @@ function DiffUnified({ ops, mode }: { ops: Op[]; mode: Mode }) {
               ? "bg-red-50 text-red-700"
               : op.type === "ins"
                 ? "bg-green-50 text-green-700"
-                : "text-gray-700";
+                : "text-foreground";
           return (
             <div key={i} className={`flex gap-2 px-3 py-0.5 ${lineCls}`}>
               <span className={`w-5 shrink-0 select-none text-center ${gutterClass(op.type)}`}>
                 {op.type === "del" ? "-" : op.type === "ins" ? "+" : " "}
               </span>
-              <span className="w-8 shrink-0 select-none text-right text-gray-300">{no}</span>
+              <span className="w-8 shrink-0 select-none text-right text-muted-foreground">{no}</span>
               <span className="whitespace-pre-wrap break-words flex-1">{op.value}</span>
             </div>
           );
@@ -247,7 +247,7 @@ function DiffUnified({ ops, mode }: { ops: Op[]; mode: Mode }) {
             ? "bg-red-100 text-red-700 line-through"
             : op.type === "ins"
               ? "bg-green-100 text-green-700"
-              : "text-gray-700";
+              : "text-foreground";
         return (
           <span key={i} className={cls}>
             {op.value}
@@ -262,28 +262,28 @@ function DiffSplit({ ops, mode }: { ops: Op[]; mode: Mode }) {
   if (mode === "line") {
     const rows = alignRows(ops);
     return (
-      <div className="grid grid-cols-2 font-mono text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-2 font-mono text-sm border border-border rounded-lg overflow-hidden">
         {rows.map((r, i) => {
           const leftCls =
             r.left === null
-              ? "bg-gray-50 text-gray-300"
+              ? "bg-muted text-muted-foreground"
               : r.right === null
                 ? "bg-red-50 text-red-700"
-                : "bg-white text-gray-700";
+                : "bg-card text-foreground";
           const rightCls =
             r.right === null
-              ? "bg-gray-50 text-gray-300"
+              ? "bg-muted text-muted-foreground"
               : r.left === null
                 ? "bg-green-50 text-green-700"
-                : "bg-white text-gray-700";
+                : "bg-card text-foreground";
           return (
             <Fragment key={i}>
-              <div className={`flex gap-2 px-3 py-0.5 border-b border-gray-100 border-l-0 ${leftCls}`}>
-                <span className="w-6 shrink-0 select-none text-right text-gray-300">{r.leftNo ?? ""}</span>
+              <div className={`flex gap-2 px-3 py-0.5 border-b border-border border-l-0 ${leftCls}`}>
+                <span className="w-6 shrink-0 select-none text-right text-muted-foreground">{r.leftNo ?? ""}</span>
                 <span className="whitespace-pre-wrap break-words flex-1">{r.left ?? ""}</span>
               </div>
-              <div className={`flex gap-2 px-3 py-0.5 border-b border-gray-100 border-l border-gray-100 ${rightCls}`}>
-                <span className="w-6 shrink-0 select-none text-right text-gray-300">{r.rightNo ?? ""}</span>
+              <div className={`flex gap-2 px-3 py-0.5 border-b border-border border-l border-border ${rightCls}`}>
+                <span className="w-6 shrink-0 select-none text-right text-muted-foreground">{r.rightNo ?? ""}</span>
                 <span className="whitespace-pre-wrap break-words flex-1">{r.right ?? ""}</span>
               </div>
             </Fragment>
@@ -294,20 +294,20 @@ function DiffSplit({ ops, mode }: { ops: Op[]; mode: Mode }) {
   }
   // word mode: 左列(原文+删除) / 右列(改后+新增) 两段内联
   return (
-    <div className="grid grid-cols-2 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden font-mono text-sm">
-      <div className="bg-white p-3 whitespace-pre-wrap break-words leading-relaxed">
+    <div className="grid grid-cols-2 gap-px bg-muted border border-border rounded-lg overflow-hidden font-mono text-sm">
+      <div className="bg-card p-3 whitespace-pre-wrap break-words leading-relaxed">
         {ops.map((op, i) =>
           op.type !== "ins" ? (
-            <span key={i} className={op.type === "del" ? "bg-red-100 text-red-700 line-through" : "text-gray-700"}>
+            <span key={i} className={op.type === "del" ? "bg-red-100 text-red-700 line-through" : "text-foreground"}>
               {op.value}
             </span>
           ) : null,
         )}
       </div>
-      <div className="bg-white p-3 whitespace-pre-wrap break-words leading-relaxed border-l border-gray-100">
+      <div className="bg-card p-3 whitespace-pre-wrap break-words leading-relaxed border-l border-border">
         {ops.map((op, i) =>
           op.type !== "del" ? (
-            <span key={i} className={op.type === "ins" ? "bg-green-100 text-green-700" : "text-gray-700"}>
+            <span key={i} className={op.type === "ins" ? "bg-green-100 text-green-700" : "text-foreground"}>
               {op.value}
             </span>
           ) : null,
@@ -394,7 +394,7 @@ export default function TextDiffPage() {
                 className="h-64 font-mono text-sm resize-y"
                 spellCheck={false}
               />
-              <p className="text-xs text-gray-400 text-right">{left.length} 字符</p>
+              <p className="text-xs text-muted-foreground text-right">{left.length} 字符</p>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -413,15 +413,15 @@ export default function TextDiffPage() {
                 className="h-64 font-mono text-sm resize-y"
                 spellCheck={false}
               />
-              <p className="text-xs text-gray-400 text-right">{right.length} 字符</p>
+              <p className="text-xs text-muted-foreground text-right">{right.length} 字符</p>
             </div>
           </div>
 
           {/* Options */}
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-gray-500">对比模式</Label>
+                <Label className="text-xs text-muted-foreground">对比模式</Label>
                 <Select value={mode} onValueChange={(v) => setMode(v as Mode)}>
                   <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -432,7 +432,7 @@ export default function TextDiffPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-gray-500">视图</Label>
+                <Label className="text-xs text-muted-foreground">视图</Label>
                 <Select value={view} onValueChange={(v) => setView(v as View)}>
                   <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -444,12 +444,12 @@ export default function TextDiffPage() {
 
               <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
                 <Switch size="sm" checked={ignoreWs} onCheckedChange={setIgnoreWs} />
-                <span className={ignoreWs ? "text-gray-900 font-medium" : "text-gray-500"}>忽略空白</span>
+                <span className={ignoreWs ? "text-foreground font-medium" : "text-muted-foreground"}>忽略空白</span>
               </label>
 
               <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
                 <Switch size="sm" checked={ignoreCase} onCheckedChange={setIgnoreCase} />
-                <span className={ignoreCase ? "text-gray-900 font-medium" : "text-gray-500"}>忽略大小写</span>
+                <span className={ignoreCase ? "text-foreground font-medium" : "text-muted-foreground"}>忽略大小写</span>
               </label>
 
               <div className="flex gap-2 ml-auto">
@@ -467,9 +467,9 @@ export default function TextDiffPage() {
           </div>
 
           {/* Result */}
-          <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-            <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-gray-100">
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-border">
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <GitCompareArrows className="size-4 text-amber-500" />
                 差异结果
               </div>
@@ -482,7 +482,7 @@ export default function TextDiffPage() {
                         <span className="text-green-600">新增 {result.insCount}</span>
                       </>
                     ) : (
-                      <span className="text-gray-400">两段文本完全相同</span>
+                      <span className="text-muted-foreground">两段文本完全相同</span>
                     )}
                   </div>
                 )}
@@ -503,7 +503,7 @@ export default function TextDiffPage() {
 
             <div className="max-h-[60vh] overflow-auto">
               {!result ? (
-                <div className="flex h-48 flex-col items-center justify-center text-sm text-gray-400">
+                <div className="flex h-48 flex-col items-center justify-center text-sm text-muted-foreground">
                   <FileDiff className="size-10 opacity-30 mb-3" />
                   在上方输入或粘贴两段文本后自动对比
                 </div>
@@ -519,12 +519,12 @@ export default function TextDiffPage() {
           </div>
 
           {/* Usage note */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 mb-3">
-              <GitCompareArrows className="size-4 text-gray-400" />
+              <GitCompareArrows className="size-4 text-muted-foreground" />
               <Label className="text-sm font-medium">使用说明</Label>
             </div>
-            <ul className="list-disc list-inside space-y-1.5 text-sm text-gray-600">
+            <ul className="list-disc list-inside space-y-1.5 text-sm text-muted-foreground">
               <li>左侧粘贴原文、右侧粘贴修改后的文本，工具会实时计算差异。</li>
               <li>「按行」以整行为单位对比；「按词」以词/字为粒度，适合段落级微调高亮。</li>
               <li>「并排」左右对照查看增删；「统一」以 + / - 行内标记展示。</li>

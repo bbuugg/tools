@@ -122,7 +122,7 @@ export default function CronGeneratorPage() {
               key={t}
               className={cn(
                 "rounded px-2.5 py-1 text-xs font-medium transition-colors",
-                field.type === t ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                field.type === t ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-accent"
               )}
               onClick={() => handleTypeChange(setter, key, t)}
             >
@@ -157,7 +157,7 @@ export default function CronGeneratorPage() {
                   <SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger>
                   <SelectContent>{WEEK_OPTIONS.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}</SelectContent>
                 </Select>
-                <span className="text-xs text-gray-400">~</span>
+                <span className="text-xs text-muted-foreground">~</span>
                 <Select value={field.end?.toString()} onValueChange={(v) => setter({ ...field, end: v })}>
                   <SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger>
                   <SelectContent>{WEEK_OPTIONS.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}</SelectContent>
@@ -166,7 +166,7 @@ export default function CronGeneratorPage() {
             ) : (
               <>
                 <Input type="number" min={min} max={max} value={field.start as number} onChange={(e) => setter({ ...field, start: parseInt(e.target.value) || min })} className="h-8 w-20" />
-                <span className="text-xs text-gray-400">~</span>
+                <span className="text-xs text-muted-foreground">~</span>
                 <Input type="number" min={min} max={max} value={field.end as number} onChange={(e) => setter({ ...field, end: parseInt(e.target.value) || max })} className="h-8 w-20" />
               </>
             )}
@@ -174,9 +174,9 @@ export default function CronGeneratorPage() {
         )}
         {field.type === "interval" && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-xs text-gray-400">从</span>
+            <span className="text-xs text-muted-foreground">从</span>
             <Input type="number" min={min} max={max} value={field.start as number || ""} onChange={(e) => setter({ ...field, start: e.target.value ? parseInt(e.target.value) : "*" })} className="h-8 w-16" placeholder="*" />
-            <span className="text-xs text-gray-400">每隔</span>
+            <span className="text-xs text-muted-foreground">每隔</span>
             <Input type="number" min={1} value={field.step || 1} onChange={(e) => setter({ ...field, step: parseInt(e.target.value) || 1 })} className="h-8 w-16" />
           </div>
         )}
@@ -199,7 +199,7 @@ export default function CronGeneratorPage() {
 
         <div className="grid gap-4 lg:grid-cols-2">
           {/* Left: Generator */}
-          <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-5">
             <Label className="text-sm font-semibold">字段设置</Label>
             {renderField(setMinute, minute, "分钟", "minute", 0, 59)}
             {renderField(setHour, hour, "小时", "hour", 0, 23)}
@@ -209,10 +209,10 @@ export default function CronGeneratorPage() {
           </div>
 
           {/* Right: Preview */}
-          <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-5">
             <div>
               <Label className="text-sm font-semibold mb-2 block">生成结果</Label>
-              <div className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 p-3">
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-border p-3">
                 <code className="text-lg font-mono break-all">{customExpr}</code>
                 <Button
                   variant="outline"
@@ -227,7 +227,7 @@ export default function CronGeneratorPage() {
                   {copied ? "已复制" : "复制"}
                 </Button>
               </div>
-              <p className="mt-2 text-sm text-gray-500">{describeCron(customExpr)}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{describeCron(customExpr)}</p>
             </div>
 
             <div>
@@ -246,9 +246,9 @@ export default function CronGeneratorPage() {
             {nextExecs.length > 0 && (
               <div>
                 <Label className="text-sm font-semibold mb-2 block">下次执行时间（模拟）</Label>
-                <div className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-gray-100">
+                <div className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-border">
                   {nextExecs.map((time, i) => (
-                    <div key={i} className="flex items-center gap-2 border-b border-gray-50 px-3 py-2 text-sm last:border-0">
+                    <div key={i} className="flex items-center gap-2 border-b border-border px-3 py-2 text-sm last:border-0">
                       <Clock className="size-3.5 text-primary" />
                       {time}
                     </div>

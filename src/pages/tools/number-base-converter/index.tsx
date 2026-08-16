@@ -97,7 +97,7 @@ export default function NumberBaseConverterPage() {
       <div>
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
-          <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-5">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-5">
             {/* Base selectors */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function NumberBaseConverterPage() {
                       key={opt.id}
                       className={cn(
                         "rounded px-2.5 py-1 text-xs font-medium transition-colors",
-                        fromBase === opt.id ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        fromBase === opt.id ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                       onClick={() => setFromBase(opt.id)}
                     >
@@ -128,7 +128,7 @@ export default function NumberBaseConverterPage() {
                       key={opt.id}
                       className={cn(
                         "rounded px-2.5 py-1 text-xs font-medium transition-colors",
-                        toBase === opt.id ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        toBase === opt.id ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                       onClick={() => setToBase(opt.id)}
                     >
@@ -144,7 +144,7 @@ export default function NumberBaseConverterPage() {
 
             {/* Advanced options */}
             <button
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
               onClick={() => setShowAdvanced(!showAdvanced)}
             >
               <Settings className="size-3.5" />
@@ -152,7 +152,7 @@ export default function NumberBaseConverterPage() {
               {showAdvanced ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
             </button>
             {showAdvanced && (
-              <div className="grid grid-cols-1 gap-3 rounded-md bg-gray-50 p-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 rounded-md bg-muted p-4 sm:grid-cols-3">
                 <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
                   <Checkbox checked={useUppercase} onCheckedChange={(c) => setUseUppercase(c === true)} />
                   大写字母
