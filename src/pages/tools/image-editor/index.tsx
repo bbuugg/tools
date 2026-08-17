@@ -876,7 +876,20 @@ export default function ImageEditorPage() {
   };
 
   const applyCrop = () => {
-    setGeo((g) => ({ ...g, crop: { ...cropDraft } }));
+    setGeo((g) => {
+      const prev = g.crop;
+      // 已有裁剪时，cropDraft 是「相对当前已裁剪画布」的比例，
+      // 需复合回「原始整图」坐标系，否则第二次裁剪会以首裁前图为基准。
+      const next: CropFrac | null = prev
+        ? {
+            x: prev.x + cropDraft.x * prev.w,
+            y: prev.y + cropDraft.y * prev.h,
+            w: cropDraft.w * prev.w,
+            h: cropDraft.h * prev.h,
+          }
+        : { ...cropDraft };
+      return { ...g, crop: next };
+    });
     setCropMode(false);
   };
   const cancelCrop = () => {
@@ -972,7 +985,9 @@ export default function ImageEditorPage() {
                 if (cropMode) {
                   cancelCrop();
                 } else {
-                  setCropDraft(geo.crop ?? { x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
+                  // 已有裁剪时，当前画布即上次裁剪结果；初始选区应为整张当前画布，
+                  // 而非旧裁剪在原始整图中的比例（否则遮罩会偏移到画布外）。
+                  setCropDraft(geo.crop ? { x: 0, y: 0, w: 1, h: 1 } : { x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
                   setCropMode(true);
                 }
               }}
