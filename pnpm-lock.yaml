@@ -62,6 +62,9 @@ importers:
       html-to-image:
         specifier: ^1.11.13
         version: 1.11.13
+      imagetracerjs:
+        specifier: ^1.2.6
+        version: 1.2.6
       js-yaml:
         specifier: ^5.2.1
         version: 5.2.3
@@ -2393,6 +2396,9 @@ packages:
   ignore@7.0.6:
     resolution: {integrity: sha512-BAg6QkE8W+TuQLrrw0Ugr7HegXduRuuj8/ti2kSOc+jz1dmx8/WNcjr6XGnq5YpDWxFwwaavqD0+jIUOKelTsw==}
     engines: {node: '>= 4'}
+
+  imagetracerjs@1.2.6:
+    resolution: {integrity: sha512-LKJlnKmXFzDdh6IZtXTyBxXcCLTAkwgKYS+NMiPXiXVnlTLjQC8fq7U89laUSgHtypJB3TdMMDK4ecG5NI/Cgw==}
 
   immediate@3.0.6:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
@@ -5975,6 +5981,8 @@ snapshots:
   ignore@5.3.0: {}
 
   ignore@7.0.6: {}
+
+  imagetracerjs@1.2.6: {}
 
   immediate@3.0.6: {}
 

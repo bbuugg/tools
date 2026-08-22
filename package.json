@@ -29,6 +29,7 @@
     "gifuct-js": "^2.1.2",
     "html-docx-js-typescript": "^0.1.5",
     "html-to-image": "^1.11.13",
+    "imagetracerjs": "^1.2.6",
     "js-yaml": "^5.2.1",
     "jsonpath-plus": "^10.4.0",
     "jsqr": "^1.4.0",

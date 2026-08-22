@@ -24,6 +24,7 @@ import {
   Radio,
   Regex,
   Shuffle,
+  Spline,
   Stamp,
   Type,
   type LucideIcon,
@@ -381,6 +382,17 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "图像处理",
       icon: Palette,
       color: "bg-red-700",
+    },
+  },
+  {
+    path: "/tools/image-to-svg",
+    lazy: () => import("@/pages/tools/image-to-svg"),
+    meta: {
+      title: "图片转 SVG",
+      description: "将位图（PNG/JPG/GIF/BMP/WebP）转换为 SVG 矢量图形，支持多种预设和参数调节",
+      category: "图像处理",
+      icon: Spline,
+      color: "bg-cyan-600",
     },
   },
   {
