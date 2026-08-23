@@ -6,6 +6,7 @@ import {
   Calculator,
   CalendarClock,
   Clock,
+  ContactRound,
   Code2,
   FileCode2,
   FileDiff,
@@ -393,6 +394,17 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "图像处理",
       icon: Spline,
       color: "bg-cyan-600",
+    },
+  },
+  {
+    path: "/tools/avatar-generator",
+    lazy: () => import("@/pages/tools/avatar-generator"),
+    meta: {
+      title: "随机头像生成器",
+      description: "基于 Seed 的程序化 SVG 肖像生成，手绘风格复古头像，支持 PNG/SVG 导出",
+      category: "图像处理",
+      icon: ContactRound,
+      color: "bg-amber-600",
     },
   },
   {
