@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **39** 个工具，分为 7 个分类。
+> 共计 **40** 个工具，分为 7 个分类。
 
 ---
 
@@ -95,3 +95,4 @@
 |---|---------|------|-----|
 | 1 | 房贷计算器 | 商业 / 公积金 / 组合贷款月供计算，支持等额本息与等额本金两种还款方式，附完整还款计划表与 CSV 导出 | <https://tools.codeemo.cn/tools/mortgage-calculator> |
 | 2 | 体脂率计算器 | 通过 BMI 公式或围度测量法（美国海军法）估算体脂率，附脂肪量、瘦体重、腰臀比与 ACE 体脂分级对照 | <https://tools.codeemo.cn/tools/body-fat-calculator> |
+| 3 | 个税计算器 | 工资薪金按累计预扣法逐月测算个税与到手收入，支持年终奖单独计税、税率盲区预警与并入综合所得对比，附明细导出 | <https://tools.codeemo.cn/tools/income-tax-calculator> |

@@ -23,6 +23,7 @@ import {
   Landmark,
   MessageCircle,
   Palette,
+  Percent,
   QrCode,
   Radio,
   Regex,
@@ -520,6 +521,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "生活工具",
       icon: Dumbbell,
       color: "bg-lime-600",
+    },
+  },
+  {
+    path: "/tools/income-tax-calculator",
+    lazy: () => import("@/pages/tools/income-tax-calculator"),
+    meta: {
+      title: "个税计算器",
+      description:
+        "工资薪金按累计预扣法逐月测算个税与到手收入，支持年终奖单独计税、税率盲区预警与并入综合所得对比，附明细导出",
+      category: "生活工具",
+      icon: Percent,
+      color: "bg-sky-600",
     },
   },
 ];
