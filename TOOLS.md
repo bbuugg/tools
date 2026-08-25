@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **40** 个工具，分为 7 个分类。
+> 共计 **41** 个工具，分为 7 个分类。
 
 ---
 
@@ -11,15 +11,18 @@
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
 | 1 | JSON 工具箱 | 格式化、转换、提取 JSON 数据的集成工具 | <https://tools.codeemo.cn/tools/json> |
-| 2 | 代码格式化 | 使用 Prettier 格式化 JavaScript、TypeScript、HTML、CSS、JSON、YAML、SQL 等多种语言 | <https://tools.codeemo.cn/tools/code-formatter> |
-| 3 | JWT 工具 | 生成、解码、验证 JSON Web Token，支持 HS256/HS384/HS512 算法 | <https://tools.codeemo.cn/tools/jwt> |
-| 4 | WebSocket 调试 | 连接 WebSocket 服务器，发送和接收消息，支持心跳、JSON 美化和消息记录 | <https://tools.codeemo.cn/tools/websocket> |
-| 5 | 正则表达式测试 | 实时测试正则表达式，高亮匹配结果，显示捕获组详情 | <https://tools.codeemo.cn/tools/regex-tester> |
-| 6 | Cron 表达式生成 | 可视化生成和解析 Cron 表达式，支持预设模板和下次执行时间预览 | <https://tools.codeemo.cn/tools/cron-generator> |
-| 7 | 字符串生成 | UUID/ULID 生成、随机字符串、密码生成，支持字符集自定义和批量导出 | <https://tools.codeemo.cn/tools/string-generator> |
-| 8 | 时间工具箱 | 时间戳转换、日期差值与加减计算、时区转换，开发常用的时间工具合集 | <https://tools.codeemo.cn/tools/time-tools> |
-| 9 | 进制转换 | 支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项 | <https://tools.codeemo.cn/tools/number-base-converter> |
-| 10 | PHP Serialize | PHP serialize/unserialize 在线工具，支持 JSON 与 PHP 序列化格式互转，附带格式说明 | <https://tools.codeemo.cn/tools/php-serialize> |
+| 2 | JSON 格式转换 | JSON、Excel、XML、YAML、CSV、SQL 格式之间互转，支持文件上传和多种输出选项 | <https://tools.codeemo.cn/tools/format-converter> |
+| 3 | 代码格式化 | 使用 Prettier 格式化 JavaScript、TypeScript、HTML、CSS、JSON、YAML、SQL 等多种语言 | <https://tools.codeemo.cn/tools/code-formatter> |
+| 4 | JWT 工具 | 生成、解码、验证 JSON Web Token，支持 HS256/HS384/HS512 算法 | <https://tools.codeemo.cn/tools/jwt> |
+| 5 | WebSocket 调试 | 连接 WebSocket 服务器，发送和接收消息，支持心跳、JSON 美化和消息记录 | <https://tools.codeemo.cn/tools/websocket> |
+| 6 | 正则表达式测试 | 实时测试正则表达式，高亮匹配结果，显示捕获组详情 | <https://tools.codeemo.cn/tools/regex-tester> |
+| 7 | Cron 表达式生成 | 可视化生成和解析 Cron 表达式，支持预设模板和下次执行时间预览 | <https://tools.codeemo.cn/tools/cron-generator> |
+| 8 | 字符串生成 | UUID/ULID 生成、随机字符串、密码生成，支持字符集自定义和批量导出 | <https://tools.codeemo.cn/tools/string-generator> |
+| 9 | Mock 数据生成器 | 批量生成中文姓名、手机号、身份证号（含合法校验码）、邮箱、地址、公司名等测试数据，支持字段组合与 JSON/CSV/TSV 导出，附身份证校验 | <https://tools.codeemo.cn/tools/mock-data-generator> |
+| 10 | 时间工具箱 | 时间戳转换、日期差值与加减计算、时区转换，开发常用的时间工具合集 | <https://tools.codeemo.cn/tools/time-tools> |
+| 11 | 进制转换 | 支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项 | <https://tools.codeemo.cn/tools/number-base-converter> |
+| 12 | 通用单位换算 | 长度（px/rem/cm/m/km/in/ft/yd/mi）、温度（°C/°F/K）、重量（mg/g/kg/t/oz/lb）、数据大小（bit/B/KB/MB/GB/TB）之间的实时换算 | <https://tools.codeemo.cn/tools/unit-converter> |
+| 13 | PHP Serialize | PHP serialize/unserialize 在线工具，支持 JSON 与 PHP 序列化格式互转，附带格式说明 | <https://tools.codeemo.cn/tools/php-serialize> |
 
 ---
 

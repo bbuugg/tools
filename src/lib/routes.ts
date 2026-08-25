@@ -8,6 +8,7 @@ import {
   Clock,
   ContactRound,
   Code2,
+  Database,
   Dumbbell,
   FileCode2,
   FileDiff,
@@ -177,6 +178,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: Shuffle,
       color: "bg-indigo-600",
+    },
+  },
+  {
+    path: "/tools/mock-data-generator",
+    lazy: () => import("@/pages/tools/mock-data-generator"),
+    meta: {
+      title: "Mock 数据生成器",
+      description:
+        "批量生成中文姓名、手机号、身份证号（含合法校验码）、邮箱、地址、公司名等测试数据，支持字段组合与 JSON/CSV/TSV 导出，附身份证校验",
+      category: "开发调试",
+      icon: Database,
+      color: "bg-fuchsia-600",
     },
   },
   {
