@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **34** 个工具，分为 7 个分类。
+> 共计 **39** 个工具，分为 7 个分类。
 
 ---
 
@@ -86,3 +86,12 @@
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
 | 1 | 音频工作室 | 在线音频工具，支持录音、上传、分贝分析、波形显示、格式转换（MP3/FLAC/OGG/WAV）及语音合成（TTS） | <https://tools.codeemo.cn/tools/audio-studio> |
+
+---
+
+## 生活工具
+
+| # | 工具名称 | 描述 | URL |
+|---|---------|------|-----|
+| 1 | 房贷计算器 | 商业 / 公积金 / 组合贷款月供计算，支持等额本息与等额本金两种还款方式，附完整还款计划表与 CSV 导出 | <https://tools.codeemo.cn/tools/mortgage-calculator> |
+| 2 | 体脂率计算器 | 通过 BMI 公式或围度测量法（美国海军法）估算体脂率，附脂肪量、瘦体重、腰臀比与 ACE 体脂分级对照 | <https://tools.codeemo.cn/tools/body-fat-calculator> |

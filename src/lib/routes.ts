@@ -8,6 +8,7 @@ import {
   Clock,
   ContactRound,
   Code2,
+  Dumbbell,
   FileCode2,
   FileDiff,
   FileEdit,
@@ -19,6 +20,7 @@ import {
   ImagePlus,
   Images,
   KeyRound,
+  Landmark,
   MessageCircle,
   Palette,
   QrCode,
@@ -83,6 +85,7 @@ const CATEGORY_ORDER = [
   "视频与动图",
   "社交模拟",
   "音频工具",
+  "生活工具",
 ];
 
 /** 所有工具路由配置（title / description / icon / color / category 统一存放于 meta） */
@@ -493,6 +496,30 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "音频工具",
       icon: AudioWaveform,
       color: "bg-purple-500",
+    },
+  },
+  {
+    path: "/tools/mortgage-calculator",
+    lazy: () => import("@/pages/tools/mortgage-calculator"),
+    meta: {
+      title: "房贷计算器",
+      description:
+        "商业 / 公积金 / 组合贷款月供计算，支持等额本息与等额本金两种还款方式，附完整还款计划表与 CSV 导出",
+      category: "生活工具",
+      icon: Landmark,
+      color: "bg-emerald-600",
+    },
+  },
+  {
+    path: "/tools/body-fat-calculator",
+    lazy: () => import("@/pages/tools/body-fat-calculator"),
+    meta: {
+      title: "体脂率计算器",
+      description:
+        "通过 BMI 公式或围度测量法（美国海军法）估算体脂率，附脂肪量、瘦体重、腰臀比与 ACE 体脂分级对照",
+      category: "生活工具",
+      icon: Dumbbell,
+      color: "bg-lime-600",
     },
   },
 ];
