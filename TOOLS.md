@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **49** 个工具，分为 7 个分类。
+> 共计 **51** 个工具，分为 7 个分类。
 
 ---
 
@@ -41,6 +41,7 @@
 | 5 | Markdown / PDF 互转 | Markdown 与 PDF 双向转换，支持实时预览、PDF 导出与 PDF 文本提取 | <https://tools.codeemo.cn/tools/markdown-pdf-converter> |
 | 6 | HTML 提取 | 从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源 | <https://tools.codeemo.cn/tools/html-extractor> |
 | 7 | CSS 渐变生成 | 可视化生成线性/径向渐变，支持自定义角度、颜色控制点和预设方案 | <https://tools.codeemo.cn/tools/css-gradient-generator> |
+| 8 | 简繁转换 | 基于 OpenCC 词典的简体繁体离线互转，支持通用繁体、台湾正体（含词汇转换）与香港繁体，词组级映射正确处理头发／乾淨／幹部等一对多用字 | <https://tools.codeemo.cn/tools/chinese-convert> |
 
 ---
 
@@ -107,3 +108,4 @@
 | 4 | 复利计算器 | 一次性投入与每月定投的复利测算，支持存款目标倒推每月需存金额，附增长曲线图与年度明细表 | <https://tools.codeemo.cn/tools/compound-interest-calculator> |
 | 5 | 提前还贷计算器 | 测算部分或全部提前还贷能省多少利息、缩短多少年限，支持等额本息/等额本金与缩短期限、减少月供两种方案对比 | <https://tools.codeemo.cn/tools/prepayment-calculator> |
 | 6 | 每日热量计算 | BMR / TDEE 计算：Mifflin-St Jeor、Harris-Benedict、Katch-McArdle 三公式基础代谢 × 活动系数，给出减脂 / 维持 / 增肌五档建议摄入与三大营养素分配 | <https://tools.codeemo.cn/tools/calorie-calculator> |
+| 7 | 数字金额大写 | 人民币小写金额转中文大写（¥1234.56 → 壹仟贰佰叁拾肆元伍角陆分），遵循央行票据书写规则处理零与整，支持负号、千分位输入与万亿级金额 | <https://tools.codeemo.cn/tools/rmb-uppercase> |

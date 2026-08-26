@@ -2,6 +2,7 @@ import {
   AppWindow,
   AudioWaveform,
   ArrowLeftRight,
+  Banknote,
   Braces,
   Calculator,
   CalendarClock,
@@ -26,6 +27,7 @@ import {
   Keyboard,
   KeyRound,
   Landmark,
+  Languages,
   MessageCircle,
   Network,
   Palette,
@@ -371,6 +373,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     },
   },
   {
+    path: "/tools/chinese-convert",
+    lazy: () => import("@/pages/tools/chinese-convert"),
+    meta: {
+      title: "简繁转换",
+      description:
+        "基于 OpenCC 词典的简体繁体离线互转，支持通用繁体、台湾正体（含词汇转换）与香港繁体三种目标，词组级映射正确处理头发／乾淨等一对多用字",
+      category: "文本与转换",
+      icon: Languages,
+      color: "bg-lime-500",
+    },
+  },
+  {
     path: "/tools/base64-image",
     lazy: () => import("@/pages/tools/base64-image"),
     meta: {
@@ -637,6 +651,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "生活工具",
       icon: HandCoins,
       color: "bg-orange-700",
+    },
+  },
+  {
+    path: "/tools/rmb-uppercase",
+    lazy: () => import("@/pages/tools/rmb-uppercase"),
+    meta: {
+      title: "数字金额大写",
+      description:
+        "人民币小写金额转中文大写（¥1234.56 → 壹仟贰佰叁拾肆元伍角陆分），遵循央行票据书写规则处理零与整，支持负数与万亿级金额",
+      category: "生活工具",
+      icon: Banknote,
+      color: "bg-emerald-700",
     },
   },
   {

@@ -43,7 +43,7 @@ importers:
         version: 5.0.3
       cropperjs:
         specifier: ^1.5.13
-        version: 1.5.13
+        version: 1.6.3
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -92,6 +92,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      opencc-js:
+        specifier: ^1.4.2
+        version: 1.4.2
       pdfjs-dist:
         specifier: ^6.1.200
         version: 6.2.108
@@ -1893,8 +1896,8 @@ packages:
     engines: {node: '>=0.8'}
     hasBin: true
 
-  cropperjs@1.5.13:
-    resolution: {integrity: sha512-by7jKAo73y5/Do0K6sxdTKHgndY0NMjG2bEdgeJxycbcmHuCiMXqw8sxy5C5Y5WTOTcDGmbT7Sr5CgKOXR06OA==}
+  cropperjs@1.6.3:
+    resolution: {integrity: sha512-BRb0PRIzjbfM5n+i6L2D85pSbXI/w6cnnwb9W9cRKgAmbiP+OjDeq+Irhd86IujZDXm/7JWECfscllFIdrlmfw==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -2974,6 +2977,9 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
+
+  opencc-js@1.4.2:
+    resolution: {integrity: sha512-EdcspgdROiCCZDM+jZR6Pa670xW+EW2QhctPBQ8gRjg6lrx4IHEl+2s+kt5izk/TkxVRgdWuFgaGkaEdIUfdaw==}
 
   option@0.2.4:
     resolution: {integrity: sha512-pkEqbDyl8ou5cpq+VsnQbe/WlEy5qS7xPzMS1U55OCG9KPvwFD46zDbxQIj3egJSFc3D+XhYOPUzz49zQAVy7A==}
@@ -5471,7 +5477,7 @@ snapshots:
 
   crc-32@1.2.2: {}
 
-  cropperjs@1.5.13: {}
+  cropperjs@1.6.3: {}
 
   cross-spawn@7.0.6:
     dependencies:
@@ -6441,6 +6447,8 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
+  opencc-js@1.4.2: {}
+
   option@0.2.4: {}
 
   optionator@0.9.4:
@@ -6693,7 +6701,7 @@ snapshots:
 
   react-cropper@2.3.3(react@19.2.8):
     dependencies:
-      cropperjs: 1.5.13
+      cropperjs: 1.6.3
       react: 19.2.8
 
   react-day-picker@10.0.1(@types/react@19.2.18)(react@19.2.8):
