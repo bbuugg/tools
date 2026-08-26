@@ -24,6 +24,7 @@ import {
   KeyRound,
   Landmark,
   MessageCircle,
+  Network,
   Palette,
   Percent,
   PiggyBank,
@@ -249,6 +250,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: Keyboard,
       color: "bg-violet-700",
+    },
+  },
+  {
+    path: "/tools/subnet-calculator",
+    lazy: () => import("@/pages/tools/subnet-calculator"),
+    meta: {
+      title: "子网计算器",
+      description:
+        "输入 CIDR 即时计算子网掩码、通配符、可用主机数与网段范围，附二进制网络位视图、子网划分列表与 /0-/32 掩码速查表",
+      category: "开发调试",
+      icon: Network,
+      color: "bg-sky-700",
     },
   },
   {
