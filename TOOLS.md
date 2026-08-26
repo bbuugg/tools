@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **46** 个工具，分为 7 个分类。
+> 共计 **48** 个工具，分为 7 个分类。
 
 ---
 
@@ -104,3 +104,5 @@
 | 2 | 体脂率计算器 | 通过 BMI 公式或围度测量法（美国海军法）估算体脂率，附脂肪量、瘦体重、腰臀比与 ACE 体脂分级对照 | <https://tools.codeemo.cn/tools/body-fat-calculator> |
 | 3 | 个税计算器 | 工资薪金按累计预扣法逐月测算个税与到手收入，支持年终奖单独计税、税率盲区预警与并入综合所得对比，附明细导出 | <https://tools.codeemo.cn/tools/income-tax-calculator> |
 | 4 | 复利计算器 | 一次性投入与每月定投的复利测算，支持存款目标倒推每月需存金额，附增长曲线图与年度明细表 | <https://tools.codeemo.cn/tools/compound-interest-calculator> |
+| 5 | 提前还贷计算器 | 测算部分或全部提前还贷能省多少利息、缩短多少年限，支持等额本息/等额本金与缩短期限、减少月供两种方案对比 | <https://tools.codeemo.cn/tools/prepayment-calculator> |
+| 6 | 每日热量计算 | BMR / TDEE 计算：Mifflin-St Jeor、Harris-Benedict、Katch-McArdle 三公式基础代谢 × 活动系数，给出减脂 / 维持 / 增肌五档建议摄入与三大营养素分配 | <https://tools.codeemo.cn/tools/calorie-calculator> |

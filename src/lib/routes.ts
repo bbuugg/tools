@@ -15,6 +15,8 @@ import {
   FileEdit,
   FileText,
   Film,
+  Flame,
+  HandCoins,
   Hash,
   ImageDown,
   Image as ImageIcon,
@@ -611,6 +613,30 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "生活工具",
       icon: PiggyBank,
       color: "bg-blue-700",
+    },
+  },
+  {
+    path: "/tools/prepayment-calculator",
+    lazy: () => import("@/pages/tools/prepayment-calculator"),
+    meta: {
+      title: "提前还贷计算器",
+      description:
+        "测算部分或全部提前还贷能省多少利息、缩短多少年限，支持等额本息/等额本金与缩短期限、减少月供两种方案对比",
+      category: "生活工具",
+      icon: HandCoins,
+      color: "bg-orange-700",
+    },
+  },
+  {
+    path: "/tools/calorie-calculator",
+    lazy: () => import("@/pages/tools/calorie-calculator"),
+    meta: {
+      title: "每日热量计算",
+      description:
+        "BMR / TDEE 计算：Mifflin-St Jeor、Harris-Benedict、Katch-McArdle 三公式基础代谢 × 活动系数，给出减脂 / 维持 / 增肌五档建议摄入与三大营养素分配",
+      category: "生活工具",
+      icon: Flame,
+      color: "bg-rose-600",
     },
   },
 ];

@@ -352,39 +352,41 @@ export default function TotpGeneratorPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-[auto_1fr_1fr] gap-3 items-end">
+                <div className="space-y-3">
                   <Field label="算法">
                     <Segmented<Algo>
                       options={[
                         { value: "SHA-1", label: "SHA1" },
-                        { value: "SHA-256", label: "256" },
-                        { value: "SHA-512", label: "512" },
+                        { value: "SHA-256", label: "SHA256" },
+                        { value: "SHA-512", label: "SHA512" },
                       ]}
                       value={algo}
                       onChange={setAlgoOverride}
                     />
                   </Field>
-                  <Field label="位数">
-                    <Segmented<"6" | "8">
-                      options={[
-                        { value: "6", label: "6 位" },
-                        { value: "8", label: "8 位" },
-                      ]}
-                      value={digitsOverride === "8" ? "8" : "6"}
-                      onChange={setDigitsOverride}
-                    />
-                  </Field>
-                  <Field label="周期">
-                    <Segmented<"15" | "30" | "60">
-                      options={[
-                        { value: "15", label: "15s" },
-                        { value: "30", label: "30s" },
-                        { value: "60", label: "60s" },
-                      ]}
-                      value={["15", "60"].includes(periodOverride) ? (periodOverride as "15" | "60") : "30"}
-                      onChange={setPeriodOverride}
-                    />
-                  </Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="位数">
+                      <Segmented<"6" | "8">
+                        options={[
+                          { value: "6", label: "6 位" },
+                          { value: "8", label: "8 位" },
+                        ]}
+                        value={digitsOverride === "8" ? "8" : "6"}
+                        onChange={setDigitsOverride}
+                      />
+                    </Field>
+                    <Field label="周期">
+                      <Segmented<"15" | "30" | "60">
+                        options={[
+                          { value: "15", label: "15s" },
+                          { value: "30", label: "30s" },
+                          { value: "60", label: "60s" },
+                        ]}
+                        value={["15", "60"].includes(periodOverride) ? (periodOverride as "15" | "60") : "30"}
+                        onChange={setPeriodOverride}
+                      />
+                    </Field>
+                  </div>
                 </div>
 
                 {/* 保存为账户 */}
