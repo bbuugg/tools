@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **42** 个工具，分为 7 个分类。
+> 共计 **43** 个工具，分为 7 个分类。
 
 ---
 
@@ -23,6 +23,7 @@
 | 11 | 进制转换 | 支持 2-36 进制之间的相互转换，提供大写、前缀、分组等高级选项 | <https://tools.codeemo.cn/tools/number-base-converter> |
 | 12 | 通用单位换算 | 长度（px/rem/cm/m/km/in/ft/yd/mi）、温度（°C/°F/K）、重量（mg/g/kg/t/oz/lb）、数据大小（bit/B/KB/MB/GB/TB）之间的实时换算 | <https://tools.codeemo.cn/tools/unit-converter> |
 | 13 | PHP Serialize | PHP serialize/unserialize 在线工具，支持 JSON 与 PHP 序列化格式互转，附带格式说明 | <https://tools.codeemo.cn/tools/php-serialize> |
+| 14 | 键盘按键测试 | 可视化键盘按亮测试，支持 Windows / Mac 双布局，实时显示 event.key / code / keyCode 与按键位置，附坏键排查、测试进度统计与事件日志 | <https://tools.codeemo.cn/tools/keyboard-tester> |
 
 ---
 

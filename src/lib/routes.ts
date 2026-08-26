@@ -20,6 +20,7 @@ import {
   Image as ImageIcon,
   ImagePlus,
   Images,
+  Keyboard,
   KeyRound,
   Landmark,
   MessageCircle,
@@ -236,6 +237,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: Braces,
       color: "bg-purple-600",
+    },
+  },
+  {
+    path: "/tools/keyboard-tester",
+    lazy: () => import("@/pages/tools/keyboard-tester"),
+    meta: {
+      title: "键盘按键测试",
+      description:
+        "可视化键盘按亮测试，支持 Windows / Mac 双布局切换，实时显示 event.key / code / keyCode，附坏键排查与按键事件日志",
+      category: "开发调试",
+      icon: Keyboard,
+      color: "bg-violet-700",
     },
   },
   {

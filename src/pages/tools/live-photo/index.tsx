@@ -12,7 +12,7 @@ export default function LivePhotoPage() {
   return (
     <>
       <div>
-        <div className="max-w-5xl mx-auto px-4 py-6 space-y-4">
+        <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
           <Tabs value={mode} onValueChange={setMode}>
             <TabsList className="w-full max-w-xs">
