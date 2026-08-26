@@ -30,6 +30,7 @@ import {
   PiggyBank,
   QrCode,
   Radio,
+  RectangleHorizontal,
   Regex,
   Shuffle,
   Spline,
@@ -262,6 +263,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: Network,
       color: "bg-sky-700",
+    },
+  },
+  {
+    path: "/tools/placeholder-image",
+    lazy: () => import("@/pages/tools/placeholder-image"),
+    meta: {
+      title: "占位图生成器",
+      description:
+        "自定义尺寸、背景与文字颜色、占位文字，实时预览并导出 SVG / PNG 或复制 Data URI 直接内嵌，前端切图常用",
+      category: "开发调试",
+      icon: RectangleHorizontal,
+      color: "bg-amber-700",
     },
   },
   {
