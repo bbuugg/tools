@@ -234,9 +234,11 @@ export default function MarkdownPdfConverterPage() {
     setPdfFileName(file.name);
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      // 使用 Vite 的 ?url 导入来获取 worker URL，避免 public/ 下 .mjs 文件的 MIME type 问题
-      const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
-      pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+      // 使用 Vite 的 ?worker 导入：Vite 会把 worker 打包成独立 .js chunk，
+      // 并返回一个 Worker 构造函数。彻底规避服务器对 .mjs 返回
+      // application/octet-stream 的 MIME 问题。
+      const PdfWorker = (await import("pdfjs-dist/build/pdf.worker.min.mjs?worker")).default;
+      pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 
       const data = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data }).promise;
