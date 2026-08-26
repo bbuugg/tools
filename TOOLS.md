@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **48** 个工具，分为 7 个分类。
+> 共计 **49** 个工具，分为 7 个分类。
 
 ---
 
@@ -56,6 +56,7 @@
 | 6 | Favicon 生成 | 上传图片裁剪并生成多种尺寸的 Favicon，支持 ICO/PNG/JPG 格式 | <https://tools.codeemo.cn/tools/favicon-generator> |
 | 7 | 二维码工具 | 生成和识别二维码，支持自定义颜色、样式、Logo 和批量生成 | <https://tools.codeemo.cn/tools/qr-code> |
 | 8 | 颜色选择 | HEX / RGB / CMYK 互转、图片取色与颜色预览工具 | <https://tools.codeemo.cn/tools/color-picker> |
+| 9 | 颜色对比度检查器 | 前景 / 背景色 WCAG 对比度计算，AA / AAA 达标矩阵（正常文本、大号文本、UI 组件）与实时文字预览，附一键微调明度至达标的修正建议 | <https://tools.codeemo.cn/tools/color-contrast-checker> |
 
 ---
 

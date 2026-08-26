@@ -8,6 +8,7 @@ import {
   Clock,
   ContactRound,
   Code2,
+  Contrast,
   Database,
   Dumbbell,
   FileCode2,
@@ -455,6 +456,17 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "图像处理",
       icon: Palette,
       color: "bg-red-700",
+    },
+  },
+  {
+    path: "/tools/color-contrast-checker",
+    lazy: () => import("@/pages/tools/color-contrast-checker"),
+    meta: {
+      title: "颜色对比度检查器",
+      description: "前景 / 背景色 WCAG 对比度计算，AA / AAA 达标矩阵与实时文字预览，附一键微调明度至达标的修正建议",
+      category: "图像处理",
+      icon: Contrast,
+      color: "bg-cyan-700",
     },
   },
   {
