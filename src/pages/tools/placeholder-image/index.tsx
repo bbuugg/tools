@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ColorPickerField } from "@/components/ui/color-picker-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeftRight, Check, Copy, Download, TriangleAlert } from "lucide-react";
@@ -139,22 +140,6 @@ function Segmented<T extends string>({
   );
 }
 
-function ColorField({ label, color, onChange }: { label: string; color: string; onChange: (v: string) => void }) {
-  return (
-    <Field label={label}>
-      <div className="flex items-center gap-2">
-        <input
-          type="color"
-          value={isHexColor(color) ? color : "#000000"}
-          onChange={(e) => onChange(e.target.value)}
-          className="size-9 shrink-0 cursor-pointer rounded-md border border-border bg-card p-0.5"
-        />
-        <Input value={color} onChange={(e) => onChange(e.target.value)} className="font-mono" spellCheck={false} />
-      </div>
-    </Field>
-  );
-}
-
 // ─── 页面 ────────────────────────────────────────────────────
 
 type CodeView = "svg" | "uri";
@@ -284,8 +269,12 @@ export default function PlaceholderImagePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <ColorField label="背景色" color={bg} onChange={setBg} />
-            <ColorField label="文字色" color={fg} onChange={setFg} />
+            <Field label="背景色">
+              <ColorPickerField value={bg} onChange={setBg} />
+            </Field>
+            <Field label="文字色">
+              <ColorPickerField value={fg} onChange={setFg} />
+            </Field>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5">

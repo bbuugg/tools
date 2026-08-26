@@ -33,6 +33,7 @@ import {
   RectangleHorizontal,
   Regex,
   Shuffle,
+  ShieldCheck,
   Spline,
   Stamp,
   Type,
@@ -275,6 +276,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "开发调试",
       icon: RectangleHorizontal,
       color: "bg-amber-700",
+    },
+  },
+  {
+    path: "/tools/totp-generator",
+    lazy: () => import("@/pages/tools/totp-generator"),
+    meta: {
+      title: "TOTP 动态口令生成器",
+      description:
+        "粘贴两步验证密钥（Base32 或 otpauth:// 链接）本地计算 6/8 位动态口令，支持 SHA1/256/512 与自定义周期，附倒计时与多账户保存，全程 WebCrypto 不出网",
+      category: "开发调试",
+      icon: ShieldCheck,
+      color: "bg-teal-700",
     },
   },
   {

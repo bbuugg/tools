@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **45** 个工具，分为 7 个分类。
+> 共计 **46** 个工具，分为 7 个分类。
 
 ---
 
@@ -26,6 +26,7 @@
 | 14 | 键盘按键测试 | 可视化键盘按亮测试，支持 Windows / Mac 双布局，实时显示 event.key / code / keyCode 与按键位置，附坏键排查、测试进度统计与事件日志 | <https://tools.codeemo.cn/tools/keyboard-tester> |
 | 15 | 子网计算器 | 输入 CIDR 即时计算子网掩码、通配符、可用主机数与网段范围，附二进制网络位视图、子网划分列表与掩码速查表 | <https://tools.codeemo.cn/tools/subnet-calculator> |
 | 16 | 占位图生成器 | 自定义尺寸、颜色与占位文字生成占位图，实时预览并导出 SVG / PNG 或复制 Data URI 直接内嵌 | <https://tools.codeemo.cn/tools/placeholder-image> |
+| 17 | TOTP 动态口令生成器 | 粘贴两步验证密钥本地计算 6/8 位动态口令（RFC 6238），支持 SHA1/256/512、otpauth 链接解析、倒计时与多账户保存，全程 WebCrypto 不出网 | <https://tools.codeemo.cn/tools/totp-generator> |
 
 ---
 
