@@ -1,4 +1,5 @@
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTheme } from "next-themes";
 import { useEffect, useRef } from "react";
 import './index.css';
 

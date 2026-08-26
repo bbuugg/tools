@@ -47,12 +47,12 @@ export default function Layout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2 bg-background/80 px-4 backdrop-blur-sm">
-          <SidebarTrigger size="icon-lg" />
-          <div className="flex min-w-0 items-baseline gap-0.5 ml-2 flex-col">
-            <h1 className="truncate font-semibold text-lg sm:text-md">{title}</h1>
+        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+          <SidebarTrigger className="size-10" />
+          <div className="flex min-w-0 flex-col justify-center gap-0.5">
+            <h1 className="truncate text-lg leading-tight font-semibold">{title}</h1>
             {description && (
-              <p className="hidden truncate text-xs text-muted-foreground sm:block">
+              <p className="hidden truncate text-xs leading-tight text-muted-foreground sm:block">
                 {description}
               </p>
             )}

@@ -27,12 +27,12 @@ export function ModeToggle() {
   return (
     <Button
       variant="ghost"
-      size="icon"
+      size="icon-lg"
       aria-label={`当前主题：${label}，点击切换到${nextLabel}`}
       title={`当前：${label} · 点击切换到${nextLabel}`}
       onClick={() => setTheme(next)}
     >
-      <Icon className="size-4" />
+      <Icon className="size-[18px]" />
       <span className="sr-only">切换主题</span>
     </Button>
   )
