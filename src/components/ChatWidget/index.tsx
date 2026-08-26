@@ -12,16 +12,21 @@ import './index.css';
  * - SDK 是无状态的，会话持久化 / 访客 ID / 认证令牌等「宿主层」职责在这里完成：
  *   · authToken 取壳子登录态（localStorage 的 shell_token）
  *   · conversationId / guestId 存入 sessionStorage，刷新/离开返回后能续接
+ * - 主题双向同步：init 传入宿主当前主题；宿主切换 → setTheme 下发，
+ *   助手内切换 → onThemeChange 回写 next-themes。
  *
  * 接口域名与智能体 ID 通过 props 覆盖，默认读取环境变量
  * VITE_AGENT_SERVER_URL / VITE_AGENT_ID（在 web/.env.<mode> 中配置）。
  */
 
 // ── AgentPlugin UMD 全局的最小类型声明（SDK 仓库不带 TS 类型） ──
+/** SDK 主题枚举：亮色 / 暗色 / 跟随系统（与 next-themes 的取值一致） */
+type AgentTheme = "light" | "dark" | "system"
 interface AgentChatInstance {
     newConversation: () => void
     destroy: () => void
     setMobile: (mobile: boolean) => void
+    setTheme: (theme: AgentTheme) => void
 }
 interface AgentInitOptions {
     serverUrl: string
@@ -31,8 +36,10 @@ interface AgentInitOptions {
     authToken?: string | null
     guestId?: string
     mobile?: boolean
+    theme?: AgentTheme
     onConversationIdChange?: (id: string | null) => void
     onStatusChange?: (status: string) => void
+    onThemeChange?: (theme: AgentTheme) => void
 }
 interface AgentPluginGlobal {
     init: (options: AgentInitOptions) => Promise<AgentChatInstance>
@@ -81,6 +88,11 @@ function loadUmd(): Promise<void> {
     })
 }
 
+/** 归一化主题值：非法值回退到 system */
+function normalizeTheme(t: string | undefined | null): AgentTheme {
+    return t === "light" || t === "dark" || t === "system" ? t : "system"
+}
+
 /** 生成并持久化匿名访客 ID */
 function getGuestId(): string {
     let id = sessionStorage.getItem(GUEST_KEY)
@@ -105,6 +117,19 @@ export default function AgentChat({
 }: AgentChatProps) {
     const instanceRef = useRef<AgentChatInstance | null>(null)
     const isMobile = useIsMobile()
+    const { theme, setTheme } = useTheme()
+
+    // init() 是异步的，闭包里捕获的值在 resolve 时可能已过期；
+    // 用 ref 让异步回调总能拿到最新值（同 ainav 的做法）。
+    const isMobileRef = useRef(isMobile)
+    isMobileRef.current = isMobile
+    const themeRef = useRef(theme)
+    themeRef.current = theme
+    // next-themes 的 setTheme 内部依赖 theme 状态（useCallback([theme])），
+    // 每次切主题都会生成新引用；绝不能进 init effect 的依赖数组，
+    // 否则切一次主题就会 destroy + 重新 init（重新请求 agent 接口）。
+    const setThemeRef = useRef(setTheme)
+    setThemeRef.current = setTheme
 
     useEffect(() => {
         let cancelled = false;
@@ -119,10 +144,16 @@ export default function AgentChat({
                     agentId,
                     conversationId: sessionStorage.getItem(CONV_KEY),
                     guestId: getGuestId(),
-                    mobile: isMobile,
+                    mobile: isMobileRef.current,
+                    // 初始主题与宿主保持一致，避免先闪一下默认亮色
+                    theme: normalizeTheme(themeRef.current),
                     onConversationIdChange: (id: string | null) => {
                         if (id) sessionStorage.setItem(CONV_KEY, id)
                         else sessionStorage.removeItem(CONV_KEY)
+                    },
+                    // 聊天助手内切换主题 → 同步到宿主（next-themes 会写入 localStorage 并切换 class）
+                    onThemeChange: (t: AgentTheme) => {
+                        setThemeRef.current(t)
                     },
                 })
 
@@ -131,6 +162,9 @@ export default function AgentChat({
                     return
                 }
                 instanceRef.current = handle
+                // init 异步期间宿主主题 / 视口可能已变化，用最新值补一次同步
+                handle.setTheme(normalizeTheme(themeRef.current))
+                handle.setMobile(isMobileRef.current)
             } catch (e) {
                 if (!cancelled) {
                     console.error("[AgentChat] SDK 初始化失败", e)
@@ -149,6 +183,11 @@ export default function AgentChat({
     useEffect(() => {
         instanceRef.current?.setMobile(isMobile)
     }, [isMobile])
+
+    // ── 宿主主题变化 → 同步到聊天助手（助手内切换则由 onThemeChange 反向同步） ──
+    useEffect(() => {
+        instanceRef.current?.setTheme(normalizeTheme(theme))
+    }, [theme])
 
     return (
         <></>

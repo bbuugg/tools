@@ -25,6 +25,7 @@ import {
   MessageCircle,
   Palette,
   Percent,
+  PiggyBank,
   QrCode,
   Radio,
   Regex,
@@ -546,6 +547,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "生活工具",
       icon: Percent,
       color: "bg-sky-600",
+    },
+  },
+  {
+    path: "/tools/compound-interest-calculator",
+    lazy: () => import("@/pages/tools/compound-interest-calculator"),
+    meta: {
+      title: "复利计算器",
+      description:
+        "一次性投入与每月定投的复利测算，支持存款目标倒推每月需存金额，附增长曲线图与年度明细表",
+      category: "生活工具",
+      icon: PiggyBank,
+      color: "bg-blue-700",
     },
   },
 ];
