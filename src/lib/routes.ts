@@ -20,6 +20,7 @@ import {
   FileEdit,
   FileText,
   Film,
+  Filter,
   Flame,
   HandCoins,
   Hash,
@@ -110,11 +111,22 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     path: "/tools/json",
     lazy: () => import("@/pages/tools/json"),
     meta: {
-      title: "JSON 格式化与提取",
-      description: "JSON 格式化、压缩、排序、转义，以及 JSONPath、字段提取和键值提取",
+      title: "JSON 格式化",
+      description: "JSON 格式化、压缩、排序 Key、转义 / 反转义 Unicode 字符串",
       category: "开发调试",
-      icon: Code2,
+      icon: Braces,
       color: "bg-blue-500",
+    },
+  },
+  {
+    path: "/tools/json-extract",
+    lazy: () => import("@/pages/tools/json-extract"),
+    meta: {
+      title: "JSON 提取",
+      description: "通过 JSONPath、字段提取、键值提取从 JSON 中筛选数据",
+      category: "开发调试",
+      icon: Filter,
+      color: "bg-cyan-500",
     },
   },
   {

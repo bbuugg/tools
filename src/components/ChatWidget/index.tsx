@@ -50,7 +50,7 @@ declare global {
     }
 }
 
-const UMD_SRC = "https://www.codeemo.cn/sdk/v0.0.1/agent-plugin.umd.js?v=0.1"
+const UMD_SRC = "https://www.codeemo.cn/sdk/v0.0.1/agent-plugin.umd.js?v=0.2"
 
 // TODO: 在 web/.env / .env.test / .env.production 中填入真实值
 const AGENT_SERVER_URL =
