@@ -27,14 +27,18 @@ src/
     barcode-reader.ts      # 条形码识别封装（示例：依赖库封装）
   components/
     ui/                    # 可复用组件：button, input, select, tabs, dialog, ...
-    layout/Layout.tsx      # 全局布局（含侧边栏、加载态）
+    layout/Layout.tsx      # 全局布局：header + 标签栏 + 多标签内容区
+    layout/tab-bar.tsx     # header 下方的标签栏（切换 / 关闭 / 更多操作）
+    layout/tabs-context.ts # 标签上下文与 useTabs()
+    layout/tabs-provider.tsx # 标签状态：打开 / 关闭 / 持久化到 sessionStorage
   pages/
     home/                  # 首页：消费 TOOL_CATEGORIES 自动渲染卡片
     not-found.tsx
     tools/<tool-name>/index.tsx   # 每个工具一个文件夹，默认导出页面组件
 ```
 
-> 路径别名 `@` → `src/`（见 `vite.config.ts` 与 `tsconfig*.json`）,
+> 路径别名 `@` → `src/`
+> 页面组件注册表：`src/lib/tabs.ts`（路径 → 懒加载组件 + 标签标题/图标）（见 `vite.config.ts` 与 `tsconfig*.json`）,
 > import 一律用 `@/...`，不要写相对路径越层引用。
 
 ## 3. 新增一个工具（标准流程）
@@ -74,6 +78,18 @@ import { Wand2 } from "lucide-react";
 
 `category` 只能是 `CATEGORY_ORDER`（`routes.ts` 顶部）中的值之一；
 新分类会**自动**在首页与侧边栏按该顺序出现，无需额外注册。
+
+### 3.1 多标签机制（写工具时必读）
+
+所有页面运行在 `components/layout/tabs-provider.tsx` 的**多标签容器**中：
+
+- 一个路径 = 一个标签，激活标签 = 当前 URL；标签列表存 `sessionStorage`，刷新后恢复。
+- 切换标签只是**隐藏**（`hidden` 属性）页面组件，**不会卸载**，所以工具里的输入、
+  上传的文件、编辑器内容都会原样保留——这是有意为之，不要依赖「切走即重置」。
+- 因此组件是常驻的：在 `useEffect` 里启动的定时器、`MediaStream`、`WebSocket`、
+  轮询等，务必在 cleanup 中释放，否则切走后仍在后台运行。
+- 标签栏中的「重新加载」会重新挂载页面（等价于强制重置状态）。
+- 路由表只有一条 `*` 规则（`App.tsx`），页面内容不通过 `<Outlet />` 渲染。
 
 ## 4. 依赖安装
 
