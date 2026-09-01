@@ -3,6 +3,7 @@ import {
   AudioWaveform,
   ArrowLeftRight,
   Banknote,
+  Barcode,
   Braces,
   Calculator,
   CalendarClock,
@@ -300,7 +301,8 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     lazy: () => import("@/pages/tools/text-diff"),
     meta: {
       title: "文本对比",
-      description: "逐行或逐词对比两段文本的差异，支持并排与统一视图，可忽略空白与大小写",
+      description:
+        "基于 Monaco Diff 编辑器对比两段文本或本地文件，支持并排 / 内联视图、语法高亮、差异跳转与 unified diff 导出",
       category: "文本与转换",
       icon: FileDiff,
       color: "bg-amber-500",
@@ -459,6 +461,18 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
       category: "图像处理",
       icon: QrCode,
       color: "bg-slate-700",
+    },
+  },
+  {
+    path: "/tools/barcode",
+    lazy: () => import("@/pages/tools/barcode"),
+    meta: {
+      title: "条形码工具",
+      description:
+        "22 种一维码与二维码生成（EAN/UPC/Code128/Code39/ITF/Codabar/QR/DM/PDF417），支持批量、校验位计算与 PNG/SVG 导出；识别侧支持图片与摄像头实时扫描，自动放大、旋转、反色重试",
+      category: "图像处理",
+      icon: Barcode,
+      color: "bg-neutral-700",
     },
   },
   {
