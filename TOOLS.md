@@ -10,7 +10,7 @@
 
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
-| 1 | JSON 工具箱 | 格式化、转换、提取 JSON 数据的集成工具 | <https://tools.codeemo.cn/tools/json> |
+| 1 | JSON 格式化 | 格式化工具 | <https://tools.codeemo.cn/tools/json-formatter> |
 | 2 | JSON 格式转换 | JSON、Excel、XML、YAML、CSV、SQL 格式之间互转，支持文件上传和多种输出选项 | <https://tools.codeemo.cn/tools/format-converter> |
 | 3 | 代码格式化 | 使用 Prettier 格式化 JavaScript、TypeScript、HTML、CSS、JSON、YAML、SQL 等多种语言 | <https://tools.codeemo.cn/tools/code-formatter> |
 | 4 | JWT 工具 | 生成、解码、验证 JSON Web Token，支持 HS256/HS384/HS512 算法 | <https://tools.codeemo.cn/tools/jwt> |

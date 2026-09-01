@@ -86,7 +86,7 @@ export interface ToolCategory {
 
 /** 工具路由定义（path + 懒加载 + meta） */
 export interface ToolRouteDef {
-  /** 路由路径，如 /tools/json */
+  /** 路由路径，如 /tools/json-formatter */
   path: string;
   /** 懒加载导入函数 */
   lazy: () => Promise<{ default: React.ComponentType }>;
@@ -108,8 +108,8 @@ const CATEGORY_ORDER = [
 /** 所有工具路由配置（title / description / icon / color / category 统一存放于 meta） */
 export const TOOL_ROUTES: ToolRouteDef[] = [
   {
-    path: "/tools/json",
-    lazy: () => import("@/pages/tools/json"),
+    path: "/tools/json-formatter",
+    lazy: () => import("@/pages/tools/json-formatter"),
     meta: {
       title: "JSON 格式化",
       description: "JSON 格式化、压缩、排序 Key、转义 / 反转义 Unicode 字符串",
