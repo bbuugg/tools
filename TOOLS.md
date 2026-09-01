@@ -2,7 +2,7 @@
 
 > 基础地址：<https://tools.codeemo.cn>
 >
-> 共计 **51** 个工具，分为 7 个分类。
+> 共计 **54** 个工具，分为 7 个分类。
 
 ---
 
@@ -35,13 +35,16 @@
 | # | 工具名称 | 描述 | URL |
 |---|---------|------|-----|
 | 1 | 文本对比 | 逐行或逐词对比两段文本的差异，支持并排与统一视图，可忽略空白与大小写 | <https://tools.codeemo.cn/tools/text-diff> |
-| 2 | 文本处理工具 | 编码转换（Base64、Base64URL、Unicode、HTML实体、HTML转义、Quoted-Printable）、加密哈希（MD5、SHA1、SHA256、SHA512、AES）、空格清理、YML/Properties 互转，附带文本统计 | <https://tools.codeemo.cn/tools/text-processor> |
-| 3 | HTML / Markdown 互转 | Markdown 与 HTML 双向实时转换，支持示例加载和结果复制 | <https://tools.codeemo.cn/tools/html-markdown-converter> |
-| 4 | Markdown / Word 互转 | Markdown 和 Word（.docx）双向互转，支持实时预览和导出 | <https://tools.codeemo.cn/tools/markdown-word-converter> |
-| 5 | Markdown / PDF 互转 | Markdown 与 PDF 双向转换，支持实时预览、PDF 导出与 PDF 文本提取 | <https://tools.codeemo.cn/tools/markdown-pdf-converter> |
-| 6 | HTML 提取 | 从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源 | <https://tools.codeemo.cn/tools/html-extractor> |
-| 7 | CSS 渐变生成 | 可视化生成线性/径向渐变，支持自定义角度、颜色控制点和预设方案 | <https://tools.codeemo.cn/tools/css-gradient-generator> |
-| 8 | 简繁转换 | 基于 OpenCC 词典的简体繁体离线互转，支持通用繁体、台湾正体（含词汇转换）与香港繁体，词组级映射正确处理头发／乾淨／幹部等一对多用字 | <https://tools.codeemo.cn/tools/chinese-convert> |
+| 2 | 编码转换 | URL、Base64、Base64URL、Unicode、HTML 实体、HTML 转义、Quoted-Printable 七种格式的编码与解码，附带文本统计 | <https://tools.codeemo.cn/tools/text-encoder> |
+| 3 | 加密哈希 | MD5、SHA1、SHA256、SHA512 哈希计算与 AES 对称加解密，全程本地运算不出网 | <https://tools.codeemo.cn/tools/hash-crypto> |
+| 4 | 空格清理 | 去除首尾空格、行首行尾空白、多余空格、空行、所有空白字符与换行符，多种模式可组合 | <https://tools.codeemo.cn/tools/whitespace-cleaner> |
+| 5 | YML / Properties 互转 | YAML 与 Spring Boot Properties 双向转换，支持分隔符选择、Unicode 转义、键名排序与缩进设置 | <https://tools.codeemo.cn/tools/yml-properties-converter> |
+| 6 | HTML / Markdown 互转 | Markdown 与 HTML 双向实时转换，支持示例加载和结果复制 | <https://tools.codeemo.cn/tools/html-markdown-converter> |
+| 7 | Markdown / Word 互转 | Markdown 和 Word（.docx）双向互转，支持实时预览和导出 | <https://tools.codeemo.cn/tools/markdown-word-converter> |
+| 8 | Markdown / PDF 互转 | Markdown 与 PDF 双向转换，支持实时预览、PDF 导出与 PDF 文本提取 | <https://tools.codeemo.cn/tools/markdown-pdf-converter> |
+| 9 | HTML 提取 | 从 HTML 中提取图片、链接、视频、音频、CSS、JS、Iframe、Meta 标签等资源 | <https://tools.codeemo.cn/tools/html-extractor> |
+| 10 | CSS 渐变生成 | 可视化生成线性/径向渐变，支持自定义角度、颜色控制点和预设方案 | <https://tools.codeemo.cn/tools/css-gradient-generator> |
+| 11 | 简繁转换 | 基于 OpenCC 词典的简体繁体离线互转，支持通用繁体、台湾正体（含词汇转换）与香港繁体，词组级映射正确处理头发／乾淨／幹部等一对多用字 | <https://tools.codeemo.cn/tools/chinese-convert> |
 
 ---
 

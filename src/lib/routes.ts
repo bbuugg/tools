@@ -13,6 +13,8 @@ import {
   Contrast,
   Database,
   Dumbbell,
+  Eraser,
+  FileCog,
   FileCode2,
   FileDiff,
   FileEdit,
@@ -29,6 +31,8 @@ import {
   KeyRound,
   Landmark,
   Languages,
+  Link2,
+  Lock,
   MessageCircle,
   Network,
   Palette,
@@ -42,7 +46,6 @@ import {
   ShieldCheck,
   Spline,
   Stamp,
-  Type,
   type LucideIcon,
 } from "lucide-react";
 
@@ -309,14 +312,50 @@ export const TOOL_ROUTES: ToolRouteDef[] = [
     },
   },
   {
-    path: "/tools/text-processor",
-    lazy: () => import("@/pages/tools/text-processor"),
+    path: "/tools/text-encoder",
+    lazy: () => import("@/pages/tools/text-encoder"),
     meta: {
-      title: "文本处理工具",
-      description: "编码转换、加密哈希、空格清理、YML/Properties 互转，附带文本统计",
+      title: "编码转换",
+      description:
+        "URL、Base64、Base64URL、Unicode、HTML 实体、HTML 转义、Quoted-Printable 七种格式的编码与解码，附带文本统计",
       category: "文本与转换",
-      icon: Type,
+      icon: Link2,
       color: "bg-indigo-500",
+    },
+  },
+  {
+    path: "/tools/hash-crypto",
+    lazy: () => import("@/pages/tools/hash-crypto"),
+    meta: {
+      title: "加密哈希",
+      description: "MD5 / SHA1 / SHA256 / SHA512 哈希、HMAC 消息认证码与 AES 对称加解密，全程本地运算不出网",
+      category: "文本与转换",
+      icon: Lock,
+      color: "bg-rose-600",
+    },
+  },
+  {
+    path: "/tools/whitespace-cleaner",
+    lazy: () => import("@/pages/tools/whitespace-cleaner"),
+    meta: {
+      title: "空格清理",
+      description:
+        "去除首尾空格、行首行尾空白、多余空格、空行、所有空白字符与换行符，多种模式可组合",
+      category: "文本与转换",
+      icon: Eraser,
+      color: "bg-teal-500",
+    },
+  },
+  {
+    path: "/tools/yml-properties-converter",
+    lazy: () => import("@/pages/tools/yml-properties-converter"),
+    meta: {
+      title: "YML / Properties 互转",
+      description:
+        "YAML 与 Spring Boot Properties 双向转换，支持分隔符选择、Unicode 转义、键名排序与缩进设置",
+      category: "文本与转换",
+      icon: FileCog,
+      color: "bg-amber-600",
     },
   },
   {
