@@ -29,6 +29,10 @@ export interface TabsContextValue {
   close: (path: string) => void;
   /** 关闭除指定标签（与首页）之外的所有标签 */
   closeOthers: (path: string) => void;
+  /** 关闭指定标签左侧（不含首页）的所有标签 */
+  closeLeft: (path: string) => void;
+  /** 关闭指定标签右侧的所有标签 */
+  closeRight: (path: string) => void;
   /** 关闭除首页之外的所有标签 */
   closeAll: () => void;
   /** 重新加载（重新挂载）指定标签的页面 */

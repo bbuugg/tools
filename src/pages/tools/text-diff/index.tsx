@@ -676,14 +676,14 @@ export default function TextDiffPage() {
       {/* 文件来源 */}
       <div className="grid gap-4 lg:grid-cols-2">
         <SidePanel
-          title="原文（左侧）"
+          title="原文"
           value={left}
           fileName={leftName}
           onLoad={(file) => void loadFile(file, "left")}
           onClear={() => clearSide("left")}
         />
         <SidePanel
-          title="对比文本（右侧）"
+          title="对比文本"
           value={right}
           fileName={rightName}
           onLoad={(file) => void loadFile(file, "right")}

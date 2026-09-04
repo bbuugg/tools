@@ -55,8 +55,8 @@ export default function MyTool() {
 ```
 
 优先复用 `src/components/ui` 现有组件（button / input / select / tabs / switch /
-field / label / dialog / upload-dropzone / color-picker-field 等），
-新组件不要重复造轮子。
+field / label / dialog / dropdown-menu / context-menu / upload-dropzone /
+color-picker-field 等），新组件不要重复造轮子。
 
 **② 在 `src/lib/routes.ts` 的 `TOOL_ROUTES` 中追加一项**：
 
@@ -89,6 +89,10 @@ import { Wand2 } from "lucide-react";
 - 因此组件是常驻的：在 `useEffect` 里启动的定时器、`MediaStream`、`WebSocket`、
   轮询等，务必在 cleanup 中释放，否则切走后仍在后台运行。
 - 标签栏中的「重新加载」会重新挂载页面（等价于强制重置状态）。
+- 每个标签支持**右键**呼出菜单（重新加载 / 关闭 / 关闭其他 / 关闭左侧 / 关闭右侧 /
+  关闭全部），由 `tab-bar.tsx` 的 `TabContextMenu` 实现；
+  标签操作统一走 `useTabs()`（`tabs-context.ts`），新增操作需同时扩展
+  context 接口与 `tabs-provider.tsx` 的实现。
 - 路由表只有一条 `*` 规则（`App.tsx`），页面内容不通过 `<Outlet />` 渲染。
 
 ## 4. 依赖安装

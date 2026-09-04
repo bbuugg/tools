@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Copy, Plus, ShieldCheck, Trash2, TriangleAlert } from "lucide-react";
+import { Check, Copy, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";

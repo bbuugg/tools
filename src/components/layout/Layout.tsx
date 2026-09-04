@@ -40,7 +40,7 @@ function LayoutShell() {
           否则整页会出现横向滚动（溢出量正好是侧边栏宽度） */}
       <SidebarInset className="min-w-0">
         <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
-          <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
+          <header className="flex h-16 shrink-0 items-center gap-3 px-4 sm:px-6">
             <SidebarTrigger className="size-10" />
             {Icon && (
               <div

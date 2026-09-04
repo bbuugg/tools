@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeftRight, Check, Copy, Eraser, Languages, Sparkles } from "lucide-react";
+import { ArrowLeftRight, Check, Copy, Eraser, Sparkles } from "lucide-react";
 import * as OpenCC from "opencc-js";
 import { useMemo, useState } from "react";
 
@@ -58,14 +58,6 @@ export default function ChineseConvertPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="flex items-center gap-2 text-xl font-semibold">
-          <Languages className="size-5 text-primary" />
-          简繁转换
-        </h1>
-        <span className="text-xs text-muted-foreground">基于 OpenCC 词典 · 全程离线本地转换</span>
-      </div>
-
       {/* 方向选择 */}
       <div className="flex flex-wrap gap-1.5">
         {MODES.map((m) => (

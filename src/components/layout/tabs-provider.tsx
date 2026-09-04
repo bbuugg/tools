@@ -141,6 +141,33 @@ export function TabsProvider({ children }: { children: ReactNode }) {
     [navigate],
   );
 
+  const closeLeft = useCallback(
+    (path: string) => {
+      const list = tabsRef.current;
+      const index = list.findIndex((t) => t.path === path);
+      if (index === -1) return;
+      const rest = list.filter(
+        (t, i) => i >= index || t.path === HOME_PATH,
+      );
+      setTabs(rest);
+      // 当前标签被关掉了就切回被右键的那个
+      if (!rest.some((t) => t.path === activePathRef.current)) navigate(path);
+    },
+    [navigate],
+  );
+
+  const closeRight = useCallback(
+    (path: string) => {
+      const list = tabsRef.current;
+      const index = list.findIndex((t) => t.path === path);
+      if (index === -1) return;
+      const rest = list.filter((t, i) => i <= index || t.path === HOME_PATH);
+      setTabs(rest);
+      if (!rest.some((t) => t.path === activePathRef.current)) navigate(path);
+    },
+    [navigate],
+  );
+
   const closeAll = useCallback(() => {
     setTabs(tabsRef.current.filter((t) => t.path === HOME_PATH));
     if (activePathRef.current !== HOME_PATH) navigate(HOME_PATH);
@@ -175,10 +202,22 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       activate,
       close,
       closeOthers,
+      closeLeft,
+      closeRight,
       closeAll,
       reload,
     }),
-    [resolvedTabs, activePath, activate, close, closeOthers, closeAll, reload],
+    [
+      resolvedTabs,
+      activePath,
+      activate,
+      close,
+      closeOthers,
+      closeLeft,
+      closeRight,
+      closeAll,
+      reload,
+    ],
   );
 
   return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;
