@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useLayoutEffect, useRef } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
+import { GithubLink } from "@/components/github-link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -61,7 +62,8 @@ function LayoutShell() {
                 </p>
               )}
             </div>
-            <div className="ml-auto flex items-center">
+            <div className="ml-auto flex items-center gap-1">
+              <GithubLink />
               <ModeToggle />
             </div>
           </header>

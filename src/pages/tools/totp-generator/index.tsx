@@ -294,16 +294,6 @@ export default function TotpGeneratorPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-xl font-semibold">
-          <ShieldCheck className="size-5 text-primary" />
-          TOTP 动态口令生成器
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          粘贴两步验证密钥（Base32 或 otpauth:// 链接），全部计算在本机 WebCrypto 完成，密钥不经过网络。
-        </p>
-      </div>
-
       <div className="grid lg:grid-cols-[380px_1fr] gap-6 items-start">
         {/* 左侧：输入与参数 */}
         <div className="space-y-6 min-w-0">

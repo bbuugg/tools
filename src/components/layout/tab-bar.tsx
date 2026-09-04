@@ -36,7 +36,7 @@ export function TabBar() {
         ref={listRef}
         role="tablist"
         aria-label="已打开的工具标签"
-        className="relative flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
+        className="relative flex min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar"
       >
         {tabs.map((tab) => {
           const Icon = tab.meta.icon;
