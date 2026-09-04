@@ -1,6 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+  ChevronLeft,
+  ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Link2,
@@ -28,11 +30,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-/** header 下方的多标签栏：切换 / 中键关闭 / 右键菜单 / 更多操作 */
+/** header 下方的多标签栏：切换 / 中键关闭 / 右键菜单 / 左右滚动 / 更多操作 */
 export function TabBar() {
   const { tabs, activePath, activate, close } = useTabs();
   const listRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef(new Map<string, HTMLDivElement>());
+  /** 标签溢出时两侧箭头的可滚动方向（用于显隐与禁用） */
+  const [overflow, setOverflow] = useState({ left: false, right: false });
+
+  // 同步「还能往哪边滚」，1px 容差避免亚像素抖动
+  const syncOverflow = useCallback(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const left = list.scrollLeft > 1;
+    const right = list.scrollLeft + list.clientWidth < list.scrollWidth - 1;
+    setOverflow((prev) =>
+      prev.left === left && prev.right === right ? prev : { left, right },
+    );
+  }, []);
 
   // 激活的标签始终滚动到可视区域内
   useEffect(() => {
@@ -46,14 +61,73 @@ export function TabBar() {
     } else if (right > list.scrollLeft + list.clientWidth) {
       list.scrollLeft = right - list.clientWidth + 8;
     }
-  }, [activePath, tabs.length]);
+    syncOverflow();
+  }, [activePath, tabs.length, syncOverflow]);
+
+  // 容器尺寸（窗口缩放 / 侧边栏折叠）、标签数量与标签自身宽度变化时更新箭头状态
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    syncOverflow();
+    const observer = new ResizeObserver(syncOverflow);
+    observer.observe(list);
+    // 容器宽度不变但内容变宽（新增标签、字体加载）时也要感知
+    itemRefs.current.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [syncOverflow, tabs.length]);
+
+  // 竖向滚轮 → 横向滚动标签栏。
+  // React 的 onWheel 是被动监听无法 preventDefault，所以这里手动注册原生监听。
+  // 已滚到边界时不再拦截，把滚动交还给页面，避免出现「滚不动」的死角。
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const onWheel = (e: WheelEvent) => {
+      // 触控板的横向滚动（deltaX 为主）交给浏览器原生处理
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const atLeft = list.scrollLeft <= 1;
+      const atRight =
+        list.scrollLeft + list.clientWidth >= list.scrollWidth - 1;
+      if ((e.deltaY < 0 && atLeft) || (e.deltaY > 0 && atRight)) return;
+      e.preventDefault();
+      list.scrollLeft += e.deltaY;
+    };
+    list.addEventListener("wheel", onWheel, { passive: false });
+    return () => list.removeEventListener("wheel", onWheel);
+  }, []);
+
+  /** 点击箭头滚动一屏（至少 160px） */
+  const scrollTabs = (direction: -1 | 1) => {
+    const list = listRef.current;
+    if (!list) return;
+    list.scrollBy({
+      left: direction * Math.max(160, list.clientWidth * 0.8),
+      behavior: "smooth",
+    });
+  };
+
+  const scrollable = overflow.left || overflow.right;
 
   return (
-    <div className="flex h-11 items-center gap-2 border-b border-border/60 px-2 sm:px-3">
+    <div className="flex h-11 items-center gap-1 border-b border-border/60 px-2 sm:px-3">
+      {scrollable && (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="向左滚动标签"
+          title="向左滚动"
+          disabled={!overflow.left}
+          onClick={() => scrollTabs(-1)}
+          className="shrink-0"
+        >
+          <ChevronLeft />
+        </Button>
+      )}
       <div
         ref={listRef}
         role="tablist"
         aria-label="已打开的工具标签"
+        onScroll={syncOverflow}
         className="relative flex min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar"
       >
         {tabs.map((tab) => {
@@ -114,6 +188,19 @@ export function TabBar() {
           );
         })}
       </div>
+      {scrollable && (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="向右滚动标签"
+          title="向右滚动"
+          disabled={!overflow.right}
+          onClick={() => scrollTabs(1)}
+          className="shrink-0"
+        >
+          <ChevronRight />
+        </Button>
+      )}
       <TabBarMenu />
     </div>
   );
@@ -157,10 +244,7 @@ function TabContextMenu({ tab }: { tab: TabItem }) {
         复制页面链接
       </ContextMenuItem>
       <ContextMenuSeparator />
-      <ContextMenuItem
-        disabled={tab.pinned}
-        onSelect={() => close(tab.path)}
-      >
+      <ContextMenuItem disabled={tab.pinned} onSelect={() => close(tab.path)}>
         <X />
         关闭
       </ContextMenuItem>

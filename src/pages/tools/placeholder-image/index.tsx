@@ -203,13 +203,6 @@ export default function PlaceholderImagePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">占位图生成器</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          自定义尺寸、颜色与占位文字，导出 SVG / PNG 或复制 Data URI 直接内嵌。
-        </p>
-      </div>
-
       <div className="grid lg:grid-cols-[380px_1fr] gap-6 items-start">
         {/* 参数面板 */}
         <div className="rounded-xl border border-border bg-card p-5 space-y-4">

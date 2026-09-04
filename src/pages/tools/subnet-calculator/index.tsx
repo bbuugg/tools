@@ -361,7 +361,6 @@ export default function SubnetCalculatorPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">子网计算器</h1>
         <Segmented<Tab>
           options={[
             { value: "calc", label: "子网计算" },
