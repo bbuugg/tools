@@ -2,6 +2,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { GithubLink } from "@/components/github-link";
 import { ModeToggle } from "@/components/mode-toggle";
+import { InstallButton } from "@/components/install-button";
 import { Spinner } from "@/components/ui/spinner";
 import {
   SidebarInset,
@@ -63,6 +64,7 @@ function LayoutShell() {
               )}
             </div>
             <div className="ml-auto flex items-center gap-1">
+              <InstallButton />
               <GithubLink />
               <ModeToggle />
             </div>
