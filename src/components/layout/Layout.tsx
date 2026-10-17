@@ -1,10 +1,10 @@
-import { useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { GithubLink } from "@/components/github-link";
-import { ModeToggle } from "@/components/mode-toggle";
-import { PanelView } from "@/components/layout/panel-view";
+import { InstallButton } from "@/components/install-button";
 import { useActiveTabKey } from "@/components/layout/panel-store";
+import { PanelView } from "@/components/layout/panel-view";
 import { TabsProvider } from "@/components/layout/tabs-provider";
+import { ModeToggle } from "@/components/mode-toggle";
 import {
   SidebarInset,
   SidebarProvider,
@@ -13,6 +13,7 @@ import {
 import { pageTitle } from "@/lib/site";
 import { resolveTabMeta } from "@/lib/tabs";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 export default function Layout() {
   return (
@@ -62,6 +63,7 @@ function LayoutShell() {
               )}
             </div>
             <div className="ml-auto flex items-center gap-1">
+              <InstallButton />
               <GithubLink />
               <ModeToggle />
             </div>
