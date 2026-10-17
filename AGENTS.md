@@ -29,7 +29,7 @@ src/
     panel-groups.ts        # 分组与标签操作纯函数：打开 / 激活 / 移动 / 拆分 / 合并 / 关闭
   components/
     ui/                    # 可复用组件：button, input, select, tabs, dialog, ...
-    layout/Layout.tsx      # 全局布局：header + 面板视图
+    layout/Layout.tsx      # 全局布局：侧边栏 + 面板视图（无顶栏，标题只写进 document.title）
     layout/panel-view.tsx  # 面板视图：标签条、分组、拖拽落点、拆分条、内容层
     layout/panel-store.ts  # 面板状态：订阅、用户操作、URL 同步、sessionStorage 持久化
     layout/panel-bodies.ts # 分组内容区 DOM 登记表（内容层按矩形绝对定位）

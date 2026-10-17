@@ -2,9 +2,13 @@ import { useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { Wrench, ChevronDown, Search } from "lucide-react"
 import { TOOL_CATEGORIES } from "@/lib/routes"
+import { GithubLink } from "@/components/github-link"
+import { InstallButton } from "@/components/install-button"
+import { ModeToggle } from "@/components/mode-toggle"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -13,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -108,6 +113,15 @@ export function AppSidebar() {
           </Collapsible>
         ))}
       </SidebarContent>
+      {/* 底部固定区：收起/展开 + 安装 / GitHub / 主题；折叠为图标栏时只留展开按钮 */}
+      <SidebarFooter className="flex-row flex-wrap items-center gap-1 [&_[data-slot=button]:hover]:bg-sidebar-accent [&_[data-slot=button]:hover]:text-sidebar-accent-foreground">
+        <SidebarTrigger className="size-9 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8" />
+        <div className="ml-auto flex items-center gap-1 group-data-[collapsible=icon]:hidden">
+          <InstallButton />
+          <GithubLink />
+          <ModeToggle />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   )
 }
