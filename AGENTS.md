@@ -19,18 +19,23 @@
 
 ```
 src/
-  App.tsx                  # 路由树装配；homeRoute + TOOL_ROUTES.map + 404
+  App.tsx                  # 路由树装配 + DndProvider；homeRoute + TOOL_ROUTES.map + 404
   lib/
     routes.ts              # 工具路由表 + 派生分类（唯一定义工具清单的地方）
     utils.ts               # cn() 等通用工具
     barcode.ts             # 条形码码制定义（示例：纯逻辑模块）
     barcode-reader.ts      # 条形码识别封装（示例：依赖库封装）
+    pane-layout.ts         # 面板布局树纯函数：拆分 / 尺寸归一化 / 结构校验
+    panel-groups.ts        # 分组与标签操作纯函数：打开 / 激活 / 移动 / 拆分 / 合并 / 关闭
   components/
     ui/                    # 可复用组件：button, input, select, tabs, dialog, ...
-    layout/Layout.tsx      # 全局布局：header + 标签栏 + 多标签内容区
-    layout/tab-bar.tsx     # header 下方的标签栏（切换 / 关闭 / 更多操作）
-    layout/tabs-context.ts # 标签上下文与 useTabs()
-    layout/tabs-provider.tsx # 标签状态：打开 / 关闭 / 持久化到 sessionStorage
+    layout/Layout.tsx      # 全局布局：header + 面板视图
+    layout/panel-view.tsx  # 面板视图：标签条、分组、拖拽落点、拆分条、内容层
+    layout/panel-store.ts  # 面板状态：订阅、用户操作、URL 同步、sessionStorage 持久化
+    layout/panel-bodies.ts # 分组内容区 DOM 登记表（内容层按矩形绝对定位）
+    layout/tab-runtime.ts  # 标签运行时：已挂载标记 / 重新加载 key
+    layout/dnd-context.ts  # react-dnd 拖拽契约与 hooks
+    layout/tabs-provider.tsx # 地址栏 ↔ 面板状态桥接 + 防抖持久化
   pages/
     home/                  # 首页：消费 TOOL_CATEGORIES 自动渲染卡片
     not-found.tsx
@@ -79,20 +84,24 @@ import { Wand2 } from "lucide-react";
 `category` 只能是 `CATEGORY_ORDER`（`routes.ts` 顶部）中的值之一；
 新分类会**自动**在首页与侧边栏按该顺序出现，无需额外注册。
 
-### 3.1 多标签机制（写工具时必读）
+### 3.1 面板 / 多标签机制（写工具时必读）
 
-所有页面运行在 `components/layout/tabs-provider.tsx` 的**多标签容器**中：
+所有页面运行在 `components/layout/panel-view.tsx` 的**可拖拽面板容器**中：
 
-- 一个路径 = 一个标签，激活标签 = 当前 URL；标签列表存 `sessionStorage`，刷新后恢复。
-- 切换标签只是**隐藏**（`hidden` 属性）页面组件，**不会卸载**，所以工具里的输入、
+- 一个路径 = 一个标签；标签归属某个分组（面板），**焦点分组的活动标签 = 当前 URL**。
+  布局树（横 / 纵拆分 + 尺寸）、分组与标签归属、焦点分组存 `sessionStorage`，刷新后恢复。
+- 布局自由组合：拖标签到标签条可换组 / 排序；拖到分组内容区**边缘**拆分为新分组，
+  拖到**中心**与目标分组合并；拖分组标题栏的握把可整体移动分组；拖动分隔条调整尺寸。
+- 切换标签、跨组移动、拆分、合并都只是**隐藏或改定位**，页面组件**不会卸载**，所以输入、
   上传的文件、编辑器内容都会原样保留——这是有意为之，不要依赖「切走即重置」。
+  内容层（`panel-bodies.ts`）保证页面 React 父节点稳定，标签换组不会重挂页面。
 - 因此组件是常驻的：在 `useEffect` 里启动的定时器、`MediaStream`、`WebSocket`、
   轮询等，务必在 cleanup 中释放，否则切走后仍在后台运行。
-- 标签栏中的「重新加载」会重新挂载页面（等价于强制重置状态）。
-- 每个标签支持**右键**呼出菜单（重新加载 / 关闭 / 关闭其他 / 关闭左侧 / 关闭右侧 /
-  关闭全部），由 `tab-bar.tsx` 的 `TabContextMenu` 实现；
-  标签操作统一走 `useTabs()`（`tabs-context.ts`），新增操作需同时扩展
-  context 接口与 `tabs-provider.tsx` 的实现。
+- 标签右键菜单：重新加载（仅重挂该标签）/ 复制链接 / 拆分到新分组 / 移动到分组 /
+  关闭（其他 / 左侧 / 右侧）/ 关闭分组；分组标题栏也有菜单与「全部合并」等操作。
+- 面板状态操作统一走 `panel-store.ts`（`activateTab` / `moveTab` / `splitTab` /
+  `moveGroup` / `resizeSplit` / 各 `close*` 等），纯逻辑在 `lib/panel-groups.ts` 与
+  `lib/pane-layout.ts`；不要在页面里另存标签或布局状态。
 - 路由表只有一条 `*` 规则（`App.tsx`），页面内容不通过 `<Outlet />` 渲染。
 
 ## 4. 依赖安装

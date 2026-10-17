@@ -1,18 +1,17 @@
-import { Suspense, useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { GithubLink } from "@/components/github-link";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Spinner } from "@/components/ui/spinner";
+import { PanelView } from "@/components/layout/panel-view";
+import { useActiveTabKey } from "@/components/layout/panel-store";
+import { TabsProvider } from "@/components/layout/tabs-provider";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { TabBar } from "@/components/layout/tab-bar";
-import { useTabs } from "@/components/layout/tabs-context";
-import { TabsProvider } from "@/components/layout/tabs-provider";
 import { pageTitle } from "@/lib/site";
-import { getPageComponent, pageKey } from "@/lib/tabs";
+import { resolveTabMeta } from "@/lib/tabs";
 import { cn } from "@/lib/utils";
 
 export default function Layout() {
@@ -24,29 +23,29 @@ export default function Layout() {
 }
 
 function LayoutShell() {
-  const { tabs, activeTab } = useTabs();
-  const title = activeTab?.meta.title ?? "开发者工具";
-  const description = activeTab?.meta.description ?? "";
+  const activePath = useActiveTabKey();
+  const meta = activePath ? resolveTabMeta(activePath) : null;
+  const title = meta?.title ?? "开发者工具";
+  const description = meta?.description ?? "";
+  const Icon = meta?.icon;
 
   useDocumentTitle(title);
-  useTabScrollMemory();
-
-  const Icon = activeTab?.meta.icon;
 
   return (
-    <SidebarProvider>
+    // h-svh + overflow-hidden：整页固定视口高度，滚动交给每个面板的标签内容，
+    // 这样多分组并排时标签条始终可见。
+    <SidebarProvider className="h-svh min-h-0 overflow-hidden">
       <AppSidebar />
-      {/* min-w-0：内容区宽度固定为「视口 - 侧边栏」，不被页面 / 标签栏的 min-content 撑开，
-          否则整页会出现横向滚动（溢出量正好是侧边栏宽度） */}
-      <SidebarInset className="min-w-0">
-        <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+      {/* min-w-0：内容区宽度固定为「视口 - 侧边栏」，不被面板的 min-content 撑开 */}
+      <SidebarInset className="h-svh min-h-0 min-w-0 overflow-hidden">
+        <div className="shrink-0 border-b border-border/60 bg-background/80 backdrop-blur-sm">
           <header className="flex h-16 shrink-0 items-center gap-3 px-4 sm:px-6">
             <SidebarTrigger className="size-10" />
             {Icon && (
               <div
                 className={cn(
                   "flex size-9 shrink-0 items-center justify-center rounded-lg text-white",
-                  activeTab?.meta.color,
+                  meta?.color,
                 )}
               >
                 <Icon className="size-5" />
@@ -67,53 +66,18 @@ function LayoutShell() {
               <ModeToggle />
             </div>
           </header>
-          <TabBar />
         </div>
-        <main className="relative flex-1 overflow-x-hidden">
-          {tabs
-            .filter((tab) => tab.mounted)
-            .map((tab) => {
-              const Page = getPageComponent(tab.path);
-              return (
-                // 未激活的标签仅隐藏不卸载，页面状态（输入内容、文件、编辑器）保持原样
-                <div key={tab.path} hidden={!tab.active}>
-                  <Suspense fallback={<TabLoading />}>
-                    <Page key={pageKey(tab.path, tab.reloadKey)} />
-                  </Suspense>
-                </div>
-              );
-            })}
-        </main>
+        <div className="flex min-h-0 flex-1 flex-col p-2 sm:p-3">
+          <PanelView />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
 }
 
-function TabLoading() {
-  return (
-    <div className="flex h-[60vh] items-center justify-center">
-      <Spinner className="size-6 text-muted-foreground" />
-    </div>
-  );
-}
-
-/** 根据当前标签更新 document.title */
+/** 根据焦点分组的活动标签更新 document.title */
 function useDocumentTitle(title: string) {
   useEffect(() => {
     document.title = pageTitle(title);
   }, [title]);
-}
-
-/** 切换标签时保存 / 还原各自的滚动位置 */
-function useTabScrollMemory() {
-  const { activePath } = useTabs();
-  const positions = useRef(new Map<string, number>());
-  const previousPath = useRef(activePath);
-
-  useLayoutEffect(() => {
-    if (previousPath.current === activePath) return;
-    positions.current.set(previousPath.current, window.scrollY);
-    previousPath.current = activePath;
-    window.scrollTo(0, positions.current.get(activePath) ?? 0);
-  }, [activePath]);
 }
