@@ -88,7 +88,8 @@ function readLegacyPaths(): string[] {
     const parsed: unknown = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(
-      (p): p is string => typeof p === "string" && isKnownPath(p),
+      (p): p is string =>
+        typeof p === "string" && p !== HOME_PATH && isKnownPath(p),
     );
   } catch {
     return [];
@@ -115,11 +116,11 @@ function readStoredPanel(): PanelState | null {
       if (!g.tabIds.every((p) => typeof p === "string")) return null;
       const tabIds: string[] = [];
       for (const p of g.tabIds as string[]) {
-        if (seen.has(p)) continue;
+        // 旧版本把首页也存成了标签，恢复时直接丢弃
+        if (p === HOME_PATH || seen.has(p)) continue;
         seen.add(p);
         tabIds.push(p);
       }
-      if (tabIds.length === 0) return null;
       const activeTabId =
         typeof g.activeTabId === "string" && tabIds.includes(g.activeTabId)
           ? g.activeTabId
@@ -150,6 +151,7 @@ function createInitialSession(currentPath: string): {
     for (const gid of collectGroupIds(stored.layout)) {
       for (const path of stored.groups[gid]?.tabIds ?? []) {
         if (paths.includes(path)) continue;
+        if (path === HOME_PATH) continue;
         if (isKnownPath(path) || path === currentPath) paths.push(path);
       }
     }
@@ -157,14 +159,19 @@ function createInitialSession(currentPath: string): {
     paths.push(...readLegacyPaths());
   }
 
-  if (!paths.includes(HOME_PATH)) paths.unshift(HOME_PATH);
-  if (!paths.includes(currentPath)) paths.push(currentPath);
+  // 首页是独立视图，不写入标签集合
+  if (currentPath !== HOME_PATH && !paths.includes(currentPath)) {
+    paths.push(currentPath);
+  }
 
   let state = stored ?? initialState(paths);
   state = alignToTabs(state, paths);
-  state = activateTabPure(state, currentPath);
+  if (currentPath !== HOME_PATH) {
+    state = activateTabPure(state, currentPath);
+  }
 
-  const mounted = new Set<string>([HOME_PATH, currentPath]);
+  const mounted = new Set<string>();
+  if (currentPath !== HOME_PATH) mounted.add(currentPath);
   for (const g of Object.values(state.groups)) {
     if (g.activeTabId) mounted.add(g.activeTabId);
   }
@@ -229,8 +236,14 @@ export function bindPanelNavigate(fn: (path: string) => void): () => void {
 }
 
 function syncUrlWithActiveTab(): void {
+  // 首页是独立视图：停留在首页时，标签状态变化不应把地址栏拉回工具页
+  if (window.location.pathname === HOME_PATH) return;
+
   const path = activeTabKey(state);
-  if (!path) return;
+  if (!path) {
+    navigateFn?.(HOME_PATH);
+    return;
+  }
   if (path !== window.location.pathname) navigateFn?.(path);
 }
 
@@ -258,9 +271,12 @@ function commit(
 
 /**
  * 地址栏变化的入口（侧边栏链接、浏览器前进后退、刷新恢复）。
+ * 首页只是切换视图，不创建 / 激活标签；其余路径确保标签存在并聚焦。
  * 只同步状态，不反向调整 URL，避免与 react-router 形成回环。
  */
 export function syncFromUrl(path: string): void {
+  if (path === HOME_PATH) return;
+
   let next = state;
   if (!groupOfTab(next, path)) {
     next = alignToTabs(next, [...allTabKeys(next), path]);
@@ -282,21 +298,19 @@ export function focusGroup(groupId: string): void {
 }
 
 export function closeTab(path: string): void {
-  if (path === HOME_PATH) return;
   commit(removeTabs(state, [path]));
 }
 
 export function closeTabs(paths: readonly string[]): void {
-  const keys = paths.filter((p) => p !== HOME_PATH);
-  if (keys.length === 0) return;
-  commit(removeTabs(state, keys));
+  if (paths.length === 0) return;
+  commit(removeTabs(state, paths));
 }
 
 export function closeOthers(path: string): void {
   const gid = groupOfTab(state, path);
   if (!gid) return;
   const g = state.groups[gid];
-  commit(removeTabs(state, g.tabIds.filter((k) => k !== path && k !== HOME_PATH)));
+  commit(removeTabs(state, g.tabIds.filter((k) => k !== path)));
 }
 
 export function closeLeft(path: string): void {
@@ -304,12 +318,7 @@ export function closeLeft(path: string): void {
   if (!gid) return;
   const g = state.groups[gid];
   const index = g.tabIds.indexOf(path);
-  commit(
-    removeTabs(
-      state,
-      g.tabIds.slice(0, Math.max(0, index)).filter((k) => k !== HOME_PATH),
-    ),
-  );
+  commit(removeTabs(state, g.tabIds.slice(0, Math.max(0, index))));
 }
 
 export function closeRight(path: string): void {
@@ -317,22 +326,17 @@ export function closeRight(path: string): void {
   if (!gid) return;
   const g = state.groups[gid];
   const index = g.tabIds.indexOf(path);
-  commit(
-    removeTabs(
-      state,
-      g.tabIds.slice(index + 1).filter((k) => k !== HOME_PATH),
-    ),
-  );
+  commit(removeTabs(state, g.tabIds.slice(index + 1)));
 }
 
-/** 关闭一个分组里的全部标签（首页固定标签保留） */
+/** 关闭一个分组里的全部标签 */
 export function closeGroup(groupId: string): void {
   const g = state.groups[groupId];
   if (!g) return;
   closeTabs(g.tabIds);
 }
 
-/** 关闭全部分组里除首页外的所有标签 */
+/** 关闭全部分组里的所有标签，关空后回到首页视图 */
 export function closeAllTabs(): void {
   closeTabs(allTabKeys(state));
 }

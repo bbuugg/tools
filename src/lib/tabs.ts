@@ -3,7 +3,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import NotFound from "@/pages/not-found";
 import { TOOL_ROUTES } from "@/lib/routes";
 
-/** 首页路径：固定标签，不可关闭 */
+/** 首页路径：独立视图，不参与标签（无标签时展示全部工具） */
 export const HOME_PATH = "/";
 
 /** 标签页展示信息 */

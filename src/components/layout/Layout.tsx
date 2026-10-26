@@ -8,8 +8,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { pageTitle } from "@/lib/site";
-import { resolveTabMeta } from "@/lib/tabs";
+import { HOME_PATH, resolveTabMeta } from "@/lib/tabs";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function Layout() {
   return (
@@ -21,8 +22,10 @@ export default function Layout() {
 
 function LayoutShell() {
   const activePath = useActiveTabKey();
+  const { pathname } = useLocation();
+  const titlePath = pathname === HOME_PATH ? HOME_PATH : activePath;
   const title =
-    (activePath ? resolveTabMeta(activePath)?.title : null) ?? "开发者工具";
+    (titlePath ? resolveTabMeta(titlePath)?.title : null) ?? "开发者工具";
 
   useDocumentTitle(title);
 

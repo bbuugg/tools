@@ -13,6 +13,7 @@ import {
   type RefObject,
 } from "react";
 import { useDrag, useDragLayer, useDrop } from "react-dnd";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import {
   ArrowDown,
@@ -105,6 +106,7 @@ import { HOME_PATH, getPageComponent, resolveTabMeta } from "@/lib/tabs";
 import type { PaneNode, PaneSplit, SplitDirectionInput } from "@/lib/pane-layout";
 
 const TAB_STRIP_HEIGHT = "h-10";
+const HomePage = getPageComponent(HOME_PATH);
 
 // ---------------------------------------------------------------------------
 // 分隔条
@@ -269,7 +271,6 @@ function PanelTabItem({
 }) {
   const meta = resolveTabMeta(path);
   const Icon = meta.icon;
-  const pinned = path === HOME_PATH;
   const elRef = useRef<HTMLDivElement | null>(null);
   const [zone, setZone] = useState<TabDropZone | null>(null);
 
@@ -355,7 +356,7 @@ function PanelTabItem({
             }
           }}
           onAuxClick={(e) => {
-            if (e.button === 1 && !pinned) {
+            if (e.button === 1) {
               e.preventDefault();
               onClose(path);
             }
@@ -370,19 +371,17 @@ function PanelTabItem({
         >
           <Icon className="size-3.5 shrink-0" />
           <span className="truncate">{meta.title}</span>
-          {!pinned && (
-            <button
-              type="button"
-              aria-label={`关闭 ${meta.title}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose(path);
-              }}
-              className="ml-0.5 flex size-4 shrink-0 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:bg-foreground/10 hover:text-foreground"
-            >
-              <X className="size-3" />
-            </button>
-          )}
+          <button
+            type="button"
+            aria-label={`关闭 ${meta.title}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose(path);
+            }}
+            className="ml-0.5 flex size-4 shrink-0 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:bg-foreground/10 hover:text-foreground"
+          >
+            <X className="size-3" />
+          </button>
 
           {visibleZone === "inside" ? (
             <span className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-primary" />
@@ -402,7 +401,6 @@ function PanelTabItem({
         groupId={groupId}
         groupTabIds={groupTabIds}
         index={index}
-        pinned={pinned}
         canCloseGroup={canCloseGroup}
       />
     </ContextMenu>
@@ -424,29 +422,21 @@ function TabContextMenu({
   groupId,
   groupTabIds,
   index,
-  pinned,
   canCloseGroup,
 }: {
   path: string;
   groupId: string;
   groupTabIds: string[];
   index: number;
-  pinned: boolean;
   canCloseGroup: boolean;
 }) {
   const state = usePanelState();
   const meta = resolveTabMeta(path);
   const otherGroups = panelGroupIds(state).filter((id) => id !== groupId);
-  const hasLeft = groupTabIds
-    .slice(0, index)
-    .some((key) => key !== HOME_PATH);
-  const hasRight = groupTabIds
-    .slice(index + 1)
-    .some((key) => key !== HOME_PATH);
-  const hasOthers = groupTabIds.some(
-    (key) => key !== path && key !== HOME_PATH,
-  );
-  const groupHasClosable = groupTabIds.some((key) => key !== HOME_PATH);
+  const hasLeft = groupTabIds.slice(0, index).length > 0;
+  const hasRight = groupTabIds.slice(index + 1).length > 0;
+  const hasOthers = groupTabIds.some((key) => key !== path);
+  const groupHasClosable = groupTabIds.length > 0;
   const splittable = groupTabIds.length > 1;
 
   const split = (direction: SplitDirectionInput): void => {
@@ -513,7 +503,7 @@ function TabContextMenu({
       )}
 
       <ContextMenuSeparator />
-      <ContextMenuItem disabled={pinned} onSelect={() => closeTab(path)}>
+      <ContextMenuItem onSelect={() => closeTab(path)}>
         <X />
         关闭
       </ContextMenuItem>
@@ -821,10 +811,8 @@ function GroupMenu({
   const group = state.groups[groupId];
   const activeKey = group?.activeTabId ?? null;
   const activeMeta = activeKey ? resolveTabMeta(activeKey) : null;
-  const groupHasClosable = (group?.tabIds ?? []).some(
-    (path) => path !== HOME_PATH,
-  );
-  const hasAnyClosable = allTabKeys(state).some((path) => path !== HOME_PATH);
+  const groupHasClosable = (group?.tabIds ?? []).length > 0;
+  const hasAnyClosable = allTabKeys(state).length > 0;
   const otherGroups = panelGroupIds(state).filter((id) => id !== groupId);
 
   return (
@@ -1104,10 +1092,29 @@ function PaneNodeView({ node }: { node: PaneNode }): ReactNode {
 
 export function PanelView() {
   const state = usePanelState();
+  const { pathname } = useLocation();
+  const showHome = pathname === HOME_PATH;
+
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border/60 bg-muted/20">
-      <PaneNodeView node={state.layout} />
-      <PanelContentLayer state={state} />
+      {/* 首页是独立视图：面板仅隐藏不卸载，保证已打开标签的页面状态不丢 */}
+      <div
+        className={cn(
+          "relative flex min-h-0 min-w-0 flex-1 flex-col",
+          showHome && "hidden",
+        )}
+      >
+        <PaneNodeView node={state.layout} />
+        <PanelContentLayer state={state} />
+      </div>
+
+      {showHome && (
+        <div className="absolute inset-0 overflow-auto overscroll-contain">
+          <Suspense fallback={<TabLoading />}>
+            <HomePage />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 }
