@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -240,7 +241,11 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
           value={value}
           onMount={handleEditorDidMount}
           onChange={(v) => onChange && onChange(v || "")}
-          loading={<div className="h-full w-full bg-card" />}
+          loading={
+            <div className="flex h-full w-full items-center justify-center bg-card">
+              <Spinner className="size-5 text-muted-foreground" />
+            </div>
+          }
           options={{
             fontSize: 13,
             mouseWheelZoom: true,
